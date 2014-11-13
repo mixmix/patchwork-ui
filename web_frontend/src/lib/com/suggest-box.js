@@ -9,7 +9,7 @@ var suggestBox = exports.suggestBox = function(box) {
       var sel = 'li'
       if (i === box.selection)
         sel += '.selected'
-      title = opt.image ? h('img', { src: opt.image }) : h('strong', opt.title)
+      title = opt.emoji ? h('i.twa.twa-2x.twa-'+opt.emoji) : h('strong', opt.title)
       return h(sel, [title, ' ', h('small', opt.subtitle)])
     }))
   ])

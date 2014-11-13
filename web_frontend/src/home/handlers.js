@@ -201,7 +201,7 @@ exports.mentionBoxInput = function(state, e) {
     } else {
       for (var emoji in emojiNamedCharacters) {
         state.suggestBox.options.push({
-          image: '/img/emoji/' + emoji + '.png',
+          emoji: emoji.replace(/_/g, '-').replace(/\+/g, 'plus'),
           title: emoji,
           subtitle: emoji,
           value: emoji + ':'

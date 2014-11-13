@@ -11,11 +11,9 @@ marked.setOptions({
   smartLists: true,
   smartypants: false,
   emoji: function(emoji) {
-    return emoji in emojiNamedCharacters ?
-        '<img src="/img/emoji/' + encodeURI(emoji) + '.png"'
-        + ' alt=":' + escape(emoji) + ':"'
-        + ' title=":' + escape(emoji) + ':"'
-        + ' class="emoji" align="absmiddle" height="20" width="20">'
+    var cls = emoji.replace(/_/g, '-').replace(/\+/g, 'plus')
+    return emoji in emojiNamedCharacters
+      ? '<i class="twa twa-lg twa-'+escape(cls)+'" title=":' + escape(emoji) + ':"></i>'
       : ':' + emoji + ':'
   }
 });
