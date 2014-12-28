@@ -2,8 +2,10 @@ var h = require('hyperscript')
 var pull = require('pull-stream')
 var com = require('../com')
 var util = require('../../lib/util')
+var memo = require('../../lib/memo')
 
 module.exports = function(state) {
+  console.time('render')
   var pid = state.page.param
   var profile = state.profiles[pid]
   var isFollowing = (state.user.following.indexOf(pid) != -1)
@@ -12,7 +14,7 @@ module.exports = function(state) {
   var msgfeed, msgs = []
   for (var i=state.msgs.length-1; i>=0; i--) {
     if (state.msgs[i].value.author == pid)
-      msgs.push(com.message(state, state.msgs[i]))
+      msgs.push(memo('msg:' + state.msgs[i].key, com.message, state, state.msgs[i]))
   }
   if (msgs.length)
     msgfeed = h('.message-feed', msgs)
@@ -50,4 +52,5 @@ module.exports = function(state) {
       h('div', { style: { width: '160px' }, innerHTML: com.toEmoji(pid) })
     )
   )))
+  console.timeEnd('render')
 }

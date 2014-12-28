@@ -7,12 +7,12 @@ exports.toggle = function(state, el, e) {
 
 exports.setRenderMode = function(state, el, e) {
   state.page.renderMode = el.dataset.mode
-  memo.clear('feed')
+  memo.clear('msg:') // need to rerender all msgs
+  memo.clear('thread:')
   state.sync()
 }
 
 exports.setFeedMode = function(state, el, e) {
   state.page.feedMode = el.dataset.mode
-  memo.clear('feed')
   state.sync()
 }
