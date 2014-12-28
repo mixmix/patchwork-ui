@@ -5,7 +5,6 @@ var util = require('../../lib/util')
 var memo = require('../../lib/memo')
 
 module.exports = function(state) {
-  console.time('render')
   var pid = state.page.param
   var profile = state.profiles[pid]
   var isFollowing = (state.user.following.indexOf(pid) != -1)
@@ -52,5 +51,4 @@ module.exports = function(state) {
       h('div', { style: { width: '160px' }, innerHTML: com.toEmoji(pid) })
     )
   )))
-  console.timeEnd('render')
 }

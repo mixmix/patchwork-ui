@@ -4,7 +4,6 @@ var com = require('../com')
 var memo = require('../../lib/memo')
 
 module.exports = function(state) {
-  console.time('render')
   var msgs = [], msg
   for (var i=state.msgs.length-1; i>=0; i--) {
     msg = state.msgs[i]
@@ -24,5 +23,4 @@ module.exports = function(state) {
       h('.message-feed', msgs)
     )
   )))
-  console.timeEnd('render')
 }
