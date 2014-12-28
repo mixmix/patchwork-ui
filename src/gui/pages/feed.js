@@ -1,16 +1,18 @@
 var h = require('hyperscript')
 var pull = require('pull-stream')
 var com = require('../com')
+var memo = require('../../lib/memo')
 
 module.exports = function(state) {
-  var msgs = []
+  var msgs = [], msg
   for (var i=state.msgs.length-1; i>=0; i--) {
+    msg = state.msgs[i]
     if (state.page.feedMode == 'threaded') {
-      if (state.msgs[i].repliesToLink)
+      if (msg.repliesToLink)
         continue
-      msgs.push(com.messageThread(state, state.msgs[i]))
+      msgs.push(memo('feed'+i, com.messageThread, state, msg))
     } else {
-      msgs.push(com.message(state, state.msgs[i]))
+      msgs.push(memo('feed'+i, com.message, state, msg))
     }
   }
   
