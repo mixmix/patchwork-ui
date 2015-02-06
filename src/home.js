@@ -1,9 +1,12 @@
 'use strict'
-var muxrpc     = require('muxrpc')
-var Serializer = require('pull-serializer')
-var auth       = require('ssb-domain-auth')
+var muxrpc       = require('muxrpc')
+var Serializer   = require('pull-serializer')
+var auth         = require('ssb-domain-auth')
 
-var ssb        = muxrpc(require('./lib/ssb-manifest'), false, function (stream) { return Serializer(stream, JSON, {split: '\n\n'}) })()
+var manifest     = require('ssb-manifest')
+manifest.phoenix = require('phoenix-api/manifest')
+
+var ssb        = muxrpc(manifest, false, function (stream) { return Serializer(stream, JSON, {split: '\n\n'}) })()
 var localhost  = require('ssb-channel').connect(ssb, 'localhost')
 var app        = require('./app')(ssb)
 
