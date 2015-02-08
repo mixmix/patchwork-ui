@@ -3,10 +3,10 @@ var muxrpc       = require('muxrpc')
 var Serializer   = require('pull-serializer')
 var auth         = require('ssb-domain-auth')
 
-var manifest     = require('ssb-manifest')
-manifest.phoenix = require('phoenix-api/manifest')
+//the SSB_MANIFEST variable is created by /manifest.js
+//which is loaded before the javascript bundle.
 
-var ssb        = muxrpc(manifest, false, function (stream) { return Serializer(stream, JSON, {split: '\n\n'}) })()
+var ssb        = muxrpc(SSB_MANIFEST, false, function (stream) { return Serializer(stream, JSON, {split: '\n\n'}) })()
 var localhost  = require('ssb-channel').connect(ssb, 'localhost')
 var app        = require('./app')(ssb)
 
