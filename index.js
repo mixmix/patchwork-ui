@@ -10,7 +10,7 @@ exports.init = function (server) {
   server.http.use(stack(
     function (req, res, next) {
       // Local-host only
-      if (req.socket.remoteAddress != '127.0.0.1') {
+      if ((req.socket.remoteAddress != '127.0.0.1') && (req.socket.remoteAddress != '::ffff:127.0.0.1')) {
         console.log('Remote access attempted by', req.socket.remoteAddress)
         res.writeHead(403)
         return res.end('Remote access forbidden')
