@@ -4,23 +4,26 @@
   position: relative;
   height: 25px;
   overflow: hidden;
-  cursor: default;
+  cursor: pointer;
 
   td {
     padding: 2px 8px 0px;
   }
-  &:nth-child(odd) td {
+  &:nth-child(even) td {
     background: #fafafa; /* zebra */
+  }
+  td:nth-child(3) {
+    white-space: nowrap;
   }
   td:nth-child(4), td:nth-child(5), td:ntch-child(6) {
     white-space: pre;
   }
 
-  td:nth-child(1) { width: 175px; }
-  td:nth-child(2) { width: 85px; }
-  td:nth-child(4) { width: 40px; }
+  /*td:nth-child(2) { width: 175px; }
+  //td:nth-child(3) { width: 85px; }
   td:nth-child(5) { width: 40px; }
-  td:nth-child(6) { width: 60px; }
+  td:nth-child(6) { width: 40px; }
+  td:nth-child(7) { width: 60px; }*/
 
   &.selected {
     td {

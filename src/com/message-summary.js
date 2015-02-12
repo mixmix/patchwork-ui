@@ -1,5 +1,6 @@
 'use strict'
 var h = require('hyperscript')
+var pull = require('pull-stream')
 var mlib = require('ssb-msgs')
 var com = require('./index')
 var util = require('../lib/util')
@@ -8,6 +9,8 @@ var mentions = require('../lib/mentions')
 
 var attachmentOpts = { toext: true, rel: 'attachment' }
 module.exports = function (app, msg, opts) {
+
+  var isExpanded = false
 
   // markup
 
@@ -38,33 +41,57 @@ module.exports = function (app, msg, opts) {
   if (numAttachments)
     attachments = h('span', h('small.text-muted', com.icon('paperclip'), numAttachments))
 
+  var depth = (opts && opts.depth) ? opts.depth * 20 : 0
+  var treeExpander = h('span', { onclick: toggleChildren, style: 'padding-left: '+depth+'px' }, com.icon('triangle-right'))
+
   var name = app.names[msg.value.author] || util.shortString(msg.value.author)
   var nameConfidence = com.nameConfidence(msg.value.author, app)
-  return h('tr.message-summary', { onclick: selectMsg, ondblclick: openMsg },
-    h('td.text-right', com.userlink(msg.value.author, name), nameConfidence),
-    h('td', msg.value.content.type),
+  var msgSummary = h('tr.message-summary', { onclick: selectMsg },
+    h('td', treeExpander, ' ', msg.value.content.type),
     h('td', h('span' + (isRaw ? '' : ''), { innerHTML: content })),
+    h('td', com.userlink(msg.value.author, name), nameConfidence),
     h('td', attachments),
     h('td', replies),
     h('td.text-muted', util.prettydate(new Date(msg.value.timestamp)))
   )
+  return msgSummary
 
   // handlers
 
   function selectMsg (e) {
+    // abort if clicked on a sub-link
+    var el = e.target
+    while (el) {
+      if (el.tagName == 'A')
+        return
+      el = el.parentNode
+    }
+
     e.preventDefault()
-    var was = this.classList.contains('selected')
-    if (!e.metaKey)
-      Array.prototype.forEach.call(this.parentNode.querySelectorAll('.selected'), function (el) { el.classList.remove('selected') })
-    if (was)
-      this.classList.remove('selected')
-    else
-      this.classList.add('selected')
+    ;[].forEach.call(document.querySelectorAll('.selected'), function (el) { el.classList.remove('selected') })
+    this.classList.toggle('selected')
+    //window.location.hash = '#/msg/'+msg.key
   }
 
-  function openMsg (e) {
+  function toggleChildren (e) {
     e.preventDefault()
-    window.location.hash = '#/msg/'+msg.key
+    e.stopPropagation()
+
+    isExpanded = !isExpanded   
+
+    var icon = treeExpander.firstChild
+    if (isExpanded) {
+      icon.classList.remove('glyphicon-triangle-right')
+      icon.classList.add('glyphicon-triangle-bottom')
+
+      var childOpts = { depth: (opts && opts.depth) ? opts.depth + 1 : 1, mustRender: (opts && opts.mustRender) }
+      pull(app.ssb.messagesLinkedToMessage({ id: msg.key, keys: true }), pull.drain(function (childMsg) {
+        msgSummary.parentNode.insertBefore(module.exports(app, childMsg, childOpts), msgSummary.nextSibling)
+      }))
+    } else {
+      icon.classList.remove('glyphicon-triangle-right')
+      icon.classList.add('glyphicon-triangle-bottom')
+    }
   }
 }
 
