@@ -1,34 +1,42 @@
 .message-summary {
   font-family: @font-family-sans-serif;
-  background: #fafafa;
+  background: #fff;
   position: relative;
-  height: 36px;
+  height: 25px;
   overflow: hidden;
-  border: 1px dashed #ccc;
-  border-width: 1px 0;
-  cursor: pointer;
+  cursor: default;
 
-  &:first-child {
+  &:first-child td {
     border-top-style: solid;
   }
 
   td {
-    padding: 0 10px;
-    border: 1px dashed #ccc;    
+    padding: 2px 8px 0px;
   }
-  td:first-child {
-    border-left-color: transparent;
+  &:nth-child(odd) td {
+    background: #fafafa; /* zebra */
   }
   td:nth-child(4), td:nth-child(5), td:ntch-child(6) {
     white-space: pre;
   }
-  td:last-child {
-    border-right-color: transparent;
-  }
 
-  &:hover {
+  td:nth-child(1) { width: 175px; }
+  td:nth-child(2) { width: 85px; }
+  td:nth-child(4) { width: 40px; }
+  td:nth-child(5) { width: 40px; }
+  td:nth-child(6) { width: 60px; }
+
+  &.selected {
     td {
-      background: #eee;
+      padding-top: 0; // to offset the borders
+      background: #FCFDDB;
+      border: 1px solid rgb(247, 247, 127);
+      border-width: 1px 0;
+      color: #5A540E;
+
+      .text-muted, .user-link {
+        color: #5A540E;
+      }
     }
   }
 }

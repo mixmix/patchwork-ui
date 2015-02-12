@@ -19,16 +19,14 @@ module.exports = function (app) {
       h('.col-xs-2.col-md-1', com.sidenav(app)),
       h('.col-xs-10.col-md-9', 
         h('p#get-latest.hidden', h('button.btn.btn-primary.btn-block', { onclick: app.refreshPage }, 'Get Latest')),
-        com.paginator('#/posts?start=', opts.start, msgcount),
         h('table.table.message-feed',
           h('thead',
             h('tr',
-              h('td', 'author'), h('td', 'type'), h('td', 'content'), h('td', com.icon('comment')), h('td', com.icon('paperclip')), h('td', 'age'))),
+              h('td.text-right', 'author'), h('td', 'type'), h('td', 'content'), h('td', com.icon('comment')), h('td', com.icon('paperclip')), h('td', 'age'))),
           msgs.map(function (msg) { 
             if (msg.value) return com.messageSummary(app, msg, mustRenderOpts)
           })
         ),
-        com.paginator('#/posts?start=', opts.start, msgcount),
         com.introhelp(app)
       ),
       h('.hidden-xs.hidden-sm.col-md-2',

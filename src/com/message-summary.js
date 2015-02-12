@@ -12,7 +12,7 @@ module.exports = function (app, msg, opts) {
   // markup
 
   var content, isRaw
-  if (msg.value.content.type == 'post') {
+  if (msg.value.content.text && typeof msg.value.content.text == 'string') {
     content = msg.value.content.text
   } else {
     if (!opts || !opts.mustRender)
@@ -40,26 +40,29 @@ module.exports = function (app, msg, opts) {
 
   var name = app.names[msg.value.author] || util.shortString(msg.value.author)
   var nameConfidence = com.nameConfidence(msg.value.author, app)
-  return h('tr.message-summary', { onclick: openMsg },
+  return h('tr.message-summary', { onclick: selectMsg, ondblclick: openMsg },
     h('td.text-right', com.userlink(msg.value.author, name), nameConfidence),
     h('td', msg.value.content.type),
     h('td', h('span' + (isRaw ? '' : ''), { innerHTML: content })),
     h('td', attachments),
     h('td', replies),
-    h('td.text-muted', util.prettydate(new Date(msg.value.timestamp), true))
+    h('td.text-muted', util.prettydate(new Date(msg.value.timestamp)))
   )
 
   // handlers
 
-  function openMsg (e) {
-    // abort if clicked on a sub-link
-    var el = e.target
-    while (el) {
-      if (el.tagName == 'A')
-        return
-      el = el.parentNode
-    }
+  function selectMsg (e) {
+    e.preventDefault()
+    var was = this.classList.contains('selected')
+    if (!e.metaKey)
+      Array.prototype.forEach.call(this.parentNode.querySelectorAll('.selected'), function (el) { el.classList.remove('selected') })
+    if (was)
+      this.classList.remove('selected')
+    else
+      this.classList.add('selected')
+  }
 
+  function openMsg (e) {
     e.preventDefault()
     window.location.hash = '#/msg/'+msg.key
   }
