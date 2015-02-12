@@ -29,6 +29,7 @@ module.exports = function (ssb) {
   // page behaviors
 
   window.addEventListener('hashchange', function() { app.refreshPage() })
+  window.addEventListener('resize', resizeControls)
   document.body.addEventListener('click', onClick(app))
 
   // toplevel & common methods
@@ -47,6 +48,12 @@ module.exports = function (ssb) {
   setInterval(app.pollPeers, 5000)
 
   return app
+}
+
+function resizeControls() {
+  try {
+    document.querySelector('.message-feed-container').style.height = (window.innerHeight - 60) + 'px'
+  } catch (e) {}
 }
 
 function onClick (app) {
@@ -283,4 +290,5 @@ function setPage (name, page, opts) {
     el.appendChild(com.page(this, name, page))
   else
     el.appendChild(h('#page.container-fluid.'+name+'-page', page))
+  resizeControls()
 }

@@ -1,7 +1,19 @@
-.message-feed {
-  font-family: @font-family-sans-serif;
+.message-feed-container {
+
+  overflow-y: auto;
+  overflow-x: hidden;
   border: 1px solid #ccc;
-  thead {
-    background: #eee;
+
+  .message-feed {
+    font-family: @font-family-sans-serif;
+    width: 100%;
+
+    thead {
+      background: #eee;
+      td {
+        padding: 8px;
+      }
+    }
   }
+
 }
