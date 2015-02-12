@@ -14,23 +14,32 @@ module.exports = function (app, msg, opts) {
 
   // markup
 
-  var content, isRaw
+  var content
   if (msg.value.content.text && typeof msg.value.content.text == 'string') {
     content = msg.value.content.text
   } else {
     if (!opts || !opts.mustRender)
       return ''
-    content = JSON.stringify(msg.value.content)
-    isRaw = true
+    content = ''
+    /*for (var k in msg.value.content) {
+      if (content.length > 60)
+        break
+      if (k == 'type')
+        continue
+      content += k +': ' + msg.value.content[k] + ', '
+    }*/
+    // content = JSON.stringify(msg.value.content)
   }
   content = util.escapePlain(content)
-  content = markdown.emojis(content)
-  content = mentions.post(content, app, msg)
+  // content = markdown.emojis(content)
+  // content = mentions.post(content, app, msg)
 
-  var len = noHtmlLen(content)
-  if (len > 60 || content.length > 512) {
-    content = content.slice(0, Math.min(60 + (content.length - len), 512)) + '...'
-  }
+  // var len = noHtmlLen(content)
+  // if (len > 60 || content.length > 512) {
+  //   content = content.slice(0, Math.min(60 + (content.length - len), 512)) + '...'
+  // }
+  if (content.length > 60)
+    content = content.slice(0, 57) + '...'
 
   var replies = ''
   if (msg.numThreadReplies)
@@ -48,7 +57,7 @@ module.exports = function (app, msg, opts) {
   var nameConfidence = com.nameConfidence(msg.value.author, app)
   var msgSummary = h('tr.message-summary', { onclick: selectMsg },
     h('td', treeExpander, ' ', msg.value.content.type),
-    h('td', h('span' + (isRaw ? '' : ''), { innerHTML: content })),
+    h('td', h('span', { innerHTML: content })),
     h('td', com.userlink(msg.value.author, name), nameConfidence),
     h('td', attachments),
     h('td', replies),
