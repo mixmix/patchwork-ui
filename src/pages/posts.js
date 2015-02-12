@@ -23,7 +23,7 @@ module.exports = function (app) {
       h('table.message-feed',
         h('thead',
           h('tr',
-            h('td', 'type'), h('td', 'summary'), h('td', 'author'), h('td', com.icon('comment')), h('td', com.icon('paperclip')), h('td', 'age'))),
+            h('td', 'message'),/* h('td', 'summary'),*/ h('td', 'author'), h('td', com.icon('comment')), h('td', com.icon('paperclip')), h('td', 'age'))),
         feedTBody))
     app.setPage('posts', h('.row',
       h('.col-xs-2.col-md-1', com.sidenav(app)),
