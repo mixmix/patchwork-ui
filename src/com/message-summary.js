@@ -88,7 +88,7 @@ module.exports = function (app, msg, opts) {
   var name = app.names[msg.value.author] || util.shortString(msg.value.author)
   var nameConfidence = com.nameConfidence(msg.value.author, app)
   var msgSummary = h('tr.message-summary', { onclick: selectMsg },
-    h('td', treeExpander, ' ', content || [com.icon('file'), ' ', msg.value.content.type]),
+    h('td', treeExpander, ' ', content || h('span.text-muted', msg.value.content.type)),
     // h('td', content),
     h('td', com.userlink(msg.value.author, name), nameConfidence),
     h('td', attachments),
