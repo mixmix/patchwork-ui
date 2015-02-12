@@ -25,11 +25,11 @@ module.exports = function (app, msg, opts) {
   content = mentions.post(content, app, msg)
 
   var len = noHtmlLen(content)
-  if (len > 60 || content.length > 512) {
-    content = content.slice(0, Math.min(60 + (content.length - len), 512)) + '...'
+  if (len > 256 || content.length > 512) {
+    content = content.slice(0, Math.min(256 + (content.length - len), 512)) + '...'
   }
 
-  var replies = ''
+  /*var replies = ''
   if (msg.numThreadReplies)
     replies = h('span', h('small.text-muted', com.icon('comment'), msg.numThreadReplies))
 
@@ -39,15 +39,15 @@ module.exports = function (app, msg, opts) {
     attachments = h('span', h('small.text-muted', com.icon('paperclip'), numAttachments))
 
   var name = app.names[msg.value.author] || util.shortString(msg.value.author)
-  var nameConfidence = com.nameConfidence(msg.value.author, app)
-  return h('tr.message-summary', { onclick: openMsg },
+  var nameConfidence = com.nameConfidence(msg.value.author, app)*/
+  return com.message.shell(app, msg, com.message.raw(app, msg, { collapsed: true }), { topmost: true })
+  /*return h('tr.message-summary', { onclick: openMsg },
     h('td.text-right', com.userlink(msg.value.author, name), nameConfidence),
-    h('td', msg.value.content.type),
-    h('td', h('span' + (isRaw ? '' : ''), { innerHTML: content })),
     h('td', attachments),
     h('td', replies),
+    h('td', h('span' + (isRaw ? '.monospace' : ''), { innerHTML: content })),
     h('td.text-muted', util.prettydate(new Date(msg.value.timestamp), true))
-  )
+  )*/
 
   // handlers
 

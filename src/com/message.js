@@ -6,6 +6,7 @@ var util = require('../lib/util')
 var markdown = require('../lib/markdown')
 var mentions = require('../lib/mentions')
 
+var message =
 module.exports = function (app, msg, opts) {
   var content
   if (opts && opts.raw) {
@@ -23,12 +24,13 @@ module.exports = function (app, msg, opts) {
       content = messageRaw(app, msg)
     }
   }    
-  return renderMsgShell(app, msg, content, opts)
+  return messageShell(app, msg, content, opts)
 }
 
-function messageRaw (app, msg) {
-  var obj = (false/*app.page.renderMode == 'rawfull'*/) ? msg.value : msg.value.content
-  var json = util.escapePlain(JSON.stringify(obj, null, 2))
+var messageRaw =
+message.raw = function (app, msg, opts) {
+  var obj = (opts && opts.headers) ? msg.value : msg.value.content
+  var json = util.escapePlain(JSON.stringify(obj, null, (opts && opts.collapsed) ? null : 2))
 
   // turn feed references into links
   json = json.replace(/\"feed\": \"([^\"]+)\"/g, function($0, $1) {
@@ -45,7 +47,8 @@ function messageRaw (app, msg) {
 }
 
 var attachmentOpts = { toext: true, rel: 'attachment' }
-function renderMsgShell(app, msg, content, opts) {
+var messageShell =
+message.shell = function (app, msg, content, opts) {
 
   // markup 
 
