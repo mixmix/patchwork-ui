@@ -16,7 +16,7 @@ function summaryStr (str) {
 
 function getSummary (app, msg) {
   try {
-    return ({
+    var s = ({
       post: function () { return [com.icon('comment'), ' ', summaryStr(msg.value.content.text)] },
       advert: function () { return [com.icon('bullhorn'), ' ', summaryStr(msg.value.content.text)] },
       init: function () {
@@ -43,6 +43,9 @@ function getSummary (app, msg) {
           })
       },
     })[msg.value.content.type]()
+    if (!s || s.length == 0)
+      s = false
+    return s
   } catch (e) { return '' }
 }
 
@@ -80,12 +83,12 @@ module.exports = function (app, msg, opts) {
     attachments = h('span', h('small.text-muted', com.icon('paperclip'), numAttachments))
 
   var depth = (opts && opts.depth) ? opts.depth * 20 : 0
-  var treeExpander = h('span.text-muted', { onclick: toggleChildren, style: 'padding-left: '+depth+'px' }, com.icon('triangle-right'))
+  var treeExpander = h('span.tree-expander', { onclick: toggleChildren, style: 'padding-left: '+depth+'px' }, com.icon('triangle-right'))
 
   var name = app.names[msg.value.author] || util.shortString(msg.value.author)
   var nameConfidence = com.nameConfidence(msg.value.author, app)
   var msgSummary = h('tr.message-summary', { onclick: selectMsg },
-    h('td', treeExpander, ' ', content || h('span.text-muted', com.icon('file'), ' ', msg.value.content.type)),
+    h('td', treeExpander, ' ', content || [com.icon('file'), ' ', msg.value.content.type]),
     // h('td', content),
     h('td', com.userlink(msg.value.author, name), nameConfidence),
     h('td', attachments),
