@@ -23,15 +23,16 @@ module.exports = function (app) {
       h('table.message-feed',
         h('thead',
           h('tr',
-            h('td', 'message'),/* h('td', 'summary'),*/ h('td', 'author'), h('td', com.icon('comment')), h('td', com.icon('paperclip')), h('td', 'age'))),
+            h('td', 'item'), h('td', 'author'), h('td', 'age'))),
         feedTBody))
     app.setPage('posts', h('.row',
       h('.col-xs-2.col-md-1', com.sidenav(app)),
-      h('.col-xs-10.col-md-11', 
+      h('.col-xs-7.col-md-7', 
         h('p#get-latest.hidden', h('button.btn.btn-primary.btn-block', { onclick: app.refreshPage }, 'Get Latest')),
         feedContainer
         //com.introhelp(app)
-      )
+      ),
+      h('.col-xs-3.col-md-4')
       /*h('.hidden-xs.hidden-sm.col-md-2',
         com.adverts(app),
         h('hr'),

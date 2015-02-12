@@ -73,17 +73,17 @@ module.exports = function (app, msg, opts) {
   //   content = content.slice(0, Math.min(60 + (content.length - len), 512)) + '...'
   // }*/
 
-  var replies = ''
+  /*var replies = ''
   if (msg.numThreadReplies)
     replies = h('span', h('small.text-muted', com.icon('comment'), msg.numThreadReplies))
 
   var attachments = ''
   var numAttachments = mlib.getLinks(msg, attachmentOpts).length
   if (numAttachments)
-    attachments = h('span', h('small.text-muted', com.icon('paperclip'), numAttachments))
+    attachments = h('span', h('small.text-muted', com.icon('paperclip'), numAttachments))*/
 
   var depth = (opts && opts.depth) ? opts.depth * 20 : 0
-  var treeExpander = h('span.tree-expander', { onclick: toggleChildren, style: 'padding-left: '+depth+'px' }, com.icon('triangle-right'))
+  var treeExpander = h('span.tree-expander', { style: 'padding-left: '+depth+'px' })
 
   var name = app.names[msg.value.author] || util.shortString(msg.value.author)
   var nameConfidence = com.nameConfidence(msg.value.author, app)
@@ -91,49 +91,26 @@ module.exports = function (app, msg, opts) {
     h('td', treeExpander, ' ', content || h('span.text-muted', msg.value.content.type)),
     // h('td', content),
     h('td', com.userlink(msg.value.author, name), nameConfidence),
-    h('td', attachments),
-    h('td', replies),
+    // h('td', attachments),
+    // h('td', replies),
     h('td.text-muted', util.prettydate(new Date(msg.value.timestamp)))
   )
   return msgSummary
+}
 
-  // handlers
-
-  function selectMsg (e) {
-    // abort if clicked on a sub-link
-    var el = e.target
-    while (el) {
-      if (el.tagName == 'A')
-        return
-      el = el.parentNode
-    }
-
-    e.preventDefault()
-    ;[].forEach.call(document.querySelectorAll('.selected'), function (el) { el.classList.remove('selected') })
-    this.classList.toggle('selected')
-    //window.location.hash = '#/msg/'+msg.key
+function selectMsg (e) {
+  // abort if clicked on a sub-link
+  var el = e.target
+  while (el) {
+    if (el.tagName == 'A')
+      return
+    el = el.parentNode
   }
 
-  function toggleChildren (e) {
-    e.preventDefault()
-    e.stopPropagation()
-
-    isExpanded = !isExpanded   
-
-    var icon = treeExpander.firstChild
-    if (isExpanded) {
-      icon.classList.remove('glyphicon-triangle-right')
-      icon.classList.add('glyphicon-triangle-bottom')
-
-      var childOpts = { depth: (opts && opts.depth) ? opts.depth + 1 : 1, mustRender: (opts && opts.mustRender) }
-      pull(app.ssb.messagesLinkedToMessage({ id: msg.key, keys: true }), pull.drain(function (childMsg) {
-        msgSummary.parentNode.insertBefore(module.exports(app, childMsg, childOpts), msgSummary.nextSibling)
-      }))
-    } else {
-      icon.classList.remove('glyphicon-triangle-right')
-      icon.classList.add('glyphicon-triangle-bottom')
-    }
-  }
+  e.preventDefault()
+  ;[].forEach.call(document.querySelectorAll('.selected'), function (el) { el.classList.remove('selected') })
+  this.classList.toggle('selected')
+  //window.location.hash = '#/msg/'+msg.key
 }
 
 function noHtmlLen (str) {
