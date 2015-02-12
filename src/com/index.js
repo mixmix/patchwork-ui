@@ -56,18 +56,18 @@ exports.toEmoji = function (buf, size) {
 
 var header =
 exports.header = function (app) {
-  return h('.nav.navbar.navbar-default', [
-    h('.container-fluid', [
-      h('.navbar-header', h('a.navbar-brand', { href: '#/' }, 'secure scuttlebutt')),
-      h('ul.nav.navbar-nav', [
-        h('li.hidden-xs', a('#/address-book', 'address book')),
-        h('li.hidden-xs', a('#/profile/' + app.myid, app.names[app.myid]))
-      ]),
-      h('ul.nav.navbar-nav.navbar-right', [
-        h('li.hidden-xs', a('#/help', 'help'))
-      ])
-    ])
-  ])
+  return h('.nav.navbar.navbar-default',
+    h('.container-fluid',
+      h('.navbar-header', h('a.navbar-brand', { href: '#/' }, 'ssb')),
+      h('ul.nav.navbar-nav',
+        h('li.hidden-xs', a('#/', icon('list'))),
+        h('li.hidden-xs', a('#/address-book', icon('book'))),
+        h('li.hidden-xs', a('#/profile/' + app.myid, icon('user')))),
+      h('.navbar-form.navbar-left',
+        h('.form-group',
+          h('input.form-control', { type: 'text', placeholder: 'Search' }))),
+      h('ul.nav.navbar-nav.navbar-right',
+        h('li.hidden-xs', a('#/help', 'help')))))
 }
 
 var sidenav =
