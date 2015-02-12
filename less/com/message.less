@@ -43,7 +43,12 @@
       word-wrap: break-word;
       color: @pre-color;
       background-color: @pre-bg;
-      overflow: auto;
+      overflow: hidden;
+
+      &.collapsed {
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
     }
   }
   .panel-footer {

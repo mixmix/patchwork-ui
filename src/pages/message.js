@@ -6,7 +6,7 @@ var util = require('../lib/util')
 
 module.exports = function (app) {
   app.ssb.relatedMessages({
-    id: app.page.param, rel: 'replies-to',
+    id: app.page.param, //rel: 'replies-to',
     count: true, parent: true
   }, function (err, thread) {
     var content
