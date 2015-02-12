@@ -7,6 +7,45 @@ var util = require('../lib/util')
 var markdown = require('../lib/markdown')
 var mentions = require('../lib/mentions')
 
+function summaryStr (str) {
+  str = util.escapePlain(str)
+  if (str.length > 60)
+    str = str.slice(0, 57) + '...'
+  return str
+}
+
+function getSummary (app, msg) {
+  try {
+    return ({
+      post: function () { return [com.icon('comment'), ' ', summaryStr(msg.value.content.text)] },
+      advert: function () { return [com.icon('bullhorn'), ' ', summaryStr(msg.value.content.text)] },
+      init: function () {
+        return [com.icon('off'), ' New user: ', (app.names[msg.value.author] || msg.value.author)]
+      },
+      name: function () {
+        return mlib.getLinks(msg.value.content, { tofeed: true, rel: 'names' })
+          .map(function (l) { return [com.icon('tag'), ' ', (app.names[l.feed] || l.feed), ' is ', l.name] })
+      },
+      follow: function () {
+        return mlib.getLinks(msg.value.content, { tofeed: true, rel: 'follows' })
+          .map(function (l) { return [com.icon('plus'), ' Followed ', (app.names[l.feed] || l.feed)] })
+          .concat(mlib.getLinks(msg.value.content, { tofeed: true, rel: 'unfollows' })
+            .map(function (l) { return [com.icon('minus'), ' Unfollowed ', (app.names[l.feed] || l.feed)] }))
+      },
+      trust: function () { 
+        return mlib.getLinks(msg.value.content, { tofeed: true, rel: 'trusts' })
+          .map(function (l) {
+            if (l.value > 0)
+              return [com.icon('lock'), ' Trusted ', (app.names[l.feed] || l.feed)]
+            if (l.value < 0)
+              return [com.icon('flag'), ' Flagged ', (app.names[l.feed] || l.feed)]
+            return 'Untrusted/Unflagged '+(app.names[l.feed] || l.feed)
+          })
+      },
+    })[msg.value.content.type]()
+  } catch (e) { return '' }
+}
+
 var attachmentOpts = { toext: true, rel: 'attachment' }
 module.exports = function (app, msg, opts) {
 
@@ -14,32 +53,22 @@ module.exports = function (app, msg, opts) {
 
   // markup
 
-  var content
-  if (msg.value.content.text && typeof msg.value.content.text == 'string') {
+  var content = getSummary(app, msg)
+  /*if (msg.value.content.text && typeof msg.value.content.text == 'string') {
     content = msg.value.content.text
   } else {
     if (!opts || !opts.mustRender)
       return ''
-    content = ''
-    /*for (var k in msg.value.content) {
-      if (content.length > 60)
-        break
-      if (k == 'type')
-        continue
-      content += k +': ' + msg.value.content[k] + ', '
-    }*/
-    // content = JSON.stringify(msg.value.content)
+    content = JSON.stringify(msg.value.content)
   }
   content = util.escapePlain(content)
-  // content = markdown.emojis(content)
-  // content = mentions.post(content, app, msg)
+  content = markdown.emojis(content)
+  content = mentions.post(content, app, msg)
 
   // var len = noHtmlLen(content)
   // if (len > 60 || content.length > 512) {
   //   content = content.slice(0, Math.min(60 + (content.length - len), 512)) + '...'
-  // }
-  if (content.length > 60)
-    content = content.slice(0, 57) + '...'
+  // }*/
 
   var replies = ''
   if (msg.numThreadReplies)
@@ -57,7 +86,7 @@ module.exports = function (app, msg, opts) {
   var nameConfidence = com.nameConfidence(msg.value.author, app)
   var msgSummary = h('tr.message-summary', { onclick: selectMsg },
     h('td', treeExpander, ' ', msg.value.content.type),
-    h('td', h('span', { innerHTML: content })),
+    h('td', content),
     h('td', com.userlink(msg.value.author, name), nameConfidence),
     h('td', attachments),
     h('td', replies),
