@@ -15,11 +15,11 @@ module.exports = function (app) {
 
     // markup
    
-    var feedTBody = h('tbody',
+    var feedTBody = makeUnselectable(h('tbody',
       msgs.map(function (msg) { 
         if (msg.value) return com.messageSummary(app, msg, mustRenderOpts)
-      }))
-    var feedContainer = h('.message-feed-container', { onscroll: onscroll, onclick: selectMsg },
+      })))
+    var feedContainer = h('.message-feed-container', { onscroll: onscroll, onclick: selectMsg, ondblclick: selectMsg },
       h('table.message-feed',
         h('thead',
           h('tr',
@@ -53,13 +53,19 @@ module.exports = function (app) {
           break
         el = el.parentNode
       }
+      e.preventDefault()
+      e.stopPropagation()
 
       var index = [].indexOf.call(feedTBody.children, el)
       var msg = msgs[index]
       if (!msg)
         throw new Error('Failed to find message for selected row')
 
-      e.preventDefault()
+      if (e.type == 'dblclick') {
+        window.location.hash = '#/msg/' + msg.key
+        return
+      }
+
       ;[].forEach.call(document.querySelectorAll('.selected'), function (el) { el.classList.remove('selected') })
       el.classList.toggle('selected')
 
@@ -86,4 +92,12 @@ module.exports = function (app) {
     }
       
   })
+}
+
+function makeUnselectable(elem) {
+  elem.onselectstart = function() { return false; };
+  elem.style.MozUserSelect = "none";
+  elem.style.KhtmlUserSelect = "none";
+  elem.unselectable = "on";
+  return elem
 }
