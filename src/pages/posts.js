@@ -19,28 +19,53 @@ module.exports = function (app) {
       msgs.map(function (msg) { 
         if (msg.value) return com.messageSummary(app, msg, mustRenderOpts)
       }))
-    var feedContainer = h('.message-feed-container', { onscroll: onscroll },
+    var feedContainer = h('.message-feed-container', { onscroll: onscroll, onclick: selectMsg },
       h('table.message-feed',
         h('thead',
           h('tr',
             h('td', 'item'), h('td', 'author'), h('td', 'age'))),
         feedTBody))
+    var detailsContainer = h('div')
     app.setPage('posts', h('.row',
       h('.col-xs-2.col-md-1', com.sidenav(app)),
-      h('.col-xs-7.col-md-7', 
+      h('.col-xs-7.col-md-6', 
         h('p#get-latest.hidden', h('button.btn.btn-primary.btn-block', { onclick: app.refreshPage }, 'Get Latest')),
         feedContainer
         //com.introhelp(app)
       ),
-      h('.col-xs-3.col-md-4')
-      /*h('.hidden-xs.hidden-sm.col-md-2',
-        com.adverts(app),
+      h('.col-xs-3.col-md-5',
+        detailsContainer
+        /*com.adverts(app),
         h('hr'),
-        com.sidehelp(app)
-      )*/
+        com.sidehelp(app)*/
+      )
     ))
 
     // handlers
+
+    function selectMsg (e) {
+      // clicked on a row? abort if clicked on a sub-link
+      var el = e.target
+      while (el) {
+        if (el.tagName == 'A' || el.tagName == 'TABLE')
+          return
+        if (el.tagName == 'TR')
+          break
+        el = el.parentNode
+      }
+
+      var index = [].indexOf.call(feedTBody.children, el)
+      var msg = msgs[index]
+      if (!msg)
+        throw new Error('Failed to find message for selected row')
+
+      e.preventDefault()
+      ;[].forEach.call(document.querySelectorAll('.selected'), function (el) { el.classList.remove('selected') })
+      el.classList.toggle('selected')
+
+      detailsContainer.innerHTML = ''
+      detailsContainer.appendChild(com.message(app, msg, { mustRender: true, fullLength: true, topmost: true }))
+    }
 
     var fetching = false
     function onscroll (e) {
@@ -51,8 +76,8 @@ module.exports = function (app) {
         app.ssb.phoenix.getFeed({ lt: msgs[msgs.length - 1], reverse: true }, function (err, _msgs) {
           fetching = false
           if (_msgs && _msgs.length) {
-            msgs = _msgs
-            msgs.forEach(function (msg) { 
+            msgs = msgs.concat(_msgs)
+            _msgs.forEach(function (msg) { 
               if (msg.value) feedTBody.appendChild(com.messageSummary(app, msg, mustRenderOpts))
             })
           }

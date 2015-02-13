@@ -52,65 +52,21 @@ function getSummary (app, msg) {
 var attachmentOpts = { toext: true, rel: 'attachment' }
 module.exports = function (app, msg, opts) {
 
-  var isExpanded = false
-
   // markup
 
   var content = getSummary(app, msg)
-  /*if (msg.value.content.text && typeof msg.value.content.text == 'string') {
-    content = msg.value.content.text
-  } else {
-    if (!opts || !opts.mustRender)
-      return ''
-    content = JSON.stringify(msg.value.content)
-  }
-  content = util.escapePlain(content)
-  content = markdown.emojis(content)
-  content = mentions.post(content, app, msg)
-
-  // var len = noHtmlLen(content)
-  // if (len > 60 || content.length > 512) {
-  //   content = content.slice(0, Math.min(60 + (content.length - len), 512)) + '...'
-  // }*/
-
-  /*var replies = ''
-  if (msg.numThreadReplies)
-    replies = h('span', h('small.text-muted', com.icon('comment'), msg.numThreadReplies))
-
-  var attachments = ''
-  var numAttachments = mlib.getLinks(msg, attachmentOpts).length
-  if (numAttachments)
-    attachments = h('span', h('small.text-muted', com.icon('paperclip'), numAttachments))*/
 
   var depth = (opts && opts.depth) ? opts.depth * 20 : 0
   var treeExpander = h('span.tree-expander', { style: 'padding-left: '+depth+'px' })
 
   var name = app.names[msg.value.author] || util.shortString(msg.value.author)
   var nameConfidence = com.nameConfidence(msg.value.author, app)
-  var msgSummary = h('tr.message-summary', { onclick: selectMsg },
+  var msgSummary = h('tr.message-summary',
     h('td', treeExpander, ' ', content || h('span.text-muted', msg.value.content.type)),
-    // h('td', content),
     h('td', com.userlink(msg.value.author, name), nameConfidence),
-    // h('td', attachments),
-    // h('td', replies),
     h('td.text-muted', util.prettydate(new Date(msg.value.timestamp)))
   )
   return msgSummary
-}
-
-function selectMsg (e) {
-  // abort if clicked on a sub-link
-  var el = e.target
-  while (el) {
-    if (el.tagName == 'A')
-      return
-    el = el.parentNode
-  }
-
-  e.preventDefault()
-  ;[].forEach.call(document.querySelectorAll('.selected'), function (el) { el.classList.remove('selected') })
-  this.classList.toggle('selected')
-  //window.location.hash = '#/msg/'+msg.key
 }
 
 function noHtmlLen (str) {

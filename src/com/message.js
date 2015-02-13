@@ -43,11 +43,7 @@ message.raw = function (app, msg, opts) {
     return '"msg": "<a href="/#/msg/'+$1+'">'+$1+'</a>"'
   })
 
-  return h('.message-raw.collapsed', { innerHTML: json, onclick: toggle })
-
-  function toggle (e) {
-    this.classList.toggle('collapsed')
-  }
+  return h('.message-raw', { innerHTML: json })
 }
 
 var attachmentOpts = { toext: true, rel: 'attachment' }
