@@ -20,7 +20,7 @@ module.exports = function (app) {
         msgs.map(function (msg) { 
           if (msg.value) return com.messageSummary(app, msg, mustRenderOpts)
         })))
-    var feedContainer = h('.message-feed-container', { onscroll: onscroll },
+    var feedContainer = h('.message-feed-container', { onscroll: onscroll, onkeydown: onkeydown },
       h('table.message-feed',
         h('thead',
           h('tr',
@@ -58,10 +58,13 @@ module.exports = function (app) {
       e.preventDefault()
       e.stopPropagation()
 
+      // duplicated from doSelectMsg:
+      // {
       var index = [].indexOf.call(feedTBody.children, el)
       var msg = msgs[index]
       if (!msg)
         throw new Error('Failed to find message for selected row')
+      // }
 
       if (e.type == 'dblclick')
         return window.open('#/msg/' + msg.key)
@@ -72,8 +75,33 @@ module.exports = function (app) {
       ;[].forEach.call(document.querySelectorAll('.selected'), function (el) { el.classList.remove('selected') })
       el.classList.toggle('selected')
 
+      if (!msg) {
+        var index = [].indexOf.call(feedTBody.children, el)
+        msg = msgs[index]
+        if (!msg)
+          throw new Error('Failed to find message for selected row')
+      }
+
       previewContainer.innerHTML = ''
       previewContainer.appendChild(com.messagePreview(app, msg, { mustRender: true, fullLength: true, topmost: true }))      
+    }
+
+    // WARNING: GLOBAL SIDE EFFECT
+    // set the page's keydown behavior to scroll the message feed
+    var UP = 38
+    var DOWN = 40
+    document.body.onkeydown = function (e) {
+      var kc = e.charCode || e.keyCode
+      if (kc == UP || kc == DOWN) {
+        var sel = document.querySelector('.selected')
+        if (!sel)
+          return
+        if (kc === UP && sel.previousSibling)
+          doSelectMsg(sel.previousSibling)
+        if (kc === DOWN && sel.nextSibling)
+          doSelectMsg(sel.nextSibling)
+        e.preventDefault()
+      }
     }
 
     var fetching = false
@@ -92,8 +120,7 @@ module.exports = function (app) {
           }
         })
       }
-    }
-      
+    }      
   })
 }
 
