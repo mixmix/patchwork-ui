@@ -10,9 +10,6 @@ module.exports = function (app, msg, opts) {
 
   // markup
 
-  var refsStr = ''
-  if (msg.numThreadReplies == 1) refsStr = ', 1 reference'
-  if (msg.numThreadReplies > 1) refsStr = ', '+msg.numThreadReplies+' refs'
 
   /*var msgfooter
   var attachments = mlib.getLinks(msg.value.content, attachmentOpts)
@@ -44,7 +41,7 @@ module.exports = function (app, msg, opts) {
         h('li', com.a('#/msg/'+msg.key, com.icon('new-window'), { target: '_blank' })),
         h('li', h('small', 'by '), com.userlink(msg.value.author, app.names[msg.value.author]), com.nameConfidence(msg.value.author, app)),
         h('li', h('small', 'type '), com.a('#/', msg.value.content.type)),
-        h('li', h('small', 'from '), com.a('#/', u.prettydate(new Date(msg.value.timestamp), true)+refsStr, { title: 'View message thread' }))),
+        h('li', h('small', 'from '), com.a('#/', u.prettydate(new Date(msg.value.timestamp), true), { title: 'View message thread' }))),
       h('.content', content)),
     outrefs)
 }
@@ -75,30 +72,17 @@ function renderRef (app, msg, ref) {
             preview.push([com.icon('off'), ' New user: ', u.shortString(app.names[msg.value.author] || msg.value.author, 60)])
           },
           name: function () {
-            return mlib.getLinks(target.content, { tofeed: true, rel: 'names' }).forEach(function (l) {
-              preview.push([com.icon('tag'), u.shortString((app.names[l.feed] || l.feed) + ' is ' + l.name, 60)])
-            })
+            preview = preview.concat(mlib.getLinks(target.content, { tofeed: true, rel: 'names' }).map(linkRender.names.bind(null, app)))
           },
           follow: function () {
-            mlib.getLinks(target.content, { tofeed: true, rel: 'follows' }).forEach(function (l) {
-              preview.push([com.icon('plus'), ' Followed ', u.shortString(app.names[l.feed] || l.feed, 60)])
-            })
-            mlib.getLinks(target.content, { tofeed: true, rel: 'unfollows' }).forEach(function (l) {
-              preview.push([com.icon('minus'), ' Unfollowed ', u.shortString(app.names[l.feed] || l.feed, 60)])
-            })
+            preview = preview.concat(mlib.getLinks(target.content, { tofeed: true, rel: 'follows' }).map(linkRender.follows.bind(null, app)))
+            preview = preview.concat(mlib.getLinks(target.content, { tofeed: true, rel: 'unfollows' }).map(linkRender.unfollows.bind(null, app)))
           },
           trust: function () { 
-            mlib.getLinks(target.content, { tofeed: true, rel: 'trusts' }).forEach(function (l) {
-              if (l.value > 0)
-                preview.push([com.icon('lock'), ' Trusted ', u.shortString(app.names[l.feed] || l.feed, 60)])
-              else if (l.value < 0)
-                preview.push([com.icon('flag'), ' Flagged ', u.shortString(app.names[l.feed] || l.feed, 60)])
-              else
-                preview.push(['Untrusted/Unflagged '+u.shortString(app.names[l.feed] || l.feed, 60)])
-            })
+            preview = preview.concat(mlib.getLinks(target.content, { tofeed: true, rel: 'trusts' }).map(linkRender.trusts.bind(null, app)))
           }
         }[type])()
-      } catch (e) { console.debug(type, e)}
+      } catch (e) { }
 
       if (preview.length === 0)
         preview.push([type])
@@ -106,10 +90,44 @@ function renderRef (app, msg, ref) {
       var link = h('a', { href: '#' /* onclick todo */}, preview)
       el.appendChild(link)
     })
-  } else {
+  } 
+  if (ref.feed) {
+    var preview = []
+
+    try {
+      preview = (linkRender[ref.rel])(app, ref) 
+    } catch (e) { }
+    
+    if (preview.length === 0)
+      preview.push([com.userlink(ref.feed, app.names[ref.feed]), com.nameConfidence(ref.feed, app)])
+
+    var link = h('a', { href: '#' /* onclick todo */}, preview)
+    el.appendChild(link)
+  } 
+  if (msg.ext) {
     el.appendChild(h('.raw', kvList(ref)))
   }
   return el
+}
+
+var linkRender = {
+  names: function (app, l) {
+    return [com.icon('tag'), ' ', u.shortString((app.names[l.feed] || l.feed) + ' is ' + l.name, 60)]
+  },
+  follows: function (app, l) {
+    return [com.icon('plus'), ' Followed ', u.shortString(app.names[l.feed] || l.feed, 60)]
+  },
+  unfollows: function (app, l) {
+    return [com.icon('minus'), ' Unfollowed ', u.shortString(app.names[l.feed] || l.feed, 60)]
+  },
+  trusts: function (app, l) {
+    if (l.value > 0)
+      return [com.icon('lock'), ' Trusted ', u.shortString(app.names[l.feed] || l.feed, 60)]
+    else if (l.value < 0)
+      return [com.icon('flag'), ' Flagged ', u.shortString(app.names[l.feed] || l.feed, 60)]
+    else
+      return ['Untrusted/Unflagged '+u.shortString(app.names[l.feed] || l.feed, 60)]
+  }
 }
 
 function kvList (obj, indent) {

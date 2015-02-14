@@ -87,6 +87,7 @@ module.exports = function (app) {
     }
 
     // WARNING: GLOBAL SIDE EFFECT
+    // TODO: find a way to catch this event without making global behavior changes
     // set the page's keydown behavior to scroll the message feed
     var UP = 38
     var DOWN = 40
