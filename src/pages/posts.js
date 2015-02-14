@@ -41,6 +41,7 @@ module.exports = function (app) {
         com.sidehelp(app)*/
       // )
     ))
+    doSelectMsg(feedTBody.firstChild, msgs[0])
 
     // handlers
 
@@ -64,12 +65,15 @@ module.exports = function (app) {
 
       if (e.type == 'dblclick')
         return window.open('#/msg/' + msg.key)
+      doSelectMsg(el, msg)
+    }
 
+    function doSelectMsg(el, msg) {
       ;[].forEach.call(document.querySelectorAll('.selected'), function (el) { el.classList.remove('selected') })
       el.classList.toggle('selected')
 
       previewContainer.innerHTML = ''
-      previewContainer.appendChild(com.messagePreview(app, msg, { mustRender: true, fullLength: true, topmost: true }))
+      previewContainer.appendChild(com.messagePreview(app, msg, { mustRender: true, fullLength: true, topmost: true }))      
     }
 
     var fetching = false
