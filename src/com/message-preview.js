@@ -104,8 +104,11 @@ function renderRef (app, msg, ref) {
     var link = h('a', { href: '#' /* onclick todo */}, preview)
     el.appendChild(link)
   } 
-  if (msg.ext) {
-    el.appendChild(h('.raw', kvList(ref)))
+  if (ref.ext) {
+    var link = h('a',
+      { href: '#' /* onclick todo */},
+      com.icon('file'), ' ', ref.name || ref.rel, ' ', h('small', (('size' in ref) ? u.bytesHuman(ref.size) : ''), ' ', ref.type||''))
+    el.appendChild(h('div', link))
   }
   return el
 }
