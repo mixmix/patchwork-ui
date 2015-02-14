@@ -58,29 +58,26 @@ module.exports = function (app) {
       e.preventDefault()
       e.stopPropagation()
 
-      // duplicated from doSelectMsg:
-      // {
+      var msg = msgFor(el)
+      if (e.type == 'dblclick')
+        return window.open('#/msg/' + msg.key)
+      doSelectMsg(el, msg)
+    }
+
+    function msgFor(el) {
       var index = [].indexOf.call(feedTBody.children, el)
       var msg = msgs[index]
       if (!msg)
         throw new Error('Failed to find message for selected row')
-      // }
-
-      if (e.type == 'dblclick')
-        return window.open('#/msg/' + msg.key)
-      doSelectMsg(el, msg)
+      return msg
     }
 
     function doSelectMsg(el, msg) {
       ;[].forEach.call(document.querySelectorAll('.selected'), function (el) { el.classList.remove('selected') })
       el.classList.toggle('selected')
 
-      if (!msg) {
-        var index = [].indexOf.call(feedTBody.children, el)
-        msg = msgs[index]
-        if (!msg)
-          throw new Error('Failed to find message for selected row')
-      }
+      if (!msg)
+        msg = msgFor(el)
 
       previewContainer.innerHTML = ''
       previewContainer.appendChild(com.messagePreview(app, msg, { mustRender: true, fullLength: true, topmost: true }))      
@@ -91,17 +88,29 @@ module.exports = function (app) {
     // set the page's keydown behavior to scroll the message feed
     var UP = 38
     var DOWN = 40
+    var ENTER = 13
     document.body.onkeydown = function (e) {
+      var sel = document.querySelector('.selected')
+      if (!sel)
+        return
+
       var kc = e.charCode || e.keyCode
+      kc = ({
+        72: DOWN, //h
+        74: UP //j
+      })[kc] || kc
+
       if (kc == UP || kc == DOWN) {
-        var sel = document.querySelector('.selected')
-        if (!sel)
-          return
         if (kc === UP && sel.previousSibling)
           doSelectMsg(sel.previousSibling)
         if (kc === DOWN && sel.nextSibling)
           doSelectMsg(sel.nextSibling)
         e.preventDefault()
+      }
+      if (kc === ENTER) {
+        var msg = msgFor(sel)
+        if (msg)
+          window.open('#/msg/'+msg.key)
       }
     }
 
