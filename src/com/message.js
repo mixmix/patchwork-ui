@@ -43,7 +43,7 @@ message.raw = function (app, msg, opts) {
     return '"msg": "<a href="/#/msg/'+$1+'">'+$1+'</a>"'
   })
 
-  return h('.message-raw', { innerHTML: json })
+  return h('.raw', { innerHTML: json })
 }
 
 var attachmentOpts = { toext: true, rel: 'attachment' }
