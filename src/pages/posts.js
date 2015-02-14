@@ -15,30 +15,31 @@ module.exports = function (app) {
 
     // markup
    
-    var feedTBody = makeUnselectable(h('tbody',
-      msgs.map(function (msg) { 
-        if (msg.value) return com.messageSummary(app, msg, mustRenderOpts)
-      })))
-    var feedContainer = h('.message-feed-container', { onscroll: onscroll, onclick: selectMsg, ondblclick: selectMsg },
+    var feedTBody = makeUnselectable(
+      h('tbody', { onclick: selectMsg, ondblclick: selectMsg }, 
+        msgs.map(function (msg) { 
+          if (msg.value) return com.messageSummary(app, msg, mustRenderOpts)
+        })))
+    var feedContainer = h('.message-feed-container', { onscroll: onscroll },
       h('table.message-feed',
         h('thead',
           h('tr',
             h('td', 'item'), h('td', 'author'), h('td', 'age'))),
         feedTBody))
-    var detailsContainer = h('div')
+    var previewContainer = h('div.message-preview-container')
     app.setPage('posts', h('.row',
       h('.col-xs-2.col-md-1', com.sidenav(app)),
-      h('.col-xs-7.col-md-6', 
-        h('p#get-latest.hidden', h('button.btn.btn-primary.btn-block', { onclick: app.refreshPage }, 'Get Latest')),
+      h('.col-xs-10.col-md-11', 
+        // h('p#get-latest.hidden', h('button.btn.btn-primary.btn-block', { onclick: app.refreshPage }, 'Get Latest')),
+        previewContainer,
         feedContainer
         //com.introhelp(app)
-      ),
-      h('.col-xs-3.col-md-5',
-        detailsContainer
+      )
+      // h('.col-xs-3.col-md-5',
         /*com.adverts(app),
         h('hr'),
         com.sidehelp(app)*/
-      )
+      // )
     ))
 
     // handlers
@@ -61,16 +62,14 @@ module.exports = function (app) {
       if (!msg)
         throw new Error('Failed to find message for selected row')
 
-      if (e.type == 'dblclick') {
-        window.location.hash = '#/msg/' + msg.key
-        return
-      }
+      if (e.type == 'dblclick')
+        return window.open('#/msg/' + msg.key)
 
       ;[].forEach.call(document.querySelectorAll('.selected'), function (el) { el.classList.remove('selected') })
       el.classList.toggle('selected')
 
-      detailsContainer.innerHTML = ''
-      detailsContainer.appendChild(com.message(app, msg, { mustRender: true, fullLength: true, topmost: true }))
+      previewContainer.innerHTML = ''
+      previewContainer.appendChild(com.messagePreview(app, msg, { mustRender: true, fullLength: true, topmost: true }))
     }
 
     var fetching = false
