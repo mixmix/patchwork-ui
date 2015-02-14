@@ -10,7 +10,7 @@
     &::before {
       content: ' ';
       position: absolute;
-      top: -5px;
+      top: -8px;
       height: 100%;
       left: 8px;
       width: 1px;
@@ -21,7 +21,7 @@
 }
 
 .message-preview {
-  margin-bottom: 5px;
+  margin-bottom: 8px;
 
   .title {
     font-size: 12px;
@@ -35,7 +35,6 @@
     /*margin-bottom: 1em;*/
     .headers {
       border: 1px solid #ccc;
-      border-bottom: 0;      
       background: #fafafa;
       margin: 0;
       li {
@@ -46,6 +45,7 @@
     .content {
       padding: 8px 12px;
       border: 1px solid #ccc;
+      border-top: 0;
       color: #555;      
       & > div > :first-child {
         margin-top: 6px;
@@ -68,18 +68,21 @@
   }
   .outref {
     position: relative;
+    border-top: 1px solid #ccc;
     &::before {
       content: attr(data-rel);
       position: absolute;
-      top: -8px;
+      z-index: 1000;
+      top: -4px;
       left: 12px;
       font-size: 12px;
+      line-height: 12px;
       background: #fff;
       color: #808080;
     }
     .content {
       padding: 12px;
-      border-top: 0;
+      border-bottom: 0;
     }
   }
 

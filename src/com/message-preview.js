@@ -30,13 +30,14 @@ module.exports = function (app, msg, opts) {
 
   var content
   if (msg.value.content.type == 'post') {
-    content = h('div', { innerHTML: mentions.post(markdown.block(msg.value.content.text), app, msg) })
-  } else {
-    content = com.message.raw(app, msg)
+    content = h('.content', { innerHTML: mentions.post(markdown.block(msg.value.content.text), app, msg) })
+  } else if (!opts || !opts.noRaw) {
+    content = h('.content', com.message.raw(app, msg))
   }
 
   return h('.message-preview',
     (opts && opts.title) ? h('.title', opts.title) : '',
+    outrefs,
     h('.value',
       h('ul.headers.list-inline',
         h('li', com.a('#/msg/'+msg.key, com.icon('new-window'), { target: '_blank' })),
@@ -46,8 +47,7 @@ module.exports = function (app, msg, opts) {
         h('li', h('small', 'by '), com.userlink(msg.value.author, app.names[msg.value.author]), com.nameConfidence(msg.value.author, app)),
         h('li', h('small', 'type '), com.a('#/', msg.value.content.type)),
         h('li', h('small', 'from '), com.a('#/', u.prettydate(new Date(msg.value.timestamp), true), { title: 'View message thread' }))),
-      h('.content', content)),
-    outrefs)
+      content))
 }
 
 function renderRef (app, msg, ref, isHighlighted) {
@@ -64,37 +64,41 @@ function renderRef (app, msg, ref, isHighlighted) {
       }
 
       var type = target.content.type
-      var preview = []
+      if (!isHighlighted) {
+        var preview = []
 
-      try {
-        ;({
-          post: function () { 
-            preview.push([com.icon('comment'), ' ', u.shortString(target.content.text || '', 60)])
-          },
-          advert: function () {
-            preview.push([com.icon('bullhorn'), ' ', u.shortString(target.content.text || '', 60)])
-          },
-          init: function () {
-            preview.push([com.icon('off'), ' New user: ', u.shortString(app.names[msg.value.author] || msg.value.author, 60)])
-          },
-          name: function () {
-            preview = preview.concat(mlib.getLinks(target.content, { tofeed: true, rel: 'names' }).map(linkRender.names.bind(null, app)))
-          },
-          follow: function () {
-            preview = preview.concat(mlib.getLinks(target.content, { tofeed: true, rel: 'follows' }).map(linkRender.follows.bind(null, app)))
-            preview = preview.concat(mlib.getLinks(target.content, { tofeed: true, rel: 'unfollows' }).map(linkRender.unfollows.bind(null, app)))
-          },
-          trust: function () { 
-            preview = preview.concat(mlib.getLinks(target.content, { tofeed: true, rel: 'trusts' }).map(linkRender.trusts.bind(null, app)))
-          }
-        }[type])()
-      } catch (e) { }
+        try {
+          ;({
+            post: function () { 
+              preview.push([com.icon('comment'), ' ', u.shortString(target.content.text || '', 60)])
+            },
+            advert: function () {
+              preview.push([com.icon('bullhorn'), ' ', u.shortString(target.content.text || '', 60)])
+            },
+            init: function () {
+              preview.push([com.icon('off'), ' New user: ', u.shortString(app.names[msg.value.author] || msg.value.author, 60)])
+            },
+            name: function () {
+              preview = preview.concat(mlib.getLinks(target.content, { tofeed: true, rel: 'names' }).map(linkRender.names.bind(null, app)))
+            },
+            follow: function () {
+              preview = preview.concat(mlib.getLinks(target.content, { tofeed: true, rel: 'follows' }).map(linkRender.follows.bind(null, app)))
+              preview = preview.concat(mlib.getLinks(target.content, { tofeed: true, rel: 'unfollows' }).map(linkRender.unfollows.bind(null, app)))
+            },
+            trust: function () { 
+              preview = preview.concat(mlib.getLinks(target.content, { tofeed: true, rel: 'trusts' }).map(linkRender.trusts.bind(null, app)))
+            }
+          }[type])()
+        } catch (e) { }
 
-      if (preview.length === 0)
-        preview.push([type])
+        if (preview.length === 0)
+          preview.push([type])
 
-      var link = h('a', { href: '#' /* onclick todo */}, preview)
-      el.appendChild(link)
+        var link = h('a', { href: '#' /* onclick todo */}, preview)
+        el.appendChild(link)
+      } else {
+        el.appendChild(h('span', com.icon('triangle-top')))
+      }
     })
   } 
   if (ref.feed) {
@@ -113,7 +117,7 @@ function renderRef (app, msg, ref, isHighlighted) {
   if (ref.ext) {
     var link = h('a',
       { href: '#' /* onclick todo */},
-      com.icon('file'), ' ', ref.name || ref.rel, ' ', h('small', (('size' in ref) ? u.bytesHuman(ref.size) : ''), ' ', ref.type||''))
+      com.icon('file'), ' ', ref.name, ' ', h('small', (('size' in ref) ? u.bytesHuman(ref.size) : ''), ' ', ref.type||''))
     el.appendChild(h('div', link))
   }
   return el

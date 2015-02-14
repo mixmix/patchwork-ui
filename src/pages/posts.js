@@ -86,7 +86,7 @@ module.exports = function (app) {
       var referrers = h('.referrers')
       previewContainer.appendChild(referrers)
       pull(app.ssb.messagesLinkedToMessage({ id: msg.key, keys: true }), pull.drain(function (msg2) {
-        referrers.appendChild(com.messagePreview(app, msg2, { selectBtn: true, highlightLink: msg.key }))          
+        referrers.appendChild(com.messagePreview(app, msg2, { selectBtn: true, highlightLink: msg.key, noRaw: true }))          
       }))
     }
 
