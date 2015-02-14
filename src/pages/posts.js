@@ -5,23 +5,43 @@ var pull = require('pull-stream')
 var multicb = require('multicb')
 var com = require('../com')
 
+var knownMsg = {
+  post: true,
+  follows: true,
+  unfollows: true,
+  trusts: true,
+  names: true,
+  advert: true,
+  init: true
+}
+
 var mustRenderOpts = { mustRender: true }
 module.exports = function (app) {
   var done = multicb({ pluck: 1 })
   var opts = { /*start: +app.page.qs.start || 0,*/ reverse: true }
-  app.ssb.phoenix.getPostCount(done())
+  var hideUnknown = false
   app.ssb.phoenix.getFeed(opts, done())
   done(function (err, res) {
-    var msgcount = res[0]
-    var msgs = res[1]
+    var msgs = res[0].filter(function (msg) {
+      if (hideUnknown) {
+        return knownMsg[msg.value.content.type]
+      }
+      return true
+    })
+    var cursor = msgs[msgs.length - 1]
+    if (msgs.length < 30)
+      fetchMore()
 
     // markup
+
+    function renderMsg (msg) {
+      return com.messageSummary(app, msg, mustRenderOpts)
+    }
    
     var feedTBody = makeUnselectable(
-      h('tbody', { onclick: selectMsg, ondblclick: selectMsg }, 
-        msgs.map(function (msg) { 
-          if (msg.value) return com.messageSummary(app, msg, mustRenderOpts)
-        })))
+      h('tbody',
+        { onclick: selectMsg, ondblclick: selectMsg }, 
+        msgs.map(renderMsg)))
     var feedContainer = h('.message-feed-container', { onscroll: onscroll, onkeydown: onkeydown },
       h('table.message-feed',
         h('thead',
@@ -124,22 +144,44 @@ module.exports = function (app) {
       }
     }
 
-    var fetching = false
     function onscroll (e) {
       if (fetching)
         return
       if (feedContainer.offsetHeight + feedContainer.scrollTop >= feedContainer.scrollHeight) {
-        fetching = true
-        app.ssb.phoenix.getFeed({ lt: msgs[msgs.length - 1], reverse: true }, function (err, _msgs) {
-          fetching = false
-          if (_msgs && _msgs.length) {
-            msgs = msgs.concat(_msgs)
-            _msgs.forEach(function (msg) { 
-              if (msg.value) feedTBody.appendChild(com.messageSummary(app, msg, mustRenderOpts))
-            })
-          }
-        })
+        fetchMore()
       }
+    }
+
+    var fetching = false
+    function fetchMore() {
+      fetching = true
+      app.ssb.phoenix.getFeed({ lt: cursor, reverse: true }, function (err, _msgs) {
+        fetching = false
+        if (_msgs && _msgs.length) {
+          // advance cursor
+          cursor = _msgs[_msgs.length - 1]
+
+          // filter andmerge
+          _msgs = _msgs.filter(function (msg) {
+            if (hideUnknown) {
+              return knownMsg[msg.value.content.type]
+            }
+            return true
+          })
+          msgs = msgs.concat(_msgs)
+
+          // render
+          _msgs.forEach(function (msg) {
+            var el = renderMsg(msg)
+            el && feedTBody.appendChild(el)
+          })
+
+          // try to fill the list
+          if (msgs.length < 30) {
+            fetchMore()
+          }
+        }
+      })
     }      
   })
 }
