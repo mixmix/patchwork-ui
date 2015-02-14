@@ -1,5 +1,7 @@
 'use strict'
 var h = require('hyperscript')
+var mlib = require('ssb-msgs')
+var pull = require('pull-stream')
 var multicb = require('multicb')
 var com = require('../com')
 
@@ -80,7 +82,12 @@ module.exports = function (app) {
         msg = msgFor(el)
 
       previewContainer.innerHTML = ''
-      previewContainer.appendChild(com.messagePreview(app, msg, { mustRender: true, fullLength: true, topmost: true }))      
+      previewContainer.appendChild(com.messagePreview(app, msg))
+      var referrers = h('.referrers')
+      previewContainer.appendChild(referrers)
+      pull(app.ssb.messagesLinkedToMessage({ id: msg.key, keys: true }), pull.drain(function (msg2) {
+        referrers.appendChild(com.messagePreview(app, msg2, { selectBtn: true, highlightLink: msg.key }))          
+      }))
     }
 
     // WARNING: GLOBAL SIDE EFFECT
@@ -94,10 +101,13 @@ module.exports = function (app) {
       if (!sel)
         return
 
+      if (e.ctrlKey || e.shiftKey || e.altKey)
+        return
+
       var kc = e.charCode || e.keyCode
       kc = ({
-        72: DOWN, //h
-        74: UP //j
+        74: DOWN, //j
+        75: UP //k
       })[kc] || kc
 
       if (kc == UP || kc == DOWN) {
@@ -134,7 +144,7 @@ module.exports = function (app) {
   })
 }
 
-function makeUnselectable(elem) {
+function makeUnselectable (elem) {
   elem.onselectstart = function() { return false; };
   elem.style.MozUserSelect = "none";
   elem.style.KhtmlUserSelect = "none";
