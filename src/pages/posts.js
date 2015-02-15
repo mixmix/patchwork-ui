@@ -103,11 +103,24 @@ module.exports = function (app) {
 
       previewContainer.innerHTML = ''
       previewContainer.appendChild(com.messagePreview(app, msg))
-      var referrers = h('table.referrers')
-      previewContainer.appendChild(referrers)
-      pull(app.ssb.messagesLinkedToMessage({ id: msg.key, keys: true }), pull.drain(function (msg2) {
-        referrers.appendChild(com.messageSummary(app, msg2, { mustRender: true, full: true }))          
-      }))
+      var relatedTable = h('table.related')
+      previewContainer.appendChild(relatedTable)
+      function add (msg, depth) {
+        var el = com.messageSummary(app, msg, { mustRender: true, full: true })
+        el.querySelector('td:first-child').style.paddingLeft = ''+((depth || 0) * 30 + 8) + 'px'
+        relatedTable.appendChild(el)
+
+        if (msg.related) {
+          msg.related.forEach(function (submsg) {
+            add(submsg, depth + 1)
+          })
+        }
+      }
+      app.ssb.relatedMessages({ id: msg.key }, function (err, msg) {
+        (msg.related || []).forEach(function (submsg) {
+          add(submsg, 0)
+        })
+      })
     }
 
     // WARNING: GLOBAL SIDE EFFECT
