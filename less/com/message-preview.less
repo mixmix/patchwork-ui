@@ -2,20 +2,13 @@
 .message-preview-container {
   float: right;
   padding: 0 16px;
-  width: 45%;
+  width: 50%;
 
   .referrers {
     padding-left: 15px;
-    position: relative;
-    &::before {
-      content: ' ';
-      position: absolute;
-      top: -8px;
-      height: 100%;
-      left: 8px;
-      width: 1px;
-      background: #ccc;
-      display: block;
+    width: 100%;
+    .message-summary {
+      vertical-align: top;
     }
   }
 }

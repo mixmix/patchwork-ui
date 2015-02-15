@@ -7,39 +7,44 @@ var util = require('../lib/util')
 var markdown = require('../lib/markdown')
 var mentions = require('../lib/mentions')
 
-function summaryStr (str) {
-  str = util.escapePlain(str)
+function shorten (str) {
   if (str.length > 60)
     str = str.slice(0, 57) + '...'
   return str
 }
 
-function getSummary (app, msg) {
+function getSummary (app, msg, opts) {
+
+  function convertMd (str) {
+    return h('div', { innerHTML: mentions.post(markdown.block(str), app, msg) })
+  }
+
+  var preprocess = (opts && opts.full) ? convertMd : shorten
   try {
     var s = ({
-      post: function () { return [com.icon('comment'), ' ', summaryStr(msg.value.content.text)] },
-      advert: function () { return [com.icon('bullhorn'), ' ', summaryStr(msg.value.content.text)] },
+      post: function () { return [(opts && opts.full) ? '' : com.icon('comment'), ' ', preprocess(msg.value.content.text)] },
+      advert: function () { return [(opts && opts.full) ? '' : com.icon('bullhorn'), ' ', preprocess(msg.value.content.text)] },
       init: function () {
-        return [com.icon('off'), ' New user: ', (app.names[msg.value.author] || msg.value.author)]
+        return [com.icon('off'), ' New user: ', preprocess(app.names[msg.value.author] || msg.value.author)]
       },
       name: function () {
         return mlib.getLinks(msg.value.content, { tofeed: true, rel: 'names' })
-          .map(function (l) { return [com.icon('tag'), ' ', (app.names[l.feed] || l.feed), ' is ', l.name] })
+          .map(function (l) { return [com.icon('tag'), ' ', preprocess(app.names[l.feed] || l.feed), ' is ', preprocess(l.name)] })
       },
       follow: function () {
         return mlib.getLinks(msg.value.content, { tofeed: true, rel: 'follows' })
-          .map(function (l) { return [com.icon('plus'), ' Followed ', (app.names[l.feed] || l.feed)] })
+          .map(function (l) { return [com.icon('plus'), ' Followed ', preprocess(app.names[l.feed] || l.feed)] })
           .concat(mlib.getLinks(msg.value.content, { tofeed: true, rel: 'unfollows' })
-            .map(function (l) { return [com.icon('minus'), ' Unfollowed ', (app.names[l.feed] || l.feed)] }))
+            .map(function (l) { return [com.icon('minus'), ' Unfollowed ', preprocess(app.names[l.feed] || l.feed)] }))
       },
       trust: function () { 
         return mlib.getLinks(msg.value.content, { tofeed: true, rel: 'trusts' })
           .map(function (l) {
             if (l.value > 0)
-              return [com.icon('lock'), ' Trusted ', (app.names[l.feed] || l.feed)]
+              return [com.icon('lock'), ' Trusted ', preprocess(app.names[l.feed] || l.feed)]
             if (l.value < 0)
-              return [com.icon('flag'), ' Flagged ', (app.names[l.feed] || l.feed)]
-            return 'Untrusted/Unflagged '+(app.names[l.feed] || l.feed)
+              return [com.icon('flag'), ' Flagged ', preprocess(app.names[l.feed] || l.feed)]
+            return 'Untrusted/Unflagged '+preprocess(app.names[l.feed] || l.feed)
           })
       },
     })[msg.value.content.type]()
@@ -54,7 +59,8 @@ module.exports = function (app, msg, opts) {
 
   // markup
 
-  var content = getSummary(app, msg)
+  var content = getSummary(app, msg, opts)
+  console.log(opts)
 
   var depth = (opts && opts.depth) ? opts.depth * 20 : 0
   var treeExpander = h('span.tree-expander', { style: 'padding-left: '+depth+'px' })
