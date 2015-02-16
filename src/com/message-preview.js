@@ -6,21 +6,65 @@ var u = require('../lib/util')
 var markdown = require('../lib/markdown')
 var mentions = require('../lib/mentions')
 
+function getContent (app, msg, opts) {
+
+  function md (str) {
+    return h('.content', { innerHTML: mentions.post(markdown.block(str), app, msg) })
+  }
+
+  function user (ext) {
+    return [com.userlink(ext, app.names[ext]), com.nameConfidence(ext, app)]
+  }
+
+  try {
+    var c = ({
+      post: function () { return md(msg.value.content.text) },
+      advert: function () { return md(msg.value.content.text) },
+      init: function () {
+        return h('.content', h('p', com.icon('off'), ' New user: ', user(msg.value.author)))
+      },
+      name: function () {
+        var nameLinks = mlib.getLinks(msg.value.content, { tofeed: true, rel: 'names' })
+        if (nameLinks.length)
+          return h('.content', h('p', nameLinks.map(function (l) { return [com.icon('tag'), ' ', user(l.feed), ' is ', l.name] })))
+        return h('.content', h('p', com.icon('tag'), ' ', user(msg.value.author), ' is ', msg.value.content.name))
+      },
+      follow: function () {
+        return h('.content',
+          mlib.getLinks(msg.value.content, { tofeed: true, rel: 'follows' })
+            .map(function (l) { return h('p', com.icon('plus'), ' Followed ', user(l.feed)) })
+            .concat(mlib.getLinks(msg.value.content, { tofeed: true, rel: 'unfollows' })
+              .map(function (l) { return h('p', com.icon('minus'), ' Unfollowed ', user(l.feed)) })))
+      },
+      trust: function () { 
+        return h('.content',
+          mlib.getLinks(msg.value.content, { tofeed: true, rel: 'trusts' })
+            .map(function (l) {
+              if (l.value > 0)
+                return h('p', com.icon('lock'), ' Trusted ', user(l.feed))
+              if (l.value < 0)
+                return h('p', com.icon('flag'), ' Flagged ', user(l.feed))
+              return h('p', 'Untrusted/Unflagged ', user(l.feed))
+            }))
+      },
+    })[msg.value.content.type]()
+    if (!c || c.children.length === 0)
+      throw "Nah lets do it raw"
+    return c
+  } catch (e) { 
+    return h('.content', com.message.raw(app, msg))
+  }
+}
+
 module.exports = function (app, msg, opts) {
 
   // markup
-
 
   var outrefs = mlib.getLinks(msg.value.content).map(function (ref) {
     return h('.outref', { 'data-rel': ref.rel }, renderRef(app, msg, ref))
   })
 
-  var content
-  if (msg.value.content.type == 'post') {
-    content = h('.content', { innerHTML: mentions.post(markdown.block(msg.value.content.text), app, msg) })
-  } else if (!opts || !opts.noRaw) {
-    content = h('.content', com.message.raw(app, msg))
-  }
+  var content = getContent(app, msg, opts)
 
   return h('.message-preview',
     (opts && opts.title) ? h('.title', opts.title) : '',
@@ -61,17 +105,17 @@ function renderRef (app, msg, ref) {
             preview.push([com.icon('bullhorn'), ' ', u.shortString(target.content.text || '', 60)])
           },
           init: function () {
-            preview.push([com.icon('off'), ' New user: ', u.shortString(app.names[msg.value.author] || msg.value.author, 60)])
+            preview.push([com.icon('off'), ' New user: ', renderFeed(msg.value.author)])
           },
           name: function () {
-            preview = preview.concat(mlib.getLinks(target.content, { tofeed: true, rel: 'names' }).map(linkRender.names.bind(null, app)))
+            preview = preview.concat(mlib.getLinks(target.content, { tofeed: true, rel: 'names' }).map(renderFeed))
           },
           follow: function () {
-            preview = preview.concat(mlib.getLinks(target.content, { tofeed: true, rel: 'follows' }).map(linkRender.follows.bind(null, app)))
-            preview = preview.concat(mlib.getLinks(target.content, { tofeed: true, rel: 'unfollows' }).map(linkRender.unfollows.bind(null, app)))
+            preview = preview.concat(mlib.getLinks(target.content, { tofeed: true, rel: 'follows' }).map(renderFeed))
+            preview = preview.concat(mlib.getLinks(target.content, { tofeed: true, rel: 'unfollows' }).map(renderFeed))
           },
           trust: function () { 
-            preview = preview.concat(mlib.getLinks(target.content, { tofeed: true, rel: 'trusts' }).map(linkRender.trusts.bind(null, app)))
+            preview = preview.concat(mlib.getLinks(target.content, { tofeed: true, rel: 'trusts' }).map(renderFeed))
           }
         }[type])()
       } catch (e) { }
@@ -85,7 +129,7 @@ function renderRef (app, msg, ref) {
     })
   } 
   if (ref.feed) {
-    var link = h('a', { href: '#/profile/' + ref.feed }, renderLink(ref))
+    var link = h('a', { href: '#/profile/' + ref.feed }, renderFeed(ref))
     el.appendChild(link)
   } 
   if (ref.ext) {
@@ -95,8 +139,9 @@ function renderRef (app, msg, ref) {
     el.appendChild(h('div', link))
   }
 
-  function renderLink (l) {
-    return [com.userlink(ref.feed, app.names[ref.feed]), com.nameConfidence(ref.feed, app)]
+  function renderFeed (l) {
+    var feed = l.feed || l
+    return [com.userlink(feed, app.names[feed]), com.nameConfidence(feed, app)]
   }
 
   return el

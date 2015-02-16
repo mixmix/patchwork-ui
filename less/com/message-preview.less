@@ -27,7 +27,6 @@
 
   .value, .outref {
     font-family: @font-family-sans-serif;
-    /*margin-bottom: 1em;*/
     .headers {
       border: 1px solid #ccc;
       background: #fafafa;
@@ -42,22 +41,24 @@
       border: 1px solid #ccc;
       border-top: 0;
       color: #555;      
-      & > div > :first-child {
+      & > :first-child {
         margin-top: 6px;
       }
+      & > :last-child {
+        margin-bottom: 6px;
+      }
 
-      &.parentlink {
-        position: relative;
-        &::before {
-          content: ' ';
-          position: absolute;
-          top: 22px;
-          height: 1px;
-          left: -8px;
-          width: 8px;
-          background: #ccc;
-          display: block;
-        }
+      .glyphicon-comment {
+        color: #006EFF;
+      }
+      .glyphicon-bullhorn, .glyphicon-tag {
+        color: #B611DA;
+      }
+      .glyphicon-plus, .glyphicon-lock {
+        color: #06AB01;
+      }
+      .glyphicon-minus, .glyphicon-flag {
+        color: rgb(208, 8, 8);
       }
     }
   }

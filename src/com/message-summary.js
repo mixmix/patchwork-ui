@@ -28,8 +28,10 @@ function getSummary (app, msg, opts) {
         return [com.icon('off'), ' New user: ', preprocess(app.names[msg.value.author] || msg.value.author)]
       },
       name: function () {
-        return mlib.getLinks(msg.value.content, { tofeed: true, rel: 'names' })
-          .map(function (l) { return [com.icon('tag'), ' ', preprocess(app.names[l.feed] || l.feed), ' is ', preprocess(l.name)] })
+        var nameLinks = mlib.getLinks(msg.value.content, { tofeed: true, rel: 'names' })
+        if (nameLinks.length)
+          return nameLinks.map(function (l) { return [com.icon('tag'), ' ', preprocess(app.names[l.feed] || l.feed), ' is ', preprocess(l.name)] })
+        return [com.icon('tag'), ' ', preprocess(app.names[msg.value.author] || msg.value.author), ' is ', preprocess(msg.value.content.name)]
       },
       follow: function () {
         return mlib.getLinks(msg.value.content, { tofeed: true, rel: 'follows' })
