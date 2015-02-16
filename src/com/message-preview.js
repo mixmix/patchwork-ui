@@ -11,19 +11,6 @@ module.exports = function (app, msg, opts) {
   // markup
 
 
-  /*var msgfooter
-  var attachments = mlib.getLinks(msg.value.content, attachmentOpts)
-  if (attachments.length) {
-    msgfooter = h('.panel-footer',
-      h('ul', attachments.map(function (link) {
-        var url = '#/ext/'+link.ext
-        if (link.name)
-          url += '?name='+encodeURIComponent(link.name)+'&msg='+encodeURIComponent(msg.key)
-        return h('li', h('a', { href: url }, link.name || u.shortString(link.ext)))
-      }))
-    )
-  }*/
-
   var outrefs = mlib.getLinks(msg.value.content).map(function (ref) {
     return h('.outref', { 'data-rel': ref.rel }, renderRef(app, msg, ref, (opts && ref.msg == opts.highlightLink)))
   })
@@ -111,7 +98,7 @@ function renderRef (app, msg, ref, isHighlighted) {
     if (preview.length === 0)
       preview.push([com.userlink(ref.feed, app.names[ref.feed]), com.nameConfidence(ref.feed, app)])
 
-    var link = h('a', { href: '#' /* onclick todo */}, preview)
+    var link = h('a', { href: '#/profile/' + ref.feed }, preview)
     el.appendChild(link)
   } 
   if (ref.ext) {
@@ -125,7 +112,7 @@ function renderRef (app, msg, ref, isHighlighted) {
 
 var linkRender = {
   names: function (app, l) {
-    return [com.icon('tag'), ' ', u.shortString((app.names[l.feed] || l.feed) + ' is ' + l.name, 60)]
+    return [com.icon('tag'), ' ', u.shortString((app.names[l.feed] || l.name || l.feed), 60)]
   },
   follows: function (app, l) {
     return [com.icon('plus'), ' Followed ', u.shortString(app.names[l.feed] || l.feed, 60)]
