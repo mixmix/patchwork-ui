@@ -51,9 +51,13 @@ module.exports = function (ssb) {
 }
 
 function resizeControls() {
+  function rc (sel) {
+    var el = document.querySelector(sel)
+    el.style.height = (window.innerHeight - el.offsetTop) + 'px'
+  }
   try {
-    document.querySelector('.message-feed-container').style.height = (window.innerHeight - 60) + 'px'
-    document.querySelector('.message-preview-container').style.height = (window.innerHeight - 60) + 'px'
+    rc('.message-feed-container')
+    rc('.message-preview-container')
   } catch (e) {}
 }
 

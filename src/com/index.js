@@ -59,10 +59,6 @@ exports.header = function (app) {
   return h('.nav.navbar.navbar-default',
     h('.container-fluid',
       h('.navbar-header', h('a.navbar-brand', { href: '#/' }, 'ssb')),
-      h('ul.nav.navbar-nav',
-        h('li.hidden-xs', a('#/', icon('list'))),
-        h('li.hidden-xs', a('#/address-book', icon('book'))),
-        h('li.hidden-xs', a('#/profile/' + app.myid, icon('user')))),
       h('.navbar-form.navbar-left',
         h('.form-group',
           h('input.form-control', { type: 'text', placeholder: 'Search' }))),
@@ -73,36 +69,26 @@ exports.header = function (app) {
 var sidenav =
 exports.sidenav = function (app) {
   var pages = [
-    ['posts', '', 'posts'],
     ['inbox', 'inbox', 'inbox ('+app.unreadMessages+')'],
+    ['address-book', 'address-book', 'users'],
+    ['profile', 'profile/'+app.myid, app.names[app.myid] || 'profile'],
     ['adverts', 'adverts', 'adverts'],
     '-',
-    ['feed', 'feed', 'data feed']
-  ]
-  var extraPages = [
-    ['address-book', 'address-book', 'addresses'],
-    ['profile', 'profile/'+app.myid, app.names[app.myid] || 'profile'],
     ['help', 'help', 'help']
   ]
 
-  return h('.side-nav', [
-    h('p', h('a.btn.btn-primary.btn-strong', { href: '#/compose' }, 'new post')),
+  return h('.side-nav',
+    h('p', a('#/', [icon('home'), ' ssb'])),
     h('hr'),
+    h('p', h('a.btn.btn-primary.btn-strong', { href: '#/compose' }, 'new post')),
     pages.map(function (page) {
       if (page == '-')
         return h('hr')
       if (page[0] == app.page.id)
         return h('p.side-nav-'+page[0], h('strong', a('#/'+page[1], page[2])))
       return h('p.side-nav-'+page[0], a('#/'+page[1], page[2]))
-    }),
-    extraPages.map(function (page) {
-      if (page == '-')
-        return h('hr')
-      if (page[0] == app.page.id)
-        return h('p.visible-xs.side-nav-'+page[0], h('strong', a('#/'+page[1], page[2])))
-      return h('p.visible-xs.side-nav-'+page[0], a('#/'+page[1], page[2]))
     })
-  ])
+  )
 }
 
 var sidehelp =
@@ -159,10 +145,7 @@ exports.panel = function (title, content) {
 
 var page =
 exports.page = function (app, id, content) {
-  return h('div',
-    header(app),
-    h('#page.container-fluid.'+id+'-page', content)
-  )
+  return h('#page.container-fluid.'+id+'-page', content)
 }
 
 exports.addresses = require('./addresses')

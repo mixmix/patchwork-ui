@@ -38,6 +38,7 @@ module.exports = function (app) {
     h('.col-xs-2.col-md-1', com.sidenav(app)),
     h('.col-xs-10.col-md-11', 
       // h('p#get-latest.hidden', h('button.btn.btn-primary.btn-block', { onclick: app.refreshPage }, 'Get Latest')),
+      h('input.search', { type: 'text', placeholder: 'Search' }),
       previewContainer,
       feedContainer
       //com.introhelp(app)
