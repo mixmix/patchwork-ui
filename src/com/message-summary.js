@@ -60,7 +60,6 @@ module.exports = function (app, msg, opts) {
   // markup
 
   var content = getSummary(app, msg, opts)
-  console.log(opts)
 
   var depth = (opts && opts.depth) ? opts.depth * 20 : 0
   var treeExpander = h('span.tree-expander', { style: 'padding-left: '+depth+'px' })
