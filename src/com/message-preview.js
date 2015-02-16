@@ -44,7 +44,7 @@ function renderRef (app, msg, ref) {
     el.innerHTML = '&nbsp;'
     app.ssb.get(ref.msg, function (err, target) {
       if (!target) {
-        el.appendChild('p', err.message)
+        el.appendChild(h('p', err.message))
         el.appendChild(h('.raw', kvList(ref)))
         return
       }

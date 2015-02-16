@@ -74,9 +74,6 @@ module.exports = function (app) {
       if (!backCursor)
         backCursor = _msgs[0]
 
-      // prepend
-      msgs = _msgs.concat(msgs)
-
       // render
       var lastEl = feedTBody.firstChild
       _msgs.forEach(function (msg) {
@@ -86,6 +83,9 @@ module.exports = function (app) {
           lastEl = el
         }
       })
+
+      // prepend
+      msgs = _msgs.reverse().concat(msgs)
 
       // maintain scroll position
       if (topmsgEl)
