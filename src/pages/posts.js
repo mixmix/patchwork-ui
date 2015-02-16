@@ -176,9 +176,15 @@ module.exports = function (app) {
     ;[].forEach.call(document.querySelectorAll('.selected'), function (el) { el.classList.remove('selected') })
     el.classList.toggle('selected')
 
+    // scroll to msg if needed
+    if (el.offsetTop < feedContainer.scrollTop || (el.offsetTop - feedContainer.scrollTop) > feedContainer.offsetHeight)
+      feedContainer.scrollTop = el.offsetTop
+
     if (!msg)
       msg = msgFor(el)
 
+
+    // populate preview
     previewContainer.innerHTML = ''
     previewContainer.appendChild(com.messagePreview(app, msg))
     var relatedTable = h('table.related')
