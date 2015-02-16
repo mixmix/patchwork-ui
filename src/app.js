@@ -53,7 +53,7 @@ module.exports = function (ssb) {
 function resizeControls() {
   function rc (sel) {
     var el = document.querySelector(sel)
-    el.style.height = (window.innerHeight - el.offsetTop) + 'px'
+    el.style.height = (window.innerHeight - el.offsetTop - 10) + 'px'
   }
   try {
     rc('.message-feed-container')
