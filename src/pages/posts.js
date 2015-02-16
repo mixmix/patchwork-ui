@@ -51,51 +51,94 @@ module.exports = function (app) {
 
   // message fetch
 
-  var cursor = null
+  var frontCursor = null, backCursor = null
 
   if (app.page.qs.start) {
     app.ssb.get(app.page.qs.start, function (err, msg) {
       if (err) {}// :TODO:
       else if (msg)
-        cursor = { key: app.page.qs.start, value: msg }
-      fetchMore()
+        backCursor = { key: app.page.qs.start, value: msg }
+      fetchBack(fetchFront)
     })
   } else
-    fetchMore()
+    fetchBack()
 
-  var fetching = false
-  function fetchMore() {
-    fetching = true
-    var wasEmpty = (msgs.length == 0)
+  function fetchFront (cb) {
+    var opts = { reverse: false }
+    opts[(msgs.length == 0) ? 'gte' : 'gt'] = frontCursor
+    var topmsgEl = feedTBody.children[0]
+
+    fetchMore(opts, function (err, _msgs) {
+      // advance cursors
+      frontCursor = _msgs[_msgs.length - 1]
+      if (!backCursor)
+        backCursor = _msgs[0]
+
+      // prepend
+      msgs = _msgs.concat(msgs)
+
+      // render
+      var lastEl = feedTBody.firstChild
+      _msgs.forEach(function (msg) {
+        var el = renderMsg(msg)
+        if (el) {
+          feedTBody.insertBefore(el, lastEl)
+          lastEl = el
+        }
+      })
+
+      // maintain scroll position
+      if (topmsgEl)
+        feedContainer.scrollTop = topmsgEl.offsetTop
+
+      cb && cb()
+    })
+  }
+  function fetchBack (cb) {
     var opts = { reverse: true }
-    opts[(wasEmpty) ? 'lte' : 'lt'] = cursor
+    opts[(msgs.length == 0) ? 'lte' : 'lt'] = backCursor
+    
+    fetchMore(opts, function (err, _msgs) {
+      // advance cursors
+      backCursor = _msgs[_msgs.length - 1]
+      if (!frontCursor)
+        frontCursor = _msgs[0]
+
+      // append
+      msgs = msgs.concat(_msgs)
+
+      // render
+      _msgs.forEach(function (msg) {
+        var el = renderMsg(msg)
+        el && feedTBody.appendChild(el)
+      })
+
+      cb && cb()
+    })
+  }
+
+  var fetching = false  
+  function fetchMore (opts, cb) {
+    if (fetching)
+      return
+
+    var wasEmpty = (msgs.length == 0)
+    fetching = true
     app.ssb.phoenix.getFeed(opts, function (err, _msgs) {
       fetching = false
       if (_msgs && _msgs.length) {
-        // advance cursor
-        cursor = _msgs[_msgs.length - 1]
-
-        // filter and merge
+        // filter
         _msgs = _msgs.filter(function (msg) {
           if (hideUnknown) {
             return knownMsg[msg.value.content.type]
           }
           return true
         })
-        msgs = msgs.concat(_msgs)
 
-        // render
-        _msgs.forEach(function (msg) {
-          var el = renderMsg(msg)
-          el && feedTBody.appendChild(el)
-        })
+        cb(err, _msgs)
+
         if (wasEmpty)
           doSelectMsg(feedTBody.firstChild, msgs[0])
-
-        // try to fill the list
-        if (msgs.length < 30) {
-          fetchMore()
-        }
       }
     })
   }
@@ -196,7 +239,10 @@ module.exports = function (app) {
     if (fetching)
       return
     if (feedContainer.offsetHeight + feedContainer.scrollTop >= feedContainer.scrollHeight) {
-      fetchMore()
+      fetchBack()
+    }
+    else if (feedContainer.scrollTop === 0) {
+      fetchFront()
     }
   }
 }

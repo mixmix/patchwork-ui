@@ -81,7 +81,7 @@ function renderRef (app, msg, ref, isHighlighted) {
         if (preview.length === 0)
           preview.push([type])
 
-        var link = h('a', { href: '#/posts?start='+ref.msg }, preview)
+        var link = h('a', { href: '#/posts?start='+encodeURIComponent(ref.msg) }, preview)
         el.appendChild(link)
       } else {
         el.appendChild(h('span', com.icon('triangle-top')))
