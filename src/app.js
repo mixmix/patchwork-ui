@@ -103,7 +103,7 @@ function refreshPage (e) {
   app.setPendingMessages(0)
 
   // run the router
-  var route = router(window.location.hash, 'posts')
+  var route = router('#'+location.href.split('#')[1]||'', 'posts')
   app.page.id    = route[0]
   app.page.param = route[1]
   app.page.qs    = route[2] || {}
