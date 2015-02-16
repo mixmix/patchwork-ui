@@ -164,6 +164,24 @@ module.exports = function (app) {
     doSelectMsg(el, msg)
   }
 
+  function navtoMsg (e) {
+    // clicked on a row? abort if clicked on a sub-link
+    var el = e.target
+    while (el) {
+      if (el.tagName == 'A' || el.tagName == 'TABLE')
+        return
+      if (el.tagName == 'TR')
+        break
+      el = el.parentNode
+    }
+    e.preventDefault()
+    e.stopPropagation()
+
+    var key = el.dataset.msg
+    if (key)
+      window.location.hash = '#/posts?start='+encodeURIComponent(key)
+  }
+
   function msgFor(el) {
     var index = [].indexOf.call(feedTBody.children, el)
     var msg = msgs[index]
@@ -183,7 +201,6 @@ module.exports = function (app) {
     if (!msg)
       msg = msgFor(el)
 
-
     // populate preview
     previewContainer.innerHTML = ''
     previewContainer.appendChild(com.messagePreview(app, msg))
@@ -191,6 +208,7 @@ module.exports = function (app) {
     previewContainer.appendChild(relatedTable)
     function add (msg, depth) {
       var el = com.messageSummary(app, msg, { mustRender: true, full: true })
+      el.onclick = navtoMsg
       el.querySelector('td:first-child').style.paddingLeft = ''+((depth || 0) * 30 + 8) + 'px'
       relatedTable.appendChild(el)
 

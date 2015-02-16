@@ -68,7 +68,7 @@ module.exports = function (app, msg, opts) {
 
   var name = app.names[msg.value.author] || util.shortString(msg.value.author)
   var nameConfidence = com.nameConfidence(msg.value.author, app)
-  var msgSummary = h('tr.message-summary',
+  var msgSummary = h('tr.message-summary', { 'data-msg': msg.key },
     h('td', treeExpander, ' ', content || h('span.text-muted', msg.value.content.type)),
     h('td', com.userlink(msg.value.author, name), nameConfidence),
     h('td.text-muted', util.prettydate(new Date(msg.value.timestamp)))

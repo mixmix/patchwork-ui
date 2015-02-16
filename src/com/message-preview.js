@@ -108,14 +108,14 @@ function renderRef (app, msg, ref) {
             preview.push([com.icon('off'), ' New user: ', renderFeed(msg.value.author)])
           },
           name: function () {
-            preview = preview.concat(mlib.getLinks(target.content, { tofeed: true, rel: 'names' }).map(renderFeed))
+            preview = preview.concat(mlib.getLinks(target.content, { tofeed: true, rel: 'names' }).map(renderLink.names.bind(null, app)))
           },
           follow: function () {
-            preview = preview.concat(mlib.getLinks(target.content, { tofeed: true, rel: 'follows' }).map(renderFeed))
-            preview = preview.concat(mlib.getLinks(target.content, { tofeed: true, rel: 'unfollows' }).map(renderFeed))
+            preview = preview.concat(mlib.getLinks(target.content, { tofeed: true, rel: 'follows' }).map(renderLink.follows.bind(null, app)))
+            preview = preview.concat(mlib.getLinks(target.content, { tofeed: true, rel: 'unfollows' }).map(renderLink.unfollows.bind(null, app)))
           },
           trust: function () { 
-            preview = preview.concat(mlib.getLinks(target.content, { tofeed: true, rel: 'trusts' }).map(renderFeed))
+            preview = preview.concat(mlib.getLinks(target.content, { tofeed: true, rel: 'trusts' }).map(renderLink.trusts.bind(null, app)))
           }
         }[type])()
       } catch (e) { }
@@ -144,28 +144,29 @@ function renderRef (app, msg, ref) {
     return [com.userlink(feed, app.names[feed]), com.nameConfidence(feed, app)]
   }
 
+  var renderLink = {
+    names: function (app, l) {
+      return [com.icon('tag'), ' ', renderFeed(l), ' is ', u.shortString((app.names[l.feed] || l.name || l.feed), 60)]
+    },
+    follows: function (app, l) {
+      return [com.icon('plus'), ' Followed ', renderFeed(l)]
+    },
+    unfollows: function (app, l) {
+      return [com.icon('minus'), ' Unfollowed ', renderFeed(l)]
+    },
+    trusts: function (app, l) {
+      if (l.value > 0)
+        return [com.icon('lock'), ' Trusted ', renderFeed(l)]
+      else if (l.value < 0)
+        return [com.icon('flag'), ' Flagged ', renderFeed(l)]
+      else
+        return ['Untrusted/Unflagged ', renderFeed(l)]
+    }
+  }
+
   return el
 }
 
-/*var linkRender = {
-  names: function (app, l) {
-    return [com.icon('tag'), ' ', u.shortString((app.names[l.feed] || l.name || l.feed), 60)]
-  },
-  follows: function (app, l) {
-    return [com.icon('plus'), ' Followed ', u.shortString(app.names[l.feed] || l.feed, 60)]
-  },
-  unfollows: function (app, l) {
-    return [com.icon('minus'), ' Unfollowed ', u.shortString(app.names[l.feed] || l.feed, 60)]
-  },
-  trusts: function (app, l) {
-    if (l.value > 0)
-      return [com.icon('lock'), ' Trusted ', u.shortString(app.names[l.feed] || l.feed, 60)]
-    else if (l.value < 0)
-      return [com.icon('flag'), ' Flagged ', u.shortString(app.names[l.feed] || l.feed, 60)]
-    else
-      return ['Untrusted/Unflagged '+u.shortString(app.names[l.feed] || l.feed, 60)]
-  }
-}*/
 
 function kvList (obj, indent) {
   indent = indent || ''
