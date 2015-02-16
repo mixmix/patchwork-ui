@@ -116,7 +116,7 @@ function renderRef (app, msg, ref, isHighlighted) {
   } 
   if (ref.ext) {
     var link = h('a',
-      { href: '#' /* onclick todo */},
+      { href: '/ext/'+ref.ext, target: '_blank' },
       com.icon('file'), ' ', ref.name, ' ', h('small', (('size' in ref) ? u.bytesHuman(ref.size) : ''), ' ', ref.type||''))
     el.appendChild(h('div', link))
   }
