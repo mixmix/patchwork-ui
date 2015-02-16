@@ -12,7 +12,7 @@ module.exports = function (app, msg, opts) {
 
 
   var outrefs = mlib.getLinks(msg.value.content).map(function (ref) {
-    return h('.outref', { 'data-rel': ref.rel }, renderRef(app, msg, ref, (opts && ref.msg == opts.highlightLink)))
+    return h('.outref', { 'data-rel': ref.rel }, renderRef(app, msg, ref))
   })
 
   var content
@@ -37,10 +37,9 @@ module.exports = function (app, msg, opts) {
     outrefs)
 }
 
-function renderRef (app, msg, ref, isHighlighted) {
+function renderRef (app, msg, ref) {
   var el = h('.content')
-  if (isHighlighted)
-    el.classList.add('parentlink')
+
   if (ref.msg) {
     el.innerHTML = '&nbsp;'
     app.ssb.get(ref.msg, function (err, target) {
@@ -51,54 +50,42 @@ function renderRef (app, msg, ref, isHighlighted) {
       }
 
       var type = target.content.type
-      if (!isHighlighted) {
-        var preview = []
+      var preview = []
 
-        try {
-          ;({
-            post: function () { 
-              preview.push([com.icon('comment'), ' ', u.shortString(target.content.text || '', 60)])
-            },
-            advert: function () {
-              preview.push([com.icon('bullhorn'), ' ', u.shortString(target.content.text || '', 60)])
-            },
-            init: function () {
-              preview.push([com.icon('off'), ' New user: ', u.shortString(app.names[msg.value.author] || msg.value.author, 60)])
-            },
-            name: function () {
-              preview = preview.concat(mlib.getLinks(target.content, { tofeed: true, rel: 'names' }).map(linkRender.names.bind(null, app)))
-            },
-            follow: function () {
-              preview = preview.concat(mlib.getLinks(target.content, { tofeed: true, rel: 'follows' }).map(linkRender.follows.bind(null, app)))
-              preview = preview.concat(mlib.getLinks(target.content, { tofeed: true, rel: 'unfollows' }).map(linkRender.unfollows.bind(null, app)))
-            },
-            trust: function () { 
-              preview = preview.concat(mlib.getLinks(target.content, { tofeed: true, rel: 'trusts' }).map(linkRender.trusts.bind(null, app)))
-            }
-          }[type])()
-        } catch (e) { }
+      try {
+        ;({
+          post: function () { 
+            preview.push([com.icon('comment'), ' ', u.shortString(target.content.text || '', 60)])
+          },
+          advert: function () {
+            preview.push([com.icon('bullhorn'), ' ', u.shortString(target.content.text || '', 60)])
+          },
+          init: function () {
+            preview.push([com.icon('off'), ' New user: ', u.shortString(app.names[msg.value.author] || msg.value.author, 60)])
+          },
+          name: function () {
+            preview = preview.concat(mlib.getLinks(target.content, { tofeed: true, rel: 'names' }).map(linkRender.names.bind(null, app)))
+          },
+          follow: function () {
+            preview = preview.concat(mlib.getLinks(target.content, { tofeed: true, rel: 'follows' }).map(linkRender.follows.bind(null, app)))
+            preview = preview.concat(mlib.getLinks(target.content, { tofeed: true, rel: 'unfollows' }).map(linkRender.unfollows.bind(null, app)))
+          },
+          trust: function () { 
+            preview = preview.concat(mlib.getLinks(target.content, { tofeed: true, rel: 'trusts' }).map(linkRender.trusts.bind(null, app)))
+          }
+        }[type])()
+      } catch (e) { }
 
-        if (preview.length === 0)
-          preview.push([type])
+      if (preview.length === 0)
+        preview.push([type])
 
-        var link = h('a', { href: '#/posts?start='+encodeURIComponent(ref.msg) }, preview)
-        el.appendChild(link)
-      } else {
-        el.appendChild(h('span', com.icon('triangle-top')))
-      }
+      var link = h('a', { href: '#/posts?start='+encodeURIComponent(ref.msg) }, preview)
+      el.appendChild(link)
+
     })
   } 
   if (ref.feed) {
-    var preview = []
-
-    try {
-      preview = (linkRender[ref.rel])(app, ref) 
-    } catch (e) { }
-    
-    if (preview.length === 0)
-      preview.push([com.userlink(ref.feed, app.names[ref.feed]), com.nameConfidence(ref.feed, app)])
-
-    var link = h('a', { href: '#/profile/' + ref.feed }, preview)
+    var link = h('a', { href: '#/profile/' + ref.feed }, renderLink(ref))
     el.appendChild(link)
   } 
   if (ref.ext) {
@@ -107,10 +94,15 @@ function renderRef (app, msg, ref, isHighlighted) {
       com.icon('file'), ' ', ref.name, ' ', h('small', (('size' in ref) ? u.bytesHuman(ref.size) : ''), ' ', ref.type||''))
     el.appendChild(h('div', link))
   }
+
+  function renderLink (l) {
+    return [com.userlink(ref.feed, app.names[ref.feed]), com.nameConfidence(ref.feed, app)]
+  }
+
   return el
 }
 
-var linkRender = {
+/*var linkRender = {
   names: function (app, l) {
     return [com.icon('tag'), ' ', u.shortString((app.names[l.feed] || l.name || l.feed), 60)]
   },
@@ -128,7 +120,7 @@ var linkRender = {
     else
       return ['Untrusted/Unflagged '+u.shortString(app.names[l.feed] || l.feed, 60)]
   }
-}
+}*/
 
 function kvList (obj, indent) {
   indent = indent || ''
