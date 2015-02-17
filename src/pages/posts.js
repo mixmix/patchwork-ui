@@ -220,7 +220,7 @@ module.exports = function (app) {
     function add (msg, parent, depth) {
       var el = com.messageSummary(app, msg, { mustRender: true, full: true })
       el.onclick = navtoMsg
-      el.children[1].style.borderRightWidth = ''+((depth || 0) * 5) + 'px'
+      el.children[1].style.borderLeftWidth = ''+((depth || 0) * 5) + 'px'
       relatedTable.insertBefore(el, parent)
 
       iterate(msg, el, depth + 1)
@@ -233,14 +233,14 @@ module.exports = function (app) {
         })
       })
     }
-    iterate(msg, null, 0)
+    iterate(msg, null, 1)
   }
 
   function populateInboundRelatedTable(relatedTable, app, msg) {
     function add (msg, depth) {
       var el = com.messageSummary(app, msg, { mustRender: true, full: true })
       el.onclick = navtoMsg
-      el.children[1].style.borderLeftWidth = ''+((depth || 0) * 5) + 'px'
+      el.children[1].style.borderRightWidth = ''+((depth || 0) * 5) + 'px'
       relatedTable.appendChild(el)
 
       if (msg.related) {
@@ -251,7 +251,7 @@ module.exports = function (app) {
     }
     app.ssb.relatedMessages({ id: msg.key }, function (err, msg) {
       (msg.related || []).forEach(function (submsg) {
-        add(submsg, 0)
+        add(submsg, 1)
       })
     })
   }
