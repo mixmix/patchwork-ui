@@ -4,6 +4,10 @@
   overflow-y: auto;
   overflow-x: hidden;
   width: 50%;
+  border-left: 1px solid #bbb;
+  box-shadow: -4px 0 3px rgba(0,0,0,0.15);
+  position: relative;
+  z-index: 5;
 
   .related {
     padding-left: 15px;
@@ -16,6 +20,7 @@
 
 .message-preview {
   border: 1px solid #bbb;
+  border-left: 0;
 
   .title {
     font-size: 12px;
@@ -27,11 +32,10 @@
   .value, .outref {
     font-family: @font-family-sans-serif;
     .headers {
-      border-bottom: 1px solid #ccc;
-      background: #fafafa;      
       margin: 0;
+      padding-left: 7px;
       li {
-        padding: 8px 12px;
+        padding: 8px 6px 0;
       }
     }
     .content {
