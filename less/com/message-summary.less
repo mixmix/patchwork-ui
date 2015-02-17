@@ -34,13 +34,12 @@
     color: #fff;
     border-color: #ccc;
     background: #ddd;
-
-    &::before {
-      content: ' ';
-      width: attr(data-depth);
-    }
   }
   td:last-child {
+    & > div {
+      border-left: 0px solid #ddd;
+      padding-left: 7px;
+    }
     width: 100%;
   }
   &.postmsg td {

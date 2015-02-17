@@ -220,7 +220,7 @@ module.exports = function (app) {
     function add (msg, parent, depth) {
       var el = com.messageSummary(app, msg, { mustRender: true, full: true })
       el.onclick = navtoMsg
-      el.children[1].style.borderLeftWidth = ''+((depth || 0) * 5) + 'px'
+      el.children[2].firstChild.style.borderLeftWidth = ''+((depth || 0) * 5) + 'px'
       relatedTable.insertBefore(el, parent)
 
       iterate(msg, el, depth + 1)
@@ -240,7 +240,7 @@ module.exports = function (app) {
     function add (msg, depth) {
       var el = com.messageSummary(app, msg, { mustRender: true, full: true })
       el.onclick = navtoMsg
-      el.children[1].style.borderRightWidth = ''+((depth || 0) * 5) + 'px'
+      el.children[2].firstChild.style.borderLeftWidth = ''+((depth || 0) * 5) + 'px'
       relatedTable.appendChild(el)
 
       if (msg.related) {
