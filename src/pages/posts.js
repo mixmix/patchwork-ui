@@ -15,7 +15,7 @@ var knownMsg = {
   init: true
 }
 
-var mustRenderOpts = { mustRender: true }
+var mustRenderOpts = { mustRender: true, full: true }
 module.exports = function (app) {
   var hideUnknown = false
   var msgs = []
@@ -29,9 +29,9 @@ module.exports = function (app) {
   var feedTBody = makeUnselectable(h('tbody', { onclick: selectMsg, ondblclick: selectMsg }))
   var feedContainer = h('.message-feed-container', { onscroll: onscroll, onkeydown: onkeydown },
     h('table.message-feed',
-      h('thead',
+      /*h('thead',
         h('tr',
-          h('td', 'item'), h('td', 'author'), h('td', 'age'))),
+          h('td'), h('td', 'item'), h('td', 'author'), h('td', 'age'))),*/
       feedTBody))
   var previewContainer = h('div.message-preview-container')
   app.setPage('posts', h('.row',
