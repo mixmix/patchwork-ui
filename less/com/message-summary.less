@@ -28,6 +28,10 @@
   td:first-child {
     text-align: right;
     white-space: nowrap;
+    & > div {
+      border-right: 0px solid #ddd;
+      padding-right: 7px;
+    }
   }
   td:nth-child(2) {
     width: 30px;
@@ -41,6 +45,12 @@
       padding-left: 7px;
     }
     width: 100%;
+  }
+  &.initmsg td {
+    &:nth-child(2) {
+      background: #333;
+      border-color: #000;
+    }  
   }
   &.postmsg td {
     &:nth-child(2) {

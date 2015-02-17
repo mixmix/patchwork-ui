@@ -35,13 +35,30 @@ message.raw = function (app, msg, opts) {
   // turn feed references into links
   json = json.replace(/\"feed\": \"([^\"]+)\"/g, function($0, $1) {
     var name = app.names[$1] || $1
+    if (opts && opts.textOnly)
+      return '"feed": "'+name+'"'
     return '"feed": "<a class="user-link" href="/#/profile/'+$1+'">'+name+'</a>"'
   })
 
   // turn message references into links
   json = json.replace(/\"msg\": \"([^\"]+)\"/g, function($0, $1) {
+    if (opts && opts.textOnly)
+      return '"msg": "&ctdot;"'
     return '"msg": "<a href="/#/msg/'+$1+'">'+$1+'</a>"'
   })
+
+  // turn ext references into links
+  json = json.replace(/\"ext\": \"([^\"]+)\"/g, function($0, $1) {
+    if (opts && opts.textOnly)
+      return '"ext": "&ctdot;"'
+    return '"ext": "<a href="/ext/'+$1+'" target="_blank">'+$1+'</a>"'
+  })
+
+  if (opts && opts.stripQuotes)
+    json = json.replace(/([^\\])"/g, function (_, s) { return s }).replace(/\\"/g, '"')
+
+  if (opts && opts.maxLength && json.length > opts.maxLength)
+    json = json.slice(0, opts.maxLength-3) + '...'
 
   return h('.raw', { innerHTML: json })
 }

@@ -233,7 +233,7 @@ module.exports = function (app) {
         })
       })
     }
-    iterate(msg, null, 1)
+    iterate(msg, null, 0)
   }
 
   function populateInboundRelatedTable(relatedTable, app, msg) {
@@ -251,7 +251,7 @@ module.exports = function (app) {
     }
     app.ssb.relatedMessages({ id: msg.key }, function (err, msg) {
       (msg.related || []).forEach(function (submsg) {
-        add(submsg, 1)
+        add(submsg, 0)
       })
     })
   }

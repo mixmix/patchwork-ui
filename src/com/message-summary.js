@@ -22,8 +22,14 @@ function getSummary (app, msg, opts) {
   var preprocess = (opts && opts.full) ? function(v){return v} : shorten
   try {
     var s = ({
-      post: function () { return ((opts && opts.full) ? md : shorten)(msg.value.content.text) },
-      advert: function () { return ((opts && opts.full) ? md : shorten)(msg.value.content.text) },
+      post: function () { 
+        if (!msg.value.content.text) return
+        return ((opts && opts.full) ? md : shorten)(msg.value.content.text)
+      },
+      advert: function () { 
+        if (!msg.value.content.text) return
+        return ((opts && opts.full) ? md : shorten)(msg.value.content.text)
+      },
       init: function () {
         return ['New user: ', preprocess(app.names[msg.value.author] || msg.value.author)]
       },
@@ -94,7 +100,7 @@ module.exports = function (app, msg, opts) {
   var msgSummary = h('tr.message-summary'+(viz.cls?'.'+viz.cls:''), { 'data-msg': msg.key },
     h('td', com.userlink(msg.value.author, name), nameConfidence),
     h('td', viz.icon ? com.icon(viz.icon) : undefined),
-    h('td', h('div', content || h('span.text-muted', msg.value.content.type)))
+    h('td', h('div', content || h('.content.text-muted', com.message.raw(app, msg, { textOnly: true, maxLength: 80, stripQuotes: true }))))// h('span.text-muted', msg.value.content.type)))
     // h('td.text-muted', util.prettydate(new Date(msg.value.timestamp)))
   )
   return msgSummary
