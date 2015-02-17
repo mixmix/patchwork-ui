@@ -237,7 +237,7 @@ module.exports = function (app) {
     if (!sel)
       return
 
-    if (e.ctrlKey || e.shiftKey || e.altKey)
+    if (e.ctrlKey || e.altKey)
       return
 
     var kc = e.charCode || e.keyCode
@@ -247,10 +247,17 @@ module.exports = function (app) {
     })[kc] || kc
 
     if (kc == UP || kc == DOWN) {
-      if (kc === UP && sel.previousSibling)
-        doSelectMsg(sel.previousSibling)
-      if (kc === DOWN && sel.nextSibling)
-        doSelectMsg(sel.nextSibling)
+      var n = (e.shiftKey) ? 5 : 1
+      for (var i=0; i < n; i++) {
+        if (kc === UP && sel.previousSibling) {
+          sel = sel.previousSibling
+          doSelectMsg(sel.previousSibling)
+        }
+        if (kc === DOWN && sel.nextSibling) {
+          sel = sel.nextSibling
+          doSelectMsg(sel)
+        }
+      }
       e.preventDefault()
     }
     if (kc === ENTER) {
