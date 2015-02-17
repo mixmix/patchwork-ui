@@ -38,7 +38,7 @@ module.exports = function (app) {
     h('.col-xs-2.col-md-1', com.sidenav(app)),
     h('.col-xs-10.col-md-11', 
       // h('p#get-latest.hidden', h('button.btn.btn-primary.btn-block', { onclick: app.refreshPage }, 'Get Latest')),
-      h('input.search', { type: 'text', placeholder: 'Search' }),
+      // h('input.search', { type: 'text', placeholder: 'Search' }),
       previewContainer,
       feedContainer
       //com.introhelp(app)
@@ -210,7 +210,7 @@ module.exports = function (app) {
     function add (msg, depth) {
       var el = com.messageSummary(app, msg, { mustRender: true, full: true })
       el.onclick = navtoMsg
-      el.querySelector('td:first-child').style.paddingLeft = ''+((depth || 0) * 30 + 8) + 'px'
+      el.children[1].style.borderLeftWidth = ''+((depth || 0) * 5) + 'px'
       relatedTable.appendChild(el)
 
       if (msg.related) {

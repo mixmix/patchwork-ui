@@ -1,10 +1,10 @@
 
 .message-preview-container {
   float: right;
-  padding: 0 0 0 16px;
   overflow-y: auto;
   overflow-x: hidden;
   width: 50%;
+  border-left: 1px solid #bbb;
 
   .related {
     padding-left: 15px;
@@ -16,7 +16,7 @@
 }
 
 .message-preview {
-  margin-bottom: 8px;
+  border-bottom: 1px solid #bbb;
 
   .title {
     font-size: 12px;
@@ -28,17 +28,15 @@
   .value, .outref {
     font-family: @font-family-sans-serif;
     .headers {
-      border: 1px solid #ccc;
-      background: #fafafa;
+      border-bottom: 1px solid #ccc;
+      background: #fafafa;      
       margin: 0;
       li {
         padding: 8px 12px;
-        border-right: 1px solid #ccc;
       }
     }
     .content {
       padding: 8px 12px;
-      border: 1px solid #ccc;
       border-top: 0;
       color: #555;      
       & > :first-child {
@@ -64,12 +62,10 @@
   }
   .outref {
     position: relative;
-    border-bottom: 1px solid #ccc;
     &::before {
       content: attr(data-rel);
       position: absolute;
       z-index: 1000;
-      top: -6px;
       left: 12px;
       font-size: 12px;
       line-height: 12px;

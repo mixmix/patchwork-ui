@@ -21,7 +21,7 @@
     td {
       border-color: #ccc;
       border-bottom-width: 1px;
-      background: #eee;
+      background: #fafafa;
     }
   }
 
@@ -34,6 +34,11 @@
     color: #fff;
     border-color: #ccc;
     background: #ddd;
+
+    &::before {
+      content: ' ';
+      width: attr(data-depth);
+    }
   }
   td:last-child {
     width: 100%;
