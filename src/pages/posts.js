@@ -281,7 +281,7 @@ module.exports = function (app) {
       for (var i=0; i < n; i++) {
         if (kc === UP && sel.previousSibling) {
           sel = sel.previousSibling
-          doSelectMsg(sel.previousSibling)
+          doSelectMsg(sel)
         }
         if (kc === DOWN && sel.nextSibling) {
           sel = sel.nextSibling
