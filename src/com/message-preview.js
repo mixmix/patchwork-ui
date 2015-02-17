@@ -61,6 +61,8 @@ module.exports = function (app, msg, opts) {
   // markup
 
   var outrefs = mlib.getLinks(msg.value.content).map(function (ref) {
+    if (ref.msg)
+      return // no msg links
     return h('.outref', { 'data-rel': ref.rel }, renderRef(app, msg, ref))
   })
 
@@ -84,7 +86,8 @@ module.exports = function (app, msg, opts) {
 function renderRef (app, msg, ref) {
   var el = h('.content')
 
-  if (ref.msg) {
+  // DISABLED
+  /*if (ref.msg) {
     el.innerHTML = '&nbsp;'
     app.ssb.get(ref.msg, function (err, target) {
       if (!target) {
@@ -127,7 +130,7 @@ function renderRef (app, msg, ref) {
       el.appendChild(link)
 
     })
-  } 
+  } */
   if (ref.feed) {
     var link = h('a', { href: '#/profile/' + ref.feed }, renderFeed(ref))
     el.appendChild(link)

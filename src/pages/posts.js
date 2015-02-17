@@ -204,9 +204,39 @@ module.exports = function (app) {
 
     // populate preview
     previewContainer.innerHTML = ''
+
+    var outboundRelated = h('table.related')
+    previewContainer.appendChild(outboundRelated)
+    populateOutboundRelatedTable(outboundRelated, app, msg)
+
     previewContainer.appendChild(com.messagePreview(app, msg))
-    var relatedTable = h('table.related')
-    previewContainer.appendChild(relatedTable)
+
+    var inboundRelated = h('table.related')
+    previewContainer.appendChild(inboundRelated)
+    populateInboundRelatedTable(inboundRelated, app, msg)
+  }
+
+  function populateOutboundRelatedTable(relatedTable, app, msg) {
+    function add (msg, parent, depth) {
+      var el = com.messageSummary(app, msg, { mustRender: true, full: true })
+      el.onclick = navtoMsg
+      el.children[1].style.borderRightWidth = ''+((depth || 0) * 5) + 'px'
+      relatedTable.insertBefore(el, parent)
+
+      iterate(msg, el, depth + 1)
+    }
+    function iterate (msg, parent, depth) {
+      mlib.getLinks(msg.value.content, { tomsg: true }).forEach(function (l) {
+        app.ssb.get(l.msg, function (err, submsg) {
+          if (submsg)
+            add({ key: l.msg, value: submsg }, parent, depth)
+        })
+      })
+    }
+    iterate(msg, null, 0)
+  }
+
+  function populateInboundRelatedTable(relatedTable, app, msg) {
     function add (msg, depth) {
       var el = com.messageSummary(app, msg, { mustRender: true, full: true })
       el.onclick = navtoMsg
