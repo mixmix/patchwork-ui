@@ -54,7 +54,7 @@ function getSummary (app, msg, opts) {
               return ['Flagged ', preprocess(app.names[l.feed] || l.feed)]
             return 'Untrusted/Unflagged '+preprocess(app.names[l.feed] || l.feed)
           })
-      },
+      }
     })[msg.value.content.type]()
     if (!s || s.length == 0)
       s = false
@@ -92,7 +92,7 @@ module.exports = function (app, msg, opts) {
   // markup
 
   var content = getSummary(app, msg, opts)
-  var viz = getVisuals(app, msg, opts) || { cls: '', icon: false }
+  var viz = getVisuals(app, msg, opts) || { cls: '', icon: 'cog' }
 
   var name = app.names[msg.value.author] || util.shortString(msg.value.author)
   var nameConfidence = com.nameConfidence(msg.value.author, app)
@@ -114,12 +114,12 @@ module.exports = function (app, msg, opts) {
   }
 
   var msgSummary = h('tr.message-summary'+(viz.cls?'.'+viz.cls:''), { 'data-msg': msg.key },
-    h('td', com.userlink(msg.value.author, name), nameConfidence),
     h('td', viz.icon ? com.icon(viz.icon) : undefined),
-    inboundLinksTd,
-    h('td', h('div', content)),
-    h('td', (numExtLinks>0) ? [com.icon('paperclip'), ' ', numExtLinks] : ''),
-    h('td', util.prettydate(new Date(msg.value.timestamp)))
+    h('td', com.userlink(msg.value.author, name), nameConfidence, h('div', content))
+    // h('td', com.userlink(msg.value.author, name), nameConfidence)
+    // inboundLinksTd,
+    // h('td', (numExtLinks>0) ? [com.icon('paperclip'), ' ', numExtLinks] : ''),
+    // h('td', util.prettydate(new Date(msg.value.timestamp)))
   )
 
   app.ssb.phoenix.getThreadMeta(msg.key, function (err, meta) {

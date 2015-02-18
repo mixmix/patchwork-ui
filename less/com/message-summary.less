@@ -8,13 +8,9 @@
   color: #555;
 
   td {
-    padding: 8px;
+    padding: 12px;
     border-bottom: 1px solid #ccc;
   }
-
-  /*&:nth-child(even) td {
-    background: #fafafa; // zebra
-  }*/
 
   &.selected {
     td:first-child {
@@ -25,7 +21,7 @@
     }
   }
 
-  td:first-child {
+  td:nth-child(3) {
     text-align: right;
     white-space: nowrap;
     & > div {
@@ -33,48 +29,44 @@
       padding-right: 7px;
     }
   }
-  td:nth-child(2) {
+  td:nth-child(1) {
     width: 30px;
     color: #fff;
-    border-color: #ccc;
-    background: #ddd;
+    border-color: #555;
+    background: #808080;
   }
-  td:nth-child(4) {
+  td:nth-child(2) {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    max-width: 500px;
   }
-  td:nth-child(3), td:nth-child(5), td:nth-child(6) {
-    white-space: nowrap;
-    color: gray;    
-  }
+
   &.initmsg td {
-    &:nth-child(2) {
+    &:nth-child(1) {
       background: #333;
       border-color: #000;
     }  
   }
   &.postmsg td {
-    &:nth-child(2) {
+    &:nth-child(1) {
       border-color: rgb(26, 102, 202);
       background: #006EFF;
     }
   }
   &.advertmsg td, &.namemsg td {
-    &:nth-child(2) {
+    &:nth-child(1) {
       border-color: rgb(137, 30, 160);
       background: #B611DA;
     }
   }
   &.followmsg td, &.trustmsg td {
-    &:nth-child(2) {
+    &:nth-child(1) {
       border-color: rgb(19, 115, 16);
       background: #06AB01;
     }
   }
   &.unfollowmsg td, &.flagmsg td {
-    &:nth-child(2) {
+    &:nth-child(1) {
       border-color: rgb(121, 18, 18);
       background: rgb(208, 8, 8);
     }
@@ -82,13 +74,17 @@
 
   .raw {
     padding: 0 1em;
-    width: 140px;
+    width: 175px;
     display: inline-block;
     overflow: hidden;
     text-overflow: ellipsis;
-    border-left: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+    &:first-child {
+      padding-left: 0;
+    }
     &:last-child {
       width: auto;
+      border-right: 0;
     }
   }
 }
