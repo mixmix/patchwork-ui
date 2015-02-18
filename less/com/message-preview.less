@@ -1,39 +1,25 @@
 
-.message-preview-container {
-  float: right;
-  overflow-y: auto;
-  overflow-x: hidden;
-  width: 50%;
-  border-left: 1px solid #bbb;
-  box-shadow: -4px 0 3px rgba(0,0,0,0.15);
-  position: relative;
-  z-index: 5;
+tr.preview {
 
+  .message-preview + .related {
+    margin-bottom: 14px;
+  }
   .related {
-    padding-left: 15px;
     width: 100%;
-    .message-summary {
-      vertical-align: top;
-    }
   }
 }
 
 .message-preview {
-  border: 1px solid #bbb;
-  border-left: 0;
-
-  .title {
-    font-size: 12px;
-    background: #f0f0f0;
-    padding: 3px 5px;
-    border-radius: 3px 3px 0px 0px;
-  }
 
   .value, .outref {
     font-family: @font-family-sans-serif;
     .headers {
-      margin: 0;
+      border: 1px solid #bbb;
+      border-top: 0;
+      margin: 0 0 12px;
       padding-left: 7px;
+      min-height: 34px;
+      background: #f0f0f0;
       li {
         padding: 8px 6px 0;
       }

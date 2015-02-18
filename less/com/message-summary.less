@@ -9,8 +9,7 @@
 
   td {
     padding: 8px;
-    border: 1px solid #fff;
-    border-bottom-width: 0;
+    border: 1px solid #ccc;
   }
 
   /*&:nth-child(even) td {
@@ -18,10 +17,11 @@
   }*/
 
   &.selected {
+    td:first-child {
+      border-left-width: 15px;
+    }
     td {
-      border-color: #ccc;
-      border-bottom-width: 1px;
-      background: #fafafa;
+      background: #fafafa;  
     }
   }
 
@@ -54,26 +54,26 @@
   }
   &.postmsg td {
     &:nth-child(2) {
-      background: #006EFF;
       border-color: rgb(26, 102, 202);
+      background: #006EFF;
     }
   }
   &.advertmsg td, &.namemsg td {
     &:nth-child(2) {
-      background: #B611DA;
       border-color: rgb(137, 30, 160);
+      background: #B611DA;
     }
   }
   &.followmsg td, &.trustmsg td {
     &:nth-child(2) {
-      background: #06AB01;
       border-color: rgb(19, 115, 16);
+      background: #06AB01;
     }
   }
   &.unfollowmsg td, &.flagmsg td {
     &:nth-child(2) {
-      background: rgb(208, 8, 8);
       border-color: rgb(121, 18, 18);
+      background: rgb(208, 8, 8);
     }
   }
 }

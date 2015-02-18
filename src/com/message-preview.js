@@ -66,20 +66,19 @@ module.exports = function (app, msg, opts) {
     return h('.outref', { 'data-rel': ref.rel }, renderRef(app, msg, ref))
   })
 
-  var content = getContent(app, msg, opts)
+  // var content = getContent(app, msg, opts)
 
   return h('.message-preview',
-    (opts && opts.title) ? h('.title', opts.title) : '',
     h('.value',
       h('ul.headers.list-inline',
         h('li', com.a('#/msg/'+msg.key, com.icon('new-window'), { target: '_blank' })),
         (opts && opts.selectBtn) ?
           h('li', com.a('#/', com.icon('arrow-right'))) :
           '',
-        h('li', h('small', 'by '), com.userlink(msg.value.author, app.names[msg.value.author]), com.nameConfidence(msg.value.author, app)),
+        // h('li', h('small', 'by '), com.userlink(msg.value.author, app.names[msg.value.author]), com.nameConfidence(msg.value.author, app)),
         h('li', h('small', 'type '), com.a('#/', msg.value.content.type)),
-        h('li', h('small', 'from '), com.a('#/', u.prettydate(new Date(msg.value.timestamp), true), { title: 'View message thread' }))),
-      content),
+        h('li', h('small', 'from '), com.a('#/', u.prettydate(new Date(msg.value.timestamp), true), { title: 'View message thread' })))
+      /*content*/),
     outrefs)
 }
 

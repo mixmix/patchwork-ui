@@ -38,13 +38,11 @@ module.exports = function (app) {
         h('tr',
           h('td'), h('td', 'item'), h('td', 'author'), h('td', 'age'))),*/
       feedTBody))
-  var previewContainer = h('div.message-preview-container')
   app.setPage('posts', h('.row',
     h('.col-xs-2.col-md-1', com.sidenav(app)),
     h('.col-xs-10.col-md-11', 
       // h('p#get-latest.hidden', h('button.btn.btn-primary.btn-block', { onclick: app.refreshPage }, 'Get Latest')),
       // h('input.search', { type: 'text', placeholder: 'Search' }),
-      // previewContainer,
       feedContainer
       //com.introhelp(app)
     )
@@ -196,17 +194,19 @@ module.exports = function (app) {
   }
 
   function msgFor(el) {
-    var index = [].indexOf.call(feedTBody.children, el)
-    var msg = msgs[index]
-    if (!msg)
-      throw new Error('Failed to find message for selected row')
-    return msg
+    var key = el.dataset.msg
+    for (var i =0; i < msgs.length; i++) {
+      if (msgs[i].key === key)
+        return msgs[i]
+    }
+    throw new Error('Failed to find message for selected row')
   }
 
   function doSelectMsg(el, msg) {
     if (!el)
       el = feedTBody.firstChild
 
+    ;[].forEach.call(document.querySelectorAll('.preview'), function (el)  { el.parentNode.removeChild(el) })
     ;[].forEach.call(document.querySelectorAll('.selected'), function (el) { el.classList.remove('selected') })
     el.classList.toggle('selected')
 
@@ -217,56 +217,33 @@ module.exports = function (app) {
     if (!msg)
       msg = msgFor(el)
 
-    // populate preview
-    previewContainer.innerHTML = ''
-
-    var outboundRelated = h('table.related')
-    previewContainer.appendChild(outboundRelated)
-    populateOutboundRelatedTable(outboundRelated, app, msg)
-
-    previewContainer.appendChild(com.messagePreview(app, msg))
-
     var inboundRelated = h('table.related')
-    previewContainer.appendChild(inboundRelated)
+    var td = h('td', com.messagePreview(app, msg), inboundRelated)
+    td.setAttribute('colspan', 2)
+    var previewContainer = h('tr.preview', h('td'), td)
+    feedTBody.insertBefore(previewContainer, el.nextSibling)
     populateInboundRelatedTable(inboundRelated, app, msg)
   }
 
-  function populateOutboundRelatedTable(relatedTable, app, msg) {
-    function add (msg, parent, depth) {
-      var el = com.messageSummary(app, msg, { mustRender: true, full: true })
-      el.onclick = navtoMsg
-      el.children[2].firstChild.style.borderLeftWidth = ''+((depth || 0) * 5) + 'px'
-      relatedTable.insertBefore(el, parent)
-
-      iterate(msg, el, depth + 1)
-    }
-    function iterate (msg, parent, depth) {
-      mlib.getLinks(msg.value.content, { tomsg: true }).forEach(function (l) {
-        app.ssb.get(l.msg, function (err, submsg) {
-          if (submsg)
-            add({ key: l.msg, value: submsg }, parent, depth)
-        })
-      })
-    }
-    iterate(msg, null, 0)
-  }
-
   function populateInboundRelatedTable(relatedTable, app, msg) {
-    function add (msg, depth) {
+    function add (msg, table) {
       var el = com.messageSummary(app, msg, { mustRender: true, full: true })
       el.onclick = navtoMsg
-      el.children[2].firstChild.style.borderLeftWidth = ''+((depth || 0) * 5) + 'px'
-      relatedTable.appendChild(el)
+      table.appendChild(el)
 
       if (msg.related) {
+        var subtable = h('table.related')
+        var td = h('td', subtable)
+        td.setAttribute('colspan', 2)
+        table.appendChild(h('tr', h('td'), td))
         msg.related.forEach(function (submsg) {
-          add(submsg, depth + 1)
+          add(submsg, subtable)
         })
       }
     }
     app.ssb.relatedMessages({ id: msg.key }, function (err, msg) {
       (msg.related || []).forEach(function (submsg) {
-        add(submsg, 0)
+        add(submsg, relatedTable)
       })
     })
   }
