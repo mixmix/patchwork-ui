@@ -21,9 +21,12 @@ function theFilterFn (msg) {
 }
 
 var mustRenderOpts = { mustRender: true }
+var filterFn = theFilterFn
+var msgs = []
+var feedTBody, feedContainer
+var frontCursor = null, backCursor = null
+var lastScrollTop = 0
 module.exports = function (app) {
-  var filterFn = theFilterFn
-  var msgs = []
 
   // markup
 
@@ -31,35 +34,31 @@ module.exports = function (app) {
     return com.messageSummary(app, msg, mustRenderOpts)
   }
  
-  var feedTBody = makeUnselectable(h('tbody', { onclick: navtoMsg }))
-  var feedContainer = h('.message-feed-container', { onscroll: onscroll }, h('table.message-feed', feedTBody))
+  if (!feedTBody) {
+    feedTBody = makeUnselectable(h('tbody'))
+    feedContainer = h('.message-feed-container', h('table.message-feed', feedTBody))
+  }
+  feedTBody.onclick = navtoMsg
+  feedContainer.onscroll = onscroll
   app.setPage('posts', h('.row',
     h('.col-xs-2.col-md-1', com.sidenav(app)),
-    h('.col-xs-10.col-md-11', 
+    h('.col-xs-8.col-md-8', 
       // h('p#get-latest.hidden', h('button.btn.btn-primary.btn-block', { onclick: app.refreshPage }, 'Get Latest')),
       // h('input.search', { type: 'text', placeholder: 'Search' }),
       feedContainer
       //com.introhelp(app)
-    )
-    // h('.col-xs-3.col-md-5',
-      /*com.adverts(app),
+    ),
+    h('.col-xs-2.col-md-3',
+      com.adverts(app),
       h('hr'),
-      com.sidehelp(app)*/
-    // )
+      com.sidehelp(app)
+    )
   ))
+  feedContainer.scrollTop = lastScrollTop
 
   // message fetch
 
-  var frontCursor = null, backCursor = null
-
-  if (app.page.qs.start) {
-    app.ssb.get(app.page.qs.start, function (err, msg) {
-      if (err) {}// :TODO:
-      else if (msg)
-        backCursor = { key: app.page.qs.start, value: msg }
-      fetchBack(30, fetchFront.bind(null, 30))
-    })
-  } else
+  if (!msgs.length)
     fetchBack(30)
 
   function fetchFront (amt, cb) {
@@ -167,6 +166,7 @@ module.exports = function (app) {
   }
 
   function onscroll (e) {
+    lastScrollTop = feedContainer.scrollTop
     if (fetching)
       return
     if (feedContainer.offsetHeight + feedContainer.scrollTop >= feedContainer.scrollHeight) {
