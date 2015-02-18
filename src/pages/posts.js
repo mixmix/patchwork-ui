@@ -20,7 +20,7 @@ function theFilterFn (msg) {
   return (c.type in knownMsgs) && l.length === 0
 }
 
-var mustRenderOpts = { mustRender: true, full: true }
+var mustRenderOpts = { mustRender: true }
 module.exports = function (app) {
   var filterFn = theFilterFn
   var msgs = []
@@ -277,6 +277,8 @@ module.exports = function (app) {
         }
         if (kc === DOWN && sel.nextSibling) {
           sel = sel.nextSibling
+          while (sel && sel.classList.contains('preview'))
+            sel = sel.nextSibling
           doSelectMsg(sel)
         }
       }

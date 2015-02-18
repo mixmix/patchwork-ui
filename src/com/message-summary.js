@@ -8,8 +8,8 @@ var markdown = require('../lib/markdown')
 var mentions = require('../lib/mentions')
 
 function shorten (str) {
-  if (str.length > 60)
-    str = str.slice(0, 57) + '...'
+  if (str.length > 90)
+    str = str.slice(0, 87) + '...'
   return str
 }
 
