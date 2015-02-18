@@ -97,12 +97,23 @@ module.exports = function (app, msg, opts) {
   var name = app.names[msg.value.author] || util.shortString(msg.value.author)
   var nameConfidence = com.nameConfidence(msg.value.author, app)
 
+  var inboundLinksTd = h('td')
+  var numExtLinks = mlib.getLinks(msg.value.content, { toext: true }).length
+
   var msgSummary = h('tr.message-summary'+(viz.cls?'.'+viz.cls:''), { 'data-msg': msg.key },
     h('td', com.userlink(msg.value.author, name), nameConfidence),
     h('td', viz.icon ? com.icon(viz.icon) : undefined),
-    h('td', h('div', content || h('.content.text-muted', com.message.raw(app, msg, { textOnly: true, maxLength: 80, stripQuotes: true }))))// h('span.text-muted', msg.value.content.type)))
-    // h('td.text-muted', util.prettydate(new Date(msg.value.timestamp)))
+    inboundLinksTd,
+    h('td', h('div', content || h('.content.text-muted', com.message.raw(app, msg, { textOnly: true, maxLength: 80, stripQuotes: true })))),
+    h('td', (numExtLinks>0) ? [com.icon('paperclip'), ' ', numExtLinks] : ''),
+    h('td', util.prettydate(new Date(msg.value.timestamp)))
   )
+
+  app.ssb.phoenix.getThreadMeta(msg.key, function (err, meta) {
+    if (meta && meta.numThreadReplies)
+      inboundLinksTd.appendChild(h('span', com.icon('option-vertical'), ' ', meta.numThreadReplies))
+  })
+
   return msgSummary
 }
 

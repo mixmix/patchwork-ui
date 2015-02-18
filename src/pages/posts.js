@@ -30,7 +30,8 @@ module.exports = function (app) {
 
   // markup
 
-  function renderMsg (msg) {
+  function renderMsg (msg, full) {
+    mustRenderOpts.full = !!full
     return com.messageSummary(app, msg, mustRenderOpts)
   }
  
@@ -42,13 +43,13 @@ module.exports = function (app) {
   feedContainer.onscroll = onscroll
   app.setPage('posts', h('.row',
     h('.col-xs-2.col-md-1', com.sidenav(app)),
-    h('.col-xs-8.col-md-8', 
+    h('.col-xs-8.col-md-9', 
       // h('p#get-latest.hidden', h('button.btn.btn-primary.btn-block', { onclick: app.refreshPage }, 'Get Latest')),
       // h('input.search', { type: 'text', placeholder: 'Search' }),
       feedContainer
       //com.introhelp(app)
     ),
-    h('.col-xs-2.col-md-3',
+    h('.col-xs-2',
       com.adverts(app),
       h('hr'),
       com.sidehelp(app)

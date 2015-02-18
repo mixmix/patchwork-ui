@@ -9,7 +9,7 @@
 
   td {
     padding: 8px;
-    border: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
   }
 
   /*&:nth-child(even) td {
@@ -39,12 +39,9 @@
     border-color: #ccc;
     background: #ddd;
   }
-  td:last-child {
-    & > div {
-      border-left: 0px solid #ddd;
-      padding-left: 7px;
-    }
-    width: 100%;
+  td:nth-child(3), td:nth-child(5), td:nth-child(6) {
+    white-space: nowrap;
+    color: gray;    
   }
   &.initmsg td {
     &:nth-child(2) {
