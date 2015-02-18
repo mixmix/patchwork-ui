@@ -117,11 +117,11 @@ module.exports = function (app, msg, opts) {
 
   var msgSummary = h('tr.message-summary'+(viz.cls?'.'+viz.cls:''), { 'data-msg': msg.key },
     h('td', viz.icon ? com.icon(viz.icon) : undefined),
-    h('td', content)
+    h('td', content),
     // h('td', com.userlink(msg.value.author, name), nameConfidence)
     // inboundLinksTd,
     // h('td', (numExtLinks>0) ? [com.icon('paperclip'), ' ', numExtLinks] : ''),
-    // h('td', util.prettydate(new Date(msg.value.timestamp)))
+    h('td', ago(msg))
   )
 
   app.ssb.phoenix.getThreadMeta(msg.key, function (err, meta) {
@@ -132,6 +132,12 @@ module.exports = function (app, msg, opts) {
   return msgSummary
 }
 
+function ago (msg) {
+  var str = util.prettydate(new Date(msg.value.timestamp))
+  if (str === 'yesterday')
+    return '1d'
+  return str
+}
 
 function user (app, id) {
   var name = app.names[id] || util.shortString(id)
