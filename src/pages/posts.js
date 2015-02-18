@@ -44,7 +44,7 @@ module.exports = function (app) {
     h('.col-xs-10.col-md-11', 
       // h('p#get-latest.hidden', h('button.btn.btn-primary.btn-block', { onclick: app.refreshPage }, 'Get Latest')),
       // h('input.search', { type: 'text', placeholder: 'Search' }),
-      previewContainer,
+      // previewContainer,
       feedContainer
       //com.introhelp(app)
     )
