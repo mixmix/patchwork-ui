@@ -81,6 +81,14 @@
   }
 
   .raw {
-    padding-right: 1em;
+    padding: 0 1em;
+    width: 140px;
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    border-left: 1px solid #ccc;
+    &:last-child {
+      width: auto;
+    }
   }
 }
