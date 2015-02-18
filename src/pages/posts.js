@@ -31,13 +31,8 @@ module.exports = function (app) {
     return com.messageSummary(app, msg, mustRenderOpts)
   }
  
-  var feedTBody = makeUnselectable(h('tbody', { onclick: selectMsg, ondblclick: selectMsg }))
-  var feedContainer = h('.message-feed-container', { onscroll: onscroll, onkeydown: onkeydown },
-    h('table.message-feed',
-      /*h('thead',
-        h('tr',
-          h('td'), h('td', 'item'), h('td', 'author'), h('td', 'age'))),*/
-      feedTBody))
+  var feedTBody = makeUnselectable(h('tbody', { onclick: navtoMsg }))
+  var feedContainer = h('.message-feed-container', { onscroll: onscroll }, h('table.message-feed', feedTBody))
   app.setPage('posts', h('.row',
     h('.col-xs-2.col-md-1', com.sidenav(app)),
     h('.col-xs-10.col-md-11', 
@@ -87,10 +82,7 @@ module.exports = function (app) {
         var lastEl = feedTBody.firstChild
         _msgs.forEach(function (msg) {
           var el = renderMsg(msg)
-          if (el) {
-            feedTBody.insertBefore(el, lastEl)
-            lastEl = el
-          }
+          el && feedTBody.insertBefore(el, lastEl)
         })
 
         // prepend
@@ -156,25 +148,6 @@ module.exports = function (app) {
 
   // handlers
 
-  function selectMsg (e) {
-    // clicked on a row? abort if clicked on a sub-link
-    var el = e.target
-    while (el) {
-      if (el.tagName == 'A' || el.tagName == 'TABLE')
-        return
-      if (el.tagName == 'TR')
-        break
-      el = el.parentNode
-    }
-    e.preventDefault()
-    e.stopPropagation()
-
-    var msg = msgFor(el)
-    if (e.type == 'dblclick')
-      return window.open('#/msg/' + msg.key)
-    doSelectMsg(el, msg)
-  }
-
   function navtoMsg (e) {
     // clicked on a row? abort if clicked on a sub-link
     var el = e.target
@@ -190,111 +163,7 @@ module.exports = function (app) {
 
     var key = el.dataset.msg
     if (key)
-      window.location.hash = '#/posts?start='+encodeURIComponent(key)
-  }
-
-  function msgFor(el) {
-    var key = el.dataset.msg
-    for (var i =0; i < msgs.length; i++) {
-      if (msgs[i].key === key)
-        return msgs[i]
-    }
-    throw new Error('Failed to find message for selected row')
-  }
-
-  function doSelectMsg(el, msg) {
-    if (!msg)
-      msg = msgFor(el)
-
-    // scroll to msg if needed
-    if (el.offsetTop < feedContainer.scrollTop || (el.offsetTop - feedContainer.scrollTop) > feedContainer.offsetHeight)
-      feedContainer.scrollTop = el.offsetTop
-
-    // free toggle:
-    el.classList.toggle('selected')
-    if (!el.classList.contains('selected')) {
-      if (el.nextSibling.classList.contains('preview'))
-        el.parentNode.removeChild(el.nextSibling)
-      return
-    }
-
-    // only one at a time:
-    // ;[].forEach.call(document.querySelectorAll('.preview'), function (el)  { el.parentNode.removeChild(el) })
-    // ;[].forEach.call(document.querySelectorAll('.selected'), function (el) { el.classList.remove('selected') })
-    // el.classList.toggle('selected')
-
-    var inboundRelated = h('table.related')
-    var td = h('td', com.messagePreview(app, msg))
-    td.setAttribute('colspan', 3)
-    var previewContainer = h('tr.preview', td)
-    feedTBody.insertBefore(previewContainer, el.nextSibling)
-    // populateInboundRelatedTable(inboundRelated, app, msg)
-  }
-
-  function populateInboundRelatedTable(relatedTable, app, msg) {
-    function add (msg, table) {
-      var el = com.messageSummary(app, msg, { mustRender: true, full: true })
-      el.onclick = navtoMsg
-      table.appendChild(el)
-
-      if (msg.related) {
-        var subtable = h('table.related')
-        var td = h('td', subtable)
-        td.setAttribute('colspan', 2)
-        table.appendChild(h('tr', h('td'), td))
-        msg.related.forEach(function (submsg) {
-          add(submsg, subtable)
-        })
-      }
-    }
-    app.ssb.relatedMessages({ id: msg.key }, function (err, msg) {
-      (msg.related || []).forEach(function (submsg) {
-        add(submsg, relatedTable)
-      })
-    })
-  }
-
-  // WARNING: GLOBAL SIDE EFFECT
-  // TODO: find a way to catch this event without making global behavior changes
-  // set the page's keydown behavior to scroll the message feed
-  var UP = 38
-  var DOWN = 40
-  var ENTER = 13
-  document.body.onkeydown = function (e) {
-    var sel = document.querySelector('.selected')
-    if (!sel)
-      return
-
-    if (e.ctrlKey || e.altKey)
-      return
-
-    var kc = e.charCode || e.keyCode
-    kc = ({
-      74: DOWN, //j
-      75: UP //k
-    })[kc] || kc
-
-    if (kc == UP || kc == DOWN) {
-      var n = (e.shiftKey) ? 5 : 1
-      for (var i=0; i < n; i++) {
-        if (kc === UP && sel.previousSibling) {
-          sel = sel.previousSibling
-          doSelectMsg(sel)
-        }
-        if (kc === DOWN && sel.nextSibling) {
-          sel = sel.nextSibling
-          while (sel && sel.classList.contains('preview'))
-            sel = sel.nextSibling
-          doSelectMsg(sel)
-        }
-      }
-      e.preventDefault()
-    }
-    if (kc === ENTER) {
-      var msg = msgFor(sel)
-      if (msg)
-        window.open('#/msg/'+msg.key)
-    }
+      window.location.hash = '#/msg/'+key
   }
 
   function onscroll (e) {
