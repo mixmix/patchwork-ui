@@ -70,14 +70,14 @@ module.exports = function (app, msg, opts) {
 
   return h('.message-preview',
     h('.value',
-      h('ul.headers.list-inline',
+      /*h('ul.headers.list-inline',
         h('li', com.a('#/msg/'+msg.key, com.icon('new-window'), { target: '_blank' })),
         (opts && opts.selectBtn) ?
           h('li', com.a('#/', com.icon('arrow-right'))) :
           '',
         // h('li', h('small', 'by '), com.userlink(msg.value.author, app.names[msg.value.author]), com.nameConfidence(msg.value.author, app)),
         h('li', h('small', 'type '), com.a('#/', msg.value.content.type)),
-        h('li', h('small', 'from '), com.a('#/', u.prettydate(new Date(msg.value.timestamp), true), { title: 'View message thread' }))),
+        h('li', h('small', 'from '), com.a('#/', u.prettydate(new Date(msg.value.timestamp), true), { title: 'View message thread' }))),*/
       content),
     outrefs)
 }

@@ -62,10 +62,10 @@ module.exports = function (app) {
       if (err) {}// :TODO:
       else if (msg)
         backCursor = { key: app.page.qs.start, value: msg }
-      fetchBack(30, fetchFront.bind(null, 30, doSelectMsg))
+      fetchBack(30, fetchFront.bind(null, 30))
     })
   } else
-    fetchBack(30, doSelectMsg)
+    fetchBack(30)
 
   function fetchFront (amt, cb) {
     var opts = { reverse: false }
@@ -203,26 +203,32 @@ module.exports = function (app) {
   }
 
   function doSelectMsg(el, msg) {
-    if (!el)
-      el = feedTBody.firstChild
-
-    ;[].forEach.call(document.querySelectorAll('.preview'), function (el)  { el.parentNode.removeChild(el) })
-    ;[].forEach.call(document.querySelectorAll('.selected'), function (el) { el.classList.remove('selected') })
-    el.classList.toggle('selected')
+    if (!msg)
+      msg = msgFor(el)
 
     // scroll to msg if needed
     if (el.offsetTop < feedContainer.scrollTop || (el.offsetTop - feedContainer.scrollTop) > feedContainer.offsetHeight)
       feedContainer.scrollTop = el.offsetTop
 
-    if (!msg)
-      msg = msgFor(el)
+    // free toggle:
+    el.classList.toggle('selected')
+    if (!el.classList.contains('selected')) {
+      if (el.nextSibling.classList.contains('preview'))
+        el.parentNode.removeChild(el.nextSibling)
+      return
+    }
+
+    // only one at a time:
+    // ;[].forEach.call(document.querySelectorAll('.preview'), function (el)  { el.parentNode.removeChild(el) })
+    // ;[].forEach.call(document.querySelectorAll('.selected'), function (el) { el.classList.remove('selected') })
+    // el.classList.toggle('selected')
 
     var inboundRelated = h('table.related')
-    var td = h('td', com.messagePreview(app, msg), inboundRelated)
-    td.setAttribute('colspan', 2)
-    var previewContainer = h('tr.preview', h('td'), td)
+    var td = h('td', com.messagePreview(app, msg))
+    td.setAttribute('colspan', 3)
+    var previewContainer = h('tr.preview', td)
     feedTBody.insertBefore(previewContainer, el.nextSibling)
-    populateInboundRelatedTable(inboundRelated, app, msg)
+    // populateInboundRelatedTable(inboundRelated, app, msg)
   }
 
   function populateInboundRelatedTable(relatedTable, app, msg) {
