@@ -43,23 +43,27 @@ message.raw = function (app, msg, opts) {
   // turn message references into links
   json = json.replace(/\"msg\": \"([^\"]+)\"/g, function($0, $1) {
     if (opts && opts.textOnly)
-      return '"msg": "&ctdot;"'
+      return '"msg link": '
     return '"msg": "<a href="/#/msg/'+$1+'">'+$1+'</a>"'
   })
 
   // turn ext references into links
   json = json.replace(/\"ext\": \"([^\"]+)\"/g, function($0, $1) {
     if (opts && opts.textOnly)
-      return '"ext": "&ctdot;"'
+      return '"ext link": '
     return '"ext": "<a href="/ext/'+$1+'" target="_blank">'+$1+'</a>"'
   })
 
-  if (opts && opts.stripQuotes)
+  if (opts && opts.stripQuotes) {
     json = json.replace(/([^\\])"/g, function (_, s) { return s }).replace(/\\"/g, '"')
+    json = json.replace(/^{|}$/g, '')
+  }
 
   if (opts && opts.maxLength && json.length > opts.maxLength)
     json = json.slice(0, opts.maxLength-3) + '...'
 
+  if (opts && opts.textOnly)
+    return json
   return h('.raw', { innerHTML: json })
 }
 

@@ -39,6 +39,12 @@
     border-color: #ccc;
     background: #ddd;
   }
+  td:nth-child(4) {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 500px;
+  }
   td:nth-child(3), td:nth-child(5), td:nth-child(6) {
     white-space: nowrap;
     color: gray;    
@@ -72,5 +78,9 @@
       border-color: rgb(121, 18, 18);
       background: rgb(208, 8, 8);
     }
+  }
+
+  .raw {
+    padding-right: 1em;
   }
 }

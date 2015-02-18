@@ -100,11 +100,24 @@ module.exports = function (app, msg, opts) {
   var inboundLinksTd = h('td')
   var numExtLinks = mlib.getLinks(msg.value.content, { toext: true }).length
 
+  if (!content) {
+    var raw = com.message.raw(app, msg, { textOnly: true, maxLength: 150, stripQuotes: true })
+    content = raw.split(',').map(function (chunk) {
+      // this isnt a perfect alg but its good enough for now
+      var parts = chunk.split(':')
+      if (parts.length == 1)
+        return parts[0]
+      var key = parts[0]
+      var v = parts.slice(1).join(':')
+      return h('span.raw', h('small', key), ' ', v)
+    })
+  }
+
   var msgSummary = h('tr.message-summary'+(viz.cls?'.'+viz.cls:''), { 'data-msg': msg.key },
     h('td', com.userlink(msg.value.author, name), nameConfidence),
     h('td', viz.icon ? com.icon(viz.icon) : undefined),
     inboundLinksTd,
-    h('td', h('div', content || h('.content.text-muted', com.message.raw(app, msg, { textOnly: true, maxLength: 80, stripQuotes: true })))),
+    h('td', h('div', content)),
     h('td', (numExtLinks>0) ? [com.icon('paperclip'), ' ', numExtLinks] : ''),
     h('td', util.prettydate(new Date(msg.value.timestamp)))
   )

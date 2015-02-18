@@ -17,7 +17,9 @@ var knownMsgs = {
 function theFilterFn (msg) {
   var c = msg.value.content
   var l = mlib.getLinks(c, { tomsg: true })
-  return (c.type in knownMsgs) && l.length === 0
+  if (c.type == 'sys-stat' || msg.value.author == 'V/M3/mKqB30EbEZuYFfond07vdf3rSoc8LhrI9X6yYs=.blake2s') // just...for now
+    return false
+  return /*(c.type in knownMsgs) &&*/ l.length === 0
 }
 
 var mustRenderOpts = { mustRender: true }
