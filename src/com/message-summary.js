@@ -19,43 +19,48 @@ function getSummary (app, msg, opts) {
     return h('div', { innerHTML: mentions.post(markdown.block(str), app, msg) })
   }
 
+  var c = msg.value.content
   var preprocess = (opts && opts.full) ? function(v){return v} : shorten
   try {
     var s = ({
       post: function () { 
-        if (!msg.value.content.text) return
-        return ((opts && opts.full) ? md : shorten)(msg.value.content.text)
+        if (!c.text) return
+        if (opts && opts.full)
+          return h('div', user(app, msg.value.author), md(c.text))
+        return h('div', user(app, msg.value.author), h('div', shorten(c.text)))
       },
       advert: function () { 
-        if (!msg.value.content.text) return
-        return ((opts && opts.full) ? md : shorten)(msg.value.content.text)
+        if (!c.text) return
+        if (opts && opts.full)
+          return h('div', user(app, msg.value.author), md(c.text))
+        return h('div', user(app, msg.value.author), h('div', shorten(c.text)))
       },
       init: function () {
-        return ['New user: ', preprocess(app.names[msg.value.author] || msg.value.author)]
+        return ['New user: ', user(app, msg.value.author)]
       },
       name: function () {
-        var nameLinks = mlib.getLinks(msg.value.content, { tofeed: true, rel: 'names' })
+        var nameLinks = mlib.getLinks(c, { tofeed: true, rel: 'names' })
         if (nameLinks.length)
-          return nameLinks.map(function (l) { return [preprocess(app.names[l.feed] || l.feed), ' is ', preprocess(l.name)] })
-        return [preprocess(app.names[msg.value.author] || msg.value.author), ' is ', preprocess(msg.value.content.name)]
+          return nameLinks.map(function (l) { return [user(app, msg.value.author), ' says ', user(app, l.feed), ' is ', preprocess(l.name)] })
+        return [user(app, msg.value.author), ' is ', preprocess(c.name)]
       },
       follow: function () {
-        return mlib.getLinks(msg.value.content, { tofeed: true, rel: 'follows' })
-          .map(function (l) { return ['Followed ', preprocess(app.names[l.feed] || l.feed)] })
-          .concat(mlib.getLinks(msg.value.content, { tofeed: true, rel: 'unfollows' })
-            .map(function (l) { return ['Unfollowed ', preprocess(app.names[l.feed] || l.feed)] }))
+        return mlib.getLinks(c, { tofeed: true, rel: 'follows' })
+          .map(function (l) { return [user(app, msg.value.author), ' followed ', user(app, l.feed)] })
+          .concat(mlib.getLinks(c, { tofeed: true, rel: 'unfollows' })
+            .map(function (l) { return [user(app, msg.value.author), ' unfollowed ', user(app, l.feed)] }))
       },
       trust: function () { 
-        return mlib.getLinks(msg.value.content, { tofeed: true, rel: 'trusts' })
+        return mlib.getLinks(c, { tofeed: true, rel: 'trusts' })
           .map(function (l) {
             if (l.value > 0)
-              return ['Trusted ', preprocess(app.names[l.feed] || l.feed)]
+              return [user(app, msg.value.author), ' trusted ', user(app, l.feed)]
             if (l.value < 0)
-              return ['Flagged ', preprocess(app.names[l.feed] || l.feed)]
-            return 'Untrusted/Unflagged '+preprocess(app.names[l.feed] || l.feed)
+              return [user(app, msg.value.author), ' flagged ', user(app, l.feed)]
+            return [user(app, msg.value.author), ' untrusted/unflagged ', user(app, l.feed)]
           })
       }
-    })[msg.value.content.type]()
+    })[c.type]()
     if (!s || s.length == 0)
       s = false
     return s
@@ -94,15 +99,12 @@ module.exports = function (app, msg, opts) {
   var content = getSummary(app, msg, opts)
   var viz = getVisuals(app, msg, opts) || { cls: '', icon: 'cog' }
 
-  var name = app.names[msg.value.author] || util.shortString(msg.value.author)
-  var nameConfidence = com.nameConfidence(msg.value.author, app)
-
   var inboundLinksTd = h('td')
   var numExtLinks = mlib.getLinks(msg.value.content, { toext: true }).length
 
   if (!content) {
     var raw = com.message.raw(app, msg, { textOnly: true, maxLength: 150, stripQuotes: true })
-    content = raw.split(',').map(function (chunk) {
+    content = h('div', user(app, msg.value.author), h('div', raw.split(',').map(function (chunk) {
       // this isnt a perfect alg but its good enough for now
       var parts = chunk.split(':')
       if (parts.length == 1)
@@ -110,12 +112,12 @@ module.exports = function (app, msg, opts) {
       var key = parts[0]
       var v = parts.slice(1).join(':')
       return h('span.raw', h('small', key), ' ', v)
-    })
+    })))
   }
 
   var msgSummary = h('tr.message-summary'+(viz.cls?'.'+viz.cls:''), { 'data-msg': msg.key },
     h('td', viz.icon ? com.icon(viz.icon) : undefined),
-    h('td', com.userlink(msg.value.author, name), nameConfidence, h('div', content))
+    h('td', content)
     // h('td', com.userlink(msg.value.author, name), nameConfidence)
     // inboundLinksTd,
     // h('td', (numExtLinks>0) ? [com.icon('paperclip'), ' ', numExtLinks] : ''),
@@ -130,10 +132,9 @@ module.exports = function (app, msg, opts) {
   return msgSummary
 }
 
-function noHtmlLen (str) {
-  var entityLen = 0
-  str.replace(/<.*>/g, function($0) {
-    entityLen += $0.length
-  })
-  return str.length - entityLen
+
+function user (app, id) {
+  var name = app.names[id] || util.shortString(id)
+  var nameConfidence = com.nameConfidence(id, app)
+  return [com.userlink(id, name), nameConfidence]
 }
