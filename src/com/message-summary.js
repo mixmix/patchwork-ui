@@ -29,7 +29,7 @@ function getSummary (app, msg, opts) {
         var replyLink = fetchReplyLink(app, msg)
         if (opts && opts.full)
           return h('div', user(app, msg.value.author), replyLink, md(c.text))
-        return h('div', user(app, msg.value.author), replyLink, h('div', { innerHTML: mentions.post(u.escapePlain(shorten(c.text)), app, msg) }))
+        return h('div', user(app, msg.value.author), replyLink, h('div', { innerHTML: mentions.post(u.escapePlain(c.text), app, msg) }))
       },
       advert: function () { 
         if (!c.text) return
@@ -149,7 +149,7 @@ function userName (app, id) {
 }
 
 function file (link) {
-  var name = link.name || ''
+  var name = link.name || link.rel
   var details = (('size' in link) ? u.bytesHuman(link.size) : '') + ' ' + (link.type||'')
   return h('a', { href: '/ext/'+link.ext, target: '_blank', title: name +' '+details }, name, ' ', h('small', details))
 }
@@ -182,17 +182,17 @@ function prettyRaw (app, obj, path) {
     if (obj[k] && typeof obj[k] == 'object') {
       if (obj[k].rel) {
         if (obj[k].ext)
-          els.push(col(k, file(obj[k])))
+          els.push(col('', file(obj[k])))
         if (obj[k].msg)
           els.push(col(k, message(obj[k])))
         if (obj[k].feed)
           els.push(col(k, user(app, obj[k].feed)))
       } else
-        els.push(prettyRaw(app, obj[k], path+k))
+        els = els.concat(prettyRaw(app, obj[k], path+k))
     } else if (k == 'msg')
       els.push(col(k, message(obj)))
     else if (k == 'ext')
-      els.push(col(k, file(obj)))
+      els.push(col('', file(obj)))
     else if (k == 'feed')
       els.push(col(k, user(app, obj.feed)))
     else
