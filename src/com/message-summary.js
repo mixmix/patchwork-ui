@@ -29,7 +29,7 @@ function getSummary (app, msg, opts) {
         var replyLink = fetchReplyLink(app, msg)
         if (opts && opts.full)
           return h('div', user(app, msg.value.author), replyLink, md(c.text))
-        return h('div', user(app, msg.value.author), replyLink, h('div', shorten(c.text)))
+        return h('div', user(app, msg.value.author), replyLink, h('div', { innerHTML: mentions.post(u.escapePlain(shorten(c.text)), app, msg) }))
       },
       advert: function () { 
         if (!c.text) return
