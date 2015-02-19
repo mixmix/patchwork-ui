@@ -106,7 +106,7 @@ module.exports = function (app, msg, opts) {
   var numExtLinks = mlib.getLinks(msg.value.content, { toext: true }).length
 
   if (!content) {
-    var raw = prettyRaw(app, msg.value.content)
+    var raw = prettyRaw(app, msg.value.content).slice(0,5)
     content = h('div', user(app, msg.value.author), h('div', raw))
   }
 
@@ -172,7 +172,6 @@ function fetchReplyLink (app, msg) {
 }
 
 function prettyRaw (app, obj, path) {
-
   function col (k, v) {
     return h('span.pretty-raw', h('small', path+k), v)
   }
@@ -180,7 +179,6 @@ function prettyRaw (app, obj, path) {
   var els = []
   path = (path) ? path + '.' : ''
   for (var k in obj) {
-
     if (obj[k] && typeof obj[k] == 'object') {
       if (obj[k].rel) {
         if (obj[k].ext)
@@ -199,6 +197,8 @@ function prettyRaw (app, obj, path) {
       els.push(col(k, user(app, obj.feed)))
     else
       els.push(col(k, ''+obj[k]))
+
+
   }
 
   return els
