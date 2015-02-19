@@ -35,6 +35,9 @@ function getSummary (app, msg, opts) {
           return h('div', user(app, msg.value.author), md(c.text))
         return h('div', user(app, msg.value.author), h('div', shorten(c.text)))
       },
+      pub: function () {
+        return [user(app, msg.value.author), ' says there\'s a public peer at ', c.address]
+      },
       name: function () {
         var nameLinks = mlib.getLinks(c, { tofeed: true, rel: 'names' })
         if (nameLinks.length)
@@ -71,6 +74,7 @@ function getVisuals (app, msg, opts) {
       advert: function () { return { cls: 'advertmsg', icon: 'bullhorn' } },
       init:   function () { return { cls: 'initmsg', icon: 'off' } },
       name:   function () { return { cls: 'namemsg', icon: 'tag' } },
+      pub:    function () { return { cls: 'pubmsg', icon: 'cloud' } },
       follow: function () {
         if (mlib.getLinks(msg.value.content, { tofeed: true, rel: 'follows' }).length)
           return { cls: 'followmsg', icon: 'plus' }
@@ -83,7 +87,7 @@ function getVisuals (app, msg, opts) {
           return { cls: 'trustmsg', icon: 'lock' }
         if (l.value < 0)
           return { cls: 'flagmsg', icon: 'flag' }
-      },
+      }
     })[msg.value.content.type]()
   } catch (e) {}
 }
