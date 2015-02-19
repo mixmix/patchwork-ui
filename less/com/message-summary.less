@@ -68,6 +68,28 @@
     }
   }
 
+  .pretty-raw {
+    padding: 0 1em;
+    width: 175px;
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    border-right: 1px solid #ccc;
+    white-space: nowrap;
+
+    small {
+      padding-right: 0.5em;
+    }
+    a {
+//      color: @brand-primary;
+//      font-weight: normal;
+    }
+
+    &:last-child {
+      border-right: 0;
+    }
+  }
+
   .raw {
     padding: 0 1em;
     width: 175px;
@@ -75,9 +97,6 @@
     overflow: hidden;
     text-overflow: ellipsis;
     border-right: 1px solid #ccc;
-    &:first-child {
-      padding-left: 0;
-    }
     &:last-child {
       width: auto;
       border-right: 0;

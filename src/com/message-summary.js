@@ -3,7 +3,7 @@ var h = require('hyperscript')
 var pull = require('pull-stream')
 var mlib = require('ssb-msgs')
 var com = require('./index')
-var util = require('../lib/util')
+var u = require('../lib/util')
 var markdown = require('../lib/markdown')
 var mentions = require('../lib/mentions')
 
@@ -34,9 +34,6 @@ function getSummary (app, msg, opts) {
         if (opts && opts.full)
           return h('div', user(app, msg.value.author), md(c.text))
         return h('div', user(app, msg.value.author), h('div', shorten(c.text)))
-      },
-      init: function () {
-        return ['New user: ', user(app, msg.value.author)]
       },
       name: function () {
         var nameLinks = mlib.getLinks(c, { tofeed: true, rel: 'names' })
@@ -97,22 +94,14 @@ module.exports = function (app, msg, opts) {
   // markup
 
   var content = getSummary(app, msg, opts)
-  var viz = getVisuals(app, msg, opts) || { cls: '', icon: 'cog' }
+  var viz = getVisuals(app, msg, opts) || { cls: '', icon: 'envelope' }
 
   var inboundLinksTd = h('td')
   var numExtLinks = mlib.getLinks(msg.value.content, { toext: true }).length
 
   if (!content) {
-    var raw = com.message.raw(app, msg, { textOnly: true, maxLength: 150, stripQuotes: true })
-    content = h('div', user(app, msg.value.author), h('div', raw.split(',').map(function (chunk) {
-      // this isnt a perfect alg but its good enough for now
-      var parts = chunk.split(':')
-      if (parts.length == 1)
-        return parts[0]
-      var key = parts[0]
-      var v = parts.slice(1).join(':')
-      return h('span.raw', h('small', key), ' ', v)
-    })))
+    var raw = prettyRaw(app, msg.value.content)
+    content = h('div', user(app, msg.value.author), h('div', raw))
   }
 
   var msgSummary = h('tr.message-summary'+(viz.cls?'.'+viz.cls:''), { 'data-msg': msg.key },
@@ -133,14 +122,57 @@ module.exports = function (app, msg, opts) {
 }
 
 function ago (msg) {
-  var str = util.prettydate(new Date(msg.value.timestamp))
+  var str = u.prettydate(new Date(msg.value.timestamp))
   if (str === 'yesterday')
     return '1d'
   return str
 }
 
+function message (link) {
+  return com.a('#/msg/'+link.msg, link.rel)
+}
+
 function user (app, id) {
-  var name = app.names[id] || util.shortString(id)
+  var name = app.names[id] || u.shortString(id)
   var nameConfidence = com.nameConfidence(id, app)
   return [com.userlink(id, name), nameConfidence]
+}
+
+function file (link) {
+  var name = link.name || ''
+  var details = (('size' in link) ? u.bytesHuman(link.size) : '') + ' ' + (link.type||'')
+  return h('a', { href: '/ext/'+link.ext, target: '_blank', title: name +' '+details }, name, ' ', h('small', details))
+}
+
+function prettyRaw (app, obj, path) {
+
+  function col (k, v) {
+    return h('span.pretty-raw', h('small', path+k), v)
+  }
+
+  var els = []
+  path = (path) ? path + '.' : ''
+  for (var k in obj) {
+
+    if (obj[k] && typeof obj[k] == 'object') {
+      if (obj[k].rel) {
+        if (obj[k].ext)
+          els.push(col(k, file(obj[k])))
+        if (obj[k].msg)
+          els.push(col(k, message(obj[k])))
+        if (obj[k].feed)
+          els.push(col(k, user(app, obj[k].feed)))
+      } else
+        els.push(prettyRaw(app, obj[k], path+k))
+    } else if (k == 'msg')
+      els.push(col(k, message(obj)))
+    else if (k == 'ext')
+      els.push(col(k, file(obj)))
+    else if (k == 'feed')
+      els.push(col(k, user(app, obj.feed)))
+    else
+      els.push(col(k, ''+obj[k]))
+  }
+
+  return els
 }
