@@ -114,7 +114,7 @@ module.exports = function (app, msg, opts) {
     // h('td', com.userlink(msg.value.author, name), nameConfidence)
     // inboundLinksTd,
     // h('td', (numExtLinks>0) ? [com.icon('paperclip'), ' ', numExtLinks] : ''),
-    h('td', ago(msg))
+    h('td.text-muted', ago(msg))
   )
 
   app.ssb.phoenix.getThreadMeta(msg.key, function (err, meta) {
