@@ -10,7 +10,7 @@ var message =
 module.exports = function (app, msg, opts) {
   var content
   if (opts && opts.raw) {
-    content = messageRaw(app, msg)
+    content = h('table', com.prettyRaw.table(app, msg.value.content))
   } else {
     if (msg.value.content.type == 'post') {
       var md = msg.value.content.text
@@ -21,7 +21,7 @@ module.exports = function (app, msg, opts) {
     } else {
       if (!opts || !opts.mustRender)
         return ''
-      content = messageRaw(app, msg)
+      content = h('table', com.prettyRaw.table(app, msg.value.content))
     }
   }    
   return messageShell(app, msg, content, opts)
@@ -53,11 +53,6 @@ message.raw = function (app, msg, opts) {
       return '"ext link": '
     return '"ext": "<a href="/ext/'+$1+'" target="_blank">'+$1+'</a>"'
   })
-
-  if (opts && opts.stripQuotes) {
-    json = json.replace(/([^\\])"/g, function (_, s) { return s }).replace(/\\"/g, '"')
-    json = json.replace(/^{|}$/g, '')
-  }
 
   if (opts && opts.maxLength && json.length > opts.maxLength)
     json = json.slice(0, opts.maxLength-3) + '...'

@@ -34,6 +34,16 @@ exports.userlink = function (id, text, opts) {
   return h('span', a('#/profile/'+id, text, opts))
 }
 
+var user =
+exports.user = function (app, id) {
+  return [userlink(id, userName(app, id)), nameConfidence(id, app)]
+}
+
+var userName =
+exports.userName = function (app, id) {
+  return app.names[id] || u.shortString(id)
+}
+
 var userlinkThin =
 exports.userlinkThin = function (id, text, opts) {
   opts = opts || {}
@@ -148,6 +158,7 @@ exports.page = function (app, id, content) {
   return h('#page.container-fluid.'+id+'-page', content)
 }
 
+exports.prettyRaw = require('./pretty-raw')
 exports.addresses = require('./addresses')
 exports.advertForm = require('./advert-form')
 exports.adverts = require('./adverts')

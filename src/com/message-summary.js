@@ -28,38 +28,38 @@ function getSummary (app, msg, opts) {
         if (!c.text) return
         var replyLink = fetchReplyLink(app, msg)
         if (opts && opts.full)
-          return h('div', user(app, msg.value.author), replyLink, md(c.text))
-        return h('div', user(app, msg.value.author), replyLink, h('div', { innerHTML: mentions.post(u.escapePlain(c.text), app, msg) }))
+          return h('div', com.user(app, msg.value.author), replyLink, md(c.text))
+        return h('div', com.user(app, msg.value.author), replyLink, h('div', { innerHTML: mentions.post(u.escapePlain(c.text), app, msg) }))
       },
       advert: function () { 
         if (!c.text) return
         if (opts && opts.full)
-          return h('div', user(app, msg.value.author), md(c.text))
-        return h('div', user(app, msg.value.author), h('div', shorten(c.text)))
+          return h('div', com.user(app, msg.value.author), md(c.text))
+        return h('div', com.user(app, msg.value.author), h('div', shorten(c.text)))
       },
       pub: function () {
-        return [user(app, msg.value.author), ' says there\'s a public peer at ', c.address]
+        return [com.user(app, msg.value.author), ' says there\'s a public peer at ', c.address]
       },
       name: function () {
         var nameLinks = mlib.getLinks(c, { tofeed: true, rel: 'names' })
         if (nameLinks.length)
-          return nameLinks.map(function (l) { return [user(app, msg.value.author), ' says ', user(app, l.feed), ' is ', preprocess(l.name)] })
-        return [user(app, msg.value.author), ' is ', preprocess(c.name)]
+          return nameLinks.map(function (l) { return [com.user(app, msg.value.author), ' says ', com.user(app, l.feed), ' is ', preprocess(l.name)] })
+        return [com.user(app, msg.value.author), ' is ', preprocess(c.name)]
       },
       follow: function () {
         return mlib.getLinks(c, { tofeed: true, rel: 'follows' })
-          .map(function (l) { return [user(app, msg.value.author), ' followed ', user(app, l.feed)] })
+          .map(function (l) { return [com.user(app, msg.value.author), ' followed ', com.user(app, l.feed)] })
           .concat(mlib.getLinks(c, { tofeed: true, rel: 'unfollows' })
-            .map(function (l) { return [user(app, msg.value.author), ' unfollowed ', user(app, l.feed)] }))
+            .map(function (l) { return [com.user(app, msg.value.author), ' unfollowed ', com.user(app, l.feed)] }))
       },
       trust: function () { 
         return mlib.getLinks(c, { tofeed: true, rel: 'trusts' })
           .map(function (l) {
             if (l.value > 0)
-              return [user(app, msg.value.author), ' trusted ', user(app, l.feed)]
+              return [com.user(app, msg.value.author), ' trusted ', com.user(app, l.feed)]
             if (l.value < 0)
-              return [user(app, msg.value.author), ' flagged ', user(app, l.feed)]
-            return [user(app, msg.value.author), ' untrusted/unflagged ', user(app, l.feed)]
+              return [com.user(app, msg.value.author), ' flagged ', com.user(app, l.feed)]
+            return [com.user(app, msg.value.author), ' untrusted/unflagged ', com.user(app, l.feed)]
           })
       }
     })[c.type]()
@@ -106,8 +106,8 @@ module.exports = function (app, msg, opts) {
   var numExtLinks = mlib.getLinks(msg.value.content, { toext: true }).length
 
   if (!content) {
-    var raw = prettyRaw(app, msg.value.content).slice(0,5)
-    content = h('div', user(app, msg.value.author), h('div', raw))
+    var raw = com.prettyRaw(app, msg.value.content).slice(0,5)
+    content = h('div', com.user(app, msg.value.author), h('div', raw))
   }
 
   var msgSummary = h('tr.message-summary'+(viz.cls?'.'+viz.cls:''), { 'data-msg': msg.key },
@@ -134,26 +134,6 @@ function ago (msg) {
   return str
 }
 
-function message (link) {
-  return com.a('#/msg/'+link.msg, link.rel)
-}
-
-function user (app, id) {
-  var name = userName(app, id)
-  var nameConfidence = com.nameConfidence(id, app)
-  return [com.userlink(id, name), nameConfidence]
-}
-
-function userName (app, id) {
-  return name = app.names[id] || u.shortString(id)
-}
-
-function file (link) {
-  var name = link.name || link.rel
-  var details = (('size' in link) ? u.bytesHuman(link.size) : '') + ' ' + (link.type||'')
-  return h('a', { href: '/ext/'+link.ext, target: '_blank', title: name +' '+details }, name, ' ', h('small', details))
-}
-
 function fetchReplyLink (app, msg) {
   var link = mlib.getLinks(msg.value.content, { rel: 'replies-to', tomsg: true })[0]
   if (!link)
@@ -162,44 +142,11 @@ function fetchReplyLink (app, msg) {
   app.ssb.get(link.msg, function (err, msg2) {
     var str
     if (msg2) {
-      str = [shorten((msg2.content.type == 'post') ? msg2.content.text : msg2.content.type, 40) + ' by ' + userName(app, msg2.author)]
+      str = [shorten((msg2.content.type == 'post') ? msg2.content.text : msg2.content.type, 40) + ' by ' + com.userName(app, msg2.author)]
     } else {
       str = link.msg
     }
     span.appendChild(h('a.text-muted', { href: '#/msg/'+link.msg }, str))
   })
   return span
-}
-
-function prettyRaw (app, obj, path) {
-  function col (k, v) {
-    return h('span.pretty-raw', h('small', path+k), v)
-  }
-
-  var els = []
-  path = (path) ? path + '.' : ''
-  for (var k in obj) {
-    if (obj[k] && typeof obj[k] == 'object') {
-      if (obj[k].rel) {
-        if (obj[k].ext)
-          els.push(col('', file(obj[k])))
-        if (obj[k].msg)
-          els.push(col(k, message(obj[k])))
-        if (obj[k].feed)
-          els.push(col(k, user(app, obj[k].feed)))
-      } else
-        els = els.concat(prettyRaw(app, obj[k], path+k))
-    } else if (k == 'msg')
-      els.push(col(k, message(obj)))
-    else if (k == 'ext')
-      els.push(col('', file(obj)))
-    else if (k == 'feed')
-      els.push(col(k, user(app, obj.feed)))
-    else
-      els.push(col(k, ''+obj[k]))
-
-
-  }
-
-  return els
 }
