@@ -8,7 +8,7 @@ var markdown = require('../lib/markdown')
 var mentions = require('../lib/mentions')
 
 function shorten (str, n) {
-  n = n || 90
+  n = n || 120
   if (str.length > n)
     str = str.slice(0, n-3) + '...'
   return str
@@ -166,7 +166,7 @@ function fetchReplyLink (app, msg) {
     } else {
       str = link.msg
     }
-    span.appendChild(h('strong', com.a('#/msg/'+link.msg, str)))
+    span.appendChild(h('a.text-muted', { href: '#/msg/'+link.msg }, str))
   })
   return span
 }
