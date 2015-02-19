@@ -7,9 +7,10 @@ var u = require('../lib/util')
 var markdown = require('../lib/markdown')
 var mentions = require('../lib/mentions')
 
-function shorten (str) {
-  if (str.length > 90)
-    str = str.slice(0, 87) + '...'
+function shorten (str, n) {
+  n = n || 90
+  if (str.length > n)
+    str = str.slice(0, n-3) + '...'
   return str
 }
 
@@ -25,9 +26,10 @@ function getSummary (app, msg, opts) {
     var s = ({
       post: function () { 
         if (!c.text) return
+        var replyLink = fetchReplyLink(app, msg)
         if (opts && opts.full)
-          return h('div', user(app, msg.value.author), md(c.text))
-        return h('div', user(app, msg.value.author), h('div', shorten(c.text)))
+          return h('div', user(app, msg.value.author), replyLink, md(c.text))
+        return h('div', user(app, msg.value.author), replyLink, h('div', shorten(c.text)))
       },
       advert: function () { 
         if (!c.text) return
@@ -137,15 +139,36 @@ function message (link) {
 }
 
 function user (app, id) {
-  var name = app.names[id] || u.shortString(id)
+  var name = userName(app, id)
   var nameConfidence = com.nameConfidence(id, app)
   return [com.userlink(id, name), nameConfidence]
+}
+
+function userName (app, id) {
+  return name = app.names[id] || u.shortString(id)
 }
 
 function file (link) {
   var name = link.name || ''
   var details = (('size' in link) ? u.bytesHuman(link.size) : '') + ' ' + (link.type||'')
   return h('a', { href: '/ext/'+link.ext, target: '_blank', title: name +' '+details }, name, ' ', h('small', details))
+}
+
+function fetchReplyLink (app, msg) {
+  var link = mlib.getLinks(msg.value.content, { rel: 'replies-to', tomsg: true })[0]
+  if (!link)
+    return
+  var span = h('span', ' replied to ')
+  app.ssb.get(link.msg, function (err, msg2) {
+    var str
+    if (msg2) {
+      str = [shorten((msg2.content.type == 'post') ? msg2.content.text : msg2.content.type, 40) + ' by ' + userName(app, msg2.author)]
+    } else {
+      str = link.msg
+    }
+    span.appendChild(h('strong', com.a('#/msg/'+link.msg, str)))
+  })
+  return span
 }
 
 function prettyRaw (app, obj, path) {
