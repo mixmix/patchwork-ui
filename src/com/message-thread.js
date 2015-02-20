@@ -11,7 +11,7 @@ function getContent (app, msg) {
     return ({
       post: function () { 
         if (!c.text) return
-        return h('div.big-heading', { innerHTML: mentions.post(markdown.block(c.text), app, msg) })
+        return h('div', { innerHTML: mentions.post(markdown.block(c.text), app, msg) })
       }
     })[c.type]()
   } catch (e) { }
@@ -22,13 +22,14 @@ module.exports = function (app, thread, opts) {
   var content = getContent(app, thread) || h('table', com.prettyRaw.table(app, thread.value.content))
   var viz = com.messageVisuals(app, thread)
 
-  return h('.message-thread'+viz.cls,
-    h('ul.tools-top.list-inline',
-      h('li.type', com.icon(viz.icon)),
-      h('li', com.userlink(thread.value.author, app.names[thread.value.author]), com.nameConfidence(thread.value.author, app)),
-      h('li', com.a('#/', u.prettydate(new Date(thread.value.timestamp), true), { title: 'View message thread' }))),
-    h('.message', content),
-    h('ul.tools-bottom.list-inline', viewModes(thread, opts.viewMode)),
+  return h('.message-thread',
+    h(viz.cls,
+      h('ul.tools-top.list-inline',
+        h('li.type', com.icon(viz.icon)),
+        h('li', com.userlink(thread.value.author, app.names[thread.value.author]), com.nameConfidence(thread.value.author, app)),
+        h('li', com.a('#/', u.prettydate(new Date(thread.value.timestamp), true), { title: 'View message thread' }))),
+      h('.message', content),
+      h('ul.tools-bottom.list-inline', viewModes(thread, opts.viewMode))),
     replies(app, thread, opts))
 }
 
