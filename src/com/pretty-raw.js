@@ -9,13 +9,14 @@ function file (link) {
 }
 
 function message (link) {
-  return com.a('#/msg/'+link.msg, link.rel)
+  return h('a', { href: '#/msg/'+link.msg, innerHTML: u.escapePlain(link.rel)+' &raquo;' })
 }
 
 var prettyRaw =
 module.exports = function (app, obj, path) {
   function col (k, v) {
-    return h('span.pretty-raw', h('small', path+k), v)
+    k = (k) ? path+k : ''
+    return h('span.pretty-raw', h('small', k), v)
   }
 
   var els = []
@@ -24,7 +25,7 @@ module.exports = function (app, obj, path) {
     if (obj[k] && typeof obj[k] == 'object') {
       if (obj[k].rel) {
         if (obj[k].ext)
-          els.push(col(k, file(obj[k])))
+          els.push(col('', file(obj[k])))
         if (obj[k].msg)
           els.push(col('', message(obj[k])))
         if (obj[k].feed)
@@ -32,11 +33,13 @@ module.exports = function (app, obj, path) {
       } else
         els = els.concat(prettyRaw(app, obj[k], path+k))
     } else if (k == 'msg')
-      els.push(col(k, message(obj)))
+      els.push(col('', message(obj)))
     else if (k == 'ext')
       els.push(col('', file(obj)))
     else if (k == 'feed')
       els.push(col(k, com.user(app, obj.feed)))
+    else if (k == 'rel' && (obj.feed || obj.msg || obj.ext))
+      continue // rendered in the links
     else
       els.push(col(k, ''+obj[k]))
 
