@@ -5,13 +5,17 @@ var com = require('../com')
 var util = require('../lib/util')
 
 module.exports = function (app) {
+  // :TODO: find top parent first, then scroll to message
   app.ssb.relatedMessages({
-    id: app.page.param, //rel: 'replies-to',
-    count: true, parent: true
+    id: app.page.param,
+    count: true,
+    parent: true
   }, function (err, thread) {
     var content
     if (thread) {
-      content = com.messageThread(app, thread, { fullLength: true })
+      content = com.messageThread(app, thread)
+
+      // :TODO: remove
       var plink = mlib.getLinks(thread.value.content, { tomsg: true, rel: 'replies-to' })[0]
       if (plink) {
         app.ssb.get(plink.msg, function (err, parent) {

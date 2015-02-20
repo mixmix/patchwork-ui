@@ -1,7 +1,73 @@
 .message-thread {
-  background: #fff;
-  margin-bottom: 6px;
-  .message-replies {
-    padding-left: 35px;
+  margin: 0;
+
+  ul.list-inline {
+    margin: 0;
+
+    &.tools-bottom {
+      background: #eee;
+      li {
+        border-right: 1px solid #ccc;
+        padding: 0;
+        a {
+          color: #555;
+          display: inline-block;
+          padding: 0.5em 1em;
+          border-bottom: 2px solid transparent;
+          &:hover {
+            background: #ddd;
+            text-decoration: none;
+          }
+        }
+        &.selected a {
+          font-weight: bold;
+          border-bottom: 2px solid @brand-primary;
+        }
+      }
+    }
   }
+
+  .message {
+    margin: 1em;
+  }
+  .message-replies {
+    padding-left: 10px;
+  }
+
+  .type {
+    width: 30px;
+    color: #fff;
+    border-color: #555;
+    background: #808080;
+    border: 1px solid gray;
+    padding: 7px;
+  }
+  &.initmsg .type {
+    background: #333;
+    border-color: #000;
+  }
+  &.postmsg {
+    .type {
+      border-color: rgb(26, 102, 202);
+      background: #006EFF;
+    }
+  }
+  &.advertmsg .type, &.namemsg .type, &.pubmsg .type {
+    border-color: rgb(137, 30, 160);
+    background: #B611DA;
+  }
+  &.followmsg .type, &.trustmsg .type {
+    border-color: rgb(19, 115, 16);
+    background: #06AB01;
+  }
+  &.unfollowmsg .type, &.flagmsg .type {
+    border-color: rgb(121, 18, 18);
+    background: rgb(208, 8, 8); 
+  }
+
+  .big-heading {
+    font-size: 150%;
+    color: #555;
+  }
+
 }

@@ -69,60 +69,23 @@ function getSummary (app, msg, opts) {
   } catch (e) { return '' }
 }
 
-function getVisuals (app, msg, opts) {
-  try {
-    return ({
-      post:   function () { return { cls: 'postmsg', icon: 'comment' } },
-      advert: function () { return { cls: 'advertmsg', icon: 'bullhorn' } },
-      init:   function () { return { cls: 'initmsg', icon: 'off' } },
-      name:   function () { return { cls: 'namemsg', icon: 'tag' } },
-      pub:    function () { return { cls: 'pubmsg', icon: 'cloud' } },
-      follow: function () {
-        if (mlib.getLinks(msg.value.content, { tofeed: true, rel: 'follows' }).length)
-          return { cls: 'followmsg', icon: 'plus' }
-        if (mlib.getLinks(msg.value.content, { tofeed: true, rel: 'unfollows' }).length)
-          return { cls: 'unfollowmsg', icon: 'minus' }
-      },
-      trust: function () { 
-        var l = mlib.getLinks(msg.value.content, { tofeed: true, rel: 'trusts' })[0]
-        if (l.value > 0)
-          return { cls: 'trustmsg', icon: 'lock' }
-        if (l.value < 0)
-          return { cls: 'flagmsg', icon: 'flag' }
-      }
-    })[msg.value.content.type]()
-  } catch (e) {}
-}
-
 var attachmentOpts = { toext: true, rel: 'attachment' }
 module.exports = function (app, msg, opts) {
 
   // markup
 
   var content = getSummary(app, msg, opts)
-  var viz = getVisuals(app, msg, opts) || { cls: '', icon: 'envelope' }
-
-  var inboundLinksTd = h('td')
-  var numExtLinks = mlib.getLinks(msg.value.content, { toext: true }).length
-
   if (!content) {
     var raw = com.prettyRaw(app, msg.value.content).slice(0,5)
     content = h('div', com.user(app, msg.value.author), h('div', raw))
   }
 
-  var msgSummary = h('tr.message-summary'+(viz.cls?'.'+viz.cls:''), { 'data-msg': msg.key },
+  var viz = com.messageVisuals(app, msg)
+  var msgSummary = h('tr.message-summary'+viz.cls, { 'data-msg': msg.key },
     h('td', viz.icon ? com.icon(viz.icon) : undefined),
     h('td', content),
-    // h('td', com.userlink(msg.value.author, name), nameConfidence)
-    // inboundLinksTd,
-    // h('td', (numExtLinks>0) ? [com.icon('paperclip'), ' ', numExtLinks] : ''),
     h('td.text-muted', ago(msg))
   )
-
-  app.ssb.phoenix.getThreadMeta(msg.key, function (err, meta) {
-    if (meta && meta.numThreadReplies)
-      inboundLinksTd.appendChild(h('span', com.icon('option-vertical'), ' ', meta.numThreadReplies))
-  })
 
   return msgSummary
 }

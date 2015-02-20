@@ -1,3 +1,15 @@
+.message {
+  .pretty-raw {
+    td {
+      padding: 4px 8px;
+      border: 1px solid #ccc;
+    }
+    td:first-child {
+      padding-right: 1em;
+    }
+  }
+}
+
 .panel.message {
   box-shadow: none;
   margin: 0;
@@ -30,16 +42,6 @@
     }
     & > div > :last-child {
       margin-bottom: 0;
-    }
-
-    .pretty-raw {
-      td {
-        padding: 4px 8px;
-        border: 1px solid #ccc;
-      }
-      td:first-child {
-        padding-right: 1em;
-      }
     }
 
     .raw {

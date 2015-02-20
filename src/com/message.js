@@ -12,14 +12,9 @@ module.exports = function (app, msg, opts) {
   if (opts && opts.raw) {
     content = h('table', com.prettyRaw.table(app, msg.value.content))
   } else {
-    if (msg.value.content.type == 'post') {
-      var md = msg.value.content.text
-      if ((!opts || !opts.fullLength) && md.length >= 512) {
-        md = md.slice(0, 512) + '... [read more](#/msg/'+msg.key+')'
-      }
-      content = h('div', { innerHTML: mentions.post(markdown.block(md), app, msg) })
-    } else {
-      if (!opts || !opts.mustRender)
+    content = getContent(app, msg, opts)
+    if (!content) {
+      if (!(opts && opts.mustRender))
         return ''
       content = h('table', com.prettyRaw.table(app, msg.value.content))
     }
@@ -27,53 +22,22 @@ module.exports = function (app, msg, opts) {
   return messageShell(app, msg, content, opts)
 }
 
-var messageRaw =
-message.raw = function (app, msg, opts) {
-  var obj = (opts && opts.headers) ? msg.value : msg.value.content
-  var json = util.escapePlain(JSON.stringify(obj, null, (opts && opts.collapsed) ? null : 2))
-
-  // turn feed references into links
-  json = json.replace(/\"feed\": \"([^\"]+)\"/g, function($0, $1) {
-    var name = app.names[$1] || $1
-    if (opts && opts.textOnly)
-      return '"feed": "'+name+'"'
-    return '"feed": "<a class="user-link" href="/#/profile/'+$1+'">'+name+'</a>"'
-  })
-
-  // turn message references into links
-  json = json.replace(/\"msg\": \"([^\"]+)\"/g, function($0, $1) {
-    if (opts && opts.textOnly)
-      return '"msg link": '
-    return '"msg": "<a href="/#/msg/'+$1+'">'+$1+'</a>"'
-  })
-
-  // turn ext references into links
-  json = json.replace(/\"ext\": \"([^\"]+)\"/g, function($0, $1) {
-    if (opts && opts.textOnly)
-      return '"ext link": '
-    return '"ext": "<a href="/ext/'+$1+'" target="_blank">'+$1+'</a>"'
-  })
-
-  if (opts && opts.maxLength && json.length > opts.maxLength)
-    json = json.slice(0, opts.maxLength-3) + '...'
-
-  if (opts && opts.textOnly)
-    return json
-  return h('.raw', { innerHTML: json })
+function getContent (app, msg, opts) {
+  var c = msg.value.content
+  try {
+    return ({
+      post: function () { 
+        if (!c.text) return
+        return h('div', { innerHTML: mentions.post(markdown.block(c.text), app, msg) })
+      }
+    })[c.type]()
+  } catch (e) {}
 }
 
 var attachmentOpts = { toext: true, rel: 'attachment' }
-var messageShell =
-message.shell = function (app, msg, content, opts) {
+var messageShell = function (app, msg, content, opts) {
 
   // markup 
-
-  var repliesStr = ''
-  if (opts && opts.topmost) {
-    var nReplies = msg.numThreadReplies
-    if (nReplies == 1) repliesStr = ', 1 reply'
-    if (nReplies > 1) repliesStr = ', '+nReplies+' replies'
-  }
 
   var msgfooter
   var attachments = mlib.getLinks(msg.value.content, attachmentOpts)
@@ -93,7 +57,7 @@ message.shell = function (app, msg, content, opts) {
     h('p.in-response-to'), // may be populated by the message page
     h('.panel-heading',
       com.userlink(msg.value.author, app.names[msg.value.author]), com.nameConfidence(msg.value.author, app),
-      ' ', com.a('#/msg/'+msg.key, util.prettydate(new Date(msg.value.timestamp), true)+repliesStr, { title: 'View message thread' }),
+      ' ', com.a('#/msg/'+msg.key, util.prettydate(new Date(msg.value.timestamp), true), { title: 'View message thread' }),
       h('span', {innerHTML: ' &middot; '}), h('a', { title: 'Reply', href: '#', onclick: reply }, 'reply')
     ),
     msgbody,
