@@ -13,7 +13,9 @@ module.exports = function (app) {
   }, function (err, thread) {
     var content
     if (thread) {
-      content = com.messageThread(app, thread)
+      content = com.messageThread(app, thread, {
+        viewMode: app.page.qs.view || 'thread'
+      })
 
       // :TODO: remove
       var plink = mlib.getLinks(thread.value.content, { tomsg: true, rel: 'replies-to' })[0]

@@ -19,19 +19,27 @@ function getContent (app, msg) {
 
 var topOpts = { mustRender: true, topmost: true }
 module.exports = function (app, thread, opts) {
-  opts = { viewMode: 'thread' }
   var content = getContent(app, thread) || h('table', com.prettyRaw.table(app, thread.value.content))
   var viz = com.messageVisuals(app, thread)
+
   return h('.message-thread'+viz.cls,
     h('ul.tools-top.list-inline',
       h('li.type', com.icon(viz.icon)),
       h('li', com.userlink(thread.value.author, app.names[thread.value.author]), com.nameConfidence(thread.value.author, app)),
       h('li', com.a('#/', u.prettydate(new Date(thread.value.timestamp), true), { title: 'View message thread' }))),
     h('.message', content),
-    h('ul.tools-bottom.list-inline',
-      h('li.selected', com.a('#/', 'Thread ('+countForMode(thread, 'thread')+')')),
-      h('li', com.a('#/', 'All ('+thread.count+')'))),
+    h('ul.tools-bottom.list-inline', viewModes(thread, opts.viewMode)),
     replies(app, thread, opts))
+}
+
+function viewModes (thread, mode) {
+  var items = []
+  function item (k, v) {
+    items.push(h('li' + ((mode == k) ? '.selected' : ''), v))
+  }
+  item('thread', com.a('#/msg/'+thread.key+'?view=thread', 'Thread ('+countForMode(thread, 'thread')+')'))
+  item('all', com.a('#/msg/'+thread.key+'?view=all', 'All ('+thread.count+')'))
+  return items
 }
 
 var replyOpts = { mustRender: true }
