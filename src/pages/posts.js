@@ -45,8 +45,8 @@ module.exports = function (app) {
   feedTBody.onclick = navtoMsg
   feedContainer.onscroll = onscroll
   app.setPage('posts', h('.row',
-    h('.col-xs-2.col-md-1', com.sidenav(app)),
-    h('.col-xs-8.col-md-9', 
+    h('.col-xs-1', com.sidenav(app)),
+    h('.col-xs-9',
       // h('p#get-latest.hidden', h('button.btn.btn-primary.btn-block', { onclick: app.refreshPage }, 'Get Latest')),
       // h('input.search', { type: 'text', placeholder: 'Search' }),
       feedContainer
