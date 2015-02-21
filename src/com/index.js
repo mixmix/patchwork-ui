@@ -1,7 +1,7 @@
 'use strict'
 var h = require('hyperscript')
 var baseEmoji = require('base-emoji')
-var util = require('../lib/util')
+var u = require('../lib/util')
 
 var a =
 exports.a = function (href, text, opts) {
@@ -30,7 +30,7 @@ var userlink =
 exports.userlink = function (id, text, opts) {
   opts = opts || {}
   opts.className = (opts.className || '') + ' user-link'
-  text = text || util.shortString(id)
+  text = text || u.shortString(id)
   return h('span', a('#/profile/'+id, text, opts))
 }
 
@@ -76,17 +76,21 @@ exports.header = function (app) {
         h('li.hidden-xs', a('#/help', 'help')))))
 }
 
+function emojicon(name) {
+  return h('img', { src: '/img/emoji/'+name+'.png', alt: ':newspaper:', title: ':newspaper:', class: 'emoji', align: 'absmiddle', height: '20', width: '20' })
+}
+
 var sidenav =
 exports.sidenav = function (app) {
   var pages = [
   //[id, path, label],
-    ['posts', '', 'ssb'],
-    ['compose', 'compose', 'new post'],
-    ['inbox', 'inbox', 'inbox ('+app.unreadMessages+')'],
-    ['address-book', 'address-book', 'users'],
-    ['profile', 'profile/'+app.myid, app.names[app.myid] || 'profile'],
-    ['adverts', 'adverts', 'adverts'],
-    ['help', 'help', 'help']
+    ['posts', '', icon('globe')],
+    ['inbox', 'inbox', [icon('inbox'),' '+app.unreadMessages]],
+    ['compose', 'compose', icon('pencil')],
+    ['address-book', 'address-book', icon('book')],
+    ['profile', 'profile/'+app.myid, icon('user')], // app.names[app.myid] || 'profile'],
+    ['adverts', 'adverts', icon('bullhorn')],
+    ['help', 'help', icon('question-sign')]
   ]
 
   return h('.side-nav',
@@ -94,7 +98,7 @@ exports.sidenav = function (app) {
       if (page == '-')
         return h('hr')
       if (page[0] == app.page.id)
-        return h('p.side-nav-'+page[0], h('strong', a('#/'+page[1], page[2])))
+        return h('p.selected.side-nav-'+page[0], a('#/'+page[1], page[2]))
       return h('p.side-nav-'+page[0], a('#/'+page[1], page[2]))
     })
   )

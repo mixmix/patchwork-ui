@@ -55,10 +55,8 @@ function resizeControls() {
     var el = document.querySelector(sel)
     el.style.height = (window.innerHeight - el.offsetTop) + 'px'
   }
-  try {
-    rc('.message-feed-container')
-    rc('.message-preview-container')
-  } catch (e) {}
+  try { rc('.message-feed-container') } catch (e) {}
+  try { rc('.side-nav') } catch (e) {}
 }
 
 function onClick (app) {

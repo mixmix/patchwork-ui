@@ -71,23 +71,36 @@ html {
 }
 #page {
   padding: 0;
+  & > .row > div:nth-child(3) {
+    padding: 1em 2em;
+  }
 }
 .side-nav {
+  background: #333;
   white-space: nowrap;
-  margin-top: 2em;
   p {
     margin: 0;
     a {
       display: block;
-      padding: 1em;
-      border-bottom: 1px solid #eee;
+      padding: 2em 1em;
+      border-bottom: 1px solid #555;
+      font-weight: bold;
+      color: #eee;
       &:hover {
         text-decoration: none;
-        background: #eee;
+        color: #555;
       }
-      &:last-child {
-        border-bottom: 0;
+    }
+    &.selected {
+      a {
+        color: @brand-primary;
       }
+    }
+    &:first-child a {
+      padding-top: 4em;
+    }
+    &:last-child a {
+      border-bottom: 0;
     }
   }
 }
