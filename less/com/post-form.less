@@ -36,21 +36,18 @@
   }
   .post-form-preview {
     padding: 2em 2em 1.25em;
+    margin-bottom: 1em;
     border: 1px solid @input-border;
     border-top-style: dashed;
-    border-bottom: 0;
-    &::empty {
-      display: none;
+    &:empty {
+      padding: 0;
+      border-width: 0 0 1px;
     }
-
     & > :first-child {
       margin-top: 0;
     }
     & > :last-child {
       margin-bottom: 0;
-    }
-    &:empty {
-      display: none;
     }
   }
   .post-form-attachments {
@@ -59,7 +56,6 @@
     border-bottom-right-radius: @input-border-radius;
     padding: 0.9em 1em 0.9em;
     margin-bottom: 10px;
-    border: 1px solid @input-border;
     color: #555;
     font-size: 12px;
 
@@ -77,8 +73,8 @@
     .postbtn {
       position: absolute;
       top: 1px;
-      bottom: 1px;
       right: 1px;
+      height: 34px;
       width: 60px;
     }
   }
