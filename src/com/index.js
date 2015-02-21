@@ -81,12 +81,12 @@ exports.sidenav = function (app) {
   var pages = [
   //[id, path, label],
     ['posts', '', [icon('globe'), h('span', { style: 'padding-left: 2px' }, 'feed')]],
-    ['inbox', 'inbox', [icon('inbox'),'inbox ('+app.unreadMessages+')']],
-    ['compose', 'compose', [icon('pencil'), 'compose']],
-    ['address-book', 'address-book', [icon('book'), 'address book']],
-    ['profile', 'profile/'+app.myid, [icon('user'), app.names[app.myid] || 'profile']],
-    ['adverts', 'adverts', [icon('bullhorn'), 'adverts']],
-    ['help', 'help', [icon('question-sign'), 'help']]
+    ['inbox', 'inbox', 'inbox ('+app.unreadMessages+')'],
+    ['compose', 'compose', 'compose'],
+    ['address-book', 'address-book', 'users'],
+    ['profile', 'profile/'+app.myid, app.names[app.myid] || 'profile'],
+    ['adverts', 'adverts', 'adverts'],
+    ['help', 'help', 'help']
   ]
 
   return h('.side-nav',

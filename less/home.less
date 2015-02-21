@@ -80,33 +80,26 @@ html {
   top: 0;
   bottom: 0;
   width: 114px;
-  background: #333;
   white-space: nowrap;
-  box-shadow: inset -8px 0 8px rgba(0,0,0,0.25);
   p {
     margin: 0;
     a {
       display: block;
       padding: 1.5em 1em;
       font-weight: 100;
-      color: #aaa;
+      color: #555;
       .glyphicon {
-        color: #eee;      
+        color: #777;      
         font-size: 17px;
         line-height: 21px;
         display: block;
       }
       &:hover {
         text-decoration: none;
-        color: #aaa;
-        background: #444;
+        background: #eee;
       }
     }
-    &.selected {
-      a, a .glyphicon {
-        color: @brand-primary;
-      }
-      a {
+    &:first-child a {
       .glyphicon {
         font-size: 32px;
         line-height: 38px;
@@ -114,7 +107,10 @@ html {
       }
       padding-top: 30px;
       padding-bottom: 22px;
-      //padding-left: 35px;
+    }
+    &.selected {
+      a, a .glyphicon {
+        color: @brand-primary;
       }
     }
   }

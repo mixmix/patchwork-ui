@@ -48,10 +48,9 @@
     }
   }
 
-  .type {
-    width: 30px;
+  ul.list-inline li.type {
+    padding: 7px 12px;
     color: #fff;
-    background: #808080;
   }
   .message.top {
     margin: 1em;
@@ -76,19 +75,22 @@
       color: #555;
     }
   }
-  .advertmsg .type, &.namemsg .type, &.pubmsg .type {
+  .advertmsg .type, .namemsg .type, .pubmsg .type {
     border-color: rgb(137, 30, 160);
     background: #B611DA;
   }
-  .followmsg .type, &.trustmsg .type {
+  .followmsg .type, .trustmsg .type {
     border-color: rgb(19, 115, 16);
     background: #06AB01;
   }
-  .unfollowmsg .type, &.flagmsg .type {
+  .unfollowmsg .type, .flagmsg .type {
     border-color: rgb(121, 18, 18);
     background: rgb(208, 8, 8); 
   }
   .rawmsg {
+    .type {
+      background: #808080;
+    }
     .message {
       font-size: 125%;
       color: #555;
