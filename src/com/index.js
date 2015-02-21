@@ -79,18 +79,17 @@ exports.header = function (app) {
 var sidenav =
 exports.sidenav = function (app) {
   var pages = [
+  //[id, path, label],
+    ['posts', '', 'ssb'],
+    ['compose', 'compose', 'new post'],
     ['inbox', 'inbox', 'inbox ('+app.unreadMessages+')'],
     ['address-book', 'address-book', 'users'],
     ['profile', 'profile/'+app.myid, app.names[app.myid] || 'profile'],
     ['adverts', 'adverts', 'adverts'],
-    '-',
     ['help', 'help', 'help']
   ]
 
   return h('.side-nav',
-    h('p', a('#/', [icon('home'), ' ssb'])),
-    h('hr'),
-    h('p', h('a.btn.btn-primary.btn-strong', { href: '#/compose' }, 'new post')),
     pages.map(function (page) {
       if (page == '-')
         return h('hr')

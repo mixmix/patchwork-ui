@@ -74,6 +74,22 @@ html {
 }
 .side-nav {
   white-space: nowrap;
+  margin-top: 2em;
+  p {
+    margin: 0;
+    a {
+      display: block;
+      padding: 1em;
+      border-bottom: 1px solid #eee;
+      &:hover {
+        text-decoration: none;
+        background: #eee;
+      }
+      &:last-child {
+        border-bottom: 0;
+      }
+    }
+  }
 }
 .user-link {
   font-weight: bold;
@@ -86,24 +102,25 @@ html {
   font-family: @font-family-monospace;
 }
 .btn-primary.btn-strong {
-  color: #fff;
-  background: @brand-primary;
+  border: 1px solid @brand-primary;
 }
 .btn-success.btn-strong {
-  color: #fff;
-  background: @brand-success;
+  border: 1px solid @brand-success;
 }
 .btn-info.btn-strong {
-  color: #fff;
-  background: @brand-info;
+  border: 1px solid @brand-info;
 }
 .btn-warning.btn-strong {
-  color: #fff;
-  background: @brand-warning;
+  border: 1px solid @brand-warning;
 }
 .btn-danger.btn-strong {
-  color: #fff;
-  background: @brand-danger;
+  border: 1px solid @brand-danger;
+}
+.btn-action {
+  color: @brand-action;
+  &.btn-strong {
+    border: 1px solid @brand-action;
+  }
 }
 #app-status {
   position: fixed;

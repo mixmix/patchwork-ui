@@ -1,4 +1,6 @@
 .message-thread {
+  margin-top: 1em;
+
   ul.list-inline {
     margin: 0;
     a {
@@ -6,10 +8,11 @@
     }
     li {
       padding: 7px;
+      border-radius: 2px;
       &.button {
         padding: 0;
         a {
-          color: #555;
+          color: @brand-primary;
           display: inline-block;
           padding: 0.5em 1em;
           &:hover {
@@ -34,6 +37,7 @@
         padding: 0;
         a {
           border-bottom: 2px solid #aaa;
+          color: #555;
         }
         &.selected a {
           font-weight: bold;

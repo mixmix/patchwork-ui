@@ -18,27 +18,27 @@ module.exports = function (app, parent) {
 
   // markup
 
-  var preview = h('.preview')
+  var preview = h('.post-form-preview')
   var filesInput = h('input.hidden', { type: 'file', multiple: true, onchange: filesAdded })  
   var filesList = h('ul')
   var textarea = h('textarea', { name: 'text', placeholder: 'Compose your message', rows: 6, onkeyup: onPostTextChange })
   suggestBox(textarea, app.suggestOptions) // decorate with suggestbox 
-  var postBtn = h('button.btn.btn-primary.btn-strong.pull-right', { disabled: true }, 'Post')
+  var postBtn = h('button.postbtn.btn.btn-primary.btn-strong', { disabled: true }, 'Post')
 
   var form = h('form.post-form' + ((!!parent) ? '.reply-form' : ''), { onsubmit: post },
-    h('small.text-muted', 'All posts are public. Markdown, @-mentions, and emojis are supported.'),
+    h('p',
+      h('small.text-muted', 
+        'All posts are public. Markdown, @-mentions, and emojis are supported. ',
+        h('a', { href: '#/action/cancel', onclick: cancel }, 'Cancel'))),
     h('div',
       h('.post-form-textarea', textarea),
+      preview,
       h('.post-form-attachments',
         filesList,
         h('a', { href: '#', onclick: addFile }, 'Click here to add an attachment'),
+        postBtn,
         filesInput
       )
-    ),
-    h('p.post-form-btns', postBtn, h('button.btn.btn-primary', { onclick: cancel }, 'Cancel')),
-    h('.preview-wrapper.panel.panel-default',
-      h('.panel-heading', h('small', 'Preview:')),
-      h('.panel-body', preview)
     )
   )
 
@@ -53,7 +53,7 @@ module.exports = function (app, parent) {
   // handlers
 
   function onPostTextChange (e) {
-    preview.innerHTML = mentions.preview(markdown.block(textarea.value), namesList)
+    preview.innerHTML = (!!textarea.value) ? mentions.preview(markdown.block(textarea.value), namesList) : ''
     if (textarea.value.trim())
       enable()
     else

@@ -22,16 +22,29 @@ module.exports = function (app, thread, opts) {
   var content = getContent(app, thread) || h('table', com.prettyRaw.table(app, thread.value.content))
   var viz = com.messageVisuals(app, thread)
 
-  return h('.message-thread',
-    h(viz.cls,
-      h('ul.threadmeta.list-inline',
-        h('li.type', com.icon(viz.icon)),
-        h('li', com.userlink(thread.value.author, app.names[thread.value.author]), com.nameConfidence(thread.value.author, app)),
-        h('li', com.a('#/', u.prettydate(new Date(thread.value.timestamp), true), { title: 'View message thread' })),
-        h('li.button.pull-right', h('a', { href: '#' }, 'Reply'))),
-      h('.message.top', content),
-      h('ul.viewmode-select.list-inline', viewModes(thread, opts.viewMode))),
-    replies(app, thread, opts))
+  // markup
+
+  var threadInner = h(viz.cls,
+    h('ul.threadmeta.list-inline',
+      h('li.type', com.icon(viz.icon)),
+      h('li', com.userlink(thread.value.author, app.names[thread.value.author]), com.nameConfidence(thread.value.author, app)),
+      h('li', com.a('#/', u.prettydate(new Date(thread.value.timestamp), true), { title: 'View message thread' })),
+      h('li.button.pull-right', h('a.btn-primary.btn-strong', { href: '#', onclick: onreply }, 'Reply'))),
+    h('.message.top', content),
+    h('ul.viewmode-select.list-inline', viewModes(thread, opts.viewMode)))
+
+  return h('.message-thread', threadInner, replies(app, thread, opts))
+
+  // handlers
+
+  function onreply (e) {
+    e.preventDefault()
+
+    if (!threadInner.nextSibling || !threadInner.nextSibling.classList || !threadInner.nextSibling.classList.contains('reply-form')) {
+      var form = com.postForm(app, thread.key)
+      threadInner.parentNode.insertBefore(form, threadInner.nextSibling)
+    }
+  }
 }
 
 function viewModes (thread, mode) {
