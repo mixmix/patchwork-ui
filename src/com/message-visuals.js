@@ -1,3 +1,5 @@
+var mlib = require('ssb-msgs')
+
 module.exports = function getVisuals (app, msg) {
   try {
     return ({
