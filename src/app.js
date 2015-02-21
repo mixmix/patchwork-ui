@@ -56,7 +56,6 @@ function resizeControls() {
     el.style.height = (window.innerHeight - el.offsetTop) + 'px'
   }
   try { rc('.message-feed-container') } catch (e) {}
-  try { rc('.side-nav') } catch (e) {}
 }
 
 function onClick (app) {

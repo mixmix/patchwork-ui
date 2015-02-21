@@ -13,7 +13,6 @@
           display: inline-block;
           padding: 4px 10px;
           margin-top: 2px;
-          border-radius: 2px;
           &:hover {
             background: #ddd;
             text-decoration: none;
@@ -23,6 +22,9 @@
     }
 
     &.threadmeta {
+      .button a {
+        border-radius: 2px;
+      }
     }
 
     &.viewmode-select {
@@ -53,17 +55,13 @@
     background: #808080;
   }
   .message.top {
-    margin: 2em 1em;
+    margin: 1em;
   }
   .message-replies {
-    margin-left: 10px;
-    //border-left: 1px solid #ccc;
+    margin-left: 12px;
     .message {
-      margin: 0;
+      margin-left: 10px;
     }
-  }
-  & > .message-replies {
-    padding: 0 10px;
   }
 
   // message type styles
