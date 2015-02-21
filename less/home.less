@@ -82,29 +82,40 @@ html {
   width: 114px;
   background: #333;
   white-space: nowrap;
+  box-shadow: inset -8px 0 8px rgba(0,0,0,0.25);
   p {
     margin: 0;
     a {
       display: block;
-      padding: 2em 1em;
-      border-bottom: 1px solid #555;
-      font-weight: bold;
-      color: #eee;
+      padding: 1.5em 1em;
+      font-weight: 100;
+      color: #aaa;
+      .glyphicon {
+        color: #eee;      
+        font-size: 17px;
+        line-height: 21px;
+        display: block;
+      }
       &:hover {
         text-decoration: none;
-        color: #555;
+        color: #aaa;
+        background: #444;
       }
     }
     &.selected {
-      a {
+      a, a .glyphicon {
         color: @brand-primary;
       }
-    }
-    &:first-child a {
-      padding-top: 4em;
-    }
-    &:last-child a {
-      border-bottom: 0;
+      a {
+      .glyphicon {
+        font-size: 32px;
+        line-height: 38px;
+        display: block;
+      }
+      padding-top: 30px;
+      padding-bottom: 22px;
+      //padding-left: 35px;
+      }
     }
   }
 }

@@ -76,21 +76,17 @@ exports.header = function (app) {
         h('li.hidden-xs', a('#/help', 'help')))))
 }
 
-function emojicon(name) {
-  return h('img', { src: '/img/emoji/'+name+'.png', alt: ':newspaper:', title: ':newspaper:', class: 'emoji', align: 'absmiddle', height: '20', width: '20' })
-}
-
 var sidenav =
 exports.sidenav = function (app) {
   var pages = [
   //[id, path, label],
-    ['posts', '', icon('globe')],
-    ['inbox', 'inbox', [icon('inbox'),' '+app.unreadMessages]],
-    ['compose', 'compose', icon('pencil')],
-    ['address-book', 'address-book', icon('book')],
-    ['profile', 'profile/'+app.myid, icon('user')], // app.names[app.myid] || 'profile'],
-    ['adverts', 'adverts', icon('bullhorn')],
-    ['help', 'help', icon('question-sign')]
+    ['posts', '', [icon('globe'), h('span', { style: 'padding-left: 2px' }, 'feed')]],
+    ['inbox', 'inbox', [icon('inbox'),'inbox ('+app.unreadMessages+')']],
+    ['compose', 'compose', [icon('pencil'), 'compose']],
+    ['address-book', 'address-book', [icon('book'), 'address book']],
+    ['profile', 'profile/'+app.myid, [icon('user'), app.names[app.myid] || 'profile']],
+    ['adverts', 'adverts', [icon('bullhorn'), 'adverts']],
+    ['help', 'help', [icon('question-sign'), 'help']]
   ]
 
   return h('.side-nav',
