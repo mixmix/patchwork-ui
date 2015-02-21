@@ -53,7 +53,7 @@ function viewModes (thread, mode) {
     items.push(h('li.button' + ((mode == k) ? '.selected' : ''), v))
   }
   item('thread', com.a('#/msg/'+thread.key+'?view=thread', 'Thread ('+countForMode(thread, 'thread')+')'))
-  item('all', com.a('#/msg/'+thread.key+'?view=all', 'All ('+thread.count+')'))
+  item('all', com.a('#/msg/'+thread.key+'?view=all', 'All ('+(thread.count||0)+')'))
   return items
 }
 
