@@ -13,13 +13,13 @@ module.exports = function getVisuals (app, msg) {
           return { cls: '.followmsg', icon: 'plus' }
         if (mlib.getLinks(msg.value.content, { tofeed: true, rel: 'unfollows' }).length)
           return { cls: '.unfollowmsg', icon: 'minus' }
+        return { cls: '.rawmsg', icon: 'envelope' }
       },
       trust: function () { 
         var l = mlib.getLinks(msg.value.content, { tofeed: true, rel: 'trusts' })[0]
-        if (l.value > 0)
-          return { cls: '.trustmsg', icon: 'lock' }
         if (l.value < 0)
           return { cls: '.flagmsg', icon: 'flag' }
+        return { cls: '.trustmsg', icon: 'lock' }
       }
     })[msg.value.content.type]()
   } catch (e) {}

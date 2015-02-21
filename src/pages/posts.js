@@ -14,22 +14,44 @@ var knownMsgs = {
   init: true
 }
 
-function theFilterFn (msg) {
-  var c = msg.value.content
-  var l = mlib.getLinks(c, { tomsg: true })
-  if (c.type == 'sys-stat' || msg.value.author == 'V/M3/mKqB30EbEZuYFfond07vdf3rSoc8LhrI9X6yYs=.blake2s') // just...for now
-    return false
-  return true
-  return /*(c.type in knownMsgs) &&*/ l.length === 0
-}
-
 var mustRenderOpts = { mustRender: true }
-var filterFn = theFilterFn
 var msgs = []
 var feedTBody, feedContainer
 var frontCursor = null, backCursor = null
 var lastScrollTop = 0
+var lastQueryStr
 module.exports = function (app) {
+
+  var queryStr = app.page.qs.q || ''
+  if (lastQueryStr != queryStr) {
+    // new query, reset the feed
+    msgs.length = 0
+    frontCursor = backCursor = null
+    feedTBody = feedContainer = null
+    lastScrollTop = 0
+  }
+
+  function filterFn (msg) {
+    var c = msg.value.content
+
+    // :TODO: remove this
+    // this filter strips out some really noisey messages
+    // someday we'll have real ways to do this
+    // for now, this is good
+    if (c.type == 'sys-stat' || msg.value.author == 'V/M3/mKqB30EbEZuYFfond07vdf3rSoc8LhrI9X6yYs=.blake2s') // just...for now
+      return false
+
+    if (!queryStr)
+      return true
+
+    var author = app.names[msg.value.author] || msg.value.author
+    var regex = new RegExp(queryStr.replace(/\s/g, '|'))
+    if (regex.exec(author) || regex.exec(c.type))
+      return true
+    if ((c.type == 'post' || c.type == 'advert') && regex.exec(c.text))
+      return true
+    return false
+  }
 
   // markup
 
@@ -38,6 +60,7 @@ module.exports = function (app) {
     return com.messageSummary(app, msg, mustRenderOpts)
   }
  
+  var searchInput = h('input.search', { type: 'text', placeholder: 'Search', value: queryStr })
   if (!feedTBody) {
     feedTBody = makeUnselectable(h('tbody'))
     feedContainer = h('.message-feed-container', h('table.message-feed', feedTBody))
@@ -49,8 +72,7 @@ module.exports = function (app) {
     h('.col-xs-9',
       // h('p#get-latest.hidden', h('button.btn.btn-primary.btn-block', { onclick: app.refreshPage }, 'Get Latest')),
       // 
-      h('.message-feed-ctrls',
-        h('input.search', { type: 'text', placeholder: 'Search' })),
+      h('.message-feed-ctrls', h('form', { onsubmit: onsearch }, searchInput)),
       feedContainer
       //com.introhelp(app)
     ),
@@ -74,6 +96,10 @@ module.exports = function (app) {
 
     doFetch(opts, function (err, _msgs) {
       if (_msgs && _msgs.length) {
+        // nothing new? stop
+        if (frontCursor && frontCursor.key == _msgs[_msgs.length - 1].key)
+          return (cb && cb())
+
         // advance cursors
         frontCursor = _msgs[_msgs.length - 1]
         if (!backCursor)
@@ -112,6 +138,10 @@ module.exports = function (app) {
     
     doFetch(opts, function (err, _msgs) {
       if (_msgs && _msgs.length) {
+        // nothing new? stop
+        if (backCursor && backCursor.key == _msgs[_msgs.length - 1].key)
+          return (cb && cb())
+
         // advance cursors
         backCursor = _msgs[_msgs.length - 1]
         if (!frontCursor)
@@ -181,6 +211,11 @@ module.exports = function (app) {
     else if (feedContainer.scrollTop === 0) {
       fetchFront(30)
     }
+  }
+
+  function onsearch (e) {
+    e.preventDefault()
+    window.location.hash = '#/posts?q='+encodeURIComponent(searchInput.value)
   }
 }
 
