@@ -48,7 +48,9 @@ module.exports = function (app) {
     h('.col-xs-1', com.sidenav(app)),
     h('.col-xs-9',
       // h('p#get-latest.hidden', h('button.btn.btn-primary.btn-block', { onclick: app.refreshPage }, 'Get Latest')),
-      // h('input.search', { type: 'text', placeholder: 'Search' }),
+      // 
+      h('.message-feed-ctrls',
+        h('input.search', { type: 'text', placeholder: 'Search' })),
       feedContainer
       //com.introhelp(app)
     ),
