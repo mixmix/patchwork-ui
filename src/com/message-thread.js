@@ -29,7 +29,8 @@ module.exports = function (app, thread, opts) {
       h('li.type', com.icon(viz.icon)),
       h('li.button', h('a', { href: '#', onclick: onreply }, 'Reply')),
       h('li', com.userlink(thread.value.author, app.names[thread.value.author]), com.nameConfidence(thread.value.author, app)),
-      h('li', com.a('#/', u.prettydate(new Date(thread.value.timestamp), true), { title: 'View message thread' }))),
+      h('li', com.a('#/', u.prettydate(new Date(thread.value.timestamp), true), { title: 'View message thread' })),
+      h('li.in-response-to')), // may be populated by the message page
     h('.message.top', content),
     h('ul.viewmode-select.list-inline', viewModes(thread, opts.viewMode)))
 

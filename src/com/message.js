@@ -54,7 +54,6 @@ var messageShell = function (app, msg, content, opts) {
 
   var msgbody = h('.panel-body', content)
   var msgpanel = h('.panel.panel-default.message',
-    h('p.in-response-to'), // may be populated by the message page
     h('.panel-heading',
       com.userlink(msg.value.author, app.names[msg.value.author]), com.nameConfidence(msg.value.author, app),
       ' ', com.a('#/msg/'+msg.key, util.prettydate(new Date(msg.value.timestamp), true), { title: 'View message thread' }),

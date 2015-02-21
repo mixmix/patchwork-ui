@@ -5,7 +5,6 @@ var com = require('../com')
 var util = require('../lib/util')
 
 module.exports = function (app) {
-  // :TODO: find top parent first, then scroll to message
   app.ssb.relatedMessages({
     id: app.page.param,
     count: true,
@@ -25,13 +24,13 @@ module.exports = function (app) {
           if (parent) {
             var pauthor = (app.names[parent.author] || util.shortString(parent.author))
             if (parent.content.text)
-              summary = '^ ' + pauthor + ': "' + util.shortString(parent.content.text, 100) + '"'
+              summary = pauthor + ': "' + util.shortString(parent.content.text, 100) + '"'
             else
-              summary = '^ '+parent.content.type+' message by ' + pauthor
+              summary = parent.content.type+' message by ' + pauthor
           } else {
-            summary = '^ parent message not yet received (' + plink.msg + ')'
+            summary = 'parent message not yet received (' + plink.msg + ')'
           }
-          content.querySelector('.in-response-to').appendChild(com.a('#/msg/'+plink.msg, summary))
+          content.querySelector('.in-response-to').appendChild(com.a('#/msg/'+plink.msg, [com.icon('arrow-up'),' ',summary]))
         })
       }
     } else {
