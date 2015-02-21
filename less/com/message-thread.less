@@ -1,37 +1,43 @@
 .message-thread {
-  margin: 1em 0 3em;
-  border: 1px solid #bbb;
-
   ul.list-inline {
     margin: 0;
     a {
       color: #777;
     }
-
-    &.tools-top {
-      background: #eee;
-      border-bottom: 1px solid #aaa;
-    }
-
-    &.tools-bottom {
-      background: #eee;
-      border-top: 1px solid #aaa;
-      li {
-        border-right: 1px solid #ccc;
+    li {
+      padding: 7px;
+      &.button {
         padding: 0;
         a {
           color: #555;
           display: inline-block;
           padding: 0.5em 1em;
-          border-bottom: 2px solid transparent;
           &:hover {
             background: #ddd;
             text-decoration: none;
           }
         }
+      }
+    }
+
+    &.threadmeta {
+    }
+
+    &.viewmode-select {
+      display: inline-block;
+      margin-bottom: 1em;
+      li {
+        margin-right: 2px;
+        &:last-child {
+          border-right: 0;
+        }
+        padding: 0;
+        a {
+          border-bottom: 2px solid #aaa;
+        }
         &.selected a {
           font-weight: bold;
-          border-bottom: 2px solid @brand-primary;
+          border-bottom: 2px solid #006EFF;
         }
       }
     }
@@ -40,19 +46,16 @@
   .type {
     width: 30px;
     color: #fff;
-    border-color: #555;
     background: #808080;
-    border-right: 1px solid gray;
-    padding: 7px;
   }
-  .message {
-    margin: 1em;
+  .message.top {
+    margin: 2em 1em;
   }
   .message-replies {
     margin-left: 10px;
-    border-left: 1px solid #ccc;
-    &:hover {
-      border-color: #888;
+    //border-left: 1px solid #ccc;
+    .message {
+      margin: 0;
     }
   }
 

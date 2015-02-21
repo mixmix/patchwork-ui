@@ -24,19 +24,20 @@ module.exports = function (app, thread, opts) {
 
   return h('.message-thread',
     h(viz.cls,
-      h('ul.tools-top.list-inline',
+      h('ul.threadmeta.list-inline',
         h('li.type', com.icon(viz.icon)),
         h('li', com.userlink(thread.value.author, app.names[thread.value.author]), com.nameConfidence(thread.value.author, app)),
-        h('li', com.a('#/', u.prettydate(new Date(thread.value.timestamp), true), { title: 'View message thread' }))),
-      h('.message', content),
-      h('ul.tools-bottom.list-inline', viewModes(thread, opts.viewMode))),
+        h('li', com.a('#/', u.prettydate(new Date(thread.value.timestamp), true), { title: 'View message thread' })),
+        h('li.button.pull-right', h('a', { href: '#' }, 'Reply'))),
+      h('.message.top', content),
+      h('ul.viewmode-select.list-inline', viewModes(thread, opts.viewMode))),
     replies(app, thread, opts))
 }
 
 function viewModes (thread, mode) {
   var items = []
   function item (k, v) {
-    items.push(h('li' + ((mode == k) ? '.selected' : ''), v))
+    items.push(h('li.button' + ((mode == k) ? '.selected' : ''), v))
   }
   item('thread', com.a('#/msg/'+thread.key+'?view=thread', 'Thread ('+countForMode(thread, 'thread')+')'))
   item('all', com.a('#/msg/'+thread.key+'?view=all', 'All ('+thread.count+')'))
