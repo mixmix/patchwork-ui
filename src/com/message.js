@@ -2,7 +2,7 @@
 var h = require('hyperscript')
 var mlib = require('ssb-msgs')
 var com = require('./index')
-var util = require('../lib/util')
+var u = require('../lib/util')
 var markdown = require('../lib/markdown')
 var mentions = require('../lib/mentions')
 
@@ -28,39 +28,35 @@ function getContent (app, msg, opts) {
     return ({
       post: function () { 
         if (!c.text) return
-        return h('div', { innerHTML: mentions.post(markdown.block(c.text), app, msg) })
+        return h('div', h('div', { innerHTML: mentions.post(markdown.block(c.text), app, msg) }), getAttachments(app, msg))
       }
     })[c.type]()
-  } catch (e) {}
+  } catch (e) { console.log(e) }
 }
 
-var attachmentOpts = { toext: true, rel: 'attachment' }
+function getAttachments (app, msg) {
+  return mlib.getLinks(msg.value.content, { toext: true }).map(function (ref) {
+    return [
+      h('a',
+        { href: '/ext/'+ref.ext, target: '_blank' },
+        com.icon('file'), ' ', ref.name, ' ', h('small', (('size' in ref) ? u.bytesHuman(ref.size) : ''), ' ', ref.type||'')),
+      h('br')
+    ]
+  })
+}
+
 var messageShell = function (app, msg, content, opts) {
 
   // markup 
-
-  var msgfooter
-  var attachments = mlib.getLinks(msg.value.content, attachmentOpts)
-  if (attachments.length) {
-    msgfooter = h('.panel-footer',
-      h('ul', attachments.map(function (link) {
-        var url = '#/ext/'+link.ext
-        if (link.name)
-          url += '?name='+encodeURIComponent(link.name)+'&msg='+encodeURIComponent(msg.key)
-        return h('li', h('a', { href: url }, link.name || util.shortString(link.ext)))
-      }))
-    )
-  }
 
   var msgbody = h('.panel-body', content)
   var msgpanel = h('.panel.panel-default.message',
     h('.panel-heading',
       com.userlink(msg.value.author, app.names[msg.value.author]), com.nameConfidence(msg.value.author, app),
-      ' ', com.a('#/msg/'+msg.key, util.prettydate(new Date(msg.value.timestamp), true), { title: 'View message thread' }),
+      ' ', com.a('#/msg/'+msg.key, u.prettydate(new Date(msg.value.timestamp), true), { title: 'View message thread' }),
       h('span', {innerHTML: ' &middot; '}), h('a', { title: 'Reply', href: '#', onclick: reply }, 'reply')
     ),
-    msgbody,
-    msgfooter
+    msgbody
   )
 
   // handlers

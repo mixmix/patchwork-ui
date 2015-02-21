@@ -1,5 +1,6 @@
 'use strict'
 var h = require('hyperscript')
+var mlib = require('ssb-msgs')
 var com = require('./index')
 var u = require('../lib/util')
 var markdown = require('../lib/markdown')
@@ -17,12 +18,39 @@ function getContent (app, msg) {
   } catch (e) { }
 }
 
+function getAttachments (app, msg) {
+  var imageTypes = {
+    png: 'image/png',
+    jpg: 'image/jpeg',
+    jpeg: 'image/jpeg',
+    gif: 'image/gif',
+    svg: 'image/svg+xml'  
+  }
+  function isImage (link) {
+    if (link.type && link.type.indexOf('image/') !== -1)
+      return true
+    if (link.name && imageTypes[link.name.split('.').slice(-1)[0].toLowerCase()])
+      return true
+  }
+
+  return mlib.getLinks(msg.value.content, { toext: true }).map(function (link) {
+    var label
+    if (isImage(link))
+      label = h('img', { src: '/ext/'+link.ext, title: link.name || link.ext })
+    else
+      label = [com.icon('file'), ' ', link.name, ' ', h('small', (('size' in link) ? u.bytesHuman(link.size) : ''), ' ', link.type||'')]
+    return h('a', { href: '/ext/'+link.ext, target: '_blank' }, label)
+  })
+}
+
 var topOpts = { mustRender: true, topmost: true }
 module.exports = function (app, thread, opts) {
-  var content = getContent(app, thread) || h('table', com.prettyRaw.table(app, thread.value.content))
-  var viz = com.messageVisuals(app, thread)
 
   // markup
+  
+  var content = getContent(app, thread) || h('table', com.prettyRaw.table(app, thread.value.content))
+  var viz = com.messageVisuals(app, thread)
+  var attachments = getAttachments(app, thread)
 
   var threadInner = h(viz.cls,
     h('ul.threadmeta.list-inline',
@@ -33,6 +61,7 @@ module.exports = function (app, thread, opts) {
       h('li.in-response-to'), // may be populated by the message page
       h('li.button.pull-right', h('a', { href: '/msg/'+thread.key, target: '_blank' }, 'as JSON'))),
     h('.message.top', content),
+    h('.attachments', attachments),
     h('ul.viewmode-select.list-inline', viewModes(thread, opts.viewMode)))
 
   return h('.message-thread', threadInner, replies(app, thread, opts))
