@@ -76,6 +76,15 @@
       right: 1px;
       height: 34px;
       width: 60px;
+
+      &::before {
+        content: attr(data-label);
+        position: absolute;
+        right: 70px;
+      }
+      &.error::before {
+        color: red;
+      }
     }
   }
 }
