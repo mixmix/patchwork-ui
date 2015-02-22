@@ -62,7 +62,7 @@ module.exports.table = function (app, obj, path) {
     } else if (k == 'msg')
       els.push(row(k, com.a('#/msg/'+obj.msg, obj.msg)))
     else if (k == 'ext')
-      els.push(row(k, com.a('#/ext/'+obj.ext, obj.ext, { target: '_blank' })))
+      els.push(row(k, com.a('/ext/'+obj.ext, obj.ext, { target: '_blank' })))
     else if (k == 'feed')
       els.push(row(k, com.user(app, obj.feed)))
     else

@@ -31,7 +31,7 @@ function getContent (app, msg, opts) {
         return h('div', h('div', { innerHTML: mentions.post(markdown.block(c.text), app, msg) }), getAttachments(app, msg))
       }
     })[c.type]()
-  } catch (e) { console.log(e) }
+  } catch (e) { }
 }
 
 function getAttachments (app, msg) {
