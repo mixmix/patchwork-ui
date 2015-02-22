@@ -45,3 +45,24 @@ exports.shortString = function(str, len) {
     return str.slice(0, len) + '...'
   return str
 }
+
+var dataSizes = ['kb', 'mb', 'gb', 'tb', 'pb', 'eb', 'zb', 'yb']
+exports.bytesHuman = function (nBytes) {
+  var str = nBytes + 'b'
+  for (var i = 0, nApprox = nBytes / 1024; nApprox > 1; nApprox /= 1024, i++) {
+    str = nApprox.toFixed(2) + dataSizes[i]
+  }
+  return str
+}
+
+// http://stackoverflow.com/a/23329386
+exports.stringByteLength = function (str) {
+  // returns the byte length of an utf8 string
+  var s = str.length;
+  for (var i=str.length-1; i>=0; i--) {
+    var code = str.charCodeAt(i);
+    if (code > 0x7f && code <= 0x7ff) s++;
+    else if (code > 0x7ff && code <= 0xffff) s+=2;
+  }
+  return s;
+}

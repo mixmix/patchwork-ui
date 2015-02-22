@@ -130,9 +130,9 @@ module.exports = function (app) {
     var joinDate = (profile) ? util.prettydate(new Date(profile.createdAt), true) : '-'
     var loadMoreBtn = (msgs.length === 30) ? h('p', h('button.btn.btn-primary.btn-block', { onclick: loadMore, style: 'margin-bottom: 24px' }, 'Load More')) : ''    
     app.setPage('profile', h('.row',
-      h('.col-xs-2.col-md-1', com.sidenav(app)),
+      h('.col-xs-1', com.sidenav(app)),
       h('.col-xs-8', nameTrustDlg, msgfeed, loadMoreBtn),
-      h('.col-xs-2.col-md-3.profile-controls',
+      h('.col-xs-3.profile-controls',
         h('.section',
           h('h2', name, com.nameConfidence(pid, app), renameBtn),
           h('p.text-muted', 'joined '+joinDate)

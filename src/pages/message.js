@@ -6,12 +6,17 @@ var util = require('../lib/util')
 
 module.exports = function (app) {
   app.ssb.relatedMessages({
-    id: app.page.param, rel: 'replies-to',
-    count: true, parent: true
+    id: app.page.param,
+    count: true,
+    parent: true
   }, function (err, thread) {
     var content
     if (thread) {
-      content = com.messageThread(app, thread, { fullLength: true })
+      content = com.messageThread(app, thread, {
+        viewMode: app.page.qs.view || 'thread'
+      })
+
+      // :TODO: remove
       var plink = mlib.getLinks(thread.value.content, { tomsg: true, rel: 'replies-to' })[0]
       if (plink) {
         app.ssb.get(plink.msg, function (err, parent) {
@@ -19,13 +24,13 @@ module.exports = function (app) {
           if (parent) {
             var pauthor = (app.names[parent.author] || util.shortString(parent.author))
             if (parent.content.text)
-              summary = '^ ' + pauthor + ': "' + util.shortString(parent.content.text, 100) + '"'
+              summary = pauthor + ': "' + util.shortString(parent.content.text, 100) + '"'
             else
-              summary = '^ '+parent.content.type+' message by ' + pauthor
+              summary = parent.content.type+' message by ' + pauthor
           } else {
-            summary = '^ parent message not yet received (' + plink.msg + ')'
+            summary = 'parent message not yet received (' + plink.msg + ')'
           }
-          content.querySelector('.in-response-to').appendChild(com.a('#/msg/'+plink.msg, summary))
+          content.querySelector('.in-response-to').appendChild(com.a('#/msg/'+plink.msg, [com.icon('arrow-up'),' ',summary]))
         })
       }
     } else {
@@ -33,9 +38,9 @@ module.exports = function (app) {
     }
 
     app.setPage('message', h('.row',
-      h('.col-xs-2.col-md-1', com.sidenav(app)),
-      h('.col-xs-10.col-md-9', content),
-      h('.hidden-xs.hidden-sm.col-md-2',
+      h('.col-xs-1', com.sidenav(app)),
+      h('.col-xs-9', content),
+      h('.col-xs-2',
         com.adverts(app),
         h('hr'),
         com.sidehelp(app)

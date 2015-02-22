@@ -1,7 +1,7 @@
 'use strict'
 var h = require('hyperscript')
 var baseEmoji = require('base-emoji')
-var util = require('../lib/util')
+var u = require('../lib/util')
 
 var a =
 exports.a = function (href, text, opts) {
@@ -30,8 +30,18 @@ var userlink =
 exports.userlink = function (id, text, opts) {
   opts = opts || {}
   opts.className = (opts.className || '') + ' user-link'
-  text = text || util.shortString(id)
+  text = text || u.shortString(id)
   return h('span', a('#/profile/'+id, text, opts))
+}
+
+var user =
+exports.user = function (app, id) {
+  return [userlink(id, userName(app, id)), nameConfidence(id, app)]
+}
+
+var userName =
+exports.userName = function (app, id) {
+  return app.names[id] || u.shortString(id)
 }
 
 var userlinkThin =
@@ -56,53 +66,38 @@ exports.toEmoji = function (buf, size) {
 
 var header =
 exports.header = function (app) {
-  return h('.nav.navbar.navbar-default', [
-    h('.container-fluid', [
-      h('.navbar-header', h('a.navbar-brand', { href: '#/' }, 'secure scuttlebutt')),
-      h('ul.nav.navbar-nav', [
-        h('li.hidden-xs', a('#/address-book', 'address book')),
-        h('li.hidden-xs', a('#/profile/' + app.myid, app.names[app.myid]))
-      ]),
-      h('ul.nav.navbar-nav.navbar-right', [
-        h('li.hidden-xs', a('#/help', 'help'))
-      ])
-    ])
-  ])
+  return h('.nav.navbar.navbar-default',
+    h('.container-fluid',
+      h('.navbar-header', h('a.navbar-brand', { href: '#/' }, 'ssb')),
+      h('.navbar-form.navbar-left',
+        h('.form-group',
+          h('input.form-control', { type: 'text', placeholder: 'Search' }))),
+      h('ul.nav.navbar-nav.navbar-right',
+        h('li.hidden-xs', a('#/help', 'help')))))
 }
 
 var sidenav =
 exports.sidenav = function (app) {
   var pages = [
-    ['posts', '', 'posts'],
+  //[id, path, label],
+    ['posts', '', [icon('globe'), h('span', { style: 'padding-left: 2px' }, 'feed')]],
     ['inbox', 'inbox', 'inbox ('+app.unreadMessages+')'],
-    ['adverts', 'adverts', 'adverts'],
-    '-',
-    ['feed', 'feed', 'data feed']
-  ]
-  var extraPages = [
-    ['address-book', 'address-book', 'addresses'],
+    ['compose', 'compose', 'compose'],
+    ['address-book', 'address-book', 'users'],
     ['profile', 'profile/'+app.myid, app.names[app.myid] || 'profile'],
+    ['adverts', 'adverts', 'adverts'],
     ['help', 'help', 'help']
   ]
 
-  return h('.side-nav', [
-    h('p', h('a.btn.btn-primary.btn-strong', { href: '#/compose' }, 'new post')),
-    h('hr'),
+  return h('.side-nav',
     pages.map(function (page) {
       if (page == '-')
         return h('hr')
       if (page[0] == app.page.id)
-        return h('p.side-nav-'+page[0], h('strong', a('#/'+page[1], page[2])))
+        return h('p.selected.side-nav-'+page[0], a('#/'+page[1], page[2]))
       return h('p.side-nav-'+page[0], a('#/'+page[1], page[2]))
-    }),
-    extraPages.map(function (page) {
-      if (page == '-')
-        return h('hr')
-      if (page[0] == app.page.id)
-        return h('p.visible-xs.side-nav-'+page[0], h('strong', a('#/'+page[1], page[2])))
-      return h('p.visible-xs.side-nav-'+page[0], a('#/'+page[1], page[2]))
     })
-  ])
+  )
 }
 
 var sidehelp =
@@ -159,17 +154,17 @@ exports.panel = function (title, content) {
 
 var page =
 exports.page = function (app, id, content) {
-  return h('div',
-    header(app),
-    h('#page.container-fluid.'+id+'-page', content)
-  )
+  return h('#page.container-fluid.'+id+'-page', content)
 }
 
+exports.prettyRaw = require('./pretty-raw')
 exports.addresses = require('./addresses')
 exports.advertForm = require('./advert-form')
 exports.adverts = require('./adverts')
+exports.messageVisuals = require('./message-visuals')
 exports.message = require('./message')
 exports.messageThread = require('./message-thread')
 exports.messageSummary = require('./message-summary')
+exports.messagePreview = require('./message-preview')
 exports.peers = require('./peers')
 exports.postForm = require('./post-form')

@@ -20,6 +20,7 @@ exports.init = function (server) {
       next()
     },
     require('./domain-auth')(server),
+    require('./msgs')(server),
     require('./blobs')(server),
     require('stack-assets-builder')({ enabled: server.config.dev, root: __dirname }),
     require('stack-assets-static')({ root: __dirname })

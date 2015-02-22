@@ -1,34 +1,101 @@
 .message-summary {
   font-family: @font-family-sans-serif;
-  background: #fafafa;
+  background: #fff;
   position: relative;
-  height: 36px;
+  height: 30px;
   overflow: hidden;
-  border: 1px dashed #ccc;
-  border-width: 1px 0;
   cursor: pointer;
-
-  &:first-child {
-    border-top-style: solid;
-  }
+  color: #555;
 
   td {
-    padding: 0 10px;
-    border: 1px dashed #ccc;    
-  }
-  td:first-child {
-    border-left-color: transparent;
-  }
-  td:nth-child(2), td:nth-child(3), td:nth-child(5) {
-    white-space: pre;
-  }
-  td:last-child {
-    border-right-color: transparent;
+    padding: 12px;
+    border-bottom: 1px solid #ccc;
   }
 
-  &:hover {
+  &.selected {
+    td:first-child {
+      border-left-width: 15px;
+    }
     td {
-      background: #eee;
+      background: #fafafa;  
+    }
+  }
+  td:nth-child(1) {
+    width: 30px;
+    color: #fff;
+    border-color: #555;
+    background: #808080;
+  }
+  td:nth-child(2) {
+    /*overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;*/
+  }
+  td:nth-child(3) {
+    text-align: right;
+    white-space: nowrap;
+    background: #fafafa;
+  }
+
+  &.initmsg td {
+    &:nth-child(1) {
+      background: #333;
+      border-color: #000;
+    }  
+  }
+  &.postmsg td {
+    &:nth-child(1) {
+      border-color: rgb(26, 102, 202);
+      background: #006EFF;
+    }
+  }
+  &.advertmsg td, &.namemsg td, &.pubmsg td {
+    &:nth-child(1) {
+      border-color: rgb(137, 30, 160);
+      background: #B611DA;
+    }
+  }
+  &.followmsg td, &.trustmsg td {
+    &:nth-child(1) {
+      border-color: rgb(19, 115, 16);
+      background: #06AB01;
+    }
+  }
+  &.unfollowmsg td, &.flagmsg td {
+    &:nth-child(1) {
+      border-color: rgb(121, 18, 18);
+      background: rgb(208, 8, 8);
+    }
+  }
+
+  .pretty-raw {
+    padding: 0 1em;
+    width: 175px;
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    border-right: 1px solid #ccc;
+    white-space: nowrap;
+
+    small {
+      padding-right: 0.5em;
+    }
+
+    &:last-child {
+      border-right: 0;
+    }
+  }
+
+  .raw {
+    padding: 0 1em;
+    width: 175px;
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    border-right: 1px solid #ccc;
+    &:last-child {
+      width: auto;
+      border-right: 0;
     }
   }
 }

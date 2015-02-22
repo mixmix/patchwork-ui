@@ -37,7 +37,7 @@
 // @import "bootstrap/list-group.less";
 @import "bootstrap/panels.less";
 // @import "bootstrap/responsive-embed.less";
-@import "bootstrap/wells.less";
+// @import "bootstrap/wells.less";
 @import "bootstrap/close.less";
 
 // Components w/ JavaScript
@@ -54,7 +54,10 @@
 @import "com/message.less";
 @import "com/message-thread.less";
 @import "com/message-summary.less";
+@import "com/message-preview.less";
+@import "com/message-feed.less";
 @import "com/ext.less";
+@import "com/search.less";
 @import "com/post-form.less";
 @import "com/adverts.less";
 @import "com/advert-form.less";
@@ -66,13 +69,49 @@
 html {
   overflow-y: scroll; // always show scrollbar
 }
-.side-nav {
-  white-space: nowrap;
+#page {
+  padding: 0;
+  & > .row > div:nth-child(3) {
+    padding: 10px 20px;
+  }
 }
-.navbar-nav {
-  li {
-    button {
-      margin: 10px 6px;
+.side-nav {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  width: 114px;
+  white-space: nowrap;
+  p {
+    margin: 0;
+    a {
+      display: block;
+      padding: 1.5em 1em;
+      font-weight: 100;
+      color: #555;
+      .glyphicon {
+        color: #777;      
+        font-size: 17px;
+        line-height: 21px;
+        display: block;
+      }
+      &:hover {
+        text-decoration: none;
+        background: #eee;
+      }
+    }
+    &:first-child a {
+      .glyphicon {
+        font-size: 32px;
+        line-height: 38px;
+        display: block;
+      }
+      padding-top: 30px;
+      padding-bottom: 22px;
+    }
+    &.selected {
+      a, a .glyphicon {
+        color: @brand-primary;
+      }
     }
   }
 }
@@ -87,24 +126,25 @@ html {
   font-family: @font-family-monospace;
 }
 .btn-primary.btn-strong {
-  color: #fff;
-  background: @brand-primary;
+  border: 1px solid @brand-primary;
 }
 .btn-success.btn-strong {
-  color: #fff;
-  background: @brand-success;
+  border: 1px solid @brand-success;
 }
 .btn-info.btn-strong {
-  color: #fff;
-  background: @brand-info;
+  border: 1px solid @brand-info;
 }
 .btn-warning.btn-strong {
-  color: #fff;
-  background: @brand-warning;
+  border: 1px solid @brand-warning;
 }
 .btn-danger.btn-strong {
-  color: #fff;
-  background: @brand-danger;
+  border: 1px solid @brand-danger;
+}
+.btn-action {
+  color: @brand-action;
+  &.btn-strong {
+    border: 1px solid @brand-action;
+  }
 }
 #app-status {
   position: fixed;

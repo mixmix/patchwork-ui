@@ -1,7 +1,115 @@
 .message-thread {
-  background: #fff;
-  margin-bottom: 6px;
+  ul.list-inline {
+    margin: 0;
+    a {
+      color: #777;
+    }
+    li {
+      padding: 7px;
+      &.button {
+        padding: 0;
+        a {
+          color: @brand-primary;
+          display: inline-block;
+          padding: 6px 19px;
+          &:hover {
+            background: #ddd;
+            text-decoration: none;
+          }
+        }
+      }
+      &.in-response-to {
+        a {
+          color: @brand-primary;
+        }
+      }
+    }
+
+    &.viewmode-select {
+      display: inline-block;
+      margin-bottom: 1em;
+      li {
+        margin-right: 2px;
+        &:last-child {
+          border-right: 0;
+        }
+        padding: 0;
+        a {
+          border-bottom: 2px solid #aaa;
+          color: #555;
+          padding: 6px 14px;
+        }
+        &.selected a {
+          font-weight: bold;
+          border-bottom: 2px solid #006EFF;
+        }
+      }
+    }
+  }
+
+  ul.list-inline li.type {
+    padding: 7px 12px;
+    color: #fff;
+  }
+  .message.top {
+    margin: 1em;
+  }
+  .attachments {
+    &:empty {
+      display: none;
+    }
+    padding: 0 2em 2em;
+    a {
+      margin-right: 1em;
+      img {
+        max-width: 200px;
+        max-height: 200px;
+      }
+    }
+  }
   .message-replies {
-    padding-left: 35px;
+    margin-left: 21px;
+  }
+
+  // message type styles
+
+  .initmsg .type {
+    background: #333;
+    border-color: #000;
+  }
+  .postmsg {
+    .type {
+      border-color: rgb(26, 102, 202);
+      background: #006EFF;
+    }
+    .message {
+      font-size: 150%;
+      color: #555;
+    }
+  }
+  .advertmsg .type, .namemsg .type, .pubmsg .type {
+    border-color: rgb(137, 30, 160);
+    background: #B611DA;
+  }
+  .followmsg .type, .trustmsg .type {
+    border-color: rgb(19, 115, 16);
+    background: #06AB01;
+  }
+  .unfollowmsg .type, .flagmsg .type {
+    border-color: rgb(121, 18, 18);
+    background: rgb(208, 8, 8); 
+  }
+  .rawmsg {
+    .type {
+      background: #808080;
+    }
+    .message {
+      font-size: 125%;
+      color: #555;
+
+      table {
+        width: 100%;
+      }
+    }
   }
 }

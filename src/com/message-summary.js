@@ -1,73 +1,115 @@
 'use strict'
 var h = require('hyperscript')
+var pull = require('pull-stream')
 var mlib = require('ssb-msgs')
 var com = require('./index')
-var util = require('../lib/util')
+var u = require('../lib/util')
 var markdown = require('../lib/markdown')
 var mentions = require('../lib/mentions')
+
+function shorten (str, n) {
+  n = n || 120
+  if (str.length > n)
+    str = str.slice(0, n-3) + '...'
+  return str
+}
+
+function getSummary (app, msg, opts) {
+
+  function md (str) {
+    return h('div', { innerHTML: mentions.post(markdown.block(str), app, msg) })
+  }
+
+  var c = msg.value.content
+  var preprocess = (opts && opts.full) ? function(v){return v} : shorten
+  try {
+    var s = ({
+      post: function () { 
+        if (!c.text) return
+        var replyLink = fetchReplyLink(app, msg)
+        if (opts && opts.full)
+          return h('div', com.user(app, msg.value.author), replyLink, md(c.text))
+        return h('div', com.user(app, msg.value.author), replyLink, h('div', { innerHTML: mentions.post(u.escapePlain(c.text), app, msg) }))
+      },
+      advert: function () { 
+        if (!c.text) return
+        if (opts && opts.full)
+          return h('div', com.user(app, msg.value.author), md(c.text))
+        return h('div', com.user(app, msg.value.author), h('div', shorten(c.text)))
+      },
+      pub: function () {
+        return [com.user(app, msg.value.author), ' says there\'s a public peer at ', c.address]
+      },
+      name: function () {
+        var nameLinks = mlib.getLinks(c, { tofeed: true, rel: 'names' })
+        if (nameLinks.length)
+          return nameLinks.map(function (l) { return [com.user(app, msg.value.author), ' says ', com.user(app, l.feed), ' is ', preprocess(l.name)] })
+        return [com.user(app, msg.value.author), ' is ', preprocess(c.name)]
+      },
+      follow: function () {
+        return mlib.getLinks(c, { tofeed: true, rel: 'follows' })
+          .map(function (l) { return [com.user(app, msg.value.author), ' followed ', com.user(app, l.feed)] })
+          .concat(mlib.getLinks(c, { tofeed: true, rel: 'unfollows' })
+            .map(function (l) { return [com.user(app, msg.value.author), ' unfollowed ', com.user(app, l.feed)] }))
+      },
+      trust: function () { 
+        return mlib.getLinks(c, { tofeed: true, rel: 'trusts' })
+          .map(function (l) {
+            if (l.value > 0)
+              return [com.user(app, msg.value.author), ' trusted ', com.user(app, l.feed)]
+            if (l.value < 0)
+              return [com.user(app, msg.value.author), ' flagged ', com.user(app, l.feed)]
+            return [com.user(app, msg.value.author), ' untrusted/unflagged ', com.user(app, l.feed)]
+          })
+      }
+    })[c.type]()
+    if (!s || s.length == 0)
+      s = false
+    return s
+  } catch (e) { return '' }
+}
 
 var attachmentOpts = { toext: true, rel: 'attachment' }
 module.exports = function (app, msg, opts) {
 
   // markup
 
-  var content, isRaw
-  if (msg.value.content.type == 'post') {
-    content = msg.value.content.text
-  } else {
-    if (!opts || !opts.mustRender)
-      return ''
-    content = JSON.stringify(msg.value.content)
-    isRaw = true
-  }
-  content = util.escapePlain(content)
-  content = markdown.emojis(content)
-  content = mentions.post(content, app, msg)
-
-  var len = noHtmlLen(content)
-  if (len > 60 || content.length > 512) {
-    content = content.slice(0, Math.min(60 + (content.length - len), 512)) + '...'
+  var content = getSummary(app, msg, opts)
+  if (!content) {
+    var raw = com.prettyRaw(app, msg.value.content).slice(0,5)
+    content = h('div', com.user(app, msg.value.author), h('div', raw))
   }
 
-  var replies = ''
-  if (msg.numThreadReplies)
-    replies = h('span', h('small.text-muted', com.icon('comment'), msg.numThreadReplies))
-
-  var attachments = ''
-  var numAttachments = mlib.getLinks(msg, attachmentOpts).length
-  if (numAttachments)
-    attachments = h('span', h('small.text-muted', com.icon('paperclip'), numAttachments))
-
-  var name = app.names[msg.value.author] || util.shortString(msg.value.author)
-  var nameConfidence = com.nameConfidence(msg.value.author, app)
-  return h('tr.message-summary', { onclick: openMsg },
-    h('td.text-right', com.userlink(msg.value.author, name), nameConfidence),
-    h('td', attachments),
-    h('td', replies),
-    h('td', h('span' + (isRaw ? '.monospace' : ''), { innerHTML: content })),
-    h('td.text-muted', util.prettydate(new Date(msg.value.timestamp), true))
+  var viz = com.messageVisuals(app, msg)
+  var msgSummary = h('tr.message-summary'+viz.cls, { 'data-msg': msg.key },
+    h('td', viz.icon ? com.icon(viz.icon) : undefined),
+    h('td', content),
+    h('td.text-muted', ago(msg))
   )
 
-  // handlers
-
-  function openMsg (e) {
-    // abort if clicked on a sub-link
-    var el = e.target
-    while (el) {
-      if (el.tagName == 'A')
-        return
-      el = el.parentNode
-    }
-
-    e.preventDefault()
-    window.location.hash = '#/msg/'+msg.key
-  }
+  return msgSummary
 }
 
-function noHtmlLen (str) {
-  var entityLen = 0
-  str.replace(/<.*>/g, function($0) {
-    entityLen += $0.length
+function ago (msg) {
+  var str = u.prettydate(new Date(msg.value.timestamp))
+  if (str === 'yesterday')
+    return '1d'
+  return str
+}
+
+function fetchReplyLink (app, msg) {
+  var link = mlib.getLinks(msg.value.content, { rel: 'replies-to', tomsg: true })[0]
+  if (!link)
+    return
+  var span = h('span', ' replied to ')
+  app.ssb.get(link.msg, function (err, msg2) {
+    var str
+    if (msg2) {
+      str = [shorten((msg2.content.type == 'post') ? msg2.content.text : msg2.content.type, 40) + ' by ' + com.userName(app, msg2.author)]
+    } else {
+      str = link.msg
+    }
+    span.appendChild(h('a.text-muted', { href: '#/msg/'+link.msg }, str))
   })
-  return str.length - entityLen
+  return span
 }

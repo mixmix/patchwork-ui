@@ -9,6 +9,8 @@ var util = require('../lib/util')
 var markdown = require('../lib/markdown')
 var mentions = require('../lib/mentions')
 
+var mentionRegex = /(\s|>|^)@([^\s^<]+)/g
+
 module.exports = function (app, parent) {
 
   var attachments = []
@@ -18,27 +20,27 @@ module.exports = function (app, parent) {
 
   // markup
 
-  var preview = h('.preview')
+  var preview = h('.post-form-preview')
   var filesInput = h('input.hidden', { type: 'file', multiple: true, onchange: filesAdded })  
   var filesList = h('ul')
   var textarea = h('textarea', { name: 'text', placeholder: 'Compose your message', rows: 6, onkeyup: onPostTextChange })
   suggestBox(textarea, app.suggestOptions) // decorate with suggestbox 
-  var postBtn = h('button.btn.btn-primary.btn-strong.pull-right', { disabled: true }, 'Post')
+  var postBtn = h('button.postbtn.btn.btn-primary.btn-strong', { disabled: true }, 'Post')
 
   var form = h('form.post-form' + ((!!parent) ? '.reply-form' : ''), { onsubmit: post },
-    h('small.text-muted', 'All posts are public. Markdown, @-mentions, and emojis are supported.'),
+    h('p',
+      h('small.text-muted', 
+        'All posts are public. Markdown, @-mentions, and emojis are supported. ',
+        h('a', { href: '#/action/cancel', onclick: cancel }, 'Cancel'))),
     h('div',
       h('.post-form-textarea', textarea),
+      preview,
       h('.post-form-attachments',
         filesList,
         h('a', { href: '#', onclick: addFile }, 'Click here to add an attachment'),
+        postBtn,
         filesInput
       )
-    ),
-    h('p.post-form-btns', postBtn, h('button.btn.btn-primary', { onclick: cancel }, 'Cancel')),
-    h('.preview-wrapper.panel.panel-default',
-      h('.panel-heading', h('small', 'Preview:')),
-      h('.panel-body', preview)
     )
   )
 
@@ -53,7 +55,8 @@ module.exports = function (app, parent) {
   // handlers
 
   function onPostTextChange (e) {
-    preview.innerHTML = mentions.preview(markdown.block(textarea.value), namesList)
+    updateSize()
+    preview.innerHTML = (!!textarea.value) ? mentions.preview(markdown.block(textarea.value), namesList) : ''
     if (textarea.value.trim())
       enable()
     else
@@ -77,9 +80,8 @@ module.exports = function (app, parent) {
       app.ssb.phoenix.getIdsByName(function (err, idsByName) {
 
         // collect any mentions
-        var mentions = [], mentionedIds = {}
-        var mentionRegex = /(\s|>|^)@([^\s^<]+)/g;
         var match
+        var mentions = [], mentionedIds = {}
         while ((match = mentionRegex.exec(text))) {
           var name = match[2]
           var id = idsByName[name]
@@ -203,6 +205,54 @@ module.exports = function (app, parent) {
     attachments.forEach(function (file, i) {
       filesList.appendChild(h('li', file.name, ' ', h('a', { href: '#', onclick: removeFile(i) }, 'remove')))
     })
+    updateSize()
+  }
+
+  // :TODO: write tests for this alg
+  var headerSizeEstimate = 314
+  // sizeof:
+  //{"previous":"vLpc/PFs4J2PV4193DfK6MPq5FB+D2X91gRiS21lvxc=.blake2s","author":"2K5koZGmdq3F7K2162zN8nGn0mwFPsR69MxYe7U2ags=.blake2s","sequence":3,"timestamp":1424580609014,"hash":"blake2s","content":,"signature":"ftMwWwA2QvfVCC2Vtaje1SYHyP4hYX0Tzt1i/J+Ato2vW28J0Gzf3kcYa/scoQP6j7MBgkCCqpBcXoXC49MhHg==.blake2s.k256"}
+  var fakeFeed = 'kIetR4xx26Q2M62vG0tNrptJDFnxP0SexLHaOIkyy08=.blake2s'
+  var fakeMsg  = 'u9JIdDDHXO8Tx9WuMkMBUU6kepaRwCMmnwBufWcEUp0=.blake2s'
+  var fakeExt  = 'tK8HVu8+WEpRoxJWnP4Bon6V6JRg0gXGZlxxKs3KkQI=.blake2s'
+  function estimateSize () {
+    var text = textarea.value
+
+    // collect files
+    var extLinks = attachments.map(function (file) {
+      return { rel: 'attachment', ext: fakeExt, name: file.name, size: file.size }
+    })
+
+    // collect mentions
+    var match
+    var mentions = [], mentionedIds = {}
+    while ((match = mentionRegex.exec(text))) {
+      var name = match[2]
+      
+      if (mentionedIds[name])
+        continue
+      mentionedIds[name] = true
+
+      if (schemas.isHash(name))
+        mentions.push({ feed: fakeFeed, rel: 'mentions' })        
+      else
+        mentions.push({ feed: fakeFeed, rel: 'mentions', name: name })  
+    }
+
+    // post
+    var post = (parent) ? schemas.schemas.replyPost(text, null, parent) : schemas.schemas.post(text)
+    if (mentions.length) post.mentions = mentions
+    if (extLinks.length) post.attachments = extLinks
+
+    return JSON.stringify(post).length + headerSizeEstimate
+  }
+
+  // 700b is roughly how big we can let it be before the header hits the 1kb limit
+  function updateSize () {
+    var len = estimateSize() - headerSizeEstimate
+    postBtn.dataset.label = len + ' / 700'
+    if (len > 700) postBtn.classList.add('error')
+    else postBtn.classList.remove('error')
   }
 
   return form
