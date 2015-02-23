@@ -12,7 +12,7 @@ module.exports = function (app) {
   app.ssb.friends.all('trust', done())
   app.ssb.phoenix.getProfile(pid, done())
   var fetchOpts = { start: 0 }  
-  app.ssb.phoenix.getPostsBy(pid, fetchOpts, done())
+  app.ssb.createHistoryStream(pid, fetchOpts, done())
   done(function (err, datas) {
     var graphs = {
       follow: datas[0],
