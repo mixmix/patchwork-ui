@@ -16,9 +16,16 @@ ssbchan.on('connect', function() {
       loginBtn.setAttribute('disabled', true)
       logoutBtn.removeAttribute('disabled')
 
-      // :TODO: this should include a challenge for the server to sign, proving ownership of the keypair
+      // a method we should have perms for
       ssb.whoami(function(err, id) {
         console.log('whoami', err, id)
+      })
+      // methods we should not have perms for
+      ssb.getPublicKey(function (err, key) {
+        console.log('getPublicKey', err, key)
+      })
+      ssb.gossip.peers(function (err, peers) {
+        console.log('gossip.peers', err, peers)
       })
     })
   })
