@@ -20,7 +20,7 @@ module.exports = function (app, filterFn, feedState) {
  
   if (!feedState.tbody)
     feedState.tbody = makeUnselectable(h('tbody'))
-  feedContainer = h('.message-feed-container', h('table.message-feed', feedState.tbody))
+  feedContainer = h('.message-feed-container.full-height', h('table.message-feed', feedState.tbody))
 
   feedState.tbody.onclick = navtoMsg
   feedContainer.onscroll = onscroll

@@ -132,7 +132,7 @@ module.exports = function (app) {
     app.setPage('profile', h('.row',
       h('.col-xs-1', com.sidenav(app)),
       h('.col-xs-8', nameTrustDlg, msgfeed),
-      h('.col-xs-3.profile-controls',
+      h('.col-xs-3.profile-controls.full-height',
         h('.section',
           h('h2', name, com.nameConfidence(pid, app), renameBtn),
           h('p.text-muted', 'joined '+joinDate)
