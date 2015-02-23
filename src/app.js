@@ -52,10 +52,11 @@ module.exports = function (ssb) {
 
 function resizeControls() {
   function rc (sel) {
-    var el = document.querySelector(sel)
-    el.style.height = (window.innerHeight - el.offsetTop) + 'px'
+    var els = document.querySelectorAll(sel)
+    for (var i=0; i < els.length; i++)
+      els[i].style.height = (window.innerHeight - els[i].offsetTop) + 'px'
   }
-  try { rc('.message-feed-container') } catch (e) {}
+  try { rc('.full-height') } catch (e) {}
 }
 
 function onClick (app) {
