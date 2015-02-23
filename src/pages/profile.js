@@ -22,30 +22,9 @@ module.exports = function (app) {
     var profile = datas[2]
 
     // messages
-    // :TODO: no messages
     var msgfeed = com.messageFeed(app, function (msg) {
       return msg.value.author == pid
     })
-    /*var msgfeed
-    if (profile) {
-      if (msgs.length)
-        msgfeed = h('table.table.message-feed', msgs.map(function (msg) {
-          if (msg.value) return com.messageSummary(app, msg)
-        }))
-      else
-        msgfeed = h('div', { style: 'display: inline-block' }, com.panel('', 'No posts have been published by this user yet.'))
-    } else {
-      msgfeed = h('div', { style: 'display: inline-block' },
-        com.panel('',
-          h('div',
-            h('strong', 'No messages found for this user.'), h('br'),
-            ((!isFollowing) ? 
-              h('span', 'Follow this user to begin searching the network for their data.') :
-              h('span', 'Scuttlebutt is searching the network for this user.'))
-          )
-        )
-      )
-    }*/
 
     // name confidence controls
     var nameTrustDlg
