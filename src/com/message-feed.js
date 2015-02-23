@@ -24,7 +24,6 @@ module.exports = function (app, filterFn, feedState) {
 
   feedState.tbody.onclick = navtoMsg
   feedContainer.onscroll = onscroll
-  feedContainer.scrollTop = feedState.lastScrollTop
 
   // message fetch
 

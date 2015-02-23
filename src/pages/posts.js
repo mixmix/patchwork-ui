@@ -12,7 +12,6 @@ module.exports = function (app) {
   var queryStr = app.page.qs.q || ''
   if (!feedState || lastQueryStr != queryStr) {
     // new query, reset the feed
-    console.log('resetting feed', feedState, lastQueryStr, queryStr)
     feedState = com.messageFeed.makeStateObj()
   }
   lastQueryStr = queryStr
@@ -49,6 +48,7 @@ module.exports = function (app) {
       com.sidehelp(app)
     )
   ))
+  feed.scrollTop = feedState.lastScrollTop
 
   // handlers
 
