@@ -87,6 +87,11 @@ module.exports = function (app, msg, opts) {
     h('td.text-muted', ago(msg))
   )
 
+  app.readtimesDB.get(msg.key, function (err, ts) {
+    if (!err && ts)
+      msgSummary.classList.add('read')
+  })
+
   return msgSummary
 }
 

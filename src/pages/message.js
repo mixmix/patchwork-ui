@@ -13,10 +13,12 @@ module.exports = function (app) {
     var content
     if (thread) {
       content = com.messageThread(app, thread, {
-        viewMode: app.page.qs.view || 'thread'
+        viewMode: app.page.qs.view || 'thread',
+        onRender: function (msg) {
+          app.readtimesDB.put(msg.key, Date.now())
+        }
       })
 
-      // :TODO: remove
       var plink = mlib.getLinks(thread.value.content, { tomsg: true, rel: 'replies-to' })[0]
       if (plink) {
         app.ssb.get(plink.msg, function (err, parent) {
@@ -48,3 +50,4 @@ module.exports = function (app) {
     ))
   })
 }
+

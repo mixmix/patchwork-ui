@@ -52,6 +52,8 @@ module.exports = function (app, thread, opts) {
   var viz = com.messageVisuals(app, thread)
   var attachments = getAttachments(app, thread)
 
+  opts.onRender && opts.onRender(thread)
+
   var threadInner = h(viz.cls,
     h('ul.threadmeta.list-inline',
       h('li.type', com.icon(viz.icon)),
@@ -96,8 +98,13 @@ function replies (app, thread, opts) {
     var subreplies = replies(app, reply, opts)
     if (subreplies)
       r.unshift(subreplies)
+
     replyOpts.mustRender = !!subreplies || mustRender(reply, opts.viewMode)
-    r.unshift(com.message(app, reply, replyOpts))
+    var el = com.message(app, reply, replyOpts)
+    if (el) {
+      r.unshift(el)
+      opts.onRender && opts.onRender(reply)
+    }
   })
 
   if (r.length)
