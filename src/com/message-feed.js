@@ -22,11 +22,14 @@ module.exports = function (app, filterFn, feedState) {
     feedState.tbody = makeUnselectable(h('tbody'))
   else {
     // update message states
+    var stateObj = { read: false, subscribed: false }
     Array.prototype.forEach.call(feedState.tbody.querySelectorAll('tr'), function (el) {
       var key = el.dataset.msg
       if (!key) return
       app.accessTimesDb.get(key, function (err, ts) {
-        com.messageSummary.setRowState(el, ts)
+        stateObj.read = !!ts
+        stateObj.subscribed = !!app.subscriptions[key]
+        com.messageSummary.setRowState(el, stateObj)
       })
     })
   }
@@ -179,13 +182,13 @@ module.exports = function (app, filterFn, feedState) {
       if (accessTime) {
         app.accessTimesDb.del(key, function (err) {
           if (err) return console.error(err)
-          com.messageSummary.setRowState(rowEl, 0)
+          com.messageSummary.setRowState(rowEl, { read: false, subscribed: !!app.subscriptions[key] })
         })
       } else {
         var _accessTime = Date.now()
         app.accessTimesDb.put(key, _accessTime, function (err) {
           if (err) return console.error(err)
-          com.messageSummary.setRowState(rowEl, _accessTime)
+          com.messageSummary.setRowState(rowEl, { read: true, subscribed: !!app.subscriptions[key] })
         })
       }
     })

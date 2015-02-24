@@ -73,7 +73,7 @@ var attachmentOpts = { toext: true, rel: 'attachment' }
 module.exports = function (app, msg, opts) {
 
   app.accessTimesDb.get(msg.key, function (err, ts) {
-    setRowState(msgSummary, ts)
+    setRowState(msgSummary, { read: !!ts, subscribed: !!app.subscriptions[msg.key] })
   })
 
   // markup
@@ -96,14 +96,18 @@ module.exports = function (app, msg, opts) {
 }
 
 var setRowState =
-module.exports.setRowState = function (el, ts) {
-  if (ts) {
+module.exports.setRowState = function (el, opts) {
+  if (opts.read) {
     el.classList.add('read')
     el.querySelector('.read-toggle').innerText = 'Mark Unread'
   } else {
     el.classList.remove('read')
     el.querySelector('.read-toggle').innerText = 'Mark Read'      
   }
+  if (opts.subscribed)
+    el.classList.add('subscribed')
+  else
+    el.classList.remove('subscribed')
 }
 
 function ago (msg) {
