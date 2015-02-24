@@ -7,11 +7,14 @@ var lastQueryStr = ''
 module.exports = function (app) {
 
   var queryStr = app.page.qs.q || lastQueryStr
+  var myfeedOpts = { feed: app.myid }
   function filterFn (msg) {
     var c = msg.value.content
 
-    // links to the user?
-    if (mlib.getLinks(msg.value.content, { feed: app.myid }).length === 0)
+    var hasLinksToUser = (mlib.getLinks(c, myfeedOpts).length > 0)
+    var parentLink = mlib.getLinks(c, { rel: 'replies-to', msg: true })[0]
+    var isSubscribedToParent = parentLink && app.subscriptions[parentLink.msg]
+    if (!(hasLinksToUser || isSubscribedToParent))
       return false
 
     if (!queryStr)

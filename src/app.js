@@ -19,6 +19,7 @@ module.exports = function (ssb) {
     ssb: ssb,
     accessTimesDb: db.sublevel('access_times'),
     subscriptionsDb: db.sublevel('subscriptions'),
+    subscriptions: {}, // in-memory cache of subscriptions
     myid: null,
     names: null,
     nameTrustRanks: null,
@@ -32,8 +33,10 @@ module.exports = function (ssb) {
     suggestOptions: require('./lib/suggest-options'),
   }
 
- 
-var sub = db.sublevel('stuff')
+  // populate in-memory subscriptions cache
+  app.subscriptionsDb.createKeyStream().on('data', function (key) {
+    app.subscriptions[key] = true
+  })
 
   // page behaviors
 

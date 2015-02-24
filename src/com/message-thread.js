@@ -49,12 +49,6 @@ function getAttachments (app, msg) {
 var topOpts = { mustRender: true, topmost: true }
 module.exports = function (app, thread, opts) {
 
-  var subscribed = false
-  app.subscriptionsDb.get(thread.key, function (err, is) {
-    subscribed = !!is
-    setSubscribeState()
-  })
-
   // markup
   
   var content = getContent(app, thread) || h('table', com.prettyRaw.table(app, thread.value.content))
@@ -63,7 +57,7 @@ module.exports = function (app, thread, opts) {
 
   opts.onRender && opts.onRender(thread)
 
-  var subscribeBtn = h('a.btn.btn-primary.btn-strong', { href: '#', onclick: onsubscribe }, '+ Subscribe to Thread')
+  var subscribeBtn = h('a.btn.btn-primary.btn-strong', { href: '#', onclick: onsubscribe })
   var threadInner = h(viz.cls,
     h('div.in-response-to'), // may be populated by the message page
     h('ul.threadmeta.list-inline',
@@ -77,6 +71,7 @@ module.exports = function (app, thread, opts) {
     h('.attachments', attachments),
     h('ul.viewmode-select.list-inline', viewModes(thread, opts.viewMode)))
 
+  setSubscribeState()
   return h('.message-thread', threadInner, replies(app, thread, opts), h('p', subscribeBtn))
 
   // handlers
@@ -101,21 +96,21 @@ module.exports = function (app, thread, opts) {
   function onsubscribe (e) {
     e.preventDefault()
 
-    if (subscribed)
+    if (app.subscriptions[thread.key])
       app.subscriptionsDb.del(thread.key)
     else
       app.subscriptionsDb.put(thread.key, 1)
-    subscribed = !subscribed
+    app.subscriptions[thread.key] = !app.subscriptions[thread.key]
     setSubscribeState()
   }
 
   // ui state
 
   function setSubscribeState () {
-    if (subscribed) {
-      subscribeBtn.innerHTML = '&ndash; Unsubscribe from Thread'
+    if (app.subscriptions[thread.key]) {
+      subscribeBtn.innerHTML = '&ndash; Unsubscribe from Replies'
     } else {
-      subscribeBtn.innerText = '+ Subscribe to Thread'
+      subscribeBtn.innerText = '+ Subscribe to Replies'
     }
   }
 }
