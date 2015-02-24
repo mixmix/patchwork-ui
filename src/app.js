@@ -4,6 +4,8 @@ var multicb    = require('multicb')
 var router     = require('phoenix-router')
 var pull       = require('pull-stream')
 var schemas    = require('ssb-msg-schemas')
+var level      = require('level-js')
+var sublevel   = require('level-sublevel')
 var com        = require('./com')
 var pages      = require('./pages')
 var util       = require('./lib/util')
@@ -12,8 +14,10 @@ module.exports = function (ssb) {
 
   // master state object
 
+  var db = sublevel(level('phoenix'))
   var app = {
     ssb: ssb,
+    hasreaddb: db.sublevel('hasread'),
     myid: null,
     names: null,
     nameTrustRanks: null,
@@ -25,6 +29,9 @@ module.exports = function (ssb) {
     unreadMessages: 0,
     suggestOptions: require('./lib/suggest-options'),
   }
+
+ 
+var sub = db.sublevel('stuff')
 
   // page behaviors
 
