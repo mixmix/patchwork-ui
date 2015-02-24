@@ -18,6 +18,7 @@ module.exports = function (ssb) {
   var app = {
     ssb: ssb,
     accessTimesDb: db.sublevel('access_times'),
+    subscriptionsDb: db.sublevel('subscriptions'),
     myid: null,
     names: null,
     nameTrustRanks: null,
