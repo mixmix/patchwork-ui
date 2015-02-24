@@ -55,11 +55,12 @@ module.exports = function (app, thread, opts) {
   opts.onRender && opts.onRender(thread)
 
   var threadInner = h(viz.cls,
+    h('div.in-response-to'), // may be populated by the message page
     h('ul.threadmeta.list-inline',
       h('li.type', com.icon(viz.icon)),
       h('li', com.userlink(thread.value.author, app.names[thread.value.author]), com.nameConfidence(thread.value.author, app)),
       h('li', com.a('#/', u.prettydate(new Date(thread.value.timestamp), true), { title: 'View message thread' })),
-      h('li.in-response-to'), // may be populated by the message page
+      h('li.button', h('a', { href: '#', onclick: onmarkunread }, 'Mark Unread')),
       h('li.button.strong.pull-right', h('a', { href: '#', onclick: onreply }, 'Reply')),
       h('li.button.pull-right', h('a', { href: '/msg/'+thread.key, target: '_blank' }, 'as JSON'))),
     h('.message.top', content),
@@ -77,6 +78,14 @@ module.exports = function (app, thread, opts) {
       var form = com.postForm(app, thread.key)
       threadInner.parentNode.insertBefore(form, threadInner.nextSibling)
     }
+  }
+
+  function onmarkunread (e) {
+    e.preventDefault()
+
+    app.accessTimesDb.del(thread.key, function () {
+      window.location.hash = '#/'
+    })
   }
 }
 
