@@ -102,11 +102,15 @@ module.exports = function (app, parent) {
         var post = (parent) ? schemas.schemas.replyPost(text, null, parent) : schemas.schemas.post(text)
         if (mentions.length) post.mentions = mentions
         if (extLinks.length) post.attachments = extLinks
-        app.ssb.add(post, function (err) {
+        app.ssb.add(post, function (err, msg) {
           app.setStatus(null)
           enable()
           if (err) swal('Error While Publishing', err.message, 'error')
           else {
+            // auto-subscribe
+            app.subscriptionsDb.put(msg.key, 1)
+            app.subscriptions[msg.key] = true
+
             if (parent)
               app.refreshPage()
             else
