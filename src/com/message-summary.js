@@ -72,6 +72,15 @@ function getSummary (app, msg, opts) {
 var attachmentOpts = { toext: true, rel: 'attachment' }
 module.exports = function (app, msg, opts) {
 
+  var accessTime
+  app.accessTimesDb.get(msg.key, function (err, ts) {
+    if (!err && ts) {
+      accessTime = ts
+      setRowState(msgSummary, accessTime)
+    }
+  })
+
+
   // markup
 
   var content = getSummary(app, msg, opts)
@@ -84,10 +93,23 @@ module.exports = function (app, msg, opts) {
   var msgSummary = h('tr.message-summary'+viz.cls, { 'data-msg': msg.key },
     h('td', viz.icon ? com.icon(viz.icon) : undefined),
     h('td', content),
+    h('td.hover-menu', h('a.read-toggle', { href: '#' })),
     h('td.text-muted', ago(msg))
   )
+  setRowState(msgSummary, accessTime)
 
   return msgSummary
+}
+
+var setRowState =
+module.exports.setRowState = function (el, ts) {
+  if (ts) {
+    el.classList.add('read')
+    el.querySelector('.read-toggle').innerText = 'Mark Unread'
+  } else {
+    el.classList.remove('read')
+    el.querySelector('.read-toggle').innerText = 'Mark Read'      
+  }
 }
 
 function ago (msg) {

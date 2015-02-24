@@ -7,10 +7,6 @@
   cursor: pointer;
   color: #555;
 
-  &.read {
-    background: #eee;
-  }
-
   td {
     padding: 12px;
     border-bottom: 1px solid #ccc;
@@ -31,14 +27,25 @@
     background: #808080;
   }
   td:nth-child(2) {
-    /*overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;*/
+    position: relative;
   }
-  td:nth-child(3) {
+  td:nth-child(4) {
     text-align: right;
     white-space: nowrap;
     background: #fafafa;
+  }
+
+  &.read {
+    background: #eee;
+    .hover-menu a {
+      border-color: #ccc;
+    }
+    td:nth-child(1) {
+      color: #eee;
+    }
+    td:nth-child(4) {
+      background: #e0e0e0;
+    }
   }
 
   &.initmsg td {
@@ -72,6 +79,34 @@
     }
   }
 
+  .hover-menu {
+    position: relative;
+    width: 100px;
+    a {
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      text-align: center;
+      padding-top: 12px;
+      color: #808080;
+      &:hover {
+        background: #f0f0f0;
+        text-decoration: none;
+      }
+    }
+  }
+  &.read {
+    .hover-menu {
+      a {
+        &:hover {
+          background: #ddd;
+        }
+      }
+    }
+  }
+
   .pretty-raw {
     padding: 0 1em;
     width: 175px;
@@ -86,19 +121,6 @@
     }
 
     &:last-child {
-      border-right: 0;
-    }
-  }
-
-  .raw {
-    padding: 0 1em;
-    width: 175px;
-    display: inline-block;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    border-right: 1px solid #ccc;
-    &:last-child {
-      width: auto;
       border-right: 0;
     }
   }

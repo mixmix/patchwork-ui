@@ -15,12 +15,7 @@ module.exports = function (app, filterFn, feedState) {
   // markup
 
   function renderMsg (msg) {
-    var s = com.messageSummary(app, msg, mustRenderOpts)
-    app.accessTimesDb.get(msg.key, function (err, ts) {
-      if (!err && ts)
-        s.classList.add('read')
-    })
-    return s
+    return com.messageSummary(app, msg, mustRenderOpts)
   }
  
   if (!feedState.tbody)
@@ -31,8 +26,7 @@ module.exports = function (app, filterFn, feedState) {
       var key = el.dataset.msg
       if (!key) return
       app.accessTimesDb.get(key, function (err, ts) {
-        if (!err && ts)
-          el.classList.add('read')
+        com.messageSummary.setRowState(el, ts)
       })
     })
   }
@@ -144,15 +138,18 @@ module.exports = function (app, filterFn, feedState) {
     // clicked on a row? abort if clicked on a sub-link
     var el = e.target
     while (el) {
-      if (el.tagName == 'A' || el.tagName == 'TABLE')
+      if (el.tagName == 'A' || el.tagName == 'TABLE') {
+        if (el.classList.contains('read-toggle'))
+          return onreadtoggle(e, el)
         return
+      }
       if (el.tagName == 'TR')
         break
       el = el.parentNode
     }
+
     e.preventDefault()
     e.stopPropagation()
-
     var key = el.dataset.msg
     if (key)
       window.location.hash = '#/msg/'+key
@@ -168,6 +165,30 @@ module.exports = function (app, filterFn, feedState) {
     else if (feedContainer.scrollTop === 0) {
       fetchFront(30)
     }
+  }
+
+  function onreadtoggle (e, btnEl) {
+    e.preventDefault()
+
+    var rowEl = btnEl
+    while (rowEl && rowEl.tagName !== 'TR')
+      rowEl = rowEl.parentNode
+
+    var key = rowEl.dataset.msg
+    app.accessTimesDb.get(key, function (er, accessTime) {
+      if (accessTime) {
+        app.accessTimesDb.del(key, function (err) {
+          if (err) return console.error(err)
+          com.messageSummary.setRowState(rowEl, 0)
+        })
+      } else {
+        var _accessTime = Date.now()
+        app.accessTimesDb.put(key, _accessTime, function (err) {
+          if (err) return console.error(err)
+          com.messageSummary.setRowState(rowEl, _accessTime)
+        })
+      }
+    })
   }
 
   return feedContainer
