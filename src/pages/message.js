@@ -15,7 +15,7 @@ module.exports = function (app) {
       content = com.messageThread(app, thread, {
         viewMode: app.page.qs.view || 'thread',
         onRender: function (msg) {
-          app.readtimesDB.put(msg.key, Date.now())
+          app.accessTimesDb.put(msg.key, Date.now())
         }
       })
 

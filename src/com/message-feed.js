@@ -15,11 +15,27 @@ module.exports = function (app, filterFn, feedState) {
   // markup
 
   function renderMsg (msg) {
-    return com.messageSummary(app, msg, mustRenderOpts)
+    var s = com.messageSummary(app, msg, mustRenderOpts)
+    app.accessTimesDb.get(msg.key, function (err, ts) {
+      if (!err && ts)
+        s.classList.add('read')
+    })
+    return s
   }
  
   if (!feedState.tbody)
     feedState.tbody = makeUnselectable(h('tbody'))
+  else {
+    // update message states
+    Array.prototype.forEach.call(feedState.tbody.querySelectorAll('tr'), function (el) {
+      var key = el.dataset.msg
+      if (!key) return
+      app.accessTimesDb.get(key, function (err, ts) {
+        if (!err && ts)
+          el.classList.add('read')
+      })
+    })
+  }
   feedContainer = h('.message-feed-container.full-height', h('table.message-feed', feedState.tbody))
 
   feedState.tbody.onclick = navtoMsg

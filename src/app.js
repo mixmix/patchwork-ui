@@ -17,7 +17,7 @@ module.exports = function (ssb) {
   var db = sublevel(level('phoenix'))
   var app = {
     ssb: ssb,
-    readtimesDB: db.sublevel('readtimes'),
+    accessTimesDb: db.sublevel('access_times'),
     myid: null,
     names: null,
     nameTrustRanks: null,
