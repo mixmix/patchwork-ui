@@ -25,6 +25,7 @@ module.exports = function (ssb) {
       id: 'feed',
       param: null
     },
+    lastHubPage: '#/',
     pendingMessages: 0,
     unreadMessages: 0,
     suggestOptions: require('./lib/suggest-options'),
@@ -161,6 +162,8 @@ function refreshPage (e) {
     var page = pages[app.page.id]
     if (!page)
       page = pages.notfound
+    if (page.isHubPage)
+      app.lastHubPage = window.location.hash
     page(app)
   })
 }

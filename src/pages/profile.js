@@ -223,3 +223,4 @@ module.exports = function (app) {
 
   })
 }
+module.exports.isHubPage = true

@@ -84,7 +84,15 @@ module.exports = function (app, thread, opts) {
     e.preventDefault()
 
     app.accessTimesDb.del(thread.key, function () {
-      window.location.hash = '#/'
+      window.location.hash = app.lastHubPage
+    })
+  }
+
+  function onsubscribe (e) {
+    e.preventDefault()
+
+    app.accessTimesDb.del(thread.key, function () {
+      window.location.hash = app.lastHubPage
     })
   }
 }
