@@ -12,7 +12,10 @@ function getContent (app, msg) {
     return ({
       post: function () { 
         if (!c.text) return
-        return h('div', { innerHTML: mentions.post(markdown.block(c.text), app, msg) })
+        var div = h('div', { innerHTML: mentions.post(markdown.block(c.text), app, msg) })
+        if (div.innerText.length <= 255)
+          div.style.fontSize = '150%'
+        return div
       }
     })[c.type]()
   } catch (e) { }
@@ -52,19 +55,24 @@ module.exports = function (app, thread, opts) {
   var viz = com.messageVisuals(app, thread)
   var attachments = getAttachments(app, thread)
 
+  opts.onRender && opts.onRender(thread)
+
+  var subscribeBtn = h('a.btn.btn-primary.btn-strong', { href: '#', onclick: onsubscribe })
   var threadInner = h(viz.cls,
+    h('div.in-response-to'), // may be populated by the message page
     h('ul.threadmeta.list-inline',
       h('li.type', com.icon(viz.icon)),
-      h('li.button', h('a', { href: '#', onclick: onreply }, 'Reply')),
       h('li', com.userlink(thread.value.author, app.names[thread.value.author]), com.nameConfidence(thread.value.author, app)),
       h('li', com.a('#/', u.prettydate(new Date(thread.value.timestamp), true), { title: 'View message thread' })),
-      h('li.in-response-to'), // may be populated by the message page
+      h('li.button', h('a', { href: '#', onclick: onmarkunread }, 'Mark Unread')),
+      h('li.button.strong.pull-right', h('a', { href: '#', onclick: onreply }, 'Reply')),
       h('li.button.pull-right', h('a', { href: '/msg/'+thread.key, target: '_blank' }, 'as JSON'))),
     h('.message.top', content),
     h('.attachments', attachments),
     h('ul.viewmode-select.list-inline', viewModes(thread, opts.viewMode)))
 
-  return h('.message-thread', threadInner, replies(app, thread, opts))
+  setSubscribeState()
+  return h('.message-thread', threadInner, replies(app, thread, opts), h('p', subscribeBtn))
 
   // handlers
 
@@ -74,6 +82,35 @@ module.exports = function (app, thread, opts) {
     if (!threadInner.nextSibling || !threadInner.nextSibling.classList || !threadInner.nextSibling.classList.contains('reply-form')) {
       var form = com.postForm(app, thread.key)
       threadInner.parentNode.insertBefore(form, threadInner.nextSibling)
+    }
+  }
+
+  function onmarkunread (e) {
+    e.preventDefault()
+
+    app.accessTimesDb.del(thread.key, function () {
+      window.location.hash = app.lastHubPage
+    })
+  }
+
+  function onsubscribe (e) {
+    e.preventDefault()
+
+    if (app.subscriptions[thread.key])
+      app.subscriptionsDb.del(thread.key)
+    else
+      app.subscriptionsDb.put(thread.key, 1)
+    app.subscriptions[thread.key] = !app.subscriptions[thread.key]
+    setSubscribeState()
+  }
+
+  // ui state
+
+  function setSubscribeState () {
+    if (app.subscriptions[thread.key]) {
+      subscribeBtn.innerHTML = '&ndash; Unsubscribe from Replies'
+    } else {
+      subscribeBtn.innerText = '+ Subscribe to Replies'
     }
   }
 }
@@ -96,8 +133,13 @@ function replies (app, thread, opts) {
     var subreplies = replies(app, reply, opts)
     if (subreplies)
       r.unshift(subreplies)
+
     replyOpts.mustRender = !!subreplies || mustRender(reply, opts.viewMode)
-    r.unshift(com.message(app, reply, replyOpts))
+    var el = com.message(app, reply, replyOpts)
+    if (el) {
+      r.unshift(el)
+      opts.onRender && opts.onRender(reply)
+    }
   })
 
   if (r.length)

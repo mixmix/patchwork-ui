@@ -22,7 +22,7 @@ module.exports = function getVisuals (app, msg) {
         return { cls: '.trustmsg', icon: 'lock' }
       }
     })[msg.value.content.type]()
-  } catch (e) {}
+  } catch (e) { }
 
   return { cls: '.rawmsg', icon: 'envelope' }
 }

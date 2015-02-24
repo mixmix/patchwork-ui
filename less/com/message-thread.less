@@ -1,4 +1,5 @@
 .message-thread {
+
   ul.list-inline {
     margin: 0;
     a {
@@ -6,15 +7,28 @@
     }
     li {
       padding: 7px;
+
+      .user-link {
+        margin-left: 5px;
+      }
       &.button {
         padding: 0;
         a {
           color: @brand-primary;
           display: inline-block;
-          padding: 6px 19px;
+          padding: 5px 10px 4px;
+          border: 1px solid transparent;
           &:hover {
             background: #ddd;
             text-decoration: none;
+          }
+        }
+        &.strong {
+          a {
+            border: 1px solid @brand-primary;
+            border-radius: 2px;
+            padding: 5px 19px 4px;
+            margin-left: 2px;         
           }
         }
       }
@@ -51,6 +65,20 @@
     padding: 7px 12px;
     color: #fff;
   }
+  .in-response-to {
+    a {
+      display: block;
+      padding: 1em;
+      background: #f5f5f5;
+      border-bottom: 1px solid #ddd;
+    }
+    &:empty {
+      display: none;
+    }
+  }
+  ul.list-inline.threadmeta {
+    margin-top: 1em;
+  }
   .message.top {
     margin: 1em;
   }
@@ -83,7 +111,6 @@
       background: #006EFF;
     }
     .message {
-      font-size: 150%;
       color: #555;
     }
   }

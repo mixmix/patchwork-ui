@@ -9,7 +9,8 @@ function file (link) {
 }
 
 function message (link) {
-  return h('a', { href: '#/msg/'+link.msg, innerHTML: u.escapePlain(link.rel)+' &raquo;' })
+  if (typeof link.rel == 'string')
+    return h('a', { href: '#/msg/'+link.msg, innerHTML: u.escapePlain(link.rel)+' &raquo;' })
 }
 
 var prettyRaw =

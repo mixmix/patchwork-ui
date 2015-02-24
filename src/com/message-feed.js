@@ -20,6 +20,19 @@ module.exports = function (app, filterFn, feedState) {
  
   if (!feedState.tbody)
     feedState.tbody = makeUnselectable(h('tbody'))
+  else {
+    // update message states
+    var stateObj = { read: false, subscribed: false }
+    Array.prototype.forEach.call(feedState.tbody.querySelectorAll('tr'), function (el) {
+      var key = el.dataset.msg
+      if (!key) return
+      app.accessTimesDb.get(key, function (err, ts) {
+        stateObj.read = !!ts
+        stateObj.subscribed = !!app.subscriptions[key]
+        com.messageSummary.setRowState(el, stateObj)
+      })
+    })
+  }
   feedContainer = h('.message-feed-container.full-height', h('table.message-feed', feedState.tbody))
 
   feedState.tbody.onclick = navtoMsg
@@ -128,15 +141,18 @@ module.exports = function (app, filterFn, feedState) {
     // clicked on a row? abort if clicked on a sub-link
     var el = e.target
     while (el) {
-      if (el.tagName == 'A' || el.tagName == 'TABLE')
+      if (el.tagName == 'A' || el.tagName == 'TABLE') {
+        if (el.classList.contains('read-toggle'))
+          return onreadtoggle(e, el)
         return
+      }
       if (el.tagName == 'TR')
         break
       el = el.parentNode
     }
+
     e.preventDefault()
     e.stopPropagation()
-
     var key = el.dataset.msg
     if (key)
       window.location.hash = '#/msg/'+key
@@ -152,6 +168,30 @@ module.exports = function (app, filterFn, feedState) {
     else if (feedContainer.scrollTop === 0) {
       fetchFront(30)
     }
+  }
+
+  function onreadtoggle (e, btnEl) {
+    e.preventDefault()
+
+    var rowEl = btnEl
+    while (rowEl && rowEl.tagName !== 'TR')
+      rowEl = rowEl.parentNode
+
+    var key = rowEl.dataset.msg
+    app.accessTimesDb.get(key, function (er, accessTime) {
+      if (accessTime) {
+        app.accessTimesDb.del(key, function (err) {
+          if (err) return console.error(err)
+          com.messageSummary.setRowState(rowEl, { read: false, subscribed: !!app.subscriptions[key] })
+        })
+      } else {
+        var _accessTime = Date.now()
+        app.accessTimesDb.put(key, _accessTime, function (err) {
+          if (err) return console.error(err)
+          com.messageSummary.setRowState(rowEl, { read: true, subscribed: !!app.subscriptions[key] })
+        })
+      }
+    })
   }
 
   return feedContainer

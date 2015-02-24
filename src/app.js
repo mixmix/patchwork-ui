@@ -4,6 +4,8 @@ var multicb    = require('multicb')
 var router     = require('phoenix-router')
 var pull       = require('pull-stream')
 var schemas    = require('ssb-msg-schemas')
+var level      = require('level-js')
+var sublevel   = require('level-sublevel')
 var com        = require('./com')
 var pages      = require('./pages')
 var util       = require('./lib/util')
@@ -12,8 +14,12 @@ module.exports = function (ssb) {
 
   // master state object
 
+  var db = sublevel(level('phoenix'))
   var app = {
     ssb: ssb,
+    accessTimesDb: db.sublevel('access_times'),
+    subscriptionsDb: db.sublevel('subscriptions'),
+    subscriptions: {}, // in-memory cache of subscriptions
     myid: null,
     names: null,
     nameTrustRanks: null,
@@ -21,10 +27,16 @@ module.exports = function (ssb) {
       id: 'feed',
       param: null
     },
+    lastHubPage: '#/',
     pendingMessages: 0,
     unreadMessages: 0,
     suggestOptions: require('./lib/suggest-options'),
   }
+
+  // populate in-memory subscriptions cache
+  app.subscriptionsDb.createKeyStream().on('data', function (key) {
+    app.subscriptions[key] = true
+  })
 
   // page behaviors
 
@@ -154,6 +166,8 @@ function refreshPage (e) {
     var page = pages[app.page.id]
     if (!page)
       page = pages.notfound
+    if (page.isHubPage)
+      app.lastHubPage = window.location.hash
     page(app)
   })
 }

@@ -57,3 +57,4 @@ module.exports = function (app) {
     window.location.hash = '#/posts?q='+encodeURIComponent(searchInput.value)
   }
 }
+module.exports.isHubPage = true
