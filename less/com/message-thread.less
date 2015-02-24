@@ -1,4 +1,6 @@
 .message-thread {
+  margin-top: 0.5em;
+
   ul.list-inline {
     margin: 0;
     a {
@@ -11,10 +13,16 @@
         a {
           color: @brand-primary;
           display: inline-block;
-          padding: 6px 19px;
+          padding: 5px 19px 4px;
           &:hover {
             background: #ddd;
             text-decoration: none;
+          }
+        }
+        &.strong {
+          a {
+            border: 1px solid @brand-primary;
+            border-radius: 2px;
           }
         }
       }
