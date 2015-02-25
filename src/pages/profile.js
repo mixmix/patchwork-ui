@@ -22,7 +22,7 @@ module.exports = function (app) {
     var profile = datas[2]
 
     // messages
-    var msgfeed = com.messageFeed(app, function (msg) {
+    var msgfeed = com.messageFeed(app, app.ssb.createFeedStream, function (msg) {
       return msg.value.author == pid
     })
 

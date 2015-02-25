@@ -42,7 +42,7 @@ module.exports = function (app) {
       h('p', 'When somebody @-mentions you or replies to your posts, you\'ll see their message here.')
     ]
   }*/
-  var content = com.messageFeed(app, filterFn)
+  var content = com.messageFeed(app, app.ssb.phoenix.createInboxStream, filterFn)
   var searchInput = h('input.search', { type: 'text', placeholder: 'Search', value: queryStr })
   app.setPage('feed', h('.row',
     h('.col-xs-2.col-md-1', com.sidenav(app)),
