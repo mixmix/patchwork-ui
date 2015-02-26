@@ -49,21 +49,17 @@
   }
 
   &.subscribed {
-    td:nth-child(2)::after {
-      content: 'Subscribed to Replies';
-      font-weight: 100;
-      padding: 0.5em 1em;
-      display: block;
-      margin-top: 0.5em;
-      background: #aaa;
-      color: #fff;
-      border-radius: 3px;
+    td:nth-child(1) {
+      .glyphicon-star;
+      &::before {
+        .glyphicon;
+      }
     }
-    &.read {
+    /*&.read {
       td:nth-child(2)::after {
         background: #999;
       }
-    }
+    }*/
   }
 
   &.initmsg td {
