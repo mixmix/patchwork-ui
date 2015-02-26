@@ -24,11 +24,11 @@
     width: 30px;
     color: #fff;
     border-color: #555;
+    border-left: 5px solid #555;
     background: #808080;
   }
   td:nth-child(2) {
     position: relative;
-    border-left: 5px solid #bbb;
   }
   td:nth-child(4) {
     text-align: right;
@@ -92,13 +92,13 @@
   }
 
   &.read {
-    td:nth-child(2) {
+    td:nth-child(1) {
       border-left-color: #eee;
     }
   }
 
   &.subscribed {
-    td:nth-child(2) {
+    td:nth-child(1) {
       border-left-color: rgb(255, 194, 0); // orangish gold
     }
   }
