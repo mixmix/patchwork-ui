@@ -11,12 +11,6 @@ module.exports = function (app) {
   function filterFn (msg) {
     var c = msg.value.content
 
-    var hasLinksToUser = (mlib.getLinks(c, myfeedOpts).length > 0)
-    var parentLink = mlib.getLinks(c, { rel: 'replies-to', msg: true })[0]
-    var isSubscribedToParent = parentLink && app.subscriptions[parentLink.msg]
-    if (!(hasLinksToUser || isSubscribedToParent))
-      return false
-
     if (!queryStr)
       return true
 
