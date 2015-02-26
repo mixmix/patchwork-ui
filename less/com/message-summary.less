@@ -28,31 +28,12 @@
   }
   td:nth-child(2) {
     position: relative;
+    border-left: 5px solid #bbb;
   }
   td:nth-child(4) {
     text-align: right;
     white-space: nowrap;
     background: #fafafa;
-  }
-
-  &:not(.read) {
-    td:nth-child(1) {
-      .glyphicon-triangle-bottom;
-      &::before {
-        .glyphicon;
-        color: #ccc;
-      }
-    }
-  }
-
-  &.subscribed {
-    // this icon will take precedence over the :not(.read) icon
-    td:nth-child(1) {
-      .glyphicon-star;
-      &::before {
-        .glyphicon;
-      }
-    }
   }
 
   &.initmsg td {
@@ -107,6 +88,18 @@
       &::before {
         color: lighten(rgb(121, 18, 18), 40%);
       }
+    }
+  }
+
+  &.read {
+    td:nth-child(2) {
+      border-left-color: #eee;
+    }
+  }
+
+  &.subscribed {
+    td:nth-child(2) {
+      border-left-color: rgb(255, 194, 0); // orangish gold
     }
   }
 
