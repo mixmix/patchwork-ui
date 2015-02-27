@@ -6,55 +6,42 @@ var util = require('../lib/util')
 var markdown = require('../lib/markdown')
 
 module.exports = function (app) {
-  var opts = { start: 0 }
-  app.ssb.phoenix.getAdverts(opts, function (err, adverts) {
 
-    // markup 
+  var queryStr = app.page.qs.q || ''
+  var myfeedOpts = { feed: app.myid }
+  function filterFn (msg) {
+    var c = msg.value.content
 
-    var content = h('div', adverts.map(renderAd))
+    if (!queryStr)
+      return true
 
-    var loadMoreBtn = (adverts.length === 30) ? h('p', h('button.btn.btn-primary.btn-block', { onclick: loadMore }, 'Load More')) : ''
-    app.setPage('feed', h('.row',
-      h('.col-xs-2.col-md-1', com.sidenav(app)),
-      h('.col-xs-10.col-md-11', 
-        com.advertForm(app),
-        h('hr'),
-        h('.row', content),
-        h('.row',
-          h('.col-xs-3',
-            h('.well.well-sm', 'Create ads to let your friends know about events, websites, etc. ', com.a('#/help/adverts', 'About'))
-          )
-        ),
-        loadMoreBtn
-      )
-    ))
+    var author = app.names[msg.value.author] || msg.value.author
+    var regex = new RegExp(queryStr.replace(/\s/g, '|'))
+    if (regex.exec(author) || regex.exec(c.text))
+      return true
+    return false
+  }
 
-    function renderAd (ad) {
-      if (ad.value) {
-        var author = ad.value.author
-        return h('.col-xs-2',
-          h('small', 'advert by ', com.userlink(author, app.names[author])),
-          h('.well.well-sm', { innerHTML: markdown.block(ad.value.content.text) })
-        )
-      }
-    }
+  // markup 
 
-    // handlers
+  var content = com.messageFeed(app, app.ssb.phoenix.createAdvertStream, filterFn)
+  var searchInput = h('input.search', { type: 'text', placeholder: 'Search', value: queryStr })
+  app.setPage('feed', h('.row',
+    h('.col-xs-1', com.sidenav(app)),
+    h('.col-xs-9', 
+      h('.message-feed-ctrls', h('form', { onsubmit: onsearch }, searchInput)),
+      content
+    ),
+    h('.col-xs-2',
+      h('.well.well-sm', 'Create ads to let your friends know about events, websites, etc. ', com.a('#/help/adverts', 'About')),
+      com.advertForm(app)
+    )
+  ))
 
-    function loadMore (e) {
-      e.preventDefault()
-      opts.start += 30
-      app.ssb.getAdverts(opts, function (err, moreAdverts) {
-        if (moreAdverts.length > 0) {
-          moreAdverts.forEach(function (ad) { 
-            var el = renderAd(ad)
-            if (el) content.appendChild(el)
-          })
-        }
-        // remove load more btn if it looks like there arent any more to load
-        if (moreAdverts.length < 30)
-          loadMoreBtn.parentNode.removeChild(loadMoreBtn)
-      })
-    }
-  })
+  // handlers
+
+  function onsearch (e) {
+    e.preventDefault()
+    window.location.hash = '#/adverts?q='+encodeURIComponent(searchInput.value)
+  }
 }

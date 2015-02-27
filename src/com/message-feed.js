@@ -22,18 +22,14 @@ module.exports = function (app, feedFn, filterFn, feedState) {
     feedState.tbody = makeUnselectable(h('tbody'))
   else {
     // update message states
-    var stateObj = { read: false, subscribed: false }
-    Array.prototype.forEach.call(feedState.tbody.querySelectorAll('tr'), function (el) {
-      var key = el.dataset.msg
-      if (!key) return
-      var done = multicb({ pluck: 1 })
-      app.ssb.phoenix.isRead(key, done())
-      app.ssb.phoenix.isSubscribed(key, done())
-      done(function (err, res) {
-        stateObj.read = res[0]
-        stateObj.subscribed = res[1]
-        com.messageSummary.setRowState(el, stateObj)
-      })
+    var stateObj = { read: false }
+    Array.prototype.forEach.call(feedState.tbody.querySelectorAll('tr'), function (el) {   
+      var key = el.dataset.msg   
+      if (!key) return   
+      app.ssb.phoenix.isRead(key, function (err, read) {
+        stateObj.read = !!read
+        com.messageSummary.setRowState(el, stateObj)   
+      })   
     })
   }
   feedContainer = h('.message-feed-container.full-height', h('table.message-feed', feedState.tbody))
@@ -134,7 +130,6 @@ module.exports = function (app, feedFn, filterFn, feedState) {
     fetching = true
     opts.limit = opts.limit || 30
     pull(feedFn(opts), pull.collect(function (err, _msgs) {
-      console.log(opts, err, _msgs)
       fetching = false
       cb(err, _msgs)
     }))
@@ -152,8 +147,6 @@ module.exports = function (app, feedFn, filterFn, feedState) {
     var el = e.target
     while (el) {
       if (el.tagName == 'A' || el.tagName == 'TABLE') {
-        if (el.classList.contains('read-toggle'))
-          return onreadtoggle(e, el)
         return
       }
       if (el.tagName == 'TR')
@@ -178,21 +171,6 @@ module.exports = function (app, feedFn, filterFn, feedState) {
     else if (feedContainer.scrollTop === 0) {
       fetchFront(30)
     }
-  }
-
-  function onreadtoggle (e, btnEl) {
-    e.preventDefault()
-
-    var rowEl = btnEl
-    while (rowEl && rowEl.tagName !== 'TR')
-      rowEl = rowEl.parentNode
-
-    var key = rowEl.dataset.msg
-    app.ssb.phoenix.toggleRead(key, function (err, isRead) {
-      if (err) return console.error(err)
-      com.messageSummary.setRowState(rowEl, { read: isRead })
-      app.updateCounts()
-    })
   }
 
   return feedContainer

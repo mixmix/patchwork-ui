@@ -24,13 +24,12 @@
     width: 30px;
     color: #fff;
     border-color: #555;
-    border-left: 5px solid #555;
     background: #808080;
   }
   td:nth-child(2) {
     position: relative;
   }
-  td:nth-child(4) {
+  td:nth-child(3) {
     text-align: right;
     white-space: nowrap;
     background: #fafafa;
@@ -90,10 +89,17 @@
       }
     }
   }
+  &.rawmsg, &.initmsg {
+    td:nth-child(2) > div > * {
+      // this ugly hack makes sure the pretty-raw spans dont add weird vertical padding (due to the overflow: hidden?)
+      float: left;
+    }
+  }
 
   &.read {
-    td:nth-child(1) {
-      border-left-color: #eee;
+    td:nth-child(2) {
+      background: #fafafa;
+      color: #666;
     }
   }
 
@@ -103,24 +109,6 @@
     }
   }
 
-  .hover-menu {
-    position: relative;
-    width: 100px;
-    a {
-      position: absolute;
-      top: 0;
-      left: 0;
-      bottom: 0;
-      right: 0;
-      text-align: center;
-      padding-top: 12px;
-      color: #808080;
-      &:hover {
-        background: #f0f0f0;
-        text-decoration: none;
-      }
-    }
-  }
   &.read {
     .hover-menu {
       a {
@@ -133,7 +121,8 @@
 
   .pretty-raw {
     padding: 0 1em;
-    width: 175px;
+    min-width: 100px;
+    max-width: 175px;
     display: inline-block;
     overflow: hidden;
     text-overflow: ellipsis;

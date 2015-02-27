@@ -74,11 +74,8 @@ var attachmentOpts = { toext: true, rel: 'attachment' }
 module.exports = function (app, msg, opts) {
 
   var done = multicb({ pluck: 1 })
-  app.ssb.phoenix.isRead(msg.key, done())
-  app.ssb.phoenix.isSubscribed(msg.key, done())
-  done(function (err, res) {
-    if (res)
-      setRowState(msgSummary, { read: !!res[0], subscribed: !!res[1] })
+  app.ssb.phoenix.isRead(msg.key, function (err, read) {
+    setRowState(msgSummary, { read: !!read })
   })
 
   // markup
@@ -86,14 +83,13 @@ module.exports = function (app, msg, opts) {
   var content = getSummary(app, msg, opts)
   if (!content) {
     var raw = com.prettyRaw(app, msg.value.content).slice(0,5)
-    content = h('div', com.user(app, msg.value.author), h('div', raw))
+    content = h('div', com.user(app, msg.value.author), raw)
   }
 
   var viz = com.messageVisuals(app, msg)
   var msgSummary = h('tr.message-summary'+viz.cls, { 'data-msg': msg.key },
     h('td', viz.icon ? com.icon(viz.icon) : undefined),
     h('td', content),
-    h('td.hover-menu', h('a.read-toggle', { href: '#' })),
     h('td.text-muted', ago(msg))
   )
 
@@ -101,21 +97,13 @@ module.exports = function (app, msg, opts) {
 }
 
 var setRowState =
-module.exports.setRowState = function (el, opts) {
-  if ('read' in opts) {
-    if (opts.read) {
-      el.classList.add('read')
-      el.querySelector('.read-toggle').innerText = 'Mark Unread'
-    } else {
+module.exports.setRowState = function (el, state) {   
+  if ('read' in state) {
+    if (state.read) {   
+      el.classList.add('read')   
+    } else {   
       el.classList.remove('read')
-      el.querySelector('.read-toggle').innerText = 'Mark Read'      
     }
-  }
-  if ('subscribed' in opts) {
-    if (opts.subscribed)
-      el.classList.add('subscribed')
-    else
-      el.classList.remove('subscribed')
   }
 }
 
