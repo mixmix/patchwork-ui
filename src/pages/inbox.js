@@ -3,10 +3,9 @@ var h = require('hyperscript')
 var mlib = require('ssb-msgs')
 var com = require('../com')
 
-var lastQueryStr = ''
 module.exports = function (app) {
 
-  var queryStr = app.page.qs.q || lastQueryStr
+  var queryStr = app.page.qs.q || ''
   var myfeedOpts = { feed: app.myid }
   function filterFn (msg) {
     var c = msg.value.content
@@ -22,10 +21,6 @@ module.exports = function (app) {
       return true
     return false
   }
-
-  // track read messages :TODO: replace this
-  // app.unreadMessages = 0
-  // localStorage.readMessages = msgcount
 
   // markup
   

@@ -1,21 +1,20 @@
 'use strict'
 var h = require('hyperscript')
-var suggestBox = require('suggest-box')
 var schemas = require('ssb-msg-schemas')
-var util = require('../lib/util')
+var com = require('../com')
 var markdown = require('../lib/markdown')
 
 module.exports = function (app) {
   
   // markup
 
-  var textarea = h('textarea.form-control', { name: 'text', rows: 3, onblur: renderPreview })
-  var preview = h('.preview.well.well-sm.col-xs-3')
+  var textarea = h('textarea.form-control', { name: 'text', rows: 3, onkeyup: renderPreview })
+  var preview = h('.preview.well.well-sm')
   var form = h('form.advert-form', { onsubmit: post },
     h('.open',
-      preview,
       h('p', textarea),
-      h('p.post-form-btns', h('button.btn.btn-primary', 'Post'), ' ', h('button.btn.btn-primary', { href: '#', onclick: close }, 'Cancel'))
+      h('p.post-form-btns', h('button.btn.btn-primary', 'Post'), ' ', h('button.btn.btn-primary', { href: '#', onclick: close }, 'Cancel')),
+      h('.adverts-but-its-cool-tho', preview)
     ),
     h('.closed', h('button.btn.btn-primary', { onclick: open }, 'New Advert'))
   )
