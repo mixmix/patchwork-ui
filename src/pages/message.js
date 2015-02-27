@@ -16,6 +16,7 @@ module.exports = function (app) {
         viewMode: app.page.qs.view || 'thread',
         onRender: function (msg) {
           app.ssb.phoenix.markRead(msg.key)
+          app.updateCounts()
         }
       })
 

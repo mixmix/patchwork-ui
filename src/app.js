@@ -36,6 +36,7 @@ module.exports = function (ssb) {
   // toplevel & common methods
   app.setupRpcConnection = setupRpcConnection.bind(app)
   app.refreshPage        = refreshPage.bind(app)
+  app.updateCounts       = updateCounts.bind(app)
   app.getOtherNames      = getOtherNames.bind(app)
   app.showUserId         = showUserId.bind(app)
   app.setPendingCount    = setPendingCount.bind(app)
@@ -158,6 +159,14 @@ function refreshPage (e) {
   })
 }
 
+function updateCounts () {
+  var this_ = this
+  this_.ssb.phoenix.getIndexCounts(function (err, counts) {
+    console.log(counts)
+    this_.setInboxUnreadCount(counts.inboxUnread)
+  })
+}
+
 function getOtherNames (profile) {
   // todo - replace with ranked names
   var name = this.names[profile.id] || profile.id
@@ -201,8 +210,8 @@ function setPendingCount (n) {
 function setInboxUnreadCount (n) {
   this.indexCounts.inboxUnread = n
   try {
-    document.querySelector('.side-nav .inbox').textContent = 'Inbox ('+n+')'
-  } catch (e) {}  
+    document.querySelector('.side-nav .side-nav-inbox a').textContent = 'inbox ('+n+')'
+  } catch (e) { }  
 }
 
 function setStatus (type, message) {

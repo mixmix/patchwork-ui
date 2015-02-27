@@ -191,6 +191,7 @@ module.exports = function (app, feedFn, filterFn, feedState) {
     app.ssb.phoenix.toggleRead(key, function (err, isRead) {
       if (err) return console.error(err)
       com.messageSummary.setRowState(rowEl, { read: isRead })
+      app.updateCounts()
     })
   }
 
