@@ -151,8 +151,6 @@ module.exports = function (app, feedFn, filterFn, feedState) {
     var el = e.target
     while (el) {
       if (el.tagName == 'A' || el.tagName == 'TABLE') {
-        if (el.classList.contains('read-toggle'))
-          return onreadtoggle(e, el)
         return
       }
       if (el.tagName == 'TR')
@@ -177,21 +175,6 @@ module.exports = function (app, feedFn, filterFn, feedState) {
     else if (feedContainer.scrollTop === 0) {
       fetchFront(30)
     }
-  }
-
-  function onreadtoggle (e, btnEl) {
-    e.preventDefault()
-
-    var rowEl = btnEl
-    while (rowEl && rowEl.tagName !== 'TR')
-      rowEl = rowEl.parentNode
-
-    var key = rowEl.dataset.msg
-    app.ssb.phoenix.toggleRead(key, function (err, isRead) {
-      if (err) return console.error(err)
-      com.messageSummary.setRowState(rowEl, { read: isRead })
-      app.updateCounts()
-    })
   }
 
   return feedContainer
