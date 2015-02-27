@@ -20,6 +20,18 @@ module.exports = function (app, feedFn, filterFn, feedState) {
  
   if (!feedState.tbody)
     feedState.tbody = makeUnselectable(h('tbody'))
+  else {
+    // update message states
+    var stateObj = { read: false }
+    Array.prototype.forEach.call(feedState.tbody.querySelectorAll('tr'), function (el) {   
+      var key = el.dataset.msg   
+      if (!key) return   
+      app.ssb.phoenix.isRead(key, function (err, read) {
+        stateObj.read = !!read
+        com.messageSummary.setRowState(el, stateObj)   
+      })   
+    })
+  }
   feedContainer = h('.message-feed-container.full-height', h('table.message-feed', feedState.tbody))
 
   feedState.tbody.onclick = navtoMsg

@@ -73,6 +73,11 @@ function getSummary (app, msg, opts) {
 var attachmentOpts = { toext: true, rel: 'attachment' }
 module.exports = function (app, msg, opts) {
 
+  var done = multicb({ pluck: 1 })
+  app.ssb.phoenix.isRead(msg.key, function (err, read) {
+    setRowState(msgSummary, { read: !!read })
+  })
+
   // markup
 
   var content = getSummary(app, msg, opts)
@@ -89,6 +94,17 @@ module.exports = function (app, msg, opts) {
   )
 
   return msgSummary
+}
+
+var setRowState =
+module.exports.setRowState = function (el, state) {   
+  if ('read' in state) {
+    if (state.read) {   
+      el.classList.add('read')   
+    } else {   
+      el.classList.remove('read')
+    }
+  }
 }
 
 function ago (msg) {
