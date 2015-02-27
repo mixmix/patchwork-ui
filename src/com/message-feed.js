@@ -26,9 +26,12 @@ module.exports = function (app, feedFn, filterFn, feedState) {
     Array.prototype.forEach.call(feedState.tbody.querySelectorAll('tr'), function (el) {
       var key = el.dataset.msg
       if (!key) return
-      app.accessTimesDb.get(key, function (err, ts) {
-        stateObj.read = !!ts
-        stateObj.subscribed = !!app.subscriptions[key]
+      var done = multicb({ pluck: 1 })
+      app.ssb.phoenix.isRead(key, done())
+      app.ssb.phoenix.isSubscribed(key, done())
+      done(function (err, res) {
+        stateObj.read = res[0]
+        stateObj.subscribed = res[1]
         com.messageSummary.setRowState(el, stateObj)
       })
     })
@@ -185,19 +188,9 @@ module.exports = function (app, feedFn, filterFn, feedState) {
       rowEl = rowEl.parentNode
 
     var key = rowEl.dataset.msg
-    app.accessTimesDb.get(key, function (er, accessTime) {
-      if (accessTime) {
-        app.accessTimesDb.del(key, function (err) {
-          if (err) return console.error(err)
-          com.messageSummary.setRowState(rowEl, { read: false, subscribed: !!app.subscriptions[key] })
-        })
-      } else {
-        var _accessTime = Date.now()
-        app.accessTimesDb.put(key, _accessTime, function (err) {
-          if (err) return console.error(err)
-          com.messageSummary.setRowState(rowEl, { read: true, subscribed: !!app.subscriptions[key] })
-        })
-      }
+    app.ssb.phoenix.toggleRead(key, function (err, isRead) {
+      if (err) return console.error(err)
+      com.messageSummary.setRowState(rowEl, { read: isRead })
     })
   }
 

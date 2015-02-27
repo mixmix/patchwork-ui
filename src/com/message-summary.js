@@ -2,6 +2,7 @@
 var h = require('hyperscript')
 var pull = require('pull-stream')
 var mlib = require('ssb-msgs')
+var multicb = require('multicb')
 var com = require('./index')
 var u = require('../lib/util')
 var markdown = require('../lib/markdown')
@@ -72,8 +73,12 @@ function getSummary (app, msg, opts) {
 var attachmentOpts = { toext: true, rel: 'attachment' }
 module.exports = function (app, msg, opts) {
 
-  app.accessTimesDb.get(msg.key, function (err, ts) {
-    setRowState(msgSummary, { read: !!ts, subscribed: !!app.subscriptions[msg.key] })
+  var done = multicb({ pluck: 1 })
+  app.ssb.phoenix.isRead(msg.key, done())
+  app.ssb.phoenix.isSubscribed(msg.key, done())
+  done(function (err, res) {
+    if (res)
+      setRowState(msgSummary, { read: !!res[0], subscribed: !!res[1] })
   })
 
   // markup
@@ -97,17 +102,21 @@ module.exports = function (app, msg, opts) {
 
 var setRowState =
 module.exports.setRowState = function (el, opts) {
-  if (opts.read) {
-    el.classList.add('read')
-    el.querySelector('.read-toggle').innerText = 'Mark Unread'
-  } else {
-    el.classList.remove('read')
-    el.querySelector('.read-toggle').innerText = 'Mark Read'      
+  if ('read' in opts) {
+    if (opts.read) {
+      el.classList.add('read')
+      el.querySelector('.read-toggle').innerText = 'Mark Unread'
+    } else {
+      el.classList.remove('read')
+      el.querySelector('.read-toggle').innerText = 'Mark Read'      
+    }
   }
-  if (opts.subscribed)
-    el.classList.add('subscribed')
-  else
-    el.classList.remove('subscribed')
+  if ('subscribed' in opts) {
+    if (opts.subscribed)
+      el.classList.add('subscribed')
+    else
+      el.classList.remove('subscribed')
+  }
 }
 
 function ago (msg) {

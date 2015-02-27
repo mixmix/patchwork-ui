@@ -4,8 +4,6 @@ var multicb    = require('multicb')
 var router     = require('phoenix-router')
 var pull       = require('pull-stream')
 var schemas    = require('ssb-msg-schemas')
-var level      = require('level-js')
-var sublevel   = require('level-sublevel')
 var com        = require('./com')
 var pages      = require('./pages')
 var util       = require('./lib/util')
@@ -14,13 +12,8 @@ module.exports = function (ssb) {
 
   // master state object
 
-  var db = sublevel(level('phoenix'))
   var app = {
     ssb: ssb,
-    sys: db.sublevel('sys'),
-    accessTimesDb: db.sublevel('access_times'),
-    subscriptionsDb: db.sublevel('subscriptions'),
-    subscriptions: {}, // in-memory cache of subscriptions
     myid: null,
     names: null,
     nameTrustRanks: null,
@@ -106,12 +99,6 @@ function setupRpcConnection () {
     if (event.type == 'notification')
       app.setInboxUnreadCount(app.indexCounts.inboxUnread + 1)
   }))
-
-
-  // populate in-memory subscriptions cache
-  app.subscriptionsDb.createKeyStream().on('data', function (key) {
-    app.subscriptions[key] = true
-  })
 }
 
 function refreshPage (e) {

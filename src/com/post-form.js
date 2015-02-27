@@ -108,8 +108,7 @@ module.exports = function (app, parent) {
           if (err) swal('Error While Publishing', err.message, 'error')
           else {
             // auto-subscribe
-            app.subscriptionsDb.put(msg.key, 1)
-            app.subscriptions[msg.key] = true
+            app.ssb.phoenix.subscribe(msg.key)
 
             if (parent)
               app.refreshPage()
