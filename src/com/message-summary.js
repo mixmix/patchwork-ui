@@ -73,14 +73,6 @@ function getSummary (app, msg, opts) {
 var attachmentOpts = { toext: true, rel: 'attachment' }
 module.exports = function (app, msg, opts) {
 
-  var done = multicb({ pluck: 1 })
-  app.ssb.phoenix.isRead(msg.key, done())
-  app.ssb.phoenix.isSubscribed(msg.key, done())
-  done(function (err, res) {
-    if (res)
-      setRowState(msgSummary, { read: !!res[0], subscribed: !!res[1] })
-  })
-
   // markup
 
   var content = getSummary(app, msg, opts)
@@ -97,25 +89,6 @@ module.exports = function (app, msg, opts) {
   )
 
   return msgSummary
-}
-
-var setRowState =
-module.exports.setRowState = function (el, opts) {
-  if ('read' in opts) {
-    if (opts.read) {
-      el.classList.add('read')
-      el.querySelector('.read-toggle').innerText = 'Mark Unread'
-    } else {
-      el.classList.remove('read')
-      el.querySelector('.read-toggle').innerText = 'Mark Read'      
-    }
-  }
-  if ('subscribed' in opts) {
-    if (opts.subscribed)
-      el.classList.add('subscribed')
-    else
-      el.classList.remove('subscribed')
-  }
 }
 
 function ago (msg) {
