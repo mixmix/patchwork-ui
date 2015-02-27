@@ -71,7 +71,7 @@ module.exports = function (app, thread, opts) {
     h('.attachments', attachments),
     h('ul.viewmode-select.list-inline', viewModes(thread, opts.viewMode)))
 
-  setSubscribeState()
+  app.ssb.phoenix.isSubscribed(thread.key, setSubscribeState)
   return h('.message-thread', threadInner, replies(app, thread, opts), h('p', subscribeBtn))
 
   // handlers
@@ -88,7 +88,7 @@ module.exports = function (app, thread, opts) {
   function onmarkunread (e) {
     e.preventDefault()
 
-    app.accessTimesDb.del(thread.key, function () {
+    app.ssb.phoenix.markUnread(thread.key, function () {
       window.location.hash = app.lastHubPage
     })
   }
@@ -96,18 +96,13 @@ module.exports = function (app, thread, opts) {
   function onsubscribe (e) {
     e.preventDefault()
 
-    if (app.subscriptions[thread.key])
-      app.subscriptionsDb.del(thread.key)
-    else
-      app.subscriptionsDb.put(thread.key, 1)
-    app.subscriptions[thread.key] = !app.subscriptions[thread.key]
-    setSubscribeState()
+    app.ssb.phoenix.toggleSubscribed(thread.key, setSubscribeState)
   }
 
   // ui state
 
-  function setSubscribeState () {
-    if (app.subscriptions[thread.key]) {
+  function setSubscribeState (err, subscribed) {
+    if (subscribed) {
       subscribeBtn.innerHTML = '&ndash; Unsubscribe from Replies'
     } else {
       subscribeBtn.innerText = '+ Subscribe to Replies'

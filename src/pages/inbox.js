@@ -11,12 +11,6 @@ module.exports = function (app) {
   function filterFn (msg) {
     var c = msg.value.content
 
-    var hasLinksToUser = (mlib.getLinks(c, myfeedOpts).length > 0)
-    var parentLink = mlib.getLinks(c, { rel: 'replies-to', msg: true })[0]
-    var isSubscribedToParent = parentLink && app.subscriptions[parentLink.msg]
-    if (!(hasLinksToUser || isSubscribedToParent))
-      return false
-
     if (!queryStr)
       return true
 
@@ -42,7 +36,7 @@ module.exports = function (app) {
       h('p', 'When somebody @-mentions you or replies to your posts, you\'ll see their message here.')
     ]
   }*/
-  var content = com.messageFeed(app, filterFn)
+  var content = com.messageFeed(app, app.ssb.phoenix.createInboxStream, filterFn)
   var searchInput = h('input.search', { type: 'text', placeholder: 'Search', value: queryStr })
   app.setPage('feed', h('.row',
     h('.col-xs-2.col-md-1', com.sidenav(app)),

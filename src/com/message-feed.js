@@ -6,7 +6,7 @@ var multicb = require('multicb')
 var com = require('../com')
 
 var mustRenderOpts = { mustRender: true }
-module.exports = function (app, filterFn, feedState) {
+module.exports = function (app, feedFn, filterFn, feedState) {
 
   var feedContainer = null
   if (!feedState)
@@ -26,9 +26,12 @@ module.exports = function (app, filterFn, feedState) {
     Array.prototype.forEach.call(feedState.tbody.querySelectorAll('tr'), function (el) {
       var key = el.dataset.msg
       if (!key) return
-      app.accessTimesDb.get(key, function (err, ts) {
-        stateObj.read = !!ts
-        stateObj.subscribed = !!app.subscriptions[key]
+      var done = multicb({ pluck: 1 })
+      app.ssb.phoenix.isRead(key, done())
+      app.ssb.phoenix.isSubscribed(key, done())
+      done(function (err, res) {
+        stateObj.read = res[0]
+        stateObj.subscribed = res[1]
         com.messageSummary.setRowState(el, stateObj)
       })
     })
@@ -45,7 +48,7 @@ module.exports = function (app, filterFn, feedState) {
 
   function fetchFront (amt, cb) {
     var opts = { reverse: false }
-    opts[(feedState.msgs.length == 0) ? 'gte' : 'gt'] = feedState.frontCursor
+    opts[(feedState.msgs.length == 0) ? 'gte' : 'gt'] = fetchPosition(feedState.frontCursor)
     var topmsgEl = feedState.tbody.children[0]
 
     doFetch(opts, function (err, _msgs) {
@@ -88,7 +91,7 @@ module.exports = function (app, filterFn, feedState) {
   }
   function fetchBack (amt, cb) {
     var opts = { reverse: true }
-    opts[(feedState.msgs.length == 0) ? 'lte' : 'lt'] = feedState.backCursor
+    opts[(feedState.msgs.length == 0) ? 'lte' : 'lt'] = fetchPosition(feedState.backCursor)
     
     doFetch(opts, function (err, _msgs) {
       if (_msgs && _msgs.length) {
@@ -129,10 +132,17 @@ module.exports = function (app, filterFn, feedState) {
     if (fetching)
       return
     fetching = true
-    app.ssb.phoenix.getFeed(opts, function (err, _msgs) {
+    opts.limit = opts.limit || 30
+    pull(feedFn(opts), pull.collect(function (err, _msgs) {
+      console.log(opts, err, _msgs)
       fetching = false
       cb(err, _msgs)
-    })
+    }))
+  }
+
+  function fetchPosition(v) {
+    if (v)
+      return [v.value.timestamp, v.value.author]
   }
 
   // handlers
@@ -178,19 +188,10 @@ module.exports = function (app, filterFn, feedState) {
       rowEl = rowEl.parentNode
 
     var key = rowEl.dataset.msg
-    app.accessTimesDb.get(key, function (er, accessTime) {
-      if (accessTime) {
-        app.accessTimesDb.del(key, function (err) {
-          if (err) return console.error(err)
-          com.messageSummary.setRowState(rowEl, { read: false, subscribed: !!app.subscriptions[key] })
-        })
-      } else {
-        var _accessTime = Date.now()
-        app.accessTimesDb.put(key, _accessTime, function (err) {
-          if (err) return console.error(err)
-          com.messageSummary.setRowState(rowEl, { read: true, subscribed: !!app.subscriptions[key] })
-        })
-      }
+    app.ssb.phoenix.toggleRead(key, function (err, isRead) {
+      if (err) return console.error(err)
+      com.messageSummary.setRowState(rowEl, { read: isRead })
+      app.updateCounts()
     })
   }
 

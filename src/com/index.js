@@ -81,7 +81,7 @@ exports.sidenav = function (app) {
   var pages = [
   //[id, path, label],
     ['posts', '', [icon('globe'), h('span', { style: 'padding-left: 2px' }, 'feed')]],
-    ['inbox', 'inbox', 'inbox ('+app.unreadMessages+')'],
+    ['inbox', 'inbox', 'inbox ('+app.indexCounts.inboxUnread+')'],
     ['compose', 'compose', 'compose'],
     ['address-book', 'address-book', 'users'],
     ['profile', 'profile/'+app.myid, app.names[app.myid] || 'profile'],

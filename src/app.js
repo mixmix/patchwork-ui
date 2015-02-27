@@ -4,8 +4,6 @@ var multicb    = require('multicb')
 var router     = require('phoenix-router')
 var pull       = require('pull-stream')
 var schemas    = require('ssb-msg-schemas')
-var level      = require('level-js')
-var sublevel   = require('level-sublevel')
 var com        = require('./com')
 var pages      = require('./pages')
 var util       = require('./lib/util')
@@ -14,12 +12,8 @@ module.exports = function (ssb) {
 
   // master state object
 
-  var db = sublevel(level('phoenix'))
   var app = {
     ssb: ssb,
-    accessTimesDb: db.sublevel('access_times'),
-    subscriptionsDb: db.sublevel('subscriptions'),
-    subscriptions: {}, // in-memory cache of subscriptions
     myid: null,
     names: null,
     nameTrustRanks: null,
@@ -28,15 +22,10 @@ module.exports = function (ssb) {
       param: null
     },
     lastHubPage: '#/',
-    pendingMessages: 0,
-    unreadMessages: 0,
+    pendingCount: 0,
+    indexCounts: { inboxUnread: 0 },
     suggestOptions: require('./lib/suggest-options'),
   }
-
-  // populate in-memory subscriptions cache
-  app.subscriptionsDb.createKeyStream().on('data', function (key) {
-    app.subscriptions[key] = true
-  })
 
   // page behaviors
 
@@ -47,9 +36,11 @@ module.exports = function (ssb) {
   // toplevel & common methods
   app.setupRpcConnection = setupRpcConnection.bind(app)
   app.refreshPage        = refreshPage.bind(app)
+  app.updateCounts       = updateCounts.bind(app)
   app.getOtherNames      = getOtherNames.bind(app)
   app.showUserId         = showUserId.bind(app)
-  app.setPendingMessages = setPendingMessages.bind(app)
+  app.setPendingCount    = setPendingCount.bind(app)
+  app.setInboxUnreadCount= setInboxUnreadCount.bind(app)
   app.setStatus          = setStatus.bind(app)
   app.followPrompt       = followPrompt.bind(app)
   app.setNamePrompt      = setNamePrompt.bind(app)
@@ -103,9 +94,11 @@ function pollPeers () {
 // should be called each time the rpc connection is (re)established
 function setupRpcConnection () {
   var app = this
-  pull(app.ssb.phoenix.events(), pull.drain(function (event) {
-    if (event.type == 'post' || event.type == 'notification')
-      app.setPendingMessages(app.pendingMessages + 1)
+  pull(app.ssb.phoenix.createEventStream(), pull.drain(function (event) {
+    if (event.type == 'message')
+      app.setPendingCount(app.pendingCount + 1)
+    if (event.type == 'notification')
+      app.setInboxUnreadCount(app.indexCounts.inboxUnread + 1)
   }))
 }
 
@@ -114,7 +107,7 @@ function refreshPage (e) {
   e && e.preventDefault()
 
   // clear pending messages
-  app.setPendingMessages(0)
+  app.setPendingCount(0)
 
   // run the router
   var route = router('#'+location.href.split('#')[1]||'', 'posts')
@@ -128,20 +121,14 @@ function refreshPage (e) {
   app.ssb.phoenix.getNamesById(done())
   app.ssb.phoenix.getNameTrustRanks(done())
   app.ssb.phoenix.getAllProfiles(done())
-  app.ssb.phoenix.getInboxCount(done())
+  app.ssb.phoenix.getIndexCounts(done())
   done(function (err, data) {
     if (err) throw err.message
     app.myid = data[0].id
     app.names = data[1]
     app.nameTrustRanks = data[2]
+    app.indexCounts = data[4]
     var profiles = data[3]
-
-    app.unreadMessages = data[4] - (+localStorage.readMessages || 0)
-    if (app.unreadMessages < 0) {
-      // probably a new account on the machine, reset
-      app.unreadMessages = 0
-      localStorage.readMessages = 0
-    }
 
     // refresh suggest options for usernames
     app.suggestOptions['@'] = []
@@ -172,6 +159,14 @@ function refreshPage (e) {
   })
 }
 
+function updateCounts () {
+  var this_ = this
+  this_.ssb.phoenix.getIndexCounts(function (err, counts) {
+    console.log(counts)
+    this_.setInboxUnreadCount(counts.inboxUnread)
+  })
+}
+
 function getOtherNames (profile) {
   // todo - replace with ranked names
   var name = this.names[profile.id] || profile.id
@@ -196,8 +191,8 @@ function showUserId () {
   swal('Here is your contact id', this.myid)
 }
 
-function setPendingMessages (n) {
-  this.pendingMessages = n
+function setPendingCount (n) {
+  this.pendingCount = n
   try {
     if (n) {
       document.title = '('+n+') secure scuttlebutt'
@@ -210,6 +205,13 @@ function setPendingMessages (n) {
       document.querySelector('#get-latest .btn').textContent = 'Get Latest'
     }
   } catch (e) {}
+}
+
+function setInboxUnreadCount (n) {
+  this.indexCounts.inboxUnread = n
+  try {
+    document.querySelector('.side-nav .side-nav-inbox a').textContent = 'inbox ('+n+')'
+  } catch (e) { }  
 }
 
 function setStatus (type, message) {

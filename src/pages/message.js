@@ -15,7 +15,8 @@ module.exports = function (app) {
       content = com.messageThread(app, thread, {
         viewMode: app.page.qs.view || 'thread',
         onRender: function (msg) {
-          app.accessTimesDb.put(msg.key, Date.now())
+          app.ssb.phoenix.markRead(msg.key)
+          app.updateCounts()
         }
       })
 
