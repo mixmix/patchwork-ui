@@ -90,6 +90,12 @@
       }
     }
   }
+  &.rawmsg {
+    td:nth-child(2) > div > * {
+      // this ugly hack makes sure the pretty-raw spans dont add weird vertical padding (due to the overflow: hidden?)
+      float: left;
+    }
+  }
 
   &.read {
     td:nth-child(1) {
@@ -133,7 +139,8 @@
 
   .pretty-raw {
     padding: 0 1em;
-    width: 175px;
+    min-width: 100px;
+    max-width: 175px;
     display: inline-block;
     overflow: hidden;
     text-overflow: ellipsis;

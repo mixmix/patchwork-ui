@@ -86,7 +86,7 @@ module.exports = function (app, msg, opts) {
   var content = getSummary(app, msg, opts)
   if (!content) {
     var raw = com.prettyRaw(app, msg.value.content).slice(0,5)
-    content = h('div', com.user(app, msg.value.author), h('div', raw))
+    content = h('div', com.user(app, msg.value.author), raw)
   }
 
   var viz = com.messageVisuals(app, msg)

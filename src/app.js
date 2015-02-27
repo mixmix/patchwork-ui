@@ -162,7 +162,6 @@ function refreshPage (e) {
 function updateCounts () {
   var this_ = this
   this_.ssb.phoenix.getIndexCounts(function (err, counts) {
-    console.log(counts)
     this_.setInboxUnreadCount(counts.inboxUnread)
   })
 }

@@ -134,7 +134,6 @@ module.exports = function (app, feedFn, filterFn, feedState) {
     fetching = true
     opts.limit = opts.limit || 30
     pull(feedFn(opts), pull.collect(function (err, _msgs) {
-      console.log(opts, err, _msgs)
       fetching = false
       cb(err, _msgs)
     }))
