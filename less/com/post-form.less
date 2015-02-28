@@ -34,6 +34,30 @@
       }
     }
   }
+  .post-form-kvarea {
+    .kvarea {
+      width: 100%;
+      tr {
+        td {
+          padding: 12px;
+          border: 1px dashed #ccc;
+          &:first-child {
+            border-left-style: solid;
+            width: 25%;
+          }
+          &:last-child {
+            border-right-style: solid;
+          }
+        }
+        &:first-child td {
+          border-top-style: solid;
+        }
+        &:last-child td {
+          border-bottom: 0;
+        }
+      }
+    }
+  }
   .post-form-preview {
     padding: 2em;
     margin-bottom: 1em;

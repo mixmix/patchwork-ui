@@ -5,7 +5,8 @@ var schemas = require('ssb-msg-schemas')
 var createHash = require('multiblob/util').createHash
 var pull = require('pull-stream')
 var pushable = require('pull-pushable')
-var util = require('../lib/util')
+var u = require('../lib/util')
+var com = require('./index')
 var markdown = require('../lib/markdown')
 var mentions = require('../lib/mentions')
 
@@ -23,26 +24,33 @@ module.exports = function (app, parent) {
   var preview = h('.post-form-preview')
   var filesInput = h('input.hidden', { type: 'file', multiple: true, onchange: filesAdded })  
   var filesList = h('ul')
-  var textarea = h('textarea', { name: 'text', placeholder: 'Compose your message', rows: 6, onkeyup: onPostTextChange })
-  suggestBox(textarea, app.suggestOptions) // decorate with suggestbox 
   var postBtn = h('button.postbtn.btn.btn-primary.btn-strong', { disabled: true }, 'Post')
+  
+  var textarea = h('textarea', { name: 'text', placeholder: 'Compose your message', rows: 6, onkeyup: onPostTextChange })
+  suggestBox(textarea, app.suggestOptions) // decorate with suggestbox
+  var textareaContainer = h('.post-form-textarea', textarea)
+
+  var kvarea = com.kvarea(app, { type: 'post', text: '' })
+  var kvareaContainer = h('.post-form-kvarea', { style: 'display: none' }, kvarea)
 
   var form = h('form.post-form' + ((!!parent) ? '.reply-form' : ''), { onsubmit: post },
     h('p',
       h('small.text-muted', 
         'All posts are public. Markdown, @-mentions, and emojis are supported. ',
-        h('a', { href: '#/action/cancel', onclick: cancel }, 'Cancel'))),
+        h('a', { href: '#', onclick: cancel }, 'Cancel')),
+      h('small.text-muted.pull-right',
+         h('a', { href: '#', onclick: textmode }, 'text'),
+        ' / ',
+         h('a', { href: '#', onclick: datamode }, 'data'))),
     h('div',
-      h('.post-form-textarea', textarea),
+      textareaContainer,
+      kvareaContainer,
       preview,
       h('.post-form-attachments',
         filesList,
         h('a', { href: '#', onclick: addFile }, 'Click here to add an attachment'),
         postBtn,
-        filesInput
-      )
-    )
-  )
+        filesInput)))
 
   function disable () {
     postBtn.setAttribute('disabled', true)
@@ -126,6 +134,18 @@ module.exports = function (app, parent) {
       form.parentNode.removeChild(form)
     else
       window.location.hash = '#/'
+  }
+
+  function textmode (e) {
+    e.preventDefault()
+    textareaContainer.style.display = 'block'
+    kvareaContainer.style.display = 'none'
+  }
+
+  function datamode (e) {
+    e.preventDefault()
+    textareaContainer.style.display = 'none'
+    kvareaContainer.style.display = 'block'
   }
 
   function addFile (e) {

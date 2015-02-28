@@ -158,6 +158,7 @@ exports.page = function (app, id, content) {
 }
 
 exports.prettyRaw = require('./pretty-raw')
+exports.kvarea = require('./kvarea')
 exports.addresses = require('./addresses')
 exports.advertForm = require('./advert-form')
 exports.adverts = require('./adverts')
