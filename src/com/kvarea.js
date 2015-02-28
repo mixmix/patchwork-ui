@@ -1,5 +1,9 @@
 var h = require('hyperscript')
 
+function isNumeric (v) {
+  return !isNaN(v)
+}
+
 module.exports = function (app, value) {
 
   // markup
@@ -28,6 +32,41 @@ var setValue =
 module.exports.setValue = function (app, table, value) {
   table.innerHTML = ''
   table.appendChild(h('tbody', rows(value), row('', '')))
+}
+
+var getValue =
+module.exports.getValue = function (app, table) {
+  var obj = {}
+  Array.prototype.forEach.call(table.querySelectorAll('tr'), function (tr) {
+    var k = tr.firstChild.textContent.trim()
+    var v = tr.lastChild.textContent.trim()
+    if (!k)
+      return
+    pathset(obj, k, v)
+  })
+  return obj
+}
+
+function pathset (obj, k, v) {
+  k = k.split('.')
+  for (var i=0; i < k.length; i++) {
+    var k_ = k[i]
+    if (!k_)
+      return
+
+    if (i + 1 == k.length)
+      obj[k_] = v // last item, set value
+    else {
+      // not last item, descend and create an object if needed
+      if (!obj[k_] || typeof obj[k_] != 'object') {
+        if (isNumeric(k[i+1]))
+          obj[k_] = []
+        else
+          obj[k_] = {}
+      }
+      obj = obj[k_]
+    }
+  }
 }
 
 function row (k, v) {

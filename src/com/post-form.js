@@ -19,6 +19,8 @@ module.exports = function (app, parent) {
   for (var id in app.names)
     namesList[app.names[id]] = app.names[id]
 
+  var postMsg = { type: 'post', text: '' } // msg in construction
+
   // markup
 
   var preview = h('.post-form-preview')
@@ -30,7 +32,7 @@ module.exports = function (app, parent) {
   suggestBox(textarea, app.suggestOptions) // decorate with suggestbox
   var textareaContainer = h('.post-form-textarea', textarea)
 
-  var kvarea = com.kvarea(app, { type: 'post', text: '' })
+  var kvarea = com.kvarea(app, postMsg)
   var kvareaContainer = h('.post-form-kvarea', { style: 'display: none' }, kvarea)
 
   var form = h('form.post-form' + ((!!parent) ? '.reply-form' : ''), { onsubmit: post },
@@ -63,8 +65,10 @@ module.exports = function (app, parent) {
   // handlers
 
   function onPostTextChange (e) {
-    updateSize()
+    postMsg.text = textarea.value
     preview.innerHTML = (!!textarea.value) ? mentions.preview(markdown.block(textarea.value), namesList) : ''
+    updateSize()
+    
     if (textarea.value.trim())
       enable()
     else
@@ -138,13 +142,23 @@ module.exports = function (app, parent) {
 
   function textmode (e) {
     e.preventDefault()
-    textareaContainer.style.display = 'block'
+    
     kvareaContainer.style.display = 'none'
+    postMsg = com.kvarea.getValue(app, kvarea)
+
+    textareaContainer.style.display = 'block'
+    textarea.value = postMsg.text
+    if (textarea.value)
+      preview.innerHTML = mentions.preview(markdown.block(textarea.value), namesList)
   }
 
   function datamode (e) {
     e.preventDefault()
+
     textareaContainer.style.display = 'none'
+    preview.innerHTML = ''
+
+    com.kvarea.setValue(app, kvarea, postMsg)
     kvareaContainer.style.display = 'block'
   }
 
