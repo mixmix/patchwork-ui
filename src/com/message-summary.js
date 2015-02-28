@@ -42,26 +42,26 @@ function getSummary (app, msg, opts) {
         return [com.user(app, msg.value.author), ' says there\'s a public peer at ', c.address]
       },
       name: function () {
-        var nameLinks = mlib.getLinks(c, { tofeed: true, rel: 'names' })
+        var nameLinks = mlib.asLinks(c.target)
         if (nameLinks.length)
           return nameLinks.map(function (l) { return [com.user(app, msg.value.author), ' says ', com.user(app, l.feed), ' is ', preprocess(l.name)] })
         return [com.user(app, msg.value.author), ' is ', preprocess(c.name)]
       },
       follow: function () {
-        return mlib.getLinks(c, { tofeed: true, rel: 'follows' })
-          .map(function (l) { return [com.user(app, msg.value.author), ' followed ', com.user(app, l.feed)] })
-          .concat(mlib.getLinks(c, { tofeed: true, rel: 'unfollows' })
-            .map(function (l) { return [com.user(app, msg.value.author), ' unfollowed ', com.user(app, l.feed)] }))
+        return mlib.asLinks(c.target).map(function (l) {
+          if (c.followed)
+            return [com.user(app, msg.value.author), ' followed ', com.user(app, l.feed)]
+          return [com.user(app, msg.value.author), ' unfollowed ', com.user(app, l.feed)]
+        })
       },
       trust: function () { 
-        return mlib.getLinks(c, { tofeed: true, rel: 'trusts' })
-          .map(function (l) {
-            if (l.value > 0)
-              return [com.user(app, msg.value.author), ' trusted ', com.user(app, l.feed)]
-            if (l.value < 0)
-              return [com.user(app, msg.value.author), ' flagged ', com.user(app, l.feed)]
-            return [com.user(app, msg.value.author), ' untrusted/unflagged ', com.user(app, l.feed)]
-          })
+        return mlib.asLinks(c.target).map(function (l) {
+          if (c.trust > 0)
+            return [com.user(app, msg.value.author), ' trusted ', com.user(app, l.feed)]
+          if (c.trust < 0)
+            return [com.user(app, msg.value.author), ' flagged ', com.user(app, l.feed)]
+          return [com.user(app, msg.value.author), ' untrusted/unflagged ', com.user(app, l.feed)]
+        })
       }
     })[c.type]()
     if (!s || s.length == 0)
@@ -115,8 +115,8 @@ function ago (msg) {
 }
 
 function fetchReplyLink (app, msg) {
-  var link = mlib.getLinks(msg.value.content, { rel: 'replies-to', tomsg: true })[0]
-  if (!link)
+  var link = mlib.asLinks(msg.value.content.repliesTo)[0]
+  if (!link || !link.msg)
     return
   var span = h('span', ' replied to ')
   app.ssb.get(link.msg, function (err, msg2) {

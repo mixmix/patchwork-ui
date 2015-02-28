@@ -20,7 +20,7 @@ module.exports = function (app) {
         }
       })
 
-      var plink = mlib.getLinks(thread.value.content, { tomsg: true, rel: 'replies-to' })[0]
+      var plink = mlib.asLinks(thread.value.content.repliesTo, 'msg')[0]
       if (plink) {
         app.ssb.get(plink.msg, function (err, parent) {
           var summary

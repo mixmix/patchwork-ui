@@ -35,14 +35,16 @@ function getContent (app, msg, opts) {
 }
 
 function getAttachments (app, msg) {
-  return mlib.getLinks(msg.value.content, { toext: true }).map(function (ref) {
-    return [
+  var els = []
+  mlib.indexLinks(msg.value.content, { ext: true }, function (link, rel) {
+    els.push([
       h('a',
-        { href: '/ext/'+ref.ext, target: '_blank' },
-        com.icon('file'), ' ', ref.name, ' ', h('small', (('size' in ref) ? u.bytesHuman(ref.size) : ''), ' ', ref.type||'')),
+        { href: '/ext/'+link.ext, target: '_blank' },
+        com.icon('file'), ' ', link.name, ' ', h('small', (('size' in link) ? u.bytesHuman(link.size) : ''), ' ', link.type||'')),
       h('br')
-    ]
+    ])
   })
+  return els
 }
 
 var messageShell = function (app, msg, content, opts) {

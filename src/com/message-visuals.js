@@ -9,15 +9,14 @@ module.exports = function getVisuals (app, msg) {
       name:   function () { return { cls: '.namemsg', icon: 'tag' } },
       pub:    function () { return { cls: '.pubmsg', icon: 'cloud' } },
       follow: function () {
-        if (mlib.getLinks(msg.value.content, { tofeed: true, rel: 'follows' }).length)
+        if (msg.value.content.follow === true)
           return { cls: '.followmsg', icon: 'plus' }
-        if (mlib.getLinks(msg.value.content, { tofeed: true, rel: 'unfollows' }).length)
+        if (msg.value.content.follow === false)
           return { cls: '.unfollowmsg', icon: 'minus' }
         return { cls: '.rawmsg', icon: 'envelope' }
       },
       trust: function () { 
-        var l = mlib.getLinks(msg.value.content, { tofeed: true, rel: 'trusts' })[0]
-        if (l.value < 0)
+        if (msg.value.content.trust < 0)
           return { cls: '.flagmsg', icon: 'flag' }
         return { cls: '.trustmsg', icon: 'lock' }
       }

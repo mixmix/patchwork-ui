@@ -36,17 +36,18 @@ function getAttachments (app, msg) {
       return true
   }
 
-  return mlib.getLinks(msg.value.content, { toext: true }).map(function (link) {
+  var els = []
+  mlib.indexLinks(msg.value.content, { ext: true }, function (link, rel) {
     var label
     if (isImage(link))
       label = h('img', { src: '/ext/'+link.ext, title: link.name || link.ext })
     else
       label = [com.icon('file'), ' ', link.name, ' ', h('small', (('size' in link) ? u.bytesHuman(link.size) : ''), ' ', link.type||'')]
-    return h('a', { href: '/ext/'+link.ext, target: '_blank' }, label)
+    els.push(h('a', { href: '/ext/'+link.ext, target: '_blank' }, label))
   })
+  return els
 }
 
-var topOpts = { mustRender: true, topmost: true }
 module.exports = function (app, thread, opts) {
 
   // markup

@@ -1,4 +1,3 @@
-var schemas = require('ssb-msg-schemas')
 var mlib = require('ssb-msgs')
 
 var mentionRegex = /(\s|>|^)@([^\s^<]+)/g;
@@ -19,13 +18,12 @@ exports.replace = function (str, each, spansOnly) {
   })
 }
 
-var mentionOpts = { tofeed: true, rel: 'mentions' }
 exports.post = function (str, app, msg, spansOnly) {
-  var mentions = mlib.getLinks(msg.value.content, mentionOpts)
+  var mentions = mlib.asLinks(msg.value.content.mentions, 'feed')
   return replace(str, function (name, found, notfound) {
     // find the id from the mention links
     var id
-    if (schemas.isHash(name))
+    if (mlib.isHash(name))
       id = name
     else {
       for (var i = 0; i < mentions.length; i++) {
@@ -46,7 +44,7 @@ exports.post = function (str, app, msg, spansOnly) {
 
 exports.preview = function (str, nameList) {
   return replace(str, function (name, found, notfound) {
-    if (schemas.isHash(name))
+    if (mlib.isHash(name))
       return found(name, name)
     if (name in nameList)
       return found(name, name)
