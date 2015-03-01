@@ -32,8 +32,8 @@ module.exports = function (app, feedFn, filterFn, feedState) {
       })   
     })
   }
-  feedContainer = h('.message-feed-container.full-height', h('table.message-feed', feedState.tbody))
 
+  feedContainer = h('.message-feed-container.full-height', h('table.message-feed', feedState.tbody))
   feedState.tbody.onclick = navtoMsg
   feedContainer.onscroll = onscroll
 
@@ -168,8 +168,9 @@ module.exports = function (app, feedFn, filterFn, feedState) {
     if (feedContainer.offsetHeight + feedContainer.scrollTop >= feedContainer.scrollHeight) {
       fetchBack(30)
     }
-    else if (feedContainer.scrollTop === 0) {
+    else if (feedContainer.scrollTop <= 1) {
       fetchFront(30)
+      feedContainer.scrollTop = 1
     }
   }
 
