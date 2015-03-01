@@ -138,7 +138,7 @@ function refreshPage (e) {
     }
 
     // re-route to setup if needed
-    if (!app.names[app.myid]) {
+    /*if (!app.names[app.myid]) {
       if (window.location.hash != '#/setup') {      
         window.location.hash = '#/setup'
         return
@@ -146,7 +146,7 @@ function refreshPage (e) {
     } else if (window.location.hash == '#/setup') {
       window.location.hash = '#/'
       return
-    }
+    }*/
 
     // render the page
     h.cleanup()    
