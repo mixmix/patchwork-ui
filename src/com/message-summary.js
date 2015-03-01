@@ -42,17 +42,35 @@ function getSummary (app, msg, opts) {
         return [com.user(app, msg.value.author), ' says there\'s a public peer at ', c.address]
       },
       name: function () {
-        var nameLinks = mlib.asLinks(c.target)
-        if (nameLinks.length)
-          return nameLinks.map(function (l) { return [com.user(app, msg.value.author), ' says ', com.user(app, l.feed), ' is ', preprocess(l.name)] })
+        if (c.feed)
+          return // legacy kludge, was naming another user
         return [com.user(app, msg.value.author), ' is ', preprocess(c.name)]
       },
-      follow: function () {
-        return mlib.asLinks(c.target).map(function (l) {
-          if (c.followed)
-            return [com.user(app, msg.value.author), ' followed ', com.user(app, l.feed)]
-          return [com.user(app, msg.value.author), ' unfollowed ', com.user(app, l.feed)]
-        })
+      contact: function () {
+        var changes = []
+        if ('following' in c) {
+          if (c.following)
+            changes.push('followed')
+          else
+            changes.push('unfollowed')
+        }
+        if ('trust' in c) {
+          var t = +c.trust|0
+          if (t === 1)
+            changes.push('trusted')
+          else if (t === -1)
+            changes.push('flagged')
+          else if (t === 0)
+            changes.push('untrusted/unflagged')
+        }
+        if ('name' in c)
+          changes.push('named')
+        return [
+          com.user(app, msg.value.author),
+          ' ', changes.join(', '), ' ',
+          mlib.asLinks(c.contact).map(function (l) { return com.user(app, l.feed) }),
+          ' ', (c.name||'')
+        ]
       },
       trust: function () { 
         return mlib.asLinks(c.target).map(function (l) {
@@ -80,15 +98,16 @@ module.exports = function (app, msg, opts) {
 
   // markup
 
+  var viz = com.messageVisuals(app, msg)
   var content = getSummary(app, msg, opts)
   if (!content) {
-    var raw = com.prettyRaw(app, msg.value.content).slice(0,5)
-    content = h('div', com.user(app, msg.value.author), raw)
+    viz = { cls: '.rawmsg', icon: null }
+    var raw = com.prettyRaw(app, msg.value.content).slice(0,4)
+    content = h('div', h('span.pretty-raw', com.user(app, msg.value.author)), raw)
   }
 
-  var viz = com.messageVisuals(app, msg)
   var msgSummary = h('tr.message-summary'+viz.cls, { 'data-msg': msg.key },
-    h('td', viz.icon ? com.icon(viz.icon) : undefined),
+    h('td', /*viz.icon ? com.icon(viz.icon) :*/ undefined),
     h('td', content),
     h('td.text-muted', ago(msg))
   )

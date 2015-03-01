@@ -37,62 +37,30 @@
 
   &.initmsg td {
     &:nth-child(1) {
-      background: #333;
-      border-color: #000;
-      &::before {
-        color: lighten(#333, 33%);
-      }
+      background: @black-primary;
+      border-color: @black-secondary;
     }
-  }
-  &.advertmsg td, &.namemsg td, &.pubmsg td {
-    &:nth-child(1) {
-      border-color: rgb(137, 30, 160);
-      background: #B611DA;
-      &::before {
-        color: lighten(#B611DA, 33%);
-      }
-    }  
   }
   &.postmsg td {
     &:nth-child(1) {
-      border-color: rgb(26, 102, 202);
-      background: #006EFF;
-      &::before {
-        color: lighten(#006EFF, 33%);
-      }
+      background: @blue-primary;
+      border-color: @blue-secondary;
     }
   }
-  &.advertmsg td, &.namemsg td, &.pubmsg td {
+  &.contactmsg td, &.namemsg td, &.pubmsg td {
     &:nth-child(1) {
-      border-color: rgb(137, 30, 160);
-      background: #B611DA;
-      &::before {
-        color: lighten(#B611DA, 33%);
-      }
+      background: @green-primary;
+      border-color: @green-secondary;
     }
   }
-  &.followmsg td, &.trustmsg td {
+  &.advertmsg td {
     &:nth-child(1) {
-      border-color: rgb(19, 115, 16);
-      background: #06AB01;
-      &::before {
-        color: lighten(#06AB01, 33%);
-      }
-    }
-  }
-  &.unfollowmsg td, &.flagmsg td {
-    &:nth-child(1) {
-      border-color: rgb(121, 18, 18);
-      background: rgb(208, 8, 8);
-      &::before {
-        color: lighten(rgb(121, 18, 18), 40%);
-      }
+      background: @purple-primary;
+      border-color: @purple-secondary;
     }
   }
   &.rawmsg, &.initmsg {
     td:nth-child(2) > div > * {
-      // this ugly hack makes sure the pretty-raw spans dont add weird vertical padding (due to the overflow: hidden?)
-      float: left;
     }
   }
 
@@ -121,18 +89,24 @@
 
   .pretty-raw {
     padding: 0 1em;
-    min-width: 100px;
-    max-width: 175px;
+    width: 175px;
     display: inline-block;
     overflow: hidden;
     text-overflow: ellipsis;
     border-right: 1px solid #ccc;
     white-space: nowrap;
 
+    // this ugly hack makes sure the pretty-raw spans dont add weird vertical padding (due to the overflow: hidden?)
+    float: left;
+
     small {
       padding-right: 0.5em;
     }
 
+    &:first-child {
+      padding-left: 0;
+      width: 100px;
+    }
     &:last-child {
       border-right: 0;
     }

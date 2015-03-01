@@ -37,6 +37,7 @@ module.exports = function (ssb) {
   app.setupRpcConnection = setupRpcConnection.bind(app)
   app.refreshPage        = refreshPage.bind(app)
   app.updateCounts       = updateCounts.bind(app)
+  app.updateContact      = updateContact.bind(app)
   app.getOtherNames      = getOtherNames.bind(app)
   app.showUserId         = showUserId.bind(app)
   app.setPendingCount    = setPendingCount.bind(app)
@@ -166,6 +167,10 @@ function updateCounts () {
   })
 }
 
+function updateContact (id, values, cb) {
+  schemas.addContact(this.ssb, id, values, cb)
+}
+
 function getOtherNames (profile) {
   // todo - replace with ranked names
   var name = this.names[profile.id] || profile.id
@@ -239,7 +244,8 @@ function followPrompt (e) {
     app.setStatus('info', 'Contacting server with invite code, this may take a few moments...')
     app.ssb.invite.addMe(id, next)
   }
-  else schemas.addFollow(app.ssb, id, next)
+  else
+    app.updateContact(id, { following: true }, next)
     
   function next (err) {
     app.setStatus(false)
@@ -290,9 +296,9 @@ function setNamePrompt (userId) {
       return
 
     if (isSelf)
-      schemas.addOwnName(app.ssb, name, done)
+      schemas.addName(app.ssb, name, done)
     else
-      schemas.addOtherName(app.ssb, userId, name, done)
+      app.updateContact(userId, { name: name }, done)
 
     function done(err) {
       if (err) swal('Error While Publishing', err.message, 'error')

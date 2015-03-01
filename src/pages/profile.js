@@ -152,7 +152,7 @@ module.exports = function (app) {
         confirmButtonColor: '#12b812',
         confirmButtonText: 'Trust'
       }, function() {
-        schemas.addTrust(app.ssb, pid, 1, function (err) {
+        app.updateContact(pid, { trust: 1 }, function (err) {
           if (err) swal('Error While Publishing', err.message, 'error')
           else app.refreshPage()
         })
@@ -173,7 +173,7 @@ module.exports = function (app) {
         confirmButtonColor: '#d9534f',
         confirmButtonText: 'Flag'
       }, function() {
-        schemas.addTrust(app.ssb, pid, -1, function (err) {
+        app.updateContact(pid, { trust: -1 }, function (err) {
           if (err) swal('Error While Publishing', err.message, 'error')
           else app.refreshPage()
         })
@@ -182,7 +182,7 @@ module.exports = function (app) {
 
     function detrust (e) {
       e.preventDefault()
-      schemas.addTrust(app.ssb, pid, 0, function(err) {
+      app.updateContact(pid, { trust: 0 }, function(err) {
         if (err) swal('Error While Publishing', err.message, 'error')
         else app.refreshPage()
       })
@@ -191,7 +191,7 @@ module.exports = function (app) {
     function follow (e) {
       e.preventDefault()
       if (!graphs.follow[app.myid][pid]) {
-        schemas.addFollow(app.ssb, pid, function(err) {
+        app.updateContact(pid, { following: true }, function(err) {
           if (err) swal('Error While Publishing', err.message, 'error')
           else app.refreshPage()
         })
@@ -201,7 +201,7 @@ module.exports = function (app) {
     function unfollow (e) {
       e.preventDefault()
       if (graphs.follow[app.myid][pid]) {
-        schemas.addUnfollow(app.ssb, pid, function(err) {
+        app.updateContact(pid, { following: false }, function(err) {
           if (err) swal('Error While Publishing', err.message, 'error')
           else app.refreshPage()
         })
@@ -215,7 +215,7 @@ module.exports = function (app) {
 
     function confirmName (e) {
       e.preventDefault()
-      schemas.addOtherName(app.ssb, pid, app.names[pid], function (err) {
+      app.updateContact(pid, { name: app.names[pid] }, function (err) {
         if (err) swal('Error While Publishing', err.message, 'error')
         else app.refreshPage()
       })
