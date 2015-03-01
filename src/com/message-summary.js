@@ -25,6 +25,9 @@ function getSummary (app, msg, opts) {
   var preprocess = (opts && opts.full) ? function(v){return v} : shorten
   try {
     var s = ({
+      init: function () {
+        return [com.user(app, msg.value.author), ' account created.']
+      },
       post: function () { 
         if (!c.text) return
         var replyLink = fetchReplyLink(app, msg)
@@ -35,8 +38,8 @@ function getSummary (app, msg, opts) {
       advert: function () { 
         if (!c.text) return
         if (opts && opts.full)
-          return h('div', com.user(app, msg.value.author), md(c.text))
-        return h('div', com.user(app, msg.value.author), h('div', shorten(c.text)))
+          return h('div', h('small', 'advert by ', com.user(app, msg.value.author)), md(c.text))
+        return h('div', h('small', 'advert by ', com.user(app, msg.value.author)), h('div', shorten(c.text)))
       },
       pub: function () {
         return [com.user(app, msg.value.author), ' says there\'s a public peer at ', c.address]
