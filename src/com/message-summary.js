@@ -110,7 +110,7 @@ module.exports = function (app, msg, opts) {
   }
 
   var msgSummary = h('tr.message-summary'+viz.cls, { 'data-msg': msg.key },
-    h('td', /*viz.icon ? com.icon(viz.icon) :*/ undefined),
+    h('td', viz.icon ? com.icon(viz.icon) : undefined),
     h('td', content),
     h('td.text-muted', ago(msg))
   )
