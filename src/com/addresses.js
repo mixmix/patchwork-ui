@@ -63,7 +63,7 @@ module.exports = function (app, profiles, follows, trusts) {
   function follow (e, pid) {
     e.preventDefault()
     if (!follows[app.myid][pid]) {
-      schemas.addFollow(app.ssb, pid, function(err) {
+      app.updateContact(pid, { following: true }, function(err) {
         if (err) swal('Error While Publishing', err.message, 'error')
         else app.refreshPage()
       })
@@ -73,7 +73,7 @@ module.exports = function (app, profiles, follows, trusts) {
   function unfollow (e, pid) {
     e.preventDefault()
     if (follows[app.myid][pid]) {
-      schemas.addUnfollow(app.ssb, pid, function(err) {
+      app.updateContact(pid, { following: false }, function(err) {
         if (err) swal('Error While Publishing', err.message, 'error')
         else app.refreshPage()
       })

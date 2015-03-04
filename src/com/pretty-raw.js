@@ -2,15 +2,15 @@ var h = require('hyperscript')
 var com = require('./index')
 var u = require('../lib/util')
 
-function file (link) {
-  var name = link.name || link.rel
+function file (link, rel) {
+  var name = link.name || rel
   var details = (('size' in link) ? u.bytesHuman(link.size) : '') + ' ' + (link.type||'')
   return h('a', { href: '/ext/'+link.ext, target: '_blank', title: name +' '+details }, name, ' ', h('small', details))
 }
 
-function message (link) {
-  if (typeof link.rel == 'string')
-    return h('a', { href: '#/msg/'+link.msg, innerHTML: u.escapePlain(link.rel)+' &raquo;' })
+function message (link, rel) {
+  if (typeof rel == 'string')
+    return h('a', { href: '#/msg/'+link.msg, innerHTML: u.escapePlain(rel)+' &raquo;' })
 }
 
 var prettyRaw =
@@ -24,26 +24,17 @@ module.exports = function (app, obj, path) {
   path = (path) ? path + '.' : ''
   for (var k in obj) {
     if (obj[k] && typeof obj[k] == 'object') {
-      if (obj[k].rel) {
-        if (obj[k].ext)
-          els.push(col('', file(obj[k])))
-        if (obj[k].msg)
-          els.push(col('', message(obj[k])))
-        if (obj[k].feed)
-          els.push(col(k, com.user(app, obj[k].feed)))
-      } else
-        els = els.concat(prettyRaw(app, obj[k], path+k))
-    } else if (k == 'msg')
-      els.push(col('', message(obj)))
-    else if (k == 'ext')
-      els.push(col('', file(obj)))
-    else if (k == 'feed')
-      els.push(col(k, com.user(app, obj.feed)))
-    else if (k == 'rel' && (obj.feed || obj.msg || obj.ext))
-      continue // rendered in the links
+      // :TODO: render links
+      // if (obj[k].ext)
+      //   els.push(col('', file(obj[k])))
+      // if (obj[k].msg)
+      //   els.push(col('', message(obj[k])))
+      // if (obj[k].feed)
+      //   els.push(col(k, com.user(app, obj[k].feed)))
+      els = els.concat(prettyRaw(app, obj[k], path+k))
+    }
     else
       els.push(col(k, ''+obj[k]))
-
   }
 
   return els

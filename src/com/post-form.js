@@ -87,19 +87,20 @@ module.exports = function (app, parent) {
           var id = idsByName[name]
           if (schemas.isHash(id)) {
             if (!mentionedIds[id]) {
-              mentions.push({ feed: id, rel: 'mentions', name: name })
+              mentions.push({ feed: id, name: name })
               mentionedIds[id] = true
             }
           } else if (schemas.isHash(name)) {
             if (!mentionedIds[name]) {
-              mentions.push({ feed: name, rel: 'mentions' })
+              mentions.push({ feed: name })
               mentionedIds[name] = true
             }
           }
         }
 
         // post
-        var post = (parent) ? schemas.schemas.replyPost(text, null, parent) : schemas.schemas.post(text)
+        var post = schemas.schemas.post(text)
+        if (parent)          post.repliesTo = { msg: parent }
         if (mentions.length) post.mentions = mentions
         if (extLinks.length) post.attachments = extLinks
         app.ssb.add(post, function (err, msg) {
@@ -154,7 +155,7 @@ module.exports = function (app, parent) {
 
     app.setStatus('info', 'Uploading ('+attachments.length+' files left)...')
     attachments.forEach(function (file) {
-      var link = { rel: 'attachment', ext: null, name: null, size: null }
+      var link = { ext: null, name: null, size: null }
       links.push(link)
 
       // read file
@@ -178,8 +179,8 @@ module.exports = function (app, parent) {
         pull.map(function (buf) { return new Buffer(new Uint8Array(buf)).toString('base64') }),
         app.ssb.blobs.add(function (err) {
           if(err) return next(err)
-          link.name = file.name
           link.ext  = hasher.digest
+          link.name = file.name
           link.size = file.size || hasher.size
           next()
         })
@@ -223,7 +224,7 @@ module.exports = function (app, parent) {
 
     // collect files
     var extLinks = attachments.map(function (file) {
-      return { rel: 'attachment', ext: fakeExt, name: file.name, size: file.size }
+      return { ext: fakeExt, name: file.name, size: file.size }
     })
 
     // collect mentions
@@ -237,9 +238,9 @@ module.exports = function (app, parent) {
       mentionedIds[name] = true
 
       if (schemas.isHash(name))
-        mentions.push({ feed: fakeFeed, rel: 'mentions' })        
+        mentions.push({ feed: fakeFeed })        
       else
-        mentions.push({ feed: fakeFeed, rel: 'mentions', name: name })  
+        mentions.push({ feed: fakeFeed, name: name })  
     }
 
     // post

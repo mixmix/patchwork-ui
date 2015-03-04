@@ -25,6 +25,9 @@ function getSummary (app, msg, opts) {
   var preprocess = (opts && opts.full) ? function(v){return v} : shorten
   try {
     var s = ({
+      init: function () {
+        return [com.user(app, msg.value.author), ' account created.']
+      },
       post: function () { 
         if (!c.text) return
         var replyLink = fetchReplyLink(app, msg)
@@ -35,33 +38,51 @@ function getSummary (app, msg, opts) {
       advert: function () { 
         if (!c.text) return
         if (opts && opts.full)
-          return h('div', com.user(app, msg.value.author), md(c.text))
-        return h('div', com.user(app, msg.value.author), h('div', shorten(c.text)))
+          return h('div', h('small', 'advert by ', com.user(app, msg.value.author)), md(c.text))
+        return h('div', h('small', 'advert by ', com.user(app, msg.value.author)), h('div', shorten(c.text)))
       },
       pub: function () {
         return [com.user(app, msg.value.author), ' says there\'s a public peer at ', c.address]
       },
       name: function () {
-        var nameLinks = mlib.getLinks(c, { tofeed: true, rel: 'names' })
-        if (nameLinks.length)
-          return nameLinks.map(function (l) { return [com.user(app, msg.value.author), ' says ', com.user(app, l.feed), ' is ', preprocess(l.name)] })
+        if (c.feed)
+          return // legacy kludge, was naming another user
         return [com.user(app, msg.value.author), ' is ', preprocess(c.name)]
       },
-      follow: function () {
-        return mlib.getLinks(c, { tofeed: true, rel: 'follows' })
-          .map(function (l) { return [com.user(app, msg.value.author), ' followed ', com.user(app, l.feed)] })
-          .concat(mlib.getLinks(c, { tofeed: true, rel: 'unfollows' })
-            .map(function (l) { return [com.user(app, msg.value.author), ' unfollowed ', com.user(app, l.feed)] }))
+      contact: function () {
+        var changes = []
+        if ('following' in c) {
+          if (c.following)
+            changes.push('followed')
+          else
+            changes.push('unfollowed')
+        }
+        if ('trust' in c) {
+          var t = +c.trust|0
+          if (t === 1)
+            changes.push('trusted')
+          else if (t === -1)
+            changes.push('flagged')
+          else if (t === 0)
+            changes.push('untrusted/unflagged')
+        }
+        if ('name' in c)
+          changes.push('named')
+        return [
+          com.user(app, msg.value.author),
+          ' ', changes.join(', '), ' ',
+          mlib.asLinks(c.contact).map(function (l) { return com.user(app, l.feed) }),
+          ' ', (c.name||'')
+        ]
       },
       trust: function () { 
-        return mlib.getLinks(c, { tofeed: true, rel: 'trusts' })
-          .map(function (l) {
-            if (l.value > 0)
-              return [com.user(app, msg.value.author), ' trusted ', com.user(app, l.feed)]
-            if (l.value < 0)
-              return [com.user(app, msg.value.author), ' flagged ', com.user(app, l.feed)]
-            return [com.user(app, msg.value.author), ' untrusted/unflagged ', com.user(app, l.feed)]
-          })
+        return mlib.asLinks(c.target).map(function (l) {
+          if (c.trust > 0)
+            return [com.user(app, msg.value.author), ' trusted ', com.user(app, l.feed)]
+          if (c.trust < 0)
+            return [com.user(app, msg.value.author), ' flagged ', com.user(app, l.feed)]
+          return [com.user(app, msg.value.author), ' untrusted/unflagged ', com.user(app, l.feed)]
+        })
       }
     })[c.type]()
     if (!s || s.length == 0)
@@ -80,13 +101,14 @@ module.exports = function (app, msg, opts) {
 
   // markup
 
+  var viz = com.messageVisuals(app, msg)
   var content = getSummary(app, msg, opts)
   if (!content) {
-    var raw = com.prettyRaw(app, msg.value.content).slice(0,5)
-    content = h('div', com.user(app, msg.value.author), raw)
+    viz = { cls: '.rawmsg', icon: null }
+    var raw = com.prettyRaw(app, msg.value.content).slice(0,4)
+    content = h('div', h('span.pretty-raw', com.user(app, msg.value.author)), raw)
   }
 
-  var viz = com.messageVisuals(app, msg)
   var msgSummary = h('tr.message-summary'+viz.cls, { 'data-msg': msg.key },
     h('td', viz.icon ? com.icon(viz.icon) : undefined),
     h('td', content),
@@ -115,8 +137,8 @@ function ago (msg) {
 }
 
 function fetchReplyLink (app, msg) {
-  var link = mlib.getLinks(msg.value.content, { rel: 'replies-to', tomsg: true })[0]
-  if (!link)
+  var link = mlib.asLinks(msg.value.content.repliesTo)[0]
+  if (!link || !link.msg)
     return
   var span = h('span', ' replied to ')
   app.ssb.get(link.msg, function (err, msg2) {
