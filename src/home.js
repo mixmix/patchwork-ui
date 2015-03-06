@@ -12,7 +12,7 @@ var app        = require('./app')(ssb)
 
 localhost.on('connect', function() {
   // authenticate the connection
-  auth.getToken('localhost', function(err, token) {
+  auth.getToken(window.location.host, function(err, token) {
     if (err) return localhost.close(), console.error('Token fetch failed', err)
     ssb.auth(token, function(err) {
       app.setStatus(false)
