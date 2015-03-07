@@ -1,8 +1,58 @@
-.addresses {
-  .label-success {
-    background: #00DB00;
+.address-book-ctrls {
+  padding: 0.5em 0;
+  border-bottom: 1px solid #ccc;
+  .lists {
+    display: inline-block;
+    a {
+      display: inline-block;
+      padding: 1em;
+      font-weight: 100;
+      &:hover {
+        text-decoration: none;
+      }
+      &.selected {
+        border-top-left-radius: 2px;
+        border-top-right-radius: 2px;
+        border: 1px solid #aaa;
+        border-bottom: 1px solid @blue-primary;
+        color: #555;
+      }
+    }
   }
-  tbody tr td {
-    vertical-align: middle;
+  form {
+    display: inline-block;
+    margin-left: 1em;
+    width: 225px;
+  }
+}
+
+.address {
+  color: #555;
+  height: 100px;
+
+  td {
+    border-bottom: 1px solid #ccc;
+  }
+
+  .profpic {
+    width: 120px;
+    img {
+      max-width: 100px;
+      max-height: 100px;
+    }
+  }
+  .details {
+    p {
+      margin: 2px 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    p.name {
+      font-size: 17px;
+      margin: 5px 0;
+      a {
+        color: #555;
+      }
+    }
   }
 }

@@ -83,7 +83,7 @@ exports.sidenav = function (app) {
     ['posts', '', [icon('globe'), h('span', { style: 'padding-left: 2px' }, 'feed')]],
     ['inbox', 'inbox', 'inbox ('+app.indexCounts.inboxUnread+')'],
     ['compose', 'compose', 'compose'],
-    ['address-book', 'address-book', 'users'],
+    ['address-book', 'address-book', 'contacts'],
     ['profile', 'profile/'+app.myid, app.names[app.myid] || 'profile'],
     ['adverts', 'adverts', 'adverts'],
     ['help', 'help', 'help']
@@ -158,7 +158,6 @@ exports.page = function (app, id, content) {
 }
 
 exports.prettyRaw = require('./pretty-raw')
-exports.addresses = require('./addresses')
 exports.advertForm = require('./advert-form')
 exports.adverts = require('./adverts')
 exports.messageVisuals = require('./message-visuals')

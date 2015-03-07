@@ -6,7 +6,7 @@ var multicb = require('multicb')
 var com = require('../com')
 
 var mustRenderOpts = { mustRender: true }
-module.exports = function (app, feedFn, filterFn, feedState) {
+module.exports = function (app, feedFn, filterFn, renderMsgFn, feedState) {
 
   var feedContainer = null
   if (!feedState)
@@ -14,8 +14,10 @@ module.exports = function (app, feedFn, filterFn, feedState) {
 
   // markup
 
-  function renderMsg (msg) {
-    return com.messageSummary(app, msg, mustRenderOpts)
+  if (!renderMsgFn) {
+    renderMsgFn = function (msg) {
+      return com.messageSummary(app, msg, mustRenderOpts)
+    }
   }
  
   if (!feedState.tbody)
@@ -65,7 +67,7 @@ module.exports = function (app, feedFn, filterFn, feedState) {
         // render
         var lastEl = feedState.tbody.firstChild
         _msgs.forEach(function (msg) {
-          var el = renderMsg(msg)
+          var el = renderMsgFn(msg)
           el && feedState.tbody.insertBefore(el, lastEl)
         })
 
@@ -109,7 +111,7 @@ module.exports = function (app, feedFn, filterFn, feedState) {
 
         // render
         _msgs.forEach(function (msg) {
-          var el = renderMsg(msg)
+          var el = renderMsgFn(msg)
           el && feedState.tbody.appendChild(el)
         })
 

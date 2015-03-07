@@ -34,7 +34,7 @@ module.exports = function (app) {
   // markup
 
   var searchInput = h('input.search', { type: 'text', placeholder: 'Search', value: queryStr })
-  var feed = com.messageFeed(app, app.ssb.createFeedStream, filterFn, feedState)
+  var feed = com.messageFeed(app, app.ssb.createFeedStream, filterFn, null, feedState)
   app.setPage('posts', h('.row',
     h('.col-xs-1', com.sidenav(app)),
     h('.col-xs-9',
