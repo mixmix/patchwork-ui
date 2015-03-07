@@ -6,6 +6,8 @@ var com = require('../com')
 var util = require('../lib/util')
 
 module.exports = function (app) {
+  var view = app.page.qs.view || 'timeline'
+
   var pid = app.page.param
   var done = multicb({ pluck: 1 })
   app.ssb.friends.all('follow', done())
@@ -21,15 +23,10 @@ module.exports = function (app) {
     var isFollowing = graphs.follow[app.myid][pid]
     var profile = datas[2]
 
-    // messages
-    var msgfeed = com.messageFeed(app, app.ssb.createFeedStream, function (msg) {
-      return msg.value.author == pid
-    })
-
     // name confidence controls
     var nameTrustDlg
     if (app.nameTrustRanks[pid] !== 1) {
-      nameTrustDlg = h('.well',
+      nameTrustDlg = h('.well', { style: 'margin-top: 0.5em; border-color: #aaa' },
         h('h3', { style: 'margin-top: 0' }, (!!app.names[pid]) ? 'Is this "'+app.names[pid]+'?"' : 'Who is this user?'),
         h('p',
           'Users whose identity you haven\'t confirmed will have a ',
@@ -38,100 +35,57 @@ module.exports = function (app) {
         ),
         (!!app.names[pid]) ?
           [
-            h('button.btn.btn-primary', {style: 'border-color: #ddd', onclick: confirmName}, 'Confirm This Name'),
+            h('button.btn.btn-primary', { onclick: confirmName }, 'Confirm This Name'),
             ' or ',
-            h('button.btn.btn-primary', {style: 'border-color: #ddd', onclick: rename}, 'Choose Another Name')
+            h('button.btn.btn-primary', { onclick: rename }, 'Choose Another Name')
           ] :
-          h('button.btn.btn-primary', {style: 'border-color: #ddd', onclick: rename}, 'Choose a Name')
+          h('button.btn.btn-primary', { onclick: rename }, 'Choose a Name')
       )
     }
 
     // profile controls
-    var followBtn = '', trustBtn = '', flagBtn = '', renameBtn = ''
+    var followbtn, blockbtn, renamebtn
     if (pid === app.myid) {
-      renameBtn = h('button.btn.btn-primary', {title: 'Rename', onclick: rename}, com.icon('pencil'))
+      renamebtn = h('button.btn.btn-primary', {title: 'Rename', onclick: rename}, com.icon('pencil'))
     } else {
-      renameBtn = h('button.btn.btn-primary', {title: 'Rename', onclick: rename}, com.icon('pencil'))
-      followBtn = (isFollowing)
-        ? h('button.btn.btn-primary', { onclick: unfollow }, com.icon('minus'), ' Unfollow')
-        : h('button.btn.btn-primary', { onclick: follow }, com.icon('plus'), ' Follow')
-      trustBtn = (graphs.trust[app.myid][pid] == 1)
-        ? h('button.btn.btn-danger', { onclick: detrust }, com.icon('remove'), ' Untrust')
+      renamebtn = h('button.btn.btn-primary', {title: 'Rename', onclick: rename}, com.icon('pencil'))
+      followbtn = (isFollowing)
+        ? h('button.btn.btn-primary', { onclick: unfollow }, com.icon('minus'), ' Remove Contact')
+        : h('button.btn.btn-primary', { onclick: follow }, com.icon('plus'), ' Add Contact')
+      blockbtn = (graphs.trust[app.myid][pid] == -1)
+        ? h('button.btn.btn-primary', { onclick: detrust }, com.icon('ok'), ' Unblock')
         : (!graphs.trust[app.myid][pid])
-          ? h('button.btn.btn-success', { onclick: trustPrompt }, com.icon('lock'), ' Trust')
-          : ''
-      flagBtn = (graphs.trust[app.myid][pid] == -1)
-        ? h('button.btn.btn-success', { onclick: detrust }, com.icon('ok'), ' Unflag')
-        : (!graphs.trust[app.myid][pid])
-          ? h('button.btn.btn-danger',{ onclick: flagPrompt },  com.icon('flag'), ' Flag')
+          ? h('button.btn.btn-primary',{ onclick: flagPrompt },  com.icon('remove'), ' Block')
           : ''
     } 
 
-    // given names
-    var givenNames = []
-    if (profile) {
-      if (profile.self.name)
-        givenNames.push(h('li', profile.self.name + ' (self-assigned)'))
-      Object.keys(profile.assignedBy).forEach(function(userid) {
-        var given = profile.assignedBy[userid]
-        if (given.name)
-          givenNames.push(h('li', given.name + ' by ', com.userlinkThin(userid, app.names[userid])))
+    var content
+    if (view == 'timeline') {
+      // messages
+      content = com.messageFeed(app, app.ssb.createFeedStream, function (msg) {
+        return msg.value.author == pid
       })
-    }
-
-    // follows, trusts, flags
-    function outEdges(g, v) {
-      var arr = []
-      if (g[pid]) {
-        for (var userid in g[pid]) {
-          if (g[pid][userid] == v)
-            arr.push(h('li', com.userlinkThin(userid, app.names[userid])))
-        }
+    } else if (view == 'about') {
+      // given names
+      var givenNames = []
+      if (profile) {
+        if (profile.self.name)
+          givenNames.push(h('li', profile.self.name + ' (self-assigned)'))
+        Object.keys(profile.assignedBy).forEach(function(userid) {
+          var given = profile.assignedBy[userid]
+          if (given.name)
+            givenNames.push(h('li', given.name + ' by ', com.userlinkThin(userid, app.names[userid])))
+        })
       }
-      return arr
-    }
-    function inEdges(g, v) {
-      var arr = []
-      for (var userid in g) {
-        if (g[userid][pid] == v)
-          arr.push(h('li', com.userlinkThin(userid, app.names[userid])))
-      }
-      return arr      
-    }
-    var follows   = outEdges(graphs.follow, true)
-    var followers = inEdges(graphs.follow, true)
-    var trusts    = outEdges(graphs.trust, 1)
-    var trusters  = inEdges(graphs.trust, 1)
-    var flags     = outEdges(graphs.trust, -1)
-    var flaggers  = inEdges(graphs.trust, -1)
 
-    // render page
-    var name = app.names[pid] || util.shortString(pid)
-    var joinDate = (profile) ? util.prettydate(new Date(profile.createdAt), true) : '-'
-    app.setPage('profile', h('.row',
-      h('.col-xs-1', com.sidenav(app)),
-      h('.col-xs-8', 
-        h('.header-ctrls',
-          com.search({
-            value: '',
-            onsearch: null
-          }),
-          com.nav({
-            current: 'timeline',
-            items: [
-              ['timeline', makeUri({ view: 'timeline' }), 'Timeline'],
-              ['about', makeUri({ view: 'about' }), 'About']
-            ]
-          })),
-        nameTrustDlg, 
-        msgfeed),
-      h('.col-xs-3.profile-controls.full-height',
-        h('.section',
-          h('img.profpic', { src: '/img/default-prof-pic.png' }),
-          h('h2', name, com.nameConfidence(pid, app), renameBtn),
-          h('p.text-muted', 'joined '+joinDate)
-        ),
-        h('.section', h('p', followBtn), h('p', trustBtn), h('p', flagBtn)),
+      // follows, trusts, flags
+      var follows   = outEdges(graphs.follow, true)
+      var followers = inEdges(graphs.follow, true)
+      var trusts    = outEdges(graphs.trust, 1)
+      var trusters  = inEdges(graphs.trust, 1)
+      var flags     = outEdges(graphs.trust, -1)
+      var flaggers  = inEdges(graphs.trust, -1)
+      content = h('div', 
         (givenNames.length)
           ? h('.section',
             h('small', h('strong', 'Given names '), com.a('#/help/names', '?')), 
@@ -150,11 +104,60 @@ module.exports = function (app) {
           h('div', { innerHTML: com.toEmoji(pid) })
         )
       )
-    ))
+    }
+
+    // render page
+    var name = app.names[pid] || util.shortString(pid)
+    var joinDate = (profile) ? util.prettydate(new Date(profile.createdAt), true) : '-'
+    app.setPage('profile', h('.row',
+      h('.col-xs-1', com.sidenav(app)),
+      h('.col-xs-8', 
+        nameTrustDlg, 
+        h('.header-ctrls',
+          com.search({
+            value: '',
+            onsearch: null
+          }),
+          com.nav({
+            current: view,
+            items: [
+              ['timeline', makeUri({ view: 'timeline' }), 'Timeline'],
+              ['about', makeUri({ view: 'about' }), 'About'],
+              ['profpic', makeUri({ view: 'profpic' }), 'Profile Pic']
+            ]
+          })),
+        content),
+      h('.col-xs-3.profile-controls.full-height',
+        h('.section',
+          h('img.profpic', { src: '/img/default-prof-pic.png' }),
+          h('h2', name, com.nameConfidence(pid, app), renamebtn),
+          h('p.text-muted', 'joined '+joinDate)
+        ),
+        h('.section', h('p', followbtn), h('p', blockbtn)))))
 
     function makeUri (opts) {
       opts.v = ('view' in opts) ? opts.view : ''
       return '#/profile/'+pid+'?view=' + encodeURIComponent(opts.view)
+    }
+
+    function outEdges(g, v) {
+      var arr = []
+      if (g[pid]) {
+        for (var userid in g[pid]) {
+          if (g[pid][userid] == v)
+            arr.push(h('li', com.userlinkThin(userid, app.names[userid])))
+        }
+      }
+      return arr
+    }
+
+    function inEdges(g, v) {
+      var arr = []
+      for (var userid in g) {
+        if (g[userid][pid] == v)
+          arr.push(h('li', com.userlinkThin(userid, app.names[userid])))
+      }
+      return arr      
     }
 
     // handlers
