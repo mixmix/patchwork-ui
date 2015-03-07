@@ -2,6 +2,7 @@
 var h = require('hyperscript')
 var suggestBox = require('suggest-box')
 var schemas = require('ssb-msg-schemas')
+var mlib = require('ssb-msgs')
 var createHash = require('multiblob/util').createHash
 var pull = require('pull-stream')
 var pushable = require('pull-pushable')
@@ -85,12 +86,12 @@ module.exports = function (app, parent) {
         while ((match = mentionRegex.exec(text))) {
           var name = match[2]
           var id = idsByName[name]
-          if (schemas.isHash(id)) {
+          if (mlib.isHash(id)) {
             if (!mentionedIds[id]) {
               mentions.push({ feed: id, name: name })
               mentionedIds[id] = true
             }
-          } else if (schemas.isHash(name)) {
+          } else if (mlib.isHash(name)) {
             if (!mentionedIds[name]) {
               mentions.push({ feed: name })
               mentionedIds[name] = true
@@ -103,7 +104,7 @@ module.exports = function (app, parent) {
         if (parent)          post.repliesTo = { msg: parent }
         if (mentions.length) post.mentions = mentions
         if (extLinks.length) post.attachments = extLinks
-        app.ssb.add(post, function (err, msg) {
+        app.ssb.publish(post, function (err, msg) {
           app.setStatus(null)
           enable()
           if (err) swal('Error While Publishing', err.message, 'error')
@@ -237,7 +238,7 @@ module.exports = function (app, parent) {
         continue
       mentionedIds[name] = true
 
-      if (schemas.isHash(name))
+      if (mlib.isHash(name))
         mentions.push({ feed: fakeFeed })        
       else
         mentions.push({ feed: fakeFeed, name: name })  
