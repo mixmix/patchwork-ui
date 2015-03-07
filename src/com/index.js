@@ -64,16 +64,21 @@ exports.toEmoji = function (buf, size) {
 }
 
 
-var header =
-exports.header = function (app) {
-  return h('.nav.navbar.navbar-default',
-    h('.container-fluid',
-      h('.navbar-header', h('a.navbar-brand', { href: '#/' }, 'ssb')),
-      h('.navbar-form.navbar-left',
-        h('.form-group',
-          h('input.form-control', { type: 'text', placeholder: 'Search' }))),
-      h('ul.nav.navbar-nav.navbar-right',
-        h('li.hidden-xs', a('#/help', 'help')))))
+var nav =
+exports.nav = function (opts) {
+  var items = opts.items.map(function (item) {
+    var cls = ''
+    if (item[0] == opts.current)
+      cls = '.selected'
+    return h('a'+cls, { href: item[1] }, item[2])
+  })
+  return h('.nav', items)
+}
+
+var search =
+exports.search = function (opts) {
+  var searchInput = h('input.search', { type: 'text', name: 'search', placeholder: 'Search', value: opts.value })
+  return h('form', { onsubmit: opts.onsearch }, searchInput)
 }
 
 var sidenav =

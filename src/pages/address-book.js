@@ -76,7 +76,7 @@ module.exports = function (app) {
       renameBtn = h('button.btn.btn-primary.btn-xs', { title: 'Rename', onclick: r }, com.icon('pencil'), ' Rename')
 
       return h('tr.address',
-        h('td.profpic', h('img', {src: '/img/default-prof-pic.png' })),
+        h('td.profpic', com.a('#/profile/'+id, h('img', { src: '/img/default-prof-pic.png' }))),
         h('td.details',
           h('p.name', 
             h('strong', com.a('#/profile/'+id, app.names[id]||id), com.nameConfidence(id, app)),
@@ -86,29 +86,24 @@ module.exports = function (app) {
               : ''),
           h('p', followbtn, ' ', renameBtn, ' ', blockBtn)))
     }
-    var searchInput = h('input.search', { type: 'text', placeholder: 'Search', value: queryStr })
-    var feed = com.messageFeed(app, listFn, filterFn, renderFn)
-    
-    function listsNav () {
-      return [
-        ['contacts', 'Your Contacts'],
-        ['others',   'Others'],
-        ['blocked',  'Blocked']
-      ].map(function (item) {
-        var cls = ''
-        if (item[0] == currentList)
-          cls = '.selected'
-        return h('a'+cls, { href: '#/address-book'+makeQs({ list: item[0] }) }, item[1])
-      })
-    }
 
     app.setPage('address-book', h('.row',
       h('.col-xs-2.col-md-1', com.sidenav(app)),
       h('.col-xs-10.col-md-8',
-        h('.address-book-ctrls',
-          h('.lists', listsNav()),
-          h('form', { onsubmit: onsearch }, searchInput)),
-        feed),
+        h('.header-ctrls',
+          com.search({
+            value: queryStr,
+            onsearch: onsearch
+          }),
+          com.nav({
+            current: currentList,
+            items: [
+              ['contacts', makeUri({ list: 'contacts' }), 'Your Contacts'],
+              ['others',   makeUri({ list: 'others' }),   'Others'],
+              ['blocked',  makeUri({ list: 'blocked' }),  'Blocked']
+            ]
+          })),
+        com.messageFeed(app, listFn, filterFn, renderFn)),
       h('.col-xs-10.col-xs-push-2.col-md-3.col-md-push-0',
         h('table.table.peers',
           h('thead', h('tr', h('th', 'Network'))),
@@ -118,17 +113,17 @@ module.exports = function (app) {
         com.sidehelp(app))
     ))
 
-    function makeQs (opts) {
+    function makeUri (opts) {
       opts.q = ('q' in opts) ? opts.q : queryStr
       opts.v = ('list' in opts) ? opts.list : currentList
-      return '?q=' + encodeURIComponent(opts.q) + '&list=' + encodeURIComponent(opts.v)
+      return '#/address-book?q=' + encodeURIComponent(opts.q) + '&list=' + encodeURIComponent(opts.v)
     }
 
     // handlers
 
     function onsearch (e) {
       e.preventDefault()
-      window.location.hash = '#/address-book'+makeQs({ q: searchInput.value })
+      window.location.hash = makeUri({ q: e.target.search.value })
     }
 
     function rename (e, pid) {

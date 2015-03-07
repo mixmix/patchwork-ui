@@ -110,9 +110,24 @@ module.exports = function (app) {
     var joinDate = (profile) ? util.prettydate(new Date(profile.createdAt), true) : '-'
     app.setPage('profile', h('.row',
       h('.col-xs-1', com.sidenav(app)),
-      h('.col-xs-8', nameTrustDlg, msgfeed),
+      h('.col-xs-8', 
+        h('.header-ctrls',
+          com.search({
+            value: '',
+            onsearch: null
+          }),
+          com.nav({
+            current: 'timeline',
+            items: [
+              ['timeline', makeUri({ view: 'timeline' }), 'Timeline'],
+              ['about', makeUri({ view: 'about' }), 'About']
+            ]
+          })),
+        nameTrustDlg, 
+        msgfeed),
       h('.col-xs-3.profile-controls.full-height',
         h('.section',
+          h('img.profpic', { src: '/img/default-prof-pic.png' }),
           h('h2', name, com.nameConfidence(pid, app), renameBtn),
           h('p.text-muted', 'joined '+joinDate)
         ),
@@ -136,6 +151,11 @@ module.exports = function (app) {
         )
       )
     ))
+
+    function makeUri (opts) {
+      opts.v = ('view' in opts) ? opts.view : ''
+      return '#/profile/'+pid+'?view=' + encodeURIComponent(opts.view)
+    }
 
     // handlers
 
