@@ -12,7 +12,7 @@ module.exports = function (app) {
   var done = multicb({ pluck: 1 })
   app.ssb.friends.all('follow', done())
   app.ssb.friends.all('trust', done())
-  app.ssb.phoenix.getProfile(pid, done())
+  app.ssb.phoenix.getAllProfiles(done())
   done(function (err, datas) {
     var graphs = {
       follow: datas[0],
@@ -21,7 +21,9 @@ module.exports = function (app) {
     graphs.follow[app.myid] = graphs.follow[app.myid] || {}
     graphs.trust [app.myid] = graphs.trust [app.myid] || {}
     var isFollowing = graphs.follow[app.myid][pid]
-    var profile = datas[2]
+    var profiles = datas[2]
+    var profile = profiles[pid]
+    var name = app.names[pid] || util.shortString(pid)
 
     // name confidence controls
     var nameTrustDlg
@@ -54,9 +56,7 @@ module.exports = function (app) {
         : h('button.btn.btn-primary', { onclick: follow }, com.icon('plus'), ' Add Contact')
       blockbtn = (graphs.trust[app.myid][pid] == -1)
         ? h('button.btn.btn-primary', { onclick: detrust }, com.icon('ok'), ' Unblock')
-        : (!graphs.trust[app.myid][pid])
-          ? h('button.btn.btn-primary',{ onclick: flagPrompt },  com.icon('remove'), ' Block')
-          : ''
+        : h('button.btn.btn-primary',{ onclick: blockPompt },  com.icon('remove'), ' Block')
     } 
 
     var content
@@ -82,32 +82,40 @@ module.exports = function (app) {
       var follows   = outEdges(graphs.follow, true)
       var followers = inEdges(graphs.follow, true)
       var trusts    = outEdges(graphs.trust, 1)
-      var trusters  = inEdges(graphs.trust, 1)
       var flags     = outEdges(graphs.trust, -1)
       var flaggers  = inEdges(graphs.trust, -1)
       content = h('div', 
         (givenNames.length)
           ? h('.section',
-            h('small', h('strong', 'Given names '), com.a('#/help/names', '?')), 
+            h('small', h('strong', 'Nicknames')),
             h('br'),
             h('ul.list-unstyled', givenNames)
           )
           : '',
-        trusters.length  ? h('.section', h('small', h('strong.text-success', com.icon('ok'), ' Trusted by'), ' ', com.a('#/help/trust', '?')), h('br'), h('ul.list-unstyled', trusters)) : '',
-        flaggers.length  ? h('.section', h('small', h('strong.text-danger', com.icon('flag'), ' Flagged by'), ' ', com.a('#/help/trust', '?')), h('br'), h('ul.list-unstyled', flaggers)) : '',
-        follows.length   ? h('.section', h('small', h('strong', 'Follows'), ' ', com.a('#/help/contacts', '?')), h('br'), h('ul.list-unstyled', follows)) : '',
-        followers.length ? h('.section', h('small', h('strong', 'Followed by'), ' ', com.a('#/help/contacts', '?')), h('br'), h('ul.list-unstyled', followers)) : '',
-        trusts.length    ? h('.section', h('small', h('strong', 'Trusts'), ' ', com.a('#/help/trust', '?')), h('br'), h('ul.list-unstyled', trusts)) : '',
-        flags.length     ? h('.section', h('small', h('strong', 'Flags'), ' ', com.a('#/help/trust', '?')), h('br'), h('ul.list-unstyled', flags)) : '',
-        h('.section',
-          h('small', h('strong', 'Emoji fingerprint '), com.a('#/help/trust', '?')),
-          h('div', { innerHTML: com.toEmoji(pid) })
-        )
+        flaggers.length  ? h('.section', h('small', h('strong', 'Blocked by')), h('br'), h('ul.list-unstyled', flaggers)) : '',
+        follows.length   ? h('.section', h('small', h('strong', 'Contacts')), h('br'), h('ul.list-unstyled', follows)) : '',
+        followers.length ? h('.section', h('small', h('strong', 'Followed by')), h('br'), h('ul.list-unstyled', followers)) : '',
+        flags.length     ? h('.section', h('small', h('strong', 'Blocked')), h('br'), h('ul.list-unstyled', flags)) : ''
       )
+    } else {
+      // contacts
+      function listFn (opts) {
+        opts.type = 'init'
+        return app.ssb.messagesByType(opts)
+      }
+      graphs.follow[pid] = graphs.follow[pid] || {}
+      function filterFn (msg) {
+        return graphs.follow[pid][msg.value.author]
+      }
+      var syncers = inEdges(graphs.trust, 1)
+      var syncing = (graphs.trust[app.myid][pid] === 1)
+      content = h('.profile-contacts',
+        (pid !== app.myid) ? h('p', h('button.btn.btn-primary.btn-strong.sync-toggle'+(syncing?'.on':''), { onclick: toggleSync })) : '',
+        syncers.length ? h('p', 'Currently Syncing:', h('ul.list-unstyled', syncers)) : '',
+        com.messageFeed(app, listFn, filterFn, com.address(app, profiles, graphs.follow)))
     }
 
     // render page
-    var name = app.names[pid] || util.shortString(pid)
     var joinDate = (profile) ? util.prettydate(new Date(profile.createdAt), true) : '-'
     app.setPage('profile', h('.row',
       h('.col-xs-1', com.sidenav(app)),
@@ -122,8 +130,8 @@ module.exports = function (app) {
             current: view,
             items: [
               ['timeline', makeUri({ view: 'timeline' }), 'Timeline'],
-              ['about', makeUri({ view: 'about' }), 'About'],
-              ['profpic', makeUri({ view: 'profpic' }), 'Profile Pic']
+              ['about', makeUri({ view: 'about' }), 'About ' + name],
+              ['address-book', makeUri({ view: 'address-book' }), 'Their Contacts'],
             ]
           })),
         content),
@@ -162,27 +170,34 @@ module.exports = function (app) {
 
     // handlers
 
-    function trustPrompt (e) {
+    function toggleSync (e) {
       e.preventDefault()
-      swal({
-        title: 'Trust '+util.escapePlain(name)+'?',
-        text: [
-          'Use their data (names, trusts, flags) in your own account?',
-          'Only do this if you know this account is your friend\'s, you trust them, and you think other people should too!'
-        ].join(' '),
-        type: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#12b812',
-        confirmButtonText: 'Trust'
-      }, function() {
-        app.updateContact(pid, { trust: 1 }, function (err) {
+      if (graphs.trust[app.myid][pid] !== 1) {
+        swal({
+          title: 'Trust '+util.escapePlain(name)+'\'s Contacts?',
+          text: [
+            'Use the contact list published by this user?',
+            'Only do this if you trust this user to publish valid contact lists.'
+          ].join(' '),
+          type: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#12b812',
+          confirmButtonText: 'Import Contacts'
+        }, function() {
+          app.updateContact(pid, { trust: 1 }, function (err) {
+            if (err) swal('Error While Publishing', err.message, 'error')
+            else app.refreshPage()
+          })
+        })
+      } else {
+        app.updateContact(pid, { trust: 0 }, function(err) {
           if (err) swal('Error While Publishing', err.message, 'error')
           else app.refreshPage()
         })
-      })
+      }
     }
 
-    function flagPrompt (e) {
+    function blockPompt (e) {
       e.preventDefault()
       swal({
         title: 'Flag '+util.escapePlain(name)+'?',

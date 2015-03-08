@@ -89,7 +89,7 @@ exports.sidenav = function (app) {
     ['inbox', 'inbox', 'inbox ('+app.indexCounts.inboxUnread+')'],
     ['compose', 'compose', 'compose'],
     ['address-book', 'address-book', 'contacts'],
-    ['profile', 'profile/'+app.myid, app.names[app.myid] || 'profile'],
+    ['your-profile', 'profile/'+app.myid, app.names[app.myid] || 'profile'],
     ['adverts', 'adverts', 'adverts'],
     ['help', 'help', 'help']
   ]
@@ -171,5 +171,6 @@ exports.messageThread = require('./message-thread')
 exports.messageSummary = require('./message-summary')
 exports.messagePreview = require('./message-preview')
 exports.messageFeed = require('./message-feed')
+exports.address = require('./address')
 exports.peers = require('./peers')
 exports.postForm = require('./post-form')

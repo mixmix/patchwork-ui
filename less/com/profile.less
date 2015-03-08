@@ -1,0 +1,49 @@
+
+.profile-controls {
+
+  overflow-y: auto;
+  overflow-x: hidden;
+  
+  h2, p {
+    margin: 0;
+  }
+  .profpic {
+    max-width: 100%;
+    margin-bottom: 1em;
+    border-radius: 2px;
+  }
+  .section {
+    margin-bottom: 24px;
+  }
+}
+
+.profile-contacts {
+  .sync-toggle {
+    width: 250px;
+
+    &::before {
+      .glyphicon;
+    }
+    &::after {
+      content: 'Import Contacts';
+    }
+    &:hover {
+      .glyphicon-ok;
+      &::after {
+        content: ' Import Contacts';
+      }
+    }
+    &.on {
+      .glyphicon-ok;
+      &::after {
+        content: ' Contacts in Sync';
+      }
+      &:hover {
+        .glyphicon-remove;
+        &::after {
+          content: ' Stop Using Contacts';
+        }
+      }
+    }
+  }
+}
