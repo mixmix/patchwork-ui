@@ -68,6 +68,10 @@ function getSummary (app, msg, opts) {
         }
         if ('name' in c)
           changes.push('named')
+        if ('profilePic' in c)
+          changes.push('set a profile pic for')
+        if (changes.length===0)
+          changes.push('published a contact link to')
         return [
           com.user(app, msg.value.author),
           ' ', changes.join(', '), ' ',
