@@ -23,7 +23,15 @@ module.exports = function (app) {
     var isFollowing = graphs.follow[app.myid][pid]
     var profiles = datas[2]
     var profile = profiles[pid]
+
     var name = app.names[pid] || util.shortString(pid)
+    var profileImg = '/img/default-prof-pic.png'
+    if (profile) {
+      if (profile.assignedBy[app.myid] && profile.assignedBy[app.myid].profilePic)
+        profileImg = '/ext/' + profile.assignedBy[app.myid].profilePic.ext
+      else if (profile.self.profilePic)
+        profileImg = '/ext/' + profile.self.profilePic.ext
+    }
 
     // name confidence controls
     var nameTrustDlg
@@ -118,7 +126,7 @@ module.exports = function (app) {
         content),
       h('.col-xs-3.profile-controls.full-height',
         h('.section',
-          h('a.profpic', { href: makeUri({ view: 'pics' }) }, h('img', { src: '/img/default-prof-pic.png' })),
+          h('a.profpic', { href: makeUri({ view: 'pics' }) }, h('img', { src: profileImg })),
           h('h2', name, com.nameConfidence(pid, app), renamebtn),
           h('p.text-muted', 'joined '+joinDate)
         ),

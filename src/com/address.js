@@ -9,6 +9,14 @@ module.exports = function (app, profiles, follows) {
     var profile = profiles[id]
     var otherNames = app.getOtherNames(profile)
 
+    var profileImg = '/img/default-prof-pic.png'
+    if (profile) {
+      if (profile.assignedBy[app.myid] && profile.assignedBy[app.myid].profilePic)
+        profileImg = '/ext/' + profile.assignedBy[app.myid].profilePic.ext
+      else if (profile.self.profilePic)
+        profileImg = '/ext/' + profile.self.profilePic.ext
+    }
+
     function f (e) { follow(e, id) }
     function unf (e) { unfollow(e, id) }
     function r (e) { rename(e, id) }
@@ -25,7 +33,7 @@ module.exports = function (app, profiles, follows) {
     renamebtn = h('button.btn.btn-primary.btn-xs', { title: 'Rename', onclick: r }, com.icon('pencil'))
 
     return h('tr.address',
-      h('td.profpic', com.a('#/profile/'+id, h('img', { src: '/img/default-prof-pic.png' }))),
+      h('td.profpic', com.a('#/profile/'+id, h('img', { src: profileImg }))),
       h('td.details',
         h('p.name', 
           h('strong', com.a('#/profile/'+id, u.shortString(app.names[id]||id, 20)), com.nameConfidence(id, app), ' ', renamebtn)),
