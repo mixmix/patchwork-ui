@@ -16,7 +16,7 @@
       border-radius: 2px;
     }
     &:hover::before {
-      content: 'Choose Profile Pic';
+      content: 'Change Profile Pic';
       position: absolute;
       bottom: 0;
       left: 0;
@@ -34,4 +34,25 @@
 
 .profile-pics {
   padding: 1em 0;
+  .pic {
+    position: relative;
+    display: inline-block;
+    margin: 1em 1em 1em 0;
+    img {
+      width: 275px;
+      height: 275px;
+      border-radius: 2px;
+    }
+    &:hover::before {
+      content: 'Use This Picture';
+      position: absolute;
+      bottom: 30px;
+      left: 0;
+      background: rgba(0,0,0,0.75);
+      font-weight: 100;
+      padding: 1em 2em;
+      color: #fff;
+      border-radius: 2px;
+    }
+  }
 }

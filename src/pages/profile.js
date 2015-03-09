@@ -61,9 +61,21 @@ module.exports = function (app) {
 
     var content
     if (view == 'pics') {
+      var pics = []
+      if (profile) {
+        if (profile.self.profilePic)
+          pics.push(profilePic(profile.self.profilePic))
+        Object.keys(profile.assignedBy).forEach(function(userid) {
+          var given = profile.assignedBy[userid]
+          if (given.profilePic)
+            pics.push(profilePic(given.profilePic, userid))
+        })
+      }
       content = h('.profile-pics',
         h('p', h('a.btn.btn-primary', { href: makeUri(), innerHTML: '&laquo; Back to Feed'})),
-        com.imageUploader(app, { onupload: onImageUpload }))
+        com.imageUploader(app, { onupload: onImageUpload }),
+        h('br'),
+        pics)
     }
     else {
       // messages
@@ -130,6 +142,20 @@ module.exports = function (app) {
         qs = '?view=' + encodeURIComponent(opts.view)
       }
       return '#/profile/'+pid+qs
+    }
+
+    function profilePic (pic, author) {
+      var authorName
+      if (!author) {
+        author = pid
+        authorName = name
+      } else {
+        authorName = app.names[author]
+      }
+      return h('.pic',
+        h('a', { href: '#', onclick: setProfilePic(pic) }, h('img', { src: '/ext/'+pic.ext })),
+        h('p', 'by ', com.userlinkThin(author, authorName))
+      )
     }
 
     function outEdges(g, v) {
@@ -241,6 +267,18 @@ module.exports = function (app) {
         if (err) swal('Error While Publishing', err.message, 'error')
         else app.refreshPage()
       })
+    }
+
+    function setProfilePic (link) {
+      return function (e) {
+        e.preventDefault()
+        if (profile && profile.assignedBy[app.myid] && profile.assignedBy[app.myid].profilePic && profile.assignedBy[app.myid].profilePic.ext == link.ext)
+          return
+        app.updateContact(pid, { profilePic: link }, function (err) {
+          if (err) swal('Error While Publishing', err.message, 'error')
+          else app.refreshPage()        
+        })
+      }
     }
 
     function onImageUpload (hasher) {
