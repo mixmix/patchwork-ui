@@ -6,7 +6,7 @@ var u = require('../lib/util')
 
 module.exports = function (app) {
   var queryStr = app.page.qs.q || ''
-  var currentList = app.page.qs.list || 'contacts'
+  var currentList = app.page.qs.list || 'following'
   
   // fetch
 
@@ -38,7 +38,7 @@ module.exports = function (app) {
           return false
       }
 
-      if (currentList == 'contacts') {
+      if (currentList == 'following') {
         if (id === app.myid || (follows[app.myid][id] && trusts[app.myid][id] !== -1))
           return true
       }
@@ -65,15 +65,15 @@ module.exports = function (app) {
           com.nav({
             current: currentList,
             items: [
-              ['contacts', makeUri({ list: 'contacts' }), 'Your Contacts'],
-              ['others',   makeUri({ list: 'others' }),   'Others'],
-              ['blocked',  makeUri({ list: 'blocked' }),  'Blocked']
+              ['following', makeUri({ list: 'following' }), 'Following'],
+              ['others',   makeUri({ list: 'others' }),     'Others'],
+              ['blocked',  makeUri({ list: 'blocked' }),    'Blocked']
             ]
           })),
         com.messageFeed(app, listFn, filterFn, com.address(app, profiles, follows))),
       h('.col-xs-10.col-xs-push-2.col-md-3.col-md-push-0',
         h('table.table.peers',
-          h('thead', h('tr', h('th', 'Network'))),
+          h('thead', h('tr', h('th', 'Gossip Network'))),
           h('tbody', com.peers(app, data[3]))
         ),
         h('hr'),

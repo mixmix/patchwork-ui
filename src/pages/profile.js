@@ -6,7 +6,7 @@ var com = require('../com')
 var util = require('../lib/util')
 
 module.exports = function (app) {
-  var view = app.page.qs.view || 'timeline'
+  var view = app.page.qs.view || 'feed'
 
   var pid = app.page.param
   var done = multicb({ pluck: 1 })
@@ -52,100 +52,84 @@ module.exports = function (app) {
     } else {
       renamebtn = h('button.btn.btn-primary', {title: 'Rename', onclick: rename}, com.icon('pencil'))
       followbtn = (isFollowing)
-        ? h('button.btn.btn-primary', { onclick: unfollow }, com.icon('minus'), ' Remove Contact')
-        : h('button.btn.btn-primary', { onclick: follow }, com.icon('plus'), ' Add Contact')
+        ? h('button.btn.btn-primary', { onclick: unfollow }, com.icon('minus'), ' Unfollow')
+        : h('button.btn.btn-primary', { onclick: follow }, com.icon('plus'), ' Follow')
       blockbtn = (graphs.trust[app.myid][pid] == -1)
         ? h('button.btn.btn-primary', { onclick: detrust }, com.icon('ok'), ' Unblock')
         : h('button.btn.btn-primary',{ onclick: blockPompt },  com.icon('remove'), ' Block')
     } 
 
     var content
-    if (view == 'timeline') {
-      // messages
-      content = com.messageFeed(app, app.ssb.createFeedStream, function (msg) {
-        return msg.value.author == pid
-      })
-    } else if (view == 'about') {
-      // given names
-      var givenNames = []
-      if (profile) {
-        if (profile.self.name)
-          givenNames.push(h('li', profile.self.name + ' (self-assigned)'))
-        Object.keys(profile.assignedBy).forEach(function(userid) {
-          var given = profile.assignedBy[userid]
-          if (given.name)
-            givenNames.push(h('li', given.name + ' by ', com.userlinkThin(userid, app.names[userid])))
-        })
-      }
-
-      // follows, trusts, flags
-      var follows   = outEdges(graphs.follow, true)
-      var followers = inEdges(graphs.follow, true)
-      var trusts    = outEdges(graphs.trust, 1)
-      var flags     = outEdges(graphs.trust, -1)
-      var flaggers  = inEdges(graphs.trust, -1)
-      content = h('div', 
-        (givenNames.length)
-          ? h('.section',
-            h('small', h('strong', 'Nicknames')),
-            h('br'),
-            h('ul.list-unstyled', givenNames)
-          )
-          : '',
-        flaggers.length  ? h('.section', h('small', h('strong', 'Blocked by')), h('br'), h('ul.list-unstyled', flaggers)) : '',
-        follows.length   ? h('.section', h('small', h('strong', 'Contacts')), h('br'), h('ul.list-unstyled', follows)) : '',
-        followers.length ? h('.section', h('small', h('strong', 'Followed by')), h('br'), h('ul.list-unstyled', followers)) : '',
-        flags.length     ? h('.section', h('small', h('strong', 'Blocked')), h('br'), h('ul.list-unstyled', flags)) : ''
-      )
-    } else {
-      // contacts
-      function listFn (opts) {
-        opts.type = 'init'
-        return app.ssb.messagesByType(opts)
-      }
-      graphs.follow[pid] = graphs.follow[pid] || {}
-      function filterFn (msg) {
-        return graphs.follow[pid][msg.value.author]
-      }
-      var syncers = inEdges(graphs.trust, 1)
-      var syncing = (graphs.trust[app.myid][pid] === 1)
-      content = h('.profile-contacts',
-        (pid !== app.myid) ? h('p', h('button.btn.btn-primary.btn-strong.sync-toggle'+(syncing?'.on':''), { onclick: toggleSync })) : '',
-        syncers.length ? h('p', 'Currently Syncing:', h('ul.list-unstyled', syncers)) : '',
-        com.messageFeed(app, listFn, filterFn, com.address(app, profiles, graphs.follow)))
+    if (view == 'pics') {
+      content = h('.profile-pics',
+        h('p', h('a.btn.btn-primary', { href: makeUri(), innerHTML: '&laquo; Back to Feed'})),
+        com.imageUploader(app, { onupload: onImageUpload }))
     }
+    else {
+      // messages
+      content = [
+        h('.header-ctrls',
+          com.search({
+            value: '',
+            onsearch: null
+          })),
+        com.messageFeed(app, app.ssb.createFeedStream, function (msg) {
+          return msg.value.author == pid
+        })
+      ]
+    }
+
+    // given names
+    var givenNames = []
+    if (profile) {
+      if (profile.self.name)
+        givenNames.push(h('li', profile.self.name + ' (self-assigned)'))
+      Object.keys(profile.assignedBy).forEach(function(userid) {
+        var given = profile.assignedBy[userid]
+        if (given.name)
+          givenNames.push(h('li', given.name + ' by ', com.userlinkThin(userid, app.names[userid])))
+      })
+    }
+
+    // follows, trusts, blocks
+    var follows   = outEdges(graphs.follow, true)
+    var followers = inEdges(graphs.follow, true)
+    var blocks    = outEdges(graphs.trust, -1)
+    var blockers  = inEdges(graphs.trust, -1)
 
     // render page
     var joinDate = (profile) ? util.prettydate(new Date(profile.createdAt), true) : '-'
     app.setPage('profile', h('.row',
       h('.col-xs-1', com.sidenav(app)),
       h('.col-xs-8', 
-        nameTrustDlg, 
-        h('.header-ctrls',
-          com.search({
-            value: '',
-            onsearch: null
-          }),
-          com.nav({
-            current: view,
-            items: [
-              ['timeline', makeUri({ view: 'timeline' }), 'Timeline'],
-              ['about', makeUri({ view: 'about' }), 'About ' + name],
-              ['address-book', makeUri({ view: 'address-book' }), 'Their Contacts'],
-            ]
-          })),
+        nameTrustDlg,
         content),
       h('.col-xs-3.profile-controls.full-height',
         h('.section',
-          h('img.profpic', { src: '/img/default-prof-pic.png' }),
+          h('a.profpic', { href: makeUri({ view: 'pics' }) }, h('img', { src: '/img/default-prof-pic.png' })),
           h('h2', name, com.nameConfidence(pid, app), renamebtn),
           h('p.text-muted', 'joined '+joinDate)
         ),
-        h('.section', h('p', followbtn), h('p', blockbtn)))))
+        h('.section', h('p', followbtn), h('p', blockbtn)),
+        (givenNames.length)
+          ? h('.section',
+            h('strong', 'Nicknames'),
+            h('br'),
+            h('ul.list-unstyled', givenNames)
+          )
+          : '',
+        follows.length   ? h('.section', h('strong', 'Follows'), h('br'), h('ul.list-unstyled', follows)) : '',
+        followers.length ? h('.section', h('strong', 'Followed by'), h('br'), h('ul.list-unstyled', followers)) : '',
+        blockers.length  ? h('.section', h('strong', 'Blocked by'), h('br'), h('ul.list-unstyled', blockers)) : '',
+        blocks.length    ? h('.section', h('strong', 'Blocked'), h('br'), h('ul.list-unstyled', blocks)) : '')))
 
     function makeUri (opts) {
-      opts.v = ('view' in opts) ? opts.view : ''
-      return '#/profile/'+pid+'?view=' + encodeURIComponent(opts.view)
+      var qs=''
+      if (opts) {
+        opts.v = ('view' in opts) ? opts.view : ''
+        qs = '?view=' + encodeURIComponent(opts.view)
+      }
+      return '#/profile/'+pid+qs
     }
 
     function outEdges(g, v) {
@@ -182,7 +166,7 @@ module.exports = function (app) {
           type: 'warning',
           showCancelButton: true,
           confirmButtonColor: '#12b812',
-          confirmButtonText: 'Import Contacts'
+          confirmButtonText: 'Use Contacts'
         }, function() {
           app.updateContact(pid, { trust: 1 }, function (err) {
             if (err) swal('Error While Publishing', err.message, 'error')
@@ -203,7 +187,7 @@ module.exports = function (app) {
         title: 'Flag '+util.escapePlain(name)+'?',
         text: [
           'Warn people about this user?',
-          'This will hurt their network reputation and cause fewer people to trust them.',
+          'This will hurt network reputation and cause fewer people to trust them.',
           'Only do this if you believe they are a spammer, troll, or attacker.'
         ].join(' '),
         type: 'warning',
@@ -256,6 +240,20 @@ module.exports = function (app) {
       app.updateContact(pid, { name: app.names[pid] }, function (err) {
         if (err) swal('Error While Publishing', err.message, 'error')
         else app.refreshPage()
+      })
+    }
+
+    function onImageUpload (hasher) {
+      var link = {
+        ext: hasher.digest,
+        size: hasher.size,
+        type: 'image/png',
+        width: 275,
+        height: 275
+      }
+      app.updateContact(pid, { profilePic: link }, function (err) {
+        if (err) swal('Error While Publishing', err.message, 'error')
+        else app.refreshPage()        
       })
     }
 

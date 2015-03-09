@@ -87,9 +87,9 @@ exports.sidenav = function (app) {
   //[id, path, label],
     ['posts', '', [icon('globe'), h('span', { style: 'padding-left: 2px' }, 'feed')]],
     ['inbox', 'inbox', 'inbox ('+app.indexCounts.inboxUnread+')'],
-    ['compose', 'compose', 'compose'],
-    ['address-book', 'address-book', 'contacts'],
-    ['your-profile', 'profile/'+app.myid, app.names[app.myid] || 'profile'],
+    // ['compose', 'compose', 'compose'],
+    ['address-book', 'address-book', 'data sources'],
+    // ['your-profile', 'profile/'+app.myid, app.names[app.myid] || 'profile'],
     ['adverts', 'adverts', 'adverts'],
     ['help', 'help', 'help']
   ]
@@ -174,3 +174,4 @@ exports.messageFeed = require('./message-feed')
 exports.address = require('./address')
 exports.peers = require('./peers')
 exports.postForm = require('./post-form')
+exports.imageUploader = require('./image-uploader')
