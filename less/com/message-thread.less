@@ -102,29 +102,25 @@
   // message type styles
 
   .initmsg .type {
-    background: #333;
-    border-color: #000;
+    background: @black-primary;
+    border-color: @black-secondary;
   }
   .postmsg {
     .type {
-      border-color: rgb(26, 102, 202);
-      background: #006EFF;
+      border-color: @blue-secondary;
+      background: @blue-primary;
     }
     .message {
       color: #555;
     }
   }
-  .advertmsg .type, .namemsg .type, .pubmsg .type {
-    border-color: rgb(137, 30, 160);
-    background: #B611DA;
+  .contactmsg .type, .namemsg .type, .pubmsg .type {
+    background: @green-primary;
+    border-color: @green-secondary;
   }
-  .followmsg .type, .trustmsg .type {
-    border-color: rgb(19, 115, 16);
-    background: #06AB01;
-  }
-  .unfollowmsg .type, .flagmsg .type {
-    border-color: rgb(121, 18, 18);
-    background: rgb(208, 8, 8); 
+  .advertmsg .type {
+    background: @purple-primary;
+    border-color: @purple-secondary;
   }
   .rawmsg {
     .type {
