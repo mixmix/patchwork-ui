@@ -3,6 +3,9 @@ var com = require('./index')
 var u = require('../lib/util')
 
 module.exports = function (app, msg, profiles, follows) {
+
+  // markup 
+
   var id = msg.value.author
   var profile = profiles[id]
   var otherNames = app.getOtherNames(profile)
@@ -40,29 +43,31 @@ module.exports = function (app, msg, profiles, follows) {
           ? h('small.text-muted', 'aka ', otherNames.join(', '))
           : '')),
     h('td.actions', followbtn))
-}
 
-function rename (e, pid) {
-  e.preventDefault()
-  app.setNamePrompt(pid)
-}
-
-function follow (e, pid) {
-  e.preventDefault()
-  if (!follows[app.myid][pid]) {
-    app.updateContact(pid, { following: true }, function(err) {
-      if (err) swal('Error While Publishing', err.message, 'error')
-      else app.refreshPage()
-    })
+  // handlers
+    
+  function rename (e, pid) {
+    e.preventDefault()
+    app.setNamePrompt(pid)
   }
-}
 
-function unfollow (e, pid) {
-  e.preventDefault()
-  if (follows[app.myid][pid]) {
-    app.updateContact(pid, { following: false }, function(err) {
-      if (err) swal('Error While Publishing', err.message, 'error')
-      else app.refreshPage()
-    })
+  function follow (e, pid) {
+    e.preventDefault()
+    if (!follows[app.myid][pid]) {
+      app.updateContact(pid, { following: true }, function(err) {
+        if (err) swal('Error While Publishing', err.message, 'error')
+        else app.refreshPage()
+      })
+    }
+  }
+
+  function unfollow (e, pid) {
+    e.preventDefault()
+    if (follows[app.myid][pid]) {
+      app.updateContact(pid, { following: false }, function(err) {
+        if (err) swal('Error While Publishing', err.message, 'error')
+        else app.refreshPage()
+      })
+    }
   }
 }

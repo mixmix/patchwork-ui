@@ -41,8 +41,12 @@ module.exports = function (app) {
         if (id === app.myid || (follows[app.myid][id] && trusts[app.myid][id] !== -1))
           return true
       }
+      else if (currentList == 'trusted') {
+        if (id !== app.myid && trusts[app.myid][id] === 1)
+          return true
+      }
       else if (currentList == 'others') {
-        if (id !== app.myid && !follows[app.myid][id] && trusts[app.myid][id] !== -1)
+        if (id !== app.myid && !follows[app.myid][id] && !trusts[app.myid][id])
           return true
       }
       else if (currentList == 'blocked') {
@@ -72,8 +76,9 @@ module.exports = function (app) {
             current: currentList,
             items: [
               ['following', makeUri({ list: 'following' }), 'Following'],
-              ['others',   makeUri({ list: 'others' }),     'Others'],
-              ['blocked',  makeUri({ list: 'blocked' }),    'Blocked']
+              ['trusted',   makeUri({ list: 'trusted' }),   'Trusted'],
+              ['others',    makeUri({ list: 'others' }),    'Others'],
+              ['blocked',   makeUri({ list: 'blocked' }),   'Blocked']
             ]
           })),
         com.messageFeed(app, { feed: listFn, filter: filterFn, cursor: cursorFn, renderMsg: renderMsgFn })),
