@@ -24,7 +24,7 @@ module.exports = function (app) {
 
   // markup 
 
-  var content = com.messageFeed(app, app.ssb.phoenix.createAdvertStream, filterFn)
+  var content = com.messageFeed(app, { feed: app.ssb.phoenix.createAdvertStream, filter: filterFn })
   var searchInput = h('input.search', { type: 'text', placeholder: 'Search', value: queryStr })
   app.setPage('feed', h('.row',
     h('.col-xs-1', com.sidenav(app)),

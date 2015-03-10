@@ -93,9 +93,9 @@ module.exports = function (app) {
             value: '',
             onsearch: null
           })),
-        com.messageFeed(app, app.ssb.createFeedStream, function (msg) {
+        com.messageFeed(app, { feed: app.ssb.createFeedStream, filter: function (msg) {
           return msg.value.author == pid
-        })
+        }})
       ]
     }
 

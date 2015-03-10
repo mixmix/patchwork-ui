@@ -53,6 +53,13 @@ module.exports = function (app) {
 
       return false
     }
+    function cursorFn (msg) {
+      if (msg)
+        return msg.value.timestamp
+    }
+    function renderMsgFn (msg) {
+      return com.address(app, msg, profiles, follows)
+    }
 
     app.setPage('address-book', h('.row',
       h('.col-xs-2.col-md-1', com.sidenav(app)),
@@ -70,7 +77,7 @@ module.exports = function (app) {
               ['blocked',  makeUri({ list: 'blocked' }),    'Blocked']
             ]
           })),
-        com.messageFeed(app, listFn, filterFn, com.address(app, profiles, follows))),
+        com.messageFeed(app, { feed: listFn, filter: filterFn, cursor: cursorFn, renderMsg: renderMsgFn })),
       h('.col-xs-10.col-xs-push-2.col-md-3.col-md-push-0',
         h('table.table.peers',
           h('thead', h('tr', h('th', 'Gossip Network'))),
