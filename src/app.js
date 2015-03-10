@@ -296,7 +296,7 @@ function setNamePrompt (userId) {
       return
 
     if (isSelf)
-      schemas.addName(app.ssb, name, done)
+      app.updateContact(userId, { name: name }, done)
     else
       app.updateContact(userId, { name: name }, done)
 

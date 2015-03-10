@@ -44,11 +44,6 @@ function getSummary (app, msg, opts) {
       pub: function () {
         return [com.user(app, msg.value.author), ' says there\'s a public peer at ', c.address]
       },
-      name: function () {
-        if (c.feed)
-          return // legacy kludge, was naming another user
-        return [com.user(app, msg.value.author), ' is ', preprocess(c.name)]
-      },
       contact: function () {
         var changes = []
         if ('following' in c) {
@@ -75,18 +70,13 @@ function getSummary (app, msg, opts) {
         return [
           com.user(app, msg.value.author),
           ' ', changes.join(', '), ' ',
-          mlib.asLinks(c.contact).map(function (l) { return com.user(app, l.feed) }),
+          mlib.asLinks(c.contact).map(function (l) {
+            if (l.feed === msg.value.author)
+              return 'self'
+            return com.user(app, l.feed)
+          }),
           ' ', (c.name||'')
         ]
-      },
-      trust: function () { 
-        return mlib.asLinks(c.target).map(function (l) {
-          if (c.trust > 0)
-            return [com.user(app, msg.value.author), ' trusted ', com.user(app, l.feed)]
-          if (c.trust < 0)
-            return [com.user(app, msg.value.author), ' flagged ', com.user(app, l.feed)]
-          return [com.user(app, msg.value.author), ' untrusted/unflagged ', com.user(app, l.feed)]
-        })
       }
     })[c.type]()
     if (!s || s.length == 0)

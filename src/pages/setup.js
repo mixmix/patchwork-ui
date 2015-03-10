@@ -49,7 +49,7 @@ module.exports = function (app) {
   function post (e) {
     e.preventDefault()
     if (input.value) {
-      schemas.addName(app.ssb, input.value, function (err) {
+      app.updateContact(app.myid, { name: input.value }, function (err) {
         if (err) swal('Error While Publishing', err.message, 'error')
         else window.location = '#/'          
       })
