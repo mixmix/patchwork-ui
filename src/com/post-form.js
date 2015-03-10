@@ -245,7 +245,8 @@ module.exports = function (app, parent) {
     }
 
     // post
-    var post = (parent) ? schemas.schemas.replyPost(text, null, parent) : schemas.schemas.post(text)
+    var post = schemas.schemas.post(text)
+    if (parent) post.repliesTo = { msg: parent }
     if (mentions.length) post.mentions = mentions
     if (extLinks.length) post.attachments = extLinks
 
