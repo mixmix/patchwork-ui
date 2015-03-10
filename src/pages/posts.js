@@ -38,7 +38,7 @@ module.exports = function (app) {
   app.setPage('posts', h('.row',
     h('.col-xs-1', com.sidenav(app)),
     h('.col-xs-9',
-      h('.message-feed-ctrls', h('form', { onsubmit: onsearch }, searchInput)),
+      h('.header-ctrls', h('form', { onsubmit: onsearch }, searchInput)),
       feed
       //com.introhelp(app)
     ),

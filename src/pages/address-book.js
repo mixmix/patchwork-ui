@@ -11,14 +11,13 @@ module.exports = function (app) {
   // fetch
 
   var done = multicb({ pluck: 1 })
-  app.ssb.phoenix.getAllProfiles(done())
   app.ssb.friends.all('follow', done())
   app.ssb.friends.all('trust', done())
   app.ssb.gossip.peers(done())
   done(function (err, data) {
-    var profiles = data[0]
-    var follows  = data[1]
-    var trusts   = data[2]
+    var follows  = data[0]
+    var trusts   = data[1]
+    var peers    = data[2]
     follows[app.myid] = follows[app.myid] || {}
     trusts [app.myid] = trusts [app.myid] || {}
 
@@ -58,7 +57,7 @@ module.exports = function (app) {
         return msg.value.timestamp
     }
     function renderMsgFn (msg) {
-      return com.address(app, msg, profiles, follows)
+      return com.address(app, msg, app.profiles, follows)
     }
 
     app.setPage('address-book', h('.row',
@@ -81,7 +80,7 @@ module.exports = function (app) {
       h('.col-xs-10.col-xs-push-2.col-md-3.col-md-push-0',
         h('table.table.peers',
           h('thead', h('tr', h('th', 'Gossip Network'))),
-          h('tbody', com.peers(app, data[3]))
+          h('tbody', com.peers(app, peers))
         ),
         h('hr'),
         com.sidehelp(app))

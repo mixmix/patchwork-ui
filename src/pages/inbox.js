@@ -36,7 +36,7 @@ module.exports = function (app) {
   app.setPage('feed', h('.row',
     h('.col-xs-2.col-md-1', com.sidenav(app)),
     h('.col-xs-10.col-md-9', 
-      h('.message-feed-ctrls', h('form', { onsubmit: onsearch }, searchInput)),
+      h('.header-ctrls', h('form', { onsubmit: onsearch }, searchInput)),
       content),
     h('.hidden-xs.hidden-sm.col-md-2',
       com.adverts(app),

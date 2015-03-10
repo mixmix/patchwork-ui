@@ -85,16 +85,22 @@ var sidenav =
 exports.sidenav = function (app) {
   var pages = [
   //[id, path, label],
-    ['posts', '', [icon('globe'), h('span', { style: 'padding-left: 2px' }, 'feed')]],
+    ['posts', '', 'feed'],
     ['inbox', 'inbox', 'inbox ('+app.indexCounts.inboxUnread+')'],
     // ['compose', 'compose', 'compose'],
-    ['address-book', 'address-book', 'data sources'],
+    ['address-book', 'address-book', 'network'],
     // ['your-profile', 'profile/'+app.myid, app.names[app.myid] || 'profile'],
     ['adverts', 'adverts', 'adverts'],
     ['help', 'help', 'help']
   ]
 
+  var profile = app.profiles[app.myid]
+  var profileImg = '/img/default-prof-pic.png'
+  if (profile && profile.self.profilePic)
+    profileImg = '/ext/' + profile.self.profilePic.ext
+
   return h('.side-nav',
+    h('p.side-nav-myprofile', a('#/profile/'+app.myid, h('img', { src: profileImg }))),
     pages.map(function (page) {
       if (page == '-')
         return h('hr')

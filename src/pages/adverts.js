@@ -29,7 +29,7 @@ module.exports = function (app) {
   app.setPage('feed', h('.row',
     h('.col-xs-1', com.sidenav(app)),
     h('.col-xs-9', 
-      h('.message-feed-ctrls', h('form', { onsubmit: onsearch }, searchInput)),
+      h('.header-ctrls', h('form', { onsubmit: onsearch }, searchInput)),
       content
     ),
     h('.col-xs-2',

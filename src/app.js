@@ -17,6 +17,7 @@ module.exports = function (ssb) {
     myid: null,
     names: null,
     nameTrustRanks: null,
+    profiles: null,
     page: {
       id: 'feed',
       param: null
@@ -129,13 +130,13 @@ function refreshPage (e) {
     app.names = data[1]
     app.nameTrustRanks = data[2]
     app.indexCounts = data[4]
-    var profiles = data[3]
+    app.profiles = data[3]
 
     // refresh suggest options for usernames
     app.suggestOptions['@'] = []
-    for (var k in profiles) {
+    for (var k in app.profiles) {
       var name = app.names[k] || k
-      app.suggestOptions['@'].push({ title: name, subtitle: app.getOtherNames(profiles[k]) + ' ' + util.shortString(k), value: name })
+      app.suggestOptions['@'].push({ title: name, subtitle: app.getOtherNames(app.profiles[k]) + ' ' + util.shortString(k), value: name })
     }
 
     // re-route to setup if needed

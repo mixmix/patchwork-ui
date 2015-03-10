@@ -12,7 +12,6 @@ module.exports = function (app) {
   var done = multicb({ pluck: 1 })
   app.ssb.friends.all('follow', done())
   app.ssb.friends.all('trust', done())
-  app.ssb.phoenix.getAllProfiles(done())
   done(function (err, datas) {
     var graphs = {
       follow: datas[0],
@@ -21,8 +20,7 @@ module.exports = function (app) {
     graphs.follow[app.myid] = graphs.follow[app.myid] || {}
     graphs.trust [app.myid] = graphs.trust [app.myid] || {}
     var isFollowing = graphs.follow[app.myid][pid]
-    var profiles = datas[2]
-    var profile = profiles[pid]
+    var profile = app.profiles[pid]
 
     var name = app.names[pid] || util.shortString(pid)
     var profileImg = '/img/default-prof-pic.png'
