@@ -87,9 +87,8 @@ exports.sidenav = function (app) {
   //[id, path, label],
     ['posts', '', 'feed'],
     ['inbox', 'inbox', 'inbox ('+app.indexCounts.inboxUnread+')'],
-    // ['compose', 'compose', 'compose'],
+    ['compose', 'compose', 'compose'],
     ['address-book', 'address-book', 'network'],
-    // ['your-profile', 'profile/'+app.myid, app.names[app.myid] || 'profile'],
     ['adverts', 'adverts', 'adverts'],
     ['help', 'help', 'help']
   ]
