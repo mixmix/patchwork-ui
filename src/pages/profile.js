@@ -52,18 +52,23 @@ module.exports = function (app) {
     }
 
     // profile controls
-    var followbtn, blockbtn, renamebtn
-    if (pid === app.myid) {
-      renamebtn = h('button.btn.btn-primary', {title: 'Rename', onclick: rename}, com.icon('pencil'))
-    } else {
-      renamebtn = h('button.btn.btn-primary', {title: 'Rename', onclick: rename}, com.icon('pencil'))
+    var followbtn, trustbtn, flagbtn, renamebtn
+    renamebtn = h('button.btn.btn-primary', {title: 'Rename', onclick: rename}, com.icon('pencil'))
+    if (pid !== app.myid) {
       followbtn = (isFollowing)
         ? h('button.btn.btn-primary', { onclick: unfollow }, com.icon('minus'), ' Unfollow')
         : h('button.btn.btn-primary', { onclick: follow }, com.icon('plus'), ' Follow')
-      blockbtn = (graphs.trust[app.myid][pid] == -1)
-        ? h('button.btn.btn-primary', { onclick: detrust }, com.icon('ok'), ' Unblock')
-        : h('button.btn.btn-primary',{ onclick: blockPompt },  com.icon('remove'), ' Block')
-    } 
+      trustbtn = (graphs.trust[app.myid][pid] == 1)
+        ? h('button.btn.btn-primary', { onclick: detrust }, com.icon('remove'), ' Untrust')
+        : (!graphs.trust[app.myid][pid])
+          ? h('button.btn.btn-primary', { onclick: trustPrompt }, com.icon('lock'), ' Trust')
+          : ''
+      flagbtn = (graphs.trust[app.myid][pid] == -1)
+        ? h('button.btn.btn-primary', { onclick: detrust }, com.icon('ok'), ' Unflag')
+        : (!graphs.trust[app.myid][pid])
+          ? h('button.btn.btn-primary',{ onclick: flagPrompt },  com.icon('flag'), ' Flag')
+          : ''
+    }
 
     var content
     if (view == 'pics') {
@@ -112,8 +117,10 @@ module.exports = function (app) {
     // follows, trusts, blocks
     var follows   = outEdges(graphs.follow, true)
     var followers = inEdges(graphs.follow, true)
-    var blocks    = outEdges(graphs.trust, -1)
-    var blockers  = inEdges(graphs.trust, -1)
+    var trusts    = outEdges(graphs.trust, 1)
+    var trusters  = inEdges(graphs.trust, 1)
+    var flags     = outEdges(graphs.trust, -1)
+    var flaggers  = inEdges(graphs.trust, -1)
 
     // render page
     var joinDate = (profile) ? util.prettydate(new Date(profile.createdAt), true) : '-'
@@ -128,7 +135,7 @@ module.exports = function (app) {
           h('h2', name, com.nameConfidence(pid, app), renamebtn),
           h('p.text-muted', 'joined '+joinDate)
         ),
-        h('.section', h('p', followbtn), h('p', blockbtn)),
+        h('.section', h('p', followbtn), h('p', trustbtn), h('p', flagbtn)),
         (givenNames.length)
           ? h('.section',
             h('strong', 'Nicknames'),
@@ -136,10 +143,12 @@ module.exports = function (app) {
             h('ul.list-unstyled', givenNames)
           )
           : '',
-        follows.length   ? h('.section', h('strong', 'Follows'), h('br'), h('ul.list-unstyled', follows)) : '',
-        followers.length ? h('.section', h('strong', 'Followed by'), h('br'), h('ul.list-unstyled', followers)) : '',
-        blockers.length  ? h('.section', h('strong', 'Blocked by'), h('br'), h('ul.list-unstyled', blockers)) : '',
-        blocks.length    ? h('.section', h('strong', 'Blocked'), h('br'), h('ul.list-unstyled', blocks)) : '')))
+        trusters.length  ? h('.section', h('small', h('strong.text-success', com.icon('ok'), ' Trusted by')), h('br'), h('ul.list-unstyled', trusters)) : '',
+        flaggers.length  ? h('.section', h('small', h('strong.text-danger', com.icon('flag'), ' Flagged by')), h('br'), h('ul.list-unstyled', flaggers)) : '',
+        follows.length   ? h('.section', h('small', h('strong', 'Follows')), h('br'), h('ul.list-unstyled', follows)) : '',
+        followers.length ? h('.section', h('small', h('strong', 'Followed by')), h('br'), h('ul.list-unstyled', followers)) : '',
+        trusts.length    ? h('.section', h('small', h('strong', 'Trusts')), h('br'), h('ul.list-unstyled', trusts)) : '',
+        flags.length     ? h('.section', h('small', h('strong', 'Flags')), h('br'), h('ul.list-unstyled', flags)) : '')))
 
     function makeUri (opts) {
       var qs=''
@@ -186,40 +195,33 @@ module.exports = function (app) {
 
     // handlers
 
-    function toggleSync (e) {
+    function trustPrompt (e) {
       e.preventDefault()
-      if (graphs.trust[app.myid][pid] !== 1) {
-        swal({
-          title: 'Trust '+util.escapePlain(name)+'\'s Contacts?',
-          text: [
-            'Use the contact list published by this user?',
-            'Only do this if you trust this user to publish valid contact lists.'
-          ].join(' '),
-          type: 'warning',
-          showCancelButton: true,
-          confirmButtonColor: '#12b812',
-          confirmButtonText: 'Use Contacts'
-        }, function() {
-          app.updateContact(pid, { trust: 1 }, function (err) {
-            if (err) swal('Error While Publishing', err.message, 'error')
-            else app.refreshPage()
-          })
-        })
-      } else {
-        app.updateContact(pid, { trust: 0 }, function(err) {
+      swal({
+        title: 'Trust '+util.escapePlain(name)+'?',
+        text: [
+          'Use their data (names, trusts, flags) in your own account?',
+          'Only do this if you know this account is your friend\'s, you trust them, and you think other people should too!'
+        ].join(' '),
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#12b812',
+        confirmButtonText: 'Trust'
+      }, function() {
+        app.updateContact(pid, { trust: 1 }, function (err) {
           if (err) swal('Error While Publishing', err.message, 'error')
           else app.refreshPage()
         })
-      }
+      })
     }
 
-    function blockPompt (e) {
+    function flagPrompt (e) {
       e.preventDefault()
       swal({
         title: 'Flag '+util.escapePlain(name)+'?',
         text: [
           'Warn people about this user?',
-          'This will hurt network reputation and cause fewer people to trust them.',
+          'This will hurt their network reputation and cause fewer people to trust them.',
           'Only do this if you believe they are a spammer, troll, or attacker.'
         ].join(' '),
         type: 'warning',

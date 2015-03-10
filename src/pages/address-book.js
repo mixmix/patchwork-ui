@@ -49,7 +49,7 @@ module.exports = function (app) {
         if (id !== app.myid && !follows[app.myid][id] && !trusts[app.myid][id])
           return true
       }
-      else if (currentList == 'blocked') {
+      else if (currentList == 'flagged') {
         if (id !== app.myid && trusts[app.myid][id] === -1)
           return true
       }
@@ -78,7 +78,7 @@ module.exports = function (app) {
               ['following', makeUri({ list: 'following' }), 'Following'],
               ['trusted',   makeUri({ list: 'trusted' }),   'Trusted'],
               ['others',    makeUri({ list: 'others' }),    'Others'],
-              ['blocked',   makeUri({ list: 'blocked' }),   'Blocked']
+              ['flagged',   makeUri({ list: 'flagged' }),   'Flagged']
             ]
           })),
         com.messageFeed(app, { feed: listFn, filter: filterFn, cursor: cursorFn, renderMsg: renderMsgFn })),
