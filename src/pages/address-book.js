@@ -83,6 +83,7 @@ module.exports = function (app) {
           })),
         com.messageFeed(app, { feed: listFn, filter: filterFn, cursor: cursorFn, renderMsg: renderMsgFn })),
       h('.col-xs-10.col-xs-push-2.col-md-3.col-md-push-0',
+        com.notifications(app),
         h('table.table.peers',
           h('thead', h('tr', h('th', 'Gossip Network'))),
           h('tbody', com.peers(app, peers))

@@ -34,13 +34,13 @@ module.exports = function (app) {
   var content = com.messageFeed(app, { feed: app.ssb.phoenix.createInboxStream, filter: filterFn })
   var searchInput = h('input.search', { type: 'text', placeholder: 'Search', value: queryStr })
   app.setPage('feed', h('.row',
-    h('.col-xs-2.col-md-1', com.sidenav(app)),
-    h('.col-xs-10.col-md-9', 
+    h('.col-xs-1', com.sidenav(app)),
+    h('.col-xs-8', 
       h('.header-ctrls', h('form', { onsubmit: onsearch }, searchInput)),
       content),
-    h('.hidden-xs.hidden-sm.col-md-2',
+    h('.col-xs-3',
+      com.notifications(app),
       com.adverts(app),
-      h('hr'),
       com.sidehelp(app)
     )
   ))

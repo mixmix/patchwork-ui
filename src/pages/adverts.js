@@ -28,11 +28,12 @@ module.exports = function (app) {
   var searchInput = h('input.search', { type: 'text', placeholder: 'Search', value: queryStr })
   app.setPage('feed', h('.row',
     h('.col-xs-1', com.sidenav(app)),
-    h('.col-xs-9', 
+    h('.col-xs-8', 
       h('.header-ctrls', h('form', { onsubmit: onsearch }, searchInput)),
       content
     ),
-    h('.col-xs-2',
+    h('.col-xs-3',
+      com.notifications(app),
       h('.well.well-sm', 'Create ads to let your friends know about events, websites, etc. ', com.a('#/help/adverts', 'About')),
       com.advertForm(app)
     )

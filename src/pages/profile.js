@@ -129,26 +129,28 @@ module.exports = function (app) {
       h('.col-xs-8', 
         nameTrustDlg,
         content),
-      h('.col-xs-3.profile-controls.full-height',
-        h('.section',
-          h('a.profpic', { href: makeUri({ view: 'pics' }) }, h('img', { src: profileImg })),
-          h('h2', name, com.nameConfidence(pid, app), renamebtn),
-          h('p.text-muted', 'joined '+joinDate)
-        ),
-        h('.section', h('p', followbtn), h('p', trustbtn), h('p', flagbtn)),
-        (givenNames.length)
-          ? h('.section',
-            h('strong', 'Nicknames'),
-            h('br'),
-            h('ul.list-unstyled', givenNames)
-          )
-          : '',
-        trusters.length  ? h('.section', h('small', h('strong.text-success', com.icon('ok'), ' Trusted by')), h('br'), h('ul.list-unstyled', trusters)) : '',
-        flaggers.length  ? h('.section', h('small', h('strong.text-danger', com.icon('flag'), ' Flagged by')), h('br'), h('ul.list-unstyled', flaggers)) : '',
-        follows.length   ? h('.section', h('small', h('strong', 'Follows')), h('br'), h('ul.list-unstyled', follows)) : '',
-        followers.length ? h('.section', h('small', h('strong', 'Followed by')), h('br'), h('ul.list-unstyled', followers)) : '',
-        trusts.length    ? h('.section', h('small', h('strong', 'Trusts')), h('br'), h('ul.list-unstyled', trusts)) : '',
-        flags.length     ? h('.section', h('small', h('strong', 'Flags')), h('br'), h('ul.list-unstyled', flags)) : '')))
+      h('.col-xs-3.full-height',
+        com.notifications(app),
+        h('.profile-controls',
+          h('.section',
+            h('a.profpic', { href: makeUri({ view: 'pics' }) }, h('img', { src: profileImg })),
+            h('h2', name, com.nameConfidence(pid, app), renamebtn),
+            h('p.text-muted', 'joined '+joinDate)
+          ),
+          h('.section', h('p', followbtn), h('p', trustbtn), h('p', flagbtn)),
+          (givenNames.length)
+            ? h('.section',
+              h('strong', 'Nicknames'),
+              h('br'),
+              h('ul.list-unstyled', givenNames)
+            )
+            : '',
+          trusters.length  ? h('.section', h('small', h('strong.text-success', com.icon('ok'), ' Trusted by')), h('br'), h('ul.list-unstyled', trusters)) : '',
+          flaggers.length  ? h('.section', h('small', h('strong.text-danger', com.icon('flag'), ' Flagged by')), h('br'), h('ul.list-unstyled', flaggers)) : '',
+          follows.length   ? h('.section', h('small', h('strong', 'Follows')), h('br'), h('ul.list-unstyled', follows)) : '',
+          followers.length ? h('.section', h('small', h('strong', 'Followed by')), h('br'), h('ul.list-unstyled', followers)) : '',
+          trusts.length    ? h('.section', h('small', h('strong', 'Trusts')), h('br'), h('ul.list-unstyled', trusts)) : '',
+          flags.length     ? h('.section', h('small', h('strong', 'Flags')), h('br'), h('ul.list-unstyled', flags)) : ''))))
 
     function makeUri (opts) {
       var qs=''

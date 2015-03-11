@@ -37,14 +37,14 @@ module.exports = function (app) {
   var feed = com.messageFeed(app, { feed: app.ssb.createFeedStream, filter: filterFn, state: feedState })
   app.setPage('posts', h('.row',
     h('.col-xs-1', com.sidenav(app)),
-    h('.col-xs-9',
+    h('.col-xs-8',
       h('.header-ctrls', h('form', { onsubmit: onsearch }, searchInput)),
       feed
       //com.introhelp(app)
     ),
-    h('.col-xs-2',
+    h('.col-xs-3',
+      com.notifications(app),
       com.adverts(app),
-      h('hr'),
       com.sidehelp(app)
     )
   ))
