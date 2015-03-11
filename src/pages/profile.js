@@ -21,15 +21,8 @@ module.exports = function (app) {
     graphs.trust [app.myid] = graphs.trust [app.myid] || {}
     var isFollowing = graphs.follow[app.myid][pid]
     var profile = app.profiles[pid]
-
-    var name = app.names[pid] || util.shortString(pid)
-    var profileImg = '/img/default-prof-pic.png'
-    if (profile) {
-      if (profile.assignedBy[app.myid] && profile.assignedBy[app.myid].profilePic)
-        profileImg = '/ext/' + profile.assignedBy[app.myid].profilePic.ext
-      else if (profile.self.profilePic)
-        profileImg = '/ext/' + profile.self.profilePic.ext
-    }
+    var name = com.userName(app, pid)
+    var profileImg = com.profilePicUrl(app, pid)
 
     // name confidence controls
     var nameTrustDlg

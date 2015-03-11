@@ -44,6 +44,19 @@ exports.userName = function (app, id) {
   return app.names[id] || u.shortString(id)
 }
 
+var profilePicUrl =
+exports.profilePicUrl = function (app, id) {
+  var url = '/img/default-prof-pic.png'
+  var profile = app.profiles[id]
+  if (profile) {
+    if (profile.assignedBy[app.myid] && profile.assignedBy[app.myid].profilePic)
+      url = '/ext/' + profile.assignedBy[app.myid].profilePic.ext
+    else if (profile.self.profilePic)
+      url = '/ext/' + profile.self.profilePic.ext
+  }
+  return url
+}
+
 var userlinkThin =
 exports.userlinkThin = function (id, text, opts) {
   opts = opts || {}
@@ -93,13 +106,8 @@ exports.sidenav = function (app) {
     ['help', 'help', 'help']
   ]
 
-  var profile = app.profiles[app.myid]
-  var profileImg = '/img/default-prof-pic.png'
-  if (profile && profile.self.profilePic)
-    profileImg = '/ext/' + profile.self.profilePic.ext
-
   return h('.side-nav',
-    h('p.side-nav-myprofile', a('#/profile/'+app.myid, h('img', { src: profileImg }))),
+    h('p.side-nav-myprofile', a('#/profile/'+app.myid, h('img', { src: profilePicUrl(app, app.myid) }))),
     pages.map(function (page) {
       if (page == '-')
         return h('hr')
