@@ -74,6 +74,8 @@ module.exports = function (app, opts) {
         if (opts.filter)
           _msgs = _msgs.filter(opts.filter)
 
+        _msgs.reverse()
+
         // render
         var lastEl = feedState.tbody.firstChild
         _msgs.forEach(function (msg) {
@@ -82,7 +84,7 @@ module.exports = function (app, opts) {
         })
 
         // prepend
-        feedState.msgs = _msgs.reverse().concat(feedState.msgs)
+        feedState.msgs = _msgs.concat(feedState.msgs)
 
         // maintain scroll position
         if (topmsgEl)
