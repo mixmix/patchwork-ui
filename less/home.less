@@ -80,19 +80,34 @@ html {
 }
 .side-nav {
   white-space: nowrap;
+  background: #333;
+  border-right: 2px solid #565656;
+
   p {
     margin: 0;
+    border-top: 1px solid #444;
+    border-bottom: 1px solid #222;
     a {
       display: block;
       padding: 1.5em 1em;
       font-weight: 100;
-      color: #555;
+      color: gray;
       &:hover {
         text-decoration: none;
-        background: #eee;
+        background: #414141;
       }
     }
+    &:first-child a {
+      .glyphicon {
+        font-size: 32px;
+        line-height: 38px;
+        display: block;
+      }
+      padding-top: 30px;
+      padding-bottom: 22px;
+    }
     &.selected {
+      background: #414141;
       a {
         color: @brand-primary;
       }

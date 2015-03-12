@@ -105,7 +105,7 @@ var sidenav =
 exports.sidenav = function (app) {
   var pages = [
   //[id, path, label],
-    ['posts', '', 'feed'],
+    ['posts', '', [icon('globe'), h('span', { style: 'padding-left: 2px' }, 'feed')]],
     ['inbox', 'inbox', 'inbox ('+app.indexCounts.inboxUnread+')'],
     ['compose', 'compose', 'compose'],
     ['address-book', 'address-book', 'network'],
@@ -113,7 +113,7 @@ exports.sidenav = function (app) {
     ['help', 'help', 'help']
   ]
 
-  return h('.side-nav',
+  return h('.side-nav.full-height',
     pages.map(function (page) {
       if (page == '-')
         return h('hr')
