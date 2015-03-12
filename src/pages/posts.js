@@ -6,18 +6,34 @@ var multicb = require('multicb')
 var com = require('../com')
 
 var feedState
-var lastQueryStr
+var lastQueryStr, lastList
 module.exports = function (app) {
 
   var queryStr = app.page.qs.q || ''
-  if (!feedState || lastQueryStr != queryStr) {
+  var list = app.page.qs.list || 'posts'
+  if (!feedState || lastQueryStr != queryStr || lastList != list) {
     // new query, reset the feed
     feedState = com.messageFeed.makeStateObj()
   }
   lastQueryStr = queryStr
+  lastList = list
 
   function filterFn (msg) {
     var c = msg.value.content
+
+    if (list == 'posts') {
+      if (c.type !== 'post' && c.type !== 'advert')
+        return false
+    }
+    else if (list == 'data') {
+      // no standard message types
+      if (c.type === 'init' || c.type === 'post' || c.type === 'advert' || c.type === 'contact' || c.type === 'pub')
+        return false
+    }
+    else if (list == 'actions') {
+      if (c.type !== 'init' && c.type !== 'contact' && c.type !== 'pub')
+        return false
+    }
 
     if (!queryStr)
       return true
@@ -37,12 +53,20 @@ module.exports = function (app) {
   var feed = com.messageFeed(app, { feed: app.ssb.createFeedStream, filter: filterFn, state: feedState })
   app.setPage('posts', h('.row',
     h('.col-xs-1', com.sidenav(app)),
-    h('.col-xs-8',
-      h('.header-ctrls', h('form', { onsubmit: onsearch }, searchInput)),
-      feed
-      //com.introhelp(app)
-    ),
+    h('.col-xs-8', feed),
     h('.col-xs-3',
+      h('.header-ctrls',
+        h('form', { onsubmit: onsearch }, searchInput),
+        com.nav({
+          current: list,
+          items: [
+            ['posts',   makeUri({ list: 'posts' }),   'Posts'],
+            ['data',    makeUri({ list: 'data' }),    'Data'],
+            ['actions', makeUri({ list: 'actions' }), 'Actions'],
+            ['all',     makeUri({ list: 'all' }),     'All']
+          ]
+        })),
+      h('hr'),
       com.notifications(app),
       com.adverts(app),
       com.sidehelp(app)
@@ -50,11 +74,17 @@ module.exports = function (app) {
   ))
   feed.scrollTop = feedState.lastScrollTop
 
+  function makeUri (opts) {
+    opts.q = ('q' in opts) ? opts.q : queryStr
+    opts.v = ('list' in opts) ? opts.list : list
+    return '#/posts?q=' + encodeURIComponent(opts.q) + '&list=' + encodeURIComponent(opts.v)
+  }
+
   // handlers
 
   function onsearch (e) {
     e.preventDefault()
-    window.location.hash = '#/posts?q='+encodeURIComponent(searchInput.value)
+    window.location.hash = makeUri({ q: searchInput.value })
   }
 }
 module.exports.isHubPage = true

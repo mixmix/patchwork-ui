@@ -6,7 +6,6 @@ var com = require('../com')
 module.exports = function (app) {
 
   var queryStr = app.page.qs.q || ''
-  var myfeedOpts = { feed: app.myid }
   function filterFn (msg) {
     var c = msg.value.content
 
