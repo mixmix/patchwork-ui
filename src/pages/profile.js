@@ -115,6 +115,18 @@ module.exports = function (app) {
     var flags     = outEdges(graphs.trust, -1)
     var flaggers  = inEdges(graphs.trust, -1)
 
+    // applications
+    var apps = []
+    if (profile) {
+      for (var subid in profile.subfeeds) {
+        var sub = app.profiles[subid]
+        if (sub)
+          apps.push(h('li', com.userlinkThin(subid, sub.self.name)))
+        else
+          apps.push(h('li', com.userlinkThin(subid)))
+      }
+    }
+
     // render page
     var joinDate = (profile) ? util.prettydate(new Date(profile.createdAt), true) : '-'
     app.setPage('profile', h('.row',
@@ -140,8 +152,9 @@ module.exports = function (app) {
             : '',
           trusters.length  ? h('.section', h('small', h('strong.text-success', com.icon('ok'), ' Trusted by')), h('br'), h('ul.list-unstyled', trusters)) : '',
           flaggers.length  ? h('.section', h('small', h('strong.text-danger', com.icon('flag'), ' Flagged by')), h('br'), h('ul.list-unstyled', flaggers)) : '',
-          follows.length   ? h('.section', h('small', h('strong', 'Follows')), h('br'), h('ul.list-unstyled', follows)) : '',
           followers.length ? h('.section', h('small', h('strong', 'Followed by')), h('br'), h('ul.list-unstyled', followers)) : '',
+          follows.length   ? h('.section', h('small', h('strong', 'Follows')), h('br'), h('ul.list-unstyled', follows)) : '',
+          apps.length      ? h('.section', h('small', h('strong', 'Uses')), h('br'), h('ul.list-unstyled', apps)) : '',
           trusts.length    ? h('.section', h('small', h('strong', 'Trusts')), h('br'), h('ul.list-unstyled', trusts)) : '',
           flags.length     ? h('.section', h('small', h('strong', 'Flags')), h('br'), h('ul.list-unstyled', flags)) : ''))))
 
