@@ -51,6 +51,10 @@ module.exports = function (app) {
         if (id !== app.myid && !follows[app.myid][id] && !trusts[app.myid][id] && !master)
           return true
       }
+      else if (currentList == 'apps') {
+        if (id !== app.myid && !!master)
+          return true
+      }
       else if (currentList == 'flagged') {
         if (id !== app.myid && trusts[app.myid][id] === -1)
           return true
@@ -79,7 +83,8 @@ module.exports = function (app) {
             items: [
               ['following', makeUri({ list: 'following' }), 'Following'],
               ['trusted',   makeUri({ list: 'trusted' }),   'Trusted'],
-              ['others',    makeUri({ list: 'others' }),    'Others'],
+              ['others',    makeUri({ list: 'others' }),    'Other Users'],
+              ['apps',      makeUri({ list: 'apps' }),      'Applications'],
               ['flagged',   makeUri({ list: 'flagged' }),   'Flagged']
             ]
           })),
