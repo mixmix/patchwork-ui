@@ -17,6 +17,10 @@ function shorten (str, n) {
 
 function getSummary (app, msg, opts) {
 
+  function author() {
+    return h('p', com.user(app, msg.value.author), ' ', ago(msg))
+  }
+
   function md (str) {
     return h('.markdown', { innerHTML: mentions.post(markdown.block(str), app, msg) })
   }
@@ -25,7 +29,7 @@ function getSummary (app, msg, opts) {
   try {
     var s = ({
       init: function () {
-        return [com.user(app, msg.value.author), ' account created. ', ago(msg)]
+        return [author(), h('h4', com.icon('off'), ' Created account.')]
       },
       post: function () { 
         if (!c.text) return
@@ -37,47 +41,51 @@ function getSummary (app, msg, opts) {
         return [h('p', 'advert by ', com.user(app, msg.value.author), ' ', ago(msg)), md(c.text)]
       },
       pub: function () {
-        return [com.user(app, msg.value.author), ' says there\'s a public peer at ', c.address, ' ', ago(msg)]
+        return [author(), h('h4', com.icon('cloud'), ' Announced a public peer at ', c.address)]
       },
       contact: function () {
-        var changes = []
-        if (c.following === true)
-          changes.push('followed')
-        if (c.following === false)
-          changes.push('unfollowed')
-        if ('trust' in c) {
-          var t = +c.trust|0
-          if (t === 1)
-            changes.push('trusted')
-          else if (t === -1)
-            changes.push('flagged')
-          else if (t === 0)
-            changes.push('untrusted/unflagged')
-        }
-        if (c.master) {
-          if (c.master.feed === msg.value.author)
-            changes.push('claimed ownership of')
-          else
-            changes.push('claimed an owner')
-        }
-        if (c.myuser === false)
-          changes.push('removed master')
-        if ('name' in c)
-          changes.push('named')
-        if ('profilePic' in c)
-          changes.push('set a profile pic for')
-        if (changes.length===0)
-          changes.push('published a contact link to')
-        return [
-          com.user(app, msg.value.author),
-          ' ', changes.join(', '), ' ',
-          mlib.asLinks(c.contact).map(function (l) {
+        function subjects () {
+          return mlib.asLinks(c.contact).map(function (l) {
             if (l.feed === msg.value.author)
               return 'self'
             return com.user(app, l.feed)
-          }),
-          ' ', ago(msg)
-        ]
+          })
+        }
+
+        var items = []
+        if (c.following === true)
+          items.push(h('h4', com.icon('plus'), ' Followed ', subjects()))
+        if (c.following === false)
+          items.push(h('h4', com.icon('minus'), ' Unfollowed ', subjects()))
+
+        if ('trust' in c) {
+          var t = +c.trust|0
+          if (t === 1)
+            items.push(h('h4', com.icon('lock'), ' Trusted ', subjects()))
+          else if (t === -1)
+            items.push(h('h4', com.icon('flag'), ' Flagged ', subjects()))
+          else if (t === 0)
+            items.push(h('h4', com.icon('erase'), ' Untrusted/Unflagged ', subjects()))
+        }
+
+        if (c.master) {
+          if (c.master.feed === msg.value.author)
+            items.push(h('h4', com.icon('link'), ' Claimed ownership of ', subjects()))
+          else
+            items.push(h('h4', com.icon('link'), ' Claimed an owner for ', subjects()))
+        }
+        if (c.master === false)
+          items.push(h('h4', com.icon('erase'), ' Claimed no ownership for ', subjects()))
+
+        if ('name' in c)
+          items.push(h('h4', com.icon('tag'), ' Named ', subjects(), ' ', c.name))
+
+        if ('profilePic' in c)
+          items.push(h('h4', com.icon('picture'), ' Set a profile pic for ', subjects()))
+
+        if (items.length===0)
+          items.push(h('h4', 'Published a contact for ', subjects()))
+        return [author(), items]
       }
     })[c.type]()
     if (!s || s.length == 0)

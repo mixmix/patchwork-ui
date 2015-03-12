@@ -6,35 +6,39 @@
   overflow: hidden;
   cursor: pointer;
   color: #555;
-  border-left: 1px solid #ccc;
-  border-right: 1px solid #ccc;
 
   & > td {
-    padding: 12px;
-    border-bottom: 1px solid #ccc;
+    padding: 24px 12px;
     vertical-align: top;
+    border-bottom: 1px solid #ccc;
+    &:nth-child(1) {
+      width: 85px;
+    }
   }
 
-  &:hover {
-    //outline: 1px solid #aaa;
-    border: 1px solid #999;
+  &:hover td {
+    background: #eee;
   }
 
   .markdown {
-    font-size: 15px;
+    font-size: 17px;
     ul {
       padding-left: 2em;
     }
   }
+  :not(.markdown) h4 {
+    font-weight: 100;
+  }
 
   .pretty-raw {
+    font-size: 17px;
     td {  
       padding: 2px 7px;
       vertical-align: top;
     }
     td:first-child {
       text-align: right;
-      min-width: 100px;
+      min-width: 150px;
       color: #999;
     }
   }
