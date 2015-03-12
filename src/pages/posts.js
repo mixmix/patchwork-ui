@@ -22,6 +22,10 @@ module.exports = function (app) {
     var c = msg.value.content
 
     if (list == 'posts') {
+      if ((c.type !== 'post' && c.type !== 'advert') || c.repliesTo)
+        return false
+    }
+    else if (list == 'allposts') {
       if (c.type !== 'post' && c.type !== 'advert')
         return false
     }
@@ -59,10 +63,11 @@ module.exports = function (app) {
         com.nav({
           current: list,
           items: [
-            ['posts',   makeUri({ list: 'posts' }),   'Posts'],
-            ['data',    makeUri({ list: 'data' }),    'Data'],
-            ['actions', makeUri({ list: 'actions' }), 'Actions'],
-            ['all',     makeUri({ list: 'all' }),     'All']
+            ['posts',    makeUri({ list: 'posts' }),    'Posts'],
+            ['allposts', makeUri({ list: 'allposts' }), 'Posts & Replies'],
+            ['data',     makeUri({ list: 'data' }),     'Data'],
+            ['actions',  makeUri({ list: 'actions' }),  'Actions'],
+            ['all',      makeUri({ list: 'all' }),      'All']
           ]
         })),feed),
     h('.col-xs-3',
