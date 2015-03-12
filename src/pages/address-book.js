@@ -74,10 +74,6 @@ module.exports = function (app) {
       h('.col-xs-2.col-md-1', com.sidenav(app)),
       h('.col-xs-10.col-md-8',
         h('.header-ctrls',
-          com.search({
-            value: queryStr,
-            onsearch: onsearch
-          }),
           com.nav({
             current: currentList,
             items: [
@@ -87,6 +83,10 @@ module.exports = function (app) {
               ['apps',      makeUri({ list: 'apps' }),      'Applications'],
               ['flagged',   makeUri({ list: 'flagged' }),   'Flagged']
             ]
+          }),
+          com.search({
+            value: queryStr,
+            onsearch: onsearch
           })),
         com.messageFeed(app, { feed: listFn, filter: filterFn, cursor: cursorFn, renderMsg: renderMsgFn })),
       h('.col-xs-10.col-xs-push-2.col-md-3.col-md-push-0',

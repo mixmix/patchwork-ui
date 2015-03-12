@@ -22,11 +22,11 @@ module.exports = function (app) {
     var c = msg.value.content
 
     if (list == 'posts') {
-      if ((c.type !== 'post' && c.type !== 'advert') || c.repliesTo)
+      if (c.type !== 'post' || c.repliesTo)
         return false
     }
     else if (list == 'allposts') {
-      if (c.type !== 'post' && c.type !== 'advert')
+      if (c.type !== 'post')
         return false
     }
     else if (list == 'data') {
@@ -59,7 +59,6 @@ module.exports = function (app) {
     h('.col-xs-1', com.sidenav(app)),
     h('.col-xs-8', 
       h('.header-ctrls',
-        h('form', { onsubmit: onsearch }, searchInput),
         com.nav({
           current: list,
           items: [
@@ -69,7 +68,9 @@ module.exports = function (app) {
             ['actions',  makeUri({ list: 'actions' }),  'Actions'],
             ['all',      makeUri({ list: 'all' }),      'All']
           ]
-        })),feed),
+        }),
+        h('form', { onsubmit: onsearch }, searchInput)),
+      feed),
     h('.col-xs-3',
       // h('hr'),
       com.notifications(app),

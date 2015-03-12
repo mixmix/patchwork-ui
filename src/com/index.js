@@ -92,7 +92,7 @@ exports.nav = function (opts) {
       cls = '.selected'
     return h('a'+cls, { href: item[1] }, item[2])
   })
-  return h('.nav', items)
+  return h('.navlinks', items)
 }
 
 var search =
