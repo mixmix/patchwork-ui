@@ -18,11 +18,10 @@ function shorten (str, n) {
 function getSummary (app, msg, opts) {
 
   function md (str) {
-    return h('div', { innerHTML: mentions.post(markdown.block(str), app, msg) })
+    return h('.markdown', { innerHTML: mentions.post(markdown.block(str), app, msg) })
   }
 
   var c = msg.value.content
-  var preprocess = (opts && opts.full) ? function(v){return v} : shorten
   try {
     var s = ({
       init: function () {
@@ -31,15 +30,11 @@ function getSummary (app, msg, opts) {
       post: function () { 
         if (!c.text) return
         var replyLink = fetchReplyLink(app, msg)
-        if (opts && opts.full)
-          return h('div', com.user(app, msg.value.author), replyLink, md(c.text))
-        return h('div', com.user(app, msg.value.author), replyLink, ' ', ago(msg), h('div', { innerHTML: mentions.post(u.escapePlain(c.text), app, msg) }))
+        return [com.user(app, msg.value.author), ' ', ago(msg), replyLink, md(c.text)]
       },
       advert: function () { 
         if (!c.text) return
-        if (opts && opts.full)
-          return h('div', h('small', 'advert by ', com.user(app, msg.value.author), ' ', ago(msg)), md(c.text))
-        return h('div', h('small', 'advert by ', com.user(app, msg.value.author), ' ', ago(msg)), h('div', shorten(c.text)))
+        return [h('small', 'advert by ', com.user(app, msg.value.author), ' ', ago(msg)), md(c.text)]
       },
       pub: function () {
         return [com.user(app, msg.value.author), ' says there\'s a public peer at ', c.address, ' ', ago(msg)]
