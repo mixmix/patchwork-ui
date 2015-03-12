@@ -23,6 +23,14 @@ module.exports = function (app) {
     var profile = app.profiles[pid]
     var name = com.userName(app, pid)
     var profileImg = com.profilePicUrl(app, pid)
+    var master
+
+    // subfeeds (applications)
+    if (profile && profile.master) {
+      master = profile.master
+      if (profile.self.name) // use own name
+        name = profile.self.name
+    }
 
     // name confidence controls
     var nameTrustDlg
@@ -140,6 +148,9 @@ module.exports = function (app) {
           h('.section',
             h('a.profpic', { href: makeUri({ view: 'pics' }) }, h('img', { src: profileImg })),
             h('h2', name, com.nameConfidence(pid, app), renamebtn),
+            (master) ?
+              h('h2', h('small', com.user(app, master), '\'s feed')) :
+              '',
             h('p.text-muted', 'joined '+joinDate)
           ),
           h('.section', h('p', followbtn), h('p', trustbtn), h('p', flagbtn)),
@@ -150,13 +161,13 @@ module.exports = function (app) {
               h('ul.list-unstyled', givenNames)
             )
             : '',
-          trusters.length  ? h('.section', h('small', h('strong.text-success', com.icon('ok'), ' Trusted by')), h('br'), h('ul.list-unstyled', trusters)) : '',
-          flaggers.length  ? h('.section', h('small', h('strong.text-danger', com.icon('flag'), ' Flagged by')), h('br'), h('ul.list-unstyled', flaggers)) : '',
-          followers.length ? h('.section', h('small', h('strong', 'Followed by')), h('br'), h('ul.list-unstyled', followers)) : '',
-          follows.length   ? h('.section', h('small', h('strong', 'Follows')), h('br'), h('ul.list-unstyled', follows)) : '',
-          apps.length      ? h('.section', h('small', h('strong', 'Uses')), h('br'), h('ul.list-unstyled', apps)) : '',
-          trusts.length    ? h('.section', h('small', h('strong', 'Trusts')), h('br'), h('ul.list-unstyled', trusts)) : '',
-          flags.length     ? h('.section', h('small', h('strong', 'Flags')), h('br'), h('ul.list-unstyled', flags)) : ''))))
+          trusters.length  ? h('.section', h('strong.text-success', com.icon('ok'), ' Trusted by'), h('br'), h('ul.list-unstyled', trusters)) : '',
+          flaggers.length  ? h('.section', h('strong.text-danger', com.icon('flag'), ' Flagged by'), h('br'), h('ul.list-unstyled', flaggers)) : '',
+          followers.length ? h('.section', h('strong', 'Followed By'), h('br'), h('ul.list-unstyled', followers)) : '',
+          apps.length      ? h('.section', h('strong', 'Subfeeds'), h('br'), h('ul.list-unstyled', apps)) : '',
+          follows.length   ? h('.section', h('strong', 'Followed'), h('br'), h('ul.list-unstyled', follows)) : '',
+          trusts.length    ? h('.section', h('strong', 'Trusted'), h('br'), h('ul.list-unstyled', trusts)) : '',
+          flags.length     ? h('.section', h('strong', 'Flagged'), h('br'), h('ul.list-unstyled', flags)) : ''))))
 
     function makeUri (opts) {
       var qs=''
@@ -185,7 +196,7 @@ module.exports = function (app) {
       var arr = []
       if (g[pid]) {
         for (var userid in g[pid]) {
-          if (g[pid][userid] == v)
+          if (g[pid][userid] == v && !profile.subfeeds[userid])
             arr.push(h('li', com.userlinkThin(userid, app.names[userid])))
         }
       }
@@ -195,7 +206,7 @@ module.exports = function (app) {
     function inEdges(g, v) {
       var arr = []
       for (var userid in g) {
-        if (g[userid][pid] == v)
+        if (g[userid][pid] == v && !profile.subfeeds[userid])
           arr.push(h('li', com.userlinkThin(userid, app.names[userid])))
       }
       return arr      
