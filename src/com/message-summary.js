@@ -61,7 +61,7 @@ function getSummary (app, msg, opts) {
         }
         if (c.master) {
           if (c.master.feed === msg.value.author)
-            changes.push('claimed ownership')
+            changes.push('claimed ownership of')
           else
             changes.push('claimed an owner')
         }

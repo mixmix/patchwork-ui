@@ -29,6 +29,8 @@ module.exports = function (app) {
     }
     function filterFn (msg) {
       var id = msg.value.author
+      var prof = app.profiles[id]
+      var master = (prof && prof.self && prof.self.master) ? prof.self.master : false
 
       if (queryStr) {
         var author = app.names[msg.value.author] || msg.value.author
@@ -46,7 +48,7 @@ module.exports = function (app) {
           return true
       }
       else if (currentList == 'others') {
-        if (id !== app.myid && !follows[app.myid][id] && !trusts[app.myid][id])
+        if (id !== app.myid && !follows[app.myid][id] && !trusts[app.myid][id] && !master)
           return true
       }
       else if (currentList == 'flagged') {
