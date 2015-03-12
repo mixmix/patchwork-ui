@@ -53,8 +53,7 @@ module.exports = function (app) {
   var feed = com.messageFeed(app, { feed: app.ssb.createFeedStream, filter: filterFn, state: feedState })
   app.setPage('posts', h('.row',
     h('.col-xs-1', com.sidenav(app)),
-    h('.col-xs-8', feed),
-    h('.col-xs-3',
+    h('.col-xs-8', 
       h('.header-ctrls',
         h('form', { onsubmit: onsearch }, searchInput),
         com.nav({
@@ -65,8 +64,9 @@ module.exports = function (app) {
             ['actions', makeUri({ list: 'actions' }), 'Actions'],
             ['all',     makeUri({ list: 'all' }),     'All']
           ]
-        })),
-      h('hr'),
+        })),feed),
+    h('.col-xs-3',
+      // h('hr'),
       com.notifications(app),
       com.adverts(app),
       com.sidehelp(app)

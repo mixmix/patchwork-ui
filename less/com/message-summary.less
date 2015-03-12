@@ -8,11 +8,10 @@
   color: #555;
 
   & > td {
-    padding: 24px 12px;
     vertical-align: top;
-    border-bottom: 1px solid #ccc;
     &:nth-child(1) {
-      width: 85px;
+      width: 45px;
+      padding-left: 5px;
     }
   }
 
@@ -21,25 +20,30 @@
   }
 
   .markdown {
+    margin-top: 10px;
     font-size: 17px;
     ul {
       padding-left: 2em;
     }
   }
   :not(.markdown) h4 {
-    font-weight: 100;
+    font-size: 15px;
+    margin-top: 10px;
   }
 
-  .pretty-raw {
-    font-size: 17px;
-    td {  
-      padding: 2px 7px;
-      vertical-align: top;
-    }
-    td:first-child {
-      text-align: right;
-      min-width: 150px;
-      color: #999;
+  .raw {
+    margin-bottom: 1em;
+    .pretty-raw {
+      font-size: 15px;
+      td {  
+        padding: 2px 7px;
+        vertical-align: top;
+      }
+      td:first-child {
+        text-align: right;
+        min-width: 150px;
+        color: #999;
+      }
     }
   }
 }

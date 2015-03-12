@@ -29,19 +29,18 @@ function getSummary (app, msg, opts) {
   try {
     var s = ({
       init: function () {
-        return [author(), h('h4', com.icon('off'), ' Created account.')]
+        return h('h4', com.icon('off'), ' Created account.')
       },
       post: function () { 
         if (!c.text) return
-        var replyLink = fetchReplyLink(app, msg)
-        return [h('p', com.user(app, msg.value.author), ' ', ago(msg), replyLink), md(c.text)]
+        return md(c.text)
       },
       advert: function () { 
         if (!c.text) return
-        return [h('p', 'advert by ', com.user(app, msg.value.author), ' ', ago(msg)), md(c.text)]
+        return md(c.text)
       },
       pub: function () {
-        return [author(), h('h4', com.icon('cloud'), ' Announced a public peer at ', c.address)]
+        return h('h4', com.icon('cloud'), ' Announced a public peer at ', c.address)
       },
       contact: function () {
         function subjects () {
@@ -84,8 +83,8 @@ function getSummary (app, msg, opts) {
           items.push(h('h4', com.icon('picture'), ' Set a profile pic for ', subjects()))
 
         if (items.length===0)
-          items.push(h('h4', 'Published a contact for ', subjects()))
-        return [author(), items]
+          items.push(h('h4', com.icon('option-horizontal'), ' Published a contact for ', subjects()))
+        return items
       }
     })[c.type]()
     if (!s || s.length == 0)
@@ -106,16 +105,12 @@ module.exports = function (app, msg, opts) {
 
   var content = getSummary(app, msg, opts)
   if (!content) {
-    content = [
-      h('p', com.user(app, msg.value.author), ' ', ago(msg)),
-      h('table', com.prettyRaw.table(app, msg.value.content))
-    ]
+    content = h('table.raw', com.prettyRaw.table(app, msg.value.content))
   }
 
   var msgSummary = h('tr.message-summary', { 'data-msg': msg.key },
-    h('td', com.hexagon(com.profilePicUrl(app, msg.value.author))),
+    h('td', com.a('#/profile/'+msg.value.author, com.hexagon(com.profilePicUrl(app, msg.value.author)))),
     h('td', content)
-    // h('td.text-muted', ago(msg))
   )
 
   return msgSummary
