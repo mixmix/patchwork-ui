@@ -26,23 +26,23 @@ function getSummary (app, msg, opts) {
   try {
     var s = ({
       init: function () {
-        return [com.user(app, msg.value.author), ' account created.']
+        return [com.user(app, msg.value.author), ' account created. ', ago(msg)]
       },
       post: function () { 
         if (!c.text) return
         var replyLink = fetchReplyLink(app, msg)
         if (opts && opts.full)
           return h('div', com.user(app, msg.value.author), replyLink, md(c.text))
-        return h('div', com.user(app, msg.value.author), replyLink, h('div', { innerHTML: mentions.post(u.escapePlain(c.text), app, msg) }))
+        return h('div', com.user(app, msg.value.author), replyLink, ' ', ago(msg), h('div', { innerHTML: mentions.post(u.escapePlain(c.text), app, msg) }))
       },
       advert: function () { 
         if (!c.text) return
         if (opts && opts.full)
-          return h('div', h('small', 'advert by ', com.user(app, msg.value.author)), md(c.text))
-        return h('div', h('small', 'advert by ', com.user(app, msg.value.author)), h('div', shorten(c.text)))
+          return h('div', h('small', 'advert by ', com.user(app, msg.value.author), ' ', ago(msg)), md(c.text))
+        return h('div', h('small', 'advert by ', com.user(app, msg.value.author), ' ', ago(msg)), h('div', shorten(c.text)))
       },
       pub: function () {
-        return [com.user(app, msg.value.author), ' says there\'s a public peer at ', c.address]
+        return [com.user(app, msg.value.author), ' says there\'s a public peer at ', c.address, ' ', ago(msg)]
       },
       contact: function () {
         var changes = []
@@ -80,7 +80,8 @@ function getSummary (app, msg, opts) {
             if (l.feed === msg.value.author)
               return 'self'
             return com.user(app, l.feed)
-          })
+          }),
+          ' ', ago(msg)
         ]
       }
     })[c.type]()
@@ -100,18 +101,16 @@ module.exports = function (app, msg, opts) {
 
   // markup
 
-  var viz = com.messageVisuals(app, msg)
   var content = getSummary(app, msg, opts)
   if (!content) {
-    viz = { cls: '.rawmsg', icon: null }
     var raw = com.prettyRaw(app, msg.value.content).slice(0,4)
     content = h('div', h('span.pretty-raw', com.user(app, msg.value.author)), raw)
   }
 
-  var msgSummary = h('tr.message-summary'+viz.cls, { 'data-msg': msg.key },
-    h('td', viz.icon ? com.icon(viz.icon) : undefined),
-    h('td', content),
-    h('td.text-muted', ago(msg))
+  var msgSummary = h('tr.message-summary', { 'data-msg': msg.key },
+    h('td', com.hexagon(com.profilePicUrl(app, msg.value.author))),
+    h('td', content)
+    // h('td.text-muted', ago(msg))
   )
 
   return msgSummary
@@ -131,8 +130,8 @@ module.exports.setRowState = function (el, state) {
 function ago (msg) {
   var str = u.prettydate(new Date(msg.value.timestamp))
   if (str === 'yesterday')
-    return '1d'
-  return str
+    str = '1d'
+  return h('small.text-muted', str, ' ago')
 }
 
 function fetchReplyLink (app, msg) {

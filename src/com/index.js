@@ -64,6 +64,13 @@ exports.userlinkThin = function (id, text, opts) {
   return userlink(id, text, opts)
 }
 
+exports.hexagon = function (img) {
+  img = img ? 'url('+img+')' : 'none'
+  return h('.hexagon',
+    h('.hexatop',
+      h('.hexabottom', { style: 'background-image: '+img })))
+}
+
 var toEmoji =
 exports.toEmoji = function (buf, size) {
   size = size || 20
@@ -107,7 +114,6 @@ exports.sidenav = function (app) {
   ]
 
   return h('.side-nav',
-    h('p.side-nav-myprofile', a('#/profile/'+app.myid, h('img', { src: profilePicUrl(app, app.myid) }))),
     pages.map(function (page) {
       if (page == '-')
         return h('hr')

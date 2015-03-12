@@ -6,76 +6,19 @@
   overflow: hidden;
   cursor: pointer;
   color: #555;
+  border-left: 1px solid #ccc;
+  border-right: 1px solid #ccc;
 
   td {
     padding: 12px;
     border-bottom: 1px solid #ccc;
   }
 
-  td:nth-child(1) {
-    width: 30px;
-    color: #fff;
-    border-color: #555;
-    background: #808080;
-  }
-  td:nth-child(2) {
-    position: relative;
-  }
-  td:nth-child(3) {
-    text-align: right;
-    white-space: nowrap;
-    background: #fafafa;
-  }
-
-  &.initmsg td {
-    &:nth-child(1) {
-      background: @black-primary;
-      border-color: @black-secondary;
-    }
-  }
-  &.postmsg td {
-    &:nth-child(1) {
-      background: @blue-primary;
-      border-color: @blue-secondary;
-    }
-  }
-  &.contactmsg td, &.pubmsg td {
-    &:nth-child(1) {
-      background: @green-primary;
-      border-color: @green-secondary;
-    }
-  }
-  &.advertmsg td {
-    &:nth-child(1) {
-      background: @purple-primary;
-      border-color: @purple-secondary;
-    }
-  }
-  &.rawmsg, &.initmsg {
-    td:nth-child(2) > div > * {
-    }
-  }
-
-  &.read {
-    td:nth-child(2) {
+  &:hover {
+    outline: 1px solid @blue-primary;
+    border-left: 1px solid @blue-primary;
+    td {
       background: #fafafa;
-      color: #666;
-    }
-  }
-
-  &.subscribed {
-    td:nth-child(1) {
-      border-left-color: rgb(255, 194, 0); // orangish gold
-    }
-  }
-
-  &.read {
-    .hover-menu {
-      a {
-        &:hover {
-          background: #ddd;
-        }
-      }
     }
   }
 

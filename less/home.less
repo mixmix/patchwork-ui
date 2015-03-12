@@ -67,6 +67,7 @@
 @import "com/profile.less";
 @import "com/addresses.less";
 @import "com/suggest-box.less";
+@import "com/hexagon.less";
 
 // Home styles
 html {
@@ -79,10 +80,6 @@ html {
   }
 }
 .side-nav {
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  width: 114px;
   white-space: nowrap;
   p {
     margin: 0;
@@ -91,17 +88,10 @@ html {
       padding: 1.5em 1em;
       font-weight: 100;
       color: #555;
-      img {
-        width: 100%;
-        padding: 5px;
-      }
       &:hover {
         text-decoration: none;
         background: #eee;
       }
-    }
-    &:first-child a {
-      padding: 0;
     }
     &.selected {
       a {
