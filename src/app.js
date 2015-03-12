@@ -17,6 +17,8 @@ module.exports = function (ssb) {
     myid: null,
     names: null,
     nameTrustRanks: null,
+    profiles: null,
+    actionItems: null,
     page: {
       id: 'feed',
       param: null
@@ -123,19 +125,21 @@ function refreshPage (e) {
   app.ssb.phoenix.getNameTrustRanks(done())
   app.ssb.phoenix.getAllProfiles(done())
   app.ssb.phoenix.getIndexCounts(done())
+  app.ssb.phoenix.getActionItems(done())
   done(function (err, data) {
     if (err) throw err.message
     app.myid = data[0].id
     app.names = data[1]
     app.nameTrustRanks = data[2]
+    app.profiles = data[3]
     app.indexCounts = data[4]
-    var profiles = data[3]
+    app.actionItems = data[5]
 
     // refresh suggest options for usernames
     app.suggestOptions['@'] = []
-    for (var k in profiles) {
+    for (var k in app.profiles) {
       var name = app.names[k] || k
-      app.suggestOptions['@'].push({ title: name, subtitle: app.getOtherNames(profiles[k]) + ' ' + util.shortString(k), value: name })
+      app.suggestOptions['@'].push({ title: name, subtitle: app.getOtherNames(app.profiles[k]) + ' ' + util.shortString(k), value: name })
     }
 
     // re-route to setup if needed
@@ -296,7 +300,7 @@ function setNamePrompt (userId) {
       return
 
     if (isSelf)
-      schemas.addName(app.ssb, name, done)
+      app.updateContact(userId, { name: name }, done)
     else
       app.updateContact(userId, { name: name }, done)
 

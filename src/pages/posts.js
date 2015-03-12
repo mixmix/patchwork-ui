@@ -34,17 +34,17 @@ module.exports = function (app) {
   // markup
 
   var searchInput = h('input.search', { type: 'text', placeholder: 'Search', value: queryStr })
-  var feed = com.messageFeed(app, app.ssb.createFeedStream, filterFn, feedState)
+  var feed = com.messageFeed(app, { feed: app.ssb.createFeedStream, filter: filterFn, state: feedState })
   app.setPage('posts', h('.row',
     h('.col-xs-1', com.sidenav(app)),
-    h('.col-xs-9',
-      h('.message-feed-ctrls', h('form', { onsubmit: onsearch }, searchInput)),
+    h('.col-xs-8',
+      h('.header-ctrls', h('form', { onsubmit: onsearch }, searchInput)),
       feed
       //com.introhelp(app)
     ),
-    h('.col-xs-2',
+    h('.col-xs-3',
+      com.notifications(app),
       com.adverts(app),
-      h('hr'),
       com.sidehelp(app)
     )
   ))

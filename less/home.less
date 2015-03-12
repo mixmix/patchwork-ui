@@ -56,12 +56,15 @@
 @import "com/message-summary.less";
 @import "com/message-preview.less";
 @import "com/message-feed.less";
+@import "com/notifications.less";
+@import "com/header-controls.less";
 @import "com/ext.less";
 @import "com/search.less";
 @import "com/post-form.less";
+@import "com/image-uploader.less";
 @import "com/adverts.less";
 @import "com/advert-form.less";
-@import "com/profile-controls.less";
+@import "com/profile.less";
 @import "com/addresses.less";
 @import "com/suggest-box.less";
 
@@ -88,11 +91,9 @@ html {
       padding: 1.5em 1em;
       font-weight: 100;
       color: #555;
-      .glyphicon {
-        color: #777;      
-        font-size: 17px;
-        line-height: 21px;
-        display: block;
+      img {
+        width: 100%;
+        padding: 5px;
       }
       &:hover {
         text-decoration: none;
@@ -100,16 +101,10 @@ html {
       }
     }
     &:first-child a {
-      .glyphicon {
-        font-size: 32px;
-        line-height: 38px;
-        display: block;
-      }
-      padding-top: 30px;
-      padding-bottom: 22px;
+      padding: 0;
     }
     &.selected {
-      a, a .glyphicon {
+      a {
         color: @brand-primary;
       }
     }
@@ -122,6 +117,10 @@ html {
     font-weight: normal;
   }
 }
+.full-height {
+  overflow-y: auto;
+  overflow-x: hidden;
+}
 .monospace {
   font-family: @font-family-monospace;
 }
@@ -129,6 +128,9 @@ html {
   border: 1px solid #ccc;
   padding: 1em;
   border-radius: 2px;
+}
+.btn-xs.btn-strong {
+  padding: 3px 5px 1px;
 }
 .btn-primary.btn-strong {
   border: 1px solid @brand-primary;
@@ -147,8 +149,9 @@ html {
 }
 .btn-action {
   color: @brand-action;
+  background: #fff;
   &.btn-strong {
-    border: 1px solid #ddd;
+    border: 1px solid #666;
   }
   &:hover {
     background: #eee;

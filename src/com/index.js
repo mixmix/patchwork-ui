@@ -44,6 +44,19 @@ exports.userName = function (app, id) {
   return app.names[id] || u.shortString(id)
 }
 
+var profilePicUrl =
+exports.profilePicUrl = function (app, id) {
+  var url = '/img/default-prof-pic.png'
+  var profile = app.profiles[id]
+  if (profile) {
+    if (profile.assignedBy[app.myid] && profile.assignedBy[app.myid].profilePic)
+      url = '/ext/' + profile.assignedBy[app.myid].profilePic.ext
+    else if (profile.self.profilePic)
+      url = '/ext/' + profile.self.profilePic.ext
+  }
+  return url
+}
+
 var userlinkThin =
 exports.userlinkThin = function (id, text, opts) {
   opts = opts || {}
@@ -64,32 +77,37 @@ exports.toEmoji = function (buf, size) {
 }
 
 
-var header =
-exports.header = function (app) {
-  return h('.nav.navbar.navbar-default',
-    h('.container-fluid',
-      h('.navbar-header', h('a.navbar-brand', { href: '#/' }, 'ssb')),
-      h('.navbar-form.navbar-left',
-        h('.form-group',
-          h('input.form-control', { type: 'text', placeholder: 'Search' }))),
-      h('ul.nav.navbar-nav.navbar-right',
-        h('li.hidden-xs', a('#/help', 'help')))))
+var nav =
+exports.nav = function (opts) {
+  var items = opts.items.map(function (item) {
+    var cls = ''
+    if (item[0] == opts.current)
+      cls = '.selected'
+    return h('a'+cls, { href: item[1] }, item[2])
+  })
+  return h('.nav', items)
+}
+
+var search =
+exports.search = function (opts) {
+  var searchInput = h('input.search', { type: 'text', name: 'search', placeholder: 'Search', value: opts.value })
+  return h('form', { onsubmit: opts.onsearch }, searchInput)
 }
 
 var sidenav =
 exports.sidenav = function (app) {
   var pages = [
   //[id, path, label],
-    ['posts', '', [icon('globe'), h('span', { style: 'padding-left: 2px' }, 'feed')]],
+    ['posts', '', 'feed'],
     ['inbox', 'inbox', 'inbox ('+app.indexCounts.inboxUnread+')'],
     ['compose', 'compose', 'compose'],
-    ['address-book', 'address-book', 'users'],
-    ['profile', 'profile/'+app.myid, app.names[app.myid] || 'profile'],
+    ['address-book', 'address-book', 'network'],
     ['adverts', 'adverts', 'adverts'],
     ['help', 'help', 'help']
   ]
 
   return h('.side-nav',
+    h('p.side-nav-myprofile', a('#/profile/'+app.myid, h('img', { src: profilePicUrl(app, app.myid) }))),
     pages.map(function (page) {
       if (page == '-')
         return h('hr')
@@ -158,14 +176,15 @@ exports.page = function (app, id, content) {
 }
 
 exports.prettyRaw = require('./pretty-raw')
-exports.addresses = require('./addresses')
 exports.advertForm = require('./advert-form')
 exports.adverts = require('./adverts')
 exports.messageVisuals = require('./message-visuals')
 exports.message = require('./message')
 exports.messageThread = require('./message-thread')
 exports.messageSummary = require('./message-summary')
-exports.messagePreview = require('./message-preview')
 exports.messageFeed = require('./message-feed')
+exports.notifications = require('./notifications')
+exports.address = require('./address')
 exports.peers = require('./peers')
 exports.postForm = require('./post-form')
+exports.imageUploader = require('./image-uploader')

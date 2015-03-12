@@ -1,8 +1,32 @@
-.addresses {
-  .label-success {
-    background: #00DB00;
+.address {
+  color: #555;
+  height: 80px;
+
+  td {
+    border-bottom: 1px solid #ccc;
   }
-  tbody tr td {
-    vertical-align: middle;
+
+  .profpic {
+    width: 100px;
+    img {
+      max-width: 80px;
+      max-height: 80px;
+    }
+  }
+  .details {
+    p {
+      margin: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    p.name {
+      font-size: 16px;
+      a {
+        color: #555;
+      }
+    }
+  }
+  .actions {
+    width: 50px;
   }
 }

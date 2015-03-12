@@ -1,7 +1,5 @@
 .message-feed-ctrls {
   padding: 0.5em 0;
-  border-bottom: 1px solid #ccc;
-  border-top: 0;
   position: relative;
 }
 
@@ -9,6 +7,7 @@
 
   overflow-y: auto;
   overflow-x: hidden;
+  border-top: 1px solid #ccc;
 
   .message-feed {
     font-family: @font-family-sans-serif;
@@ -26,6 +25,16 @@
         &:last-child {
           border-right: 0;
         }
+      }
+    }
+    tbody {
+      &:empty::before {
+        content: 'Empty';
+        font-size: 16px;
+        font-style: italic;
+        color: #777;
+        margin: 1em;
+        display: block;
       }
     }
   }

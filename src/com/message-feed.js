@@ -6,17 +6,29 @@ var multicb = require('multicb')
 var com = require('../com')
 
 var mustRenderOpts = { mustRender: true }
-module.exports = function (app, feedFn, filterFn, feedState) {
+module.exports = function (app, opts) {
+  opts = opts || {}
 
+  var feedState = opts.state
   var feedContainer = null
   if (!feedState)
     feedState = module.exports.makeStateObj()
 
-  // markup
-
-  function renderMsg (msg) {
-    return com.messageSummary(app, msg, mustRenderOpts)
+  if (!opts.feed)
+    opts.feed = app.ssb.createFeedStream
+  if (!opts.cursor) {
+    opts.cursor = function (msg) {
+      if (msg)
+        return [msg.value.timestamp, msg.value.author]
+    }
   }
+  if (!opts.renderMsg) {
+    opts.renderMsg = function (msg) {
+      return com.messageSummary(app, msg, mustRenderOpts)
+    }
+  }
+
+  // markup
  
   if (!feedState.tbody)
     feedState.tbody = makeUnselectable(h('tbody'))
@@ -43,11 +55,11 @@ module.exports = function (app, feedFn, filterFn, feedState) {
     fetchBack(30)
 
   function fetchFront (amt, cb) {
-    var opts = { reverse: false }
-    opts[(feedState.msgs.length == 0) ? 'gte' : 'gt'] = fetchPosition(feedState.frontCursor)
+    var fetchopts = { reverse: false }
+    fetchopts[(feedState.msgs.length == 0) ? 'gte' : 'gt'] = opts.cursor(feedState.frontCursor)
     var topmsgEl = feedState.tbody.children[0]
 
-    doFetch(opts, function (err, _msgs) {
+    doFetch(fetchopts, function (err, _msgs) {
       if (_msgs && _msgs.length) {
         // nothing new? stop
         if (feedState.frontCursor && feedState.frontCursor.key == _msgs[_msgs.length - 1].key)
@@ -59,18 +71,20 @@ module.exports = function (app, feedFn, filterFn, feedState) {
           feedState.backCursor = _msgs[0]
 
         // filter
-        if (filterFn)
-          _msgs = _msgs.filter(filterFn)
+        if (opts.filter)
+          _msgs = _msgs.filter(opts.filter)
+
+        _msgs.reverse()
 
         // render
         var lastEl = feedState.tbody.firstChild
         _msgs.forEach(function (msg) {
-          var el = renderMsg(msg)
+          var el = opts.renderMsg(msg)
           el && feedState.tbody.insertBefore(el, lastEl)
         })
 
         // prepend
-        feedState.msgs = _msgs.reverse().concat(feedState.msgs)
+        feedState.msgs = _msgs.concat(feedState.msgs)
 
         // maintain scroll position
         if (topmsgEl)
@@ -86,10 +100,10 @@ module.exports = function (app, feedFn, filterFn, feedState) {
     })
   }
   function fetchBack (amt, cb) {
-    var opts = { reverse: true }
-    opts[(feedState.msgs.length == 0) ? 'lte' : 'lt'] = fetchPosition(feedState.backCursor)
+    var fetchopts = { reverse: true }
+    fetchopts[(feedState.msgs.length == 0) ? 'lte' : 'lt'] = opts.cursor(feedState.backCursor)
     
-    doFetch(opts, function (err, _msgs) {
+    doFetch(fetchopts, function (err, _msgs) {
       if (_msgs && _msgs.length) {
         // nothing new? stop
         if (feedState.backCursor && feedState.backCursor.key == _msgs[_msgs.length - 1].key)
@@ -101,15 +115,15 @@ module.exports = function (app, feedFn, filterFn, feedState) {
           feedState.frontCursor = _msgs[0]
 
         // filter
-        if (filterFn)
-          _msgs = _msgs.filter(filterFn)
+        if (opts.filter)
+          _msgs = _msgs.filter(opts.filter)
 
         // append
         feedState.msgs = feedState.msgs.concat(_msgs)
 
         // render
         _msgs.forEach(function (msg) {
-          var el = renderMsg(msg)
+          var el = opts.renderMsg(msg)
           el && feedState.tbody.appendChild(el)
         })
 
@@ -124,20 +138,15 @@ module.exports = function (app, feedFn, filterFn, feedState) {
   }
 
   var fetching = false  
-  function doFetch (opts, cb) {
+  function doFetch (fetchopts, cb) {
     if (fetching)
       return
     fetching = true
-    opts.limit = opts.limit || 30
-    pull(feedFn(opts), pull.collect(function (err, _msgs) {
+    fetchopts.limit = fetchopts.limit || 30
+    pull(opts.feed(fetchopts), pull.collect(function (err, _msgs) {
       fetching = false
       cb(err, _msgs)
     }))
-  }
-
-  function fetchPosition(v) {
-    if (v)
-      return [v.value.timestamp, v.value.author]
   }
 
   // handlers

@@ -1,0 +1,59 @@
+
+.profile-controls {
+  
+  h2, p {
+    margin: 0;
+  }
+  .profpic {
+    position: relative;
+    display: inline-block;
+    margin-bottom: 1em;
+    img {
+      max-width: 100%;
+      border-radius: 2px;
+    }
+    &:hover::before {
+      content: 'Change Profile Pic';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      background: rgba(0,0,0,0.75);
+      font-weight: 100;
+      padding: 1em 2em;
+      color: #fff;
+      border-radius: 2px;
+    }
+  }
+  .section {
+    margin-bottom: 24px;
+  }
+  li {
+    display: inline-block;
+    margin-right: 1em;
+  }
+}
+
+.profile-pics {
+  padding: 1em 0;
+  .pic {
+    position: relative;
+    display: inline-block;
+    margin: 1em 1em 1em 0;
+    img {
+      width: 275px;
+      height: 275px;
+      border-radius: 2px;
+    }
+    &:hover::before {
+      content: 'Use This Picture';
+      position: absolute;
+      bottom: 30px;
+      left: 0;
+      background: rgba(0,0,0,0.75);
+      font-weight: 100;
+      padding: 1em 2em;
+      color: #fff;
+      border-radius: 2px;
+    }
+  }
+}

@@ -44,19 +44,12 @@ function getSummary (app, msg, opts) {
       pub: function () {
         return [com.user(app, msg.value.author), ' says there\'s a public peer at ', c.address]
       },
-      name: function () {
-        if (c.feed)
-          return // legacy kludge, was naming another user
-        return [com.user(app, msg.value.author), ' is ', preprocess(c.name)]
-      },
       contact: function () {
         var changes = []
-        if ('following' in c) {
-          if (c.following)
-            changes.push('followed')
-          else
-            changes.push('unfollowed')
-        }
+        if (c.following === true)
+          changes.push('followed')
+        if (c.following === false)
+          changes.push('unfollowed')
         if ('trust' in c) {
           var t = +c.trust|0
           if (t === 1)
@@ -66,23 +59,29 @@ function getSummary (app, msg, opts) {
           else if (t === 0)
             changes.push('untrusted/unflagged')
         }
+        if (c.master) {
+          if (c.master.feed === msg.value.author)
+            changes.push('claimed ownership of')
+          else
+            changes.push('claimed an owner')
+        }
+        if (c.myuser === false)
+          changes.push('removed master')
         if ('name' in c)
           changes.push('named')
+        if ('profilePic' in c)
+          changes.push('set a profile pic for')
+        if (changes.length===0)
+          changes.push('published a contact link to')
         return [
           com.user(app, msg.value.author),
           ' ', changes.join(', '), ' ',
-          mlib.asLinks(c.contact).map(function (l) { return com.user(app, l.feed) }),
-          ' ', (c.name||'')
+          mlib.asLinks(c.contact).map(function (l) {
+            if (l.feed === msg.value.author)
+              return 'self'
+            return com.user(app, l.feed)
+          })
         ]
-      },
-      trust: function () { 
-        return mlib.asLinks(c.target).map(function (l) {
-          if (c.trust > 0)
-            return [com.user(app, msg.value.author), ' trusted ', com.user(app, l.feed)]
-          if (c.trust < 0)
-            return [com.user(app, msg.value.author), ' flagged ', com.user(app, l.feed)]
-          return [com.user(app, msg.value.author), ' untrusted/unflagged ', com.user(app, l.feed)]
-        })
       }
     })[c.type]()
     if (!s || s.length == 0)
