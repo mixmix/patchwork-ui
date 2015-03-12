@@ -10,7 +10,7 @@ module.exports = function (app) {
     var item = app.actionItems[k]
     if (item.action == 'confirm-app') {
       notes.push(h('.note.well', 
-        h('p', com.user(app, item.feedid), ' claims it\'s your application. Alias it to your account?'),
+        h('p', com.user(app, item.subid), ' claims it\'s your application. Alias it to your account?'),
         h('div', 
           h('button.btn.btn-success.btn-strong', { onclick: confirmApp(item) }, com.icon('ok'), ' Confirm'),
           ' ',
@@ -25,10 +25,14 @@ module.exports = function (app) {
   function confirmApp (item) {
     return function (e) {
       e.preventDefault()
-      var contact = { myapp: true, following: true }
-      if (app.names[item.feedid])
-        contact.name = app.names[item.feedid]
-      app.updateContact(item.feedid, contact, function (err) {
+
+      var contact = {}
+      if (app.names[item.subid])
+        contact.name = app.names[item.subid]
+      contact.master = { feed: app.myid }
+      contact.following = true
+
+      app.updateContact(item.subid, contact, function (err) {
         if (err) swal('Error While Publishing', err.message, 'error')
         else app.refreshPage()
       })
@@ -38,7 +42,7 @@ module.exports = function (app) {
   function denyApp (item) {
     return function (e) {
       e.preventDefault()
-      app.updateContact(item.feedid, { myapp: false, trust: -1 }, function (err) {
+      app.updateContact(item.subid, { master: false, trust: -1 }, function (err) {
         if (err) swal('Error While Publishing', err.message, 'error')
         else app.refreshPage()
       })

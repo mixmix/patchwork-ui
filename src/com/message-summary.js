@@ -59,14 +59,14 @@ function getSummary (app, msg, opts) {
           else if (t === 0)
             changes.push('untrusted/unflagged')
         }
-        if (c.myapp === true)
-          changes.push('claimed as app')
-        if (c.myapp === false)
-          changes.push('disowned as app')
-        if (c.myuser === true)
-          changes.push('claimed as user')
+        if (c.master) {
+          if (c.master.feed === msg.value.author)
+            changes.push('claimed ownership')
+          else
+            changes.push('claimed an owner')
+        }
         if (c.myuser === false)
-          changes.push('disowned as user')
+          changes.push('removed master')
         if ('name' in c)
           changes.push('named')
         if ('profilePic' in c)
@@ -80,8 +80,7 @@ function getSummary (app, msg, opts) {
             if (l.feed === msg.value.author)
               return 'self'
             return com.user(app, l.feed)
-          }),
-          ' ', (c.name||'')
+          })
         ]
       }
     })[c.type]()
