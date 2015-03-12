@@ -43,7 +43,7 @@ module.exports = function (app, obj, path) {
 var prettyRawTable =
 module.exports.table = function (app, obj, path) {
   function row (k, v) {
-    return h('tr.pretty-raw', h('td', h('small', path+k)), h('td', v))
+    return h('tr.pretty-raw', h('td', path+k), h('td', v))
   }
 
   var els = []

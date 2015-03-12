@@ -9,49 +9,33 @@
   border-left: 1px solid #ccc;
   border-right: 1px solid #ccc;
 
-  td {
+  & > td {
     padding: 12px;
     border-bottom: 1px solid #ccc;
     vertical-align: top;
   }
 
   &:hover {
-    outline: 1px solid @blue-primary;
-    border-left: 1px solid @blue-primary;
-    td {
-      background: #fafafa;
-    }
+    //outline: 1px solid #aaa;
+    border: 1px solid #999;
   }
 
   .markdown {
-    margin-top: 0.5em;
+    font-size: 15px;
     ul {
       padding-left: 2em;
     }
   }
 
   .pretty-raw {
-    padding: 0 1em;
-    width: 175px;
-    display: inline-block;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    border-right: 1px solid #ccc;
-    white-space: nowrap;
-
-    // this ugly hack makes sure the pretty-raw spans dont add weird vertical padding (due to the overflow: hidden?)
-    float: left;
-
-    small {
-      padding-right: 0.5em;
+    td {  
+      padding: 2px 7px;
+      vertical-align: top;
     }
-
-    &:first-child {
-      padding-left: 0;
-      width: 100px;
-    }
-    &:last-child {
-      border-right: 0;
+    td:first-child {
+      text-align: right;
+      min-width: 100px;
+      color: #999;
     }
   }
 }

@@ -155,10 +155,10 @@ module.exports = function (app, opts) {
     // clicked on a row? abort if clicked on a sub-link
     var el = e.target
     while (el) {
-      if (el.tagName == 'A' || el.tagName == 'TABLE') {
+      if (el.tagName == 'A' || el.className == 'message-feed') {
         return
       }
-      if (el.tagName == 'TR')
+      if (el.classList.contains('message-summary'))
         break
       el = el.parentNode
     }

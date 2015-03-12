@@ -30,11 +30,11 @@ function getSummary (app, msg, opts) {
       post: function () { 
         if (!c.text) return
         var replyLink = fetchReplyLink(app, msg)
-        return [com.user(app, msg.value.author), ' ', ago(msg), replyLink, md(c.text)]
+        return [h('p', com.user(app, msg.value.author), ' ', ago(msg), replyLink), md(c.text)]
       },
       advert: function () { 
         if (!c.text) return
-        return [h('small', 'advert by ', com.user(app, msg.value.author), ' ', ago(msg)), md(c.text)]
+        return [h('p', 'advert by ', com.user(app, msg.value.author), ' ', ago(msg)), md(c.text)]
       },
       pub: function () {
         return [com.user(app, msg.value.author), ' says there\'s a public peer at ', c.address, ' ', ago(msg)]
@@ -98,8 +98,10 @@ module.exports = function (app, msg, opts) {
 
   var content = getSummary(app, msg, opts)
   if (!content) {
-    var raw = com.prettyRaw(app, msg.value.content).slice(0,4)
-    content = h('div', h('span.pretty-raw', com.user(app, msg.value.author)), raw)
+    content = [
+      h('p', com.user(app, msg.value.author), ' ', ago(msg)),
+      h('table', com.prettyRaw.table(app, msg.value.content))
+    ]
   }
 
   var msgSummary = h('tr.message-summary', { 'data-msg': msg.key },
