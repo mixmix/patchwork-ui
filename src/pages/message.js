@@ -13,7 +13,6 @@ module.exports = function (app) {
     var content
     if (thread) {
       content = com.messageThread(app, thread, {
-        viewMode: app.page.qs.view || 'thread',
         onRender: function (msg) {
           app.ssb.phoenix.markRead(msg.key)
           app.updateCounts()
@@ -42,7 +41,7 @@ module.exports = function (app) {
 
     app.setPage('message', h('.row',
       h('.col-xs-1', com.sidenav(app)),
-      h('.col-xs-8', content),
+      h('.col-xs-8.full-height', content),
       h('.col-xs-3.full-height',
         com.notifications(app),
         com.adverts(app),
