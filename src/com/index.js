@@ -64,6 +64,18 @@ exports.userlinkThin = function (id, text, opts) {
   return userlink(id, text, opts)
 }
 
+var hexagon =
+exports.hexagon = function (img) {
+  img = img ? 'url('+img+')' : 'none'
+  return h('.hexagon',
+    h('.hexatop',
+      h('.hexabottom', { style: 'background-image: '+img })))
+}
+
+exports.userHexagon = function (app, id) {
+  return h('a.user-hexagon', { href: '#/profile/'+id }, hexagon(profilePicUrl(app, id)))
+}
+
 var toEmoji =
 exports.toEmoji = function (buf, size) {
   size = size || 20
@@ -85,7 +97,7 @@ exports.nav = function (opts) {
       cls = '.selected'
     return h('a'+cls, { href: item[1] }, item[2])
   })
-  return h('.nav', items)
+  return h('.navlinks', items)
 }
 
 var search =
@@ -98,7 +110,7 @@ var sidenav =
 exports.sidenav = function (app) {
   var pages = [
   //[id, path, label],
-    ['posts', '', 'feed'],
+    ['posts', '', [icon('globe'), h('span', { style: 'padding-left: 2px' }, 'feed')]],
     ['inbox', 'inbox', 'inbox ('+app.indexCounts.inboxUnread+')'],
     ['compose', 'compose', 'compose'],
     ['address-book', 'address-book', 'network'],
@@ -106,8 +118,7 @@ exports.sidenav = function (app) {
     ['help', 'help', 'help']
   ]
 
-  return h('.side-nav',
-    h('p.side-nav-myprofile', a('#/profile/'+app.myid, h('img', { src: profilePicUrl(app, app.myid) }))),
+  return h('.side-nav.full-height',
     pages.map(function (page) {
       if (page == '-')
         return h('hr')
@@ -183,6 +194,7 @@ exports.message = require('./message')
 exports.messageThread = require('./message-thread')
 exports.messageSummary = require('./message-summary')
 exports.messageFeed = require('./message-feed')
+exports.messageAttachments = require('./message-attachments')
 exports.notifications = require('./notifications')
 exports.address = require('./address')
 exports.peers = require('./peers')

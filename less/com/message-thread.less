@@ -39,31 +39,22 @@
       }
     }
 
-    &.viewmode-select {
-      display: inline-block;
-      margin-bottom: 1em;
-      li {
-        margin-right: 2px;
-        &:last-child {
-          border-right: 0;
-        }
-        padding: 0;
-        a {
-          border-bottom: 2px solid #aaa;
-          color: #555;
-          padding: 6px 14px;
-        }
-        &.selected a {
-          font-weight: bold;
-          border-bottom: 2px solid #006EFF;
-        }
-      }
-    }
   }
 
-  ul.list-inline li.type {
-    padding: 7px 12px;
-    color: #fff;
+  ul.list-inline {
+    li.type {
+      padding: 7px 12px;
+      color: #fff;
+    }
+    li.hex {
+      width: 30px;
+      position: relative;
+      .user-hexagon {
+        position: absolute;
+        top: -10px;
+        left: 5px;
+      }
+    }
   }
   .in-response-to {
     a {
@@ -78,6 +69,7 @@
   }
   ul.list-inline.threadmeta {
     margin-top: 5px;
+    margin-right: 5px;
   }
   .message.top {
     margin: 1em;
@@ -95,8 +87,11 @@
       }
     }
   }
+  .replies-meta {
+    margin: 1em;
+  }
   .message-replies {
-    margin-left: 21px;
+    margin-left: 2em;
   }
 
   // message type styles
@@ -127,12 +122,24 @@
       background: #808080;
     }
     .message {
-      font-size: 125%;
       color: #555;
 
       table {
         width: 100%;
       }
+    }
+  }
+
+  .pretty-raw {
+    font-size: 15px;
+    td {  
+      padding: 2px 7px;
+      vertical-align: top;
+    }
+    td:first-child {
+      text-align: right;
+      min-width: 150px;
+      color: #999;
     }
   }
 }

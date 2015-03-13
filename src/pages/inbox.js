@@ -6,7 +6,6 @@ var com = require('../com')
 module.exports = function (app) {
 
   var queryStr = app.page.qs.q || ''
-  var myfeedOpts = { feed: app.myid }
   function filterFn (msg) {
     var c = msg.value.content
 
@@ -38,7 +37,7 @@ module.exports = function (app) {
     h('.col-xs-8', 
       h('.header-ctrls', h('form', { onsubmit: onsearch }, searchInput)),
       content),
-    h('.col-xs-3',
+    h('.col-xs-3.full-height',
       com.notifications(app),
       com.adverts(app),
       com.sidehelp(app)

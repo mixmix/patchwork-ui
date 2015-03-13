@@ -54,7 +54,6 @@
 @import "com/message.less";
 @import "com/message-thread.less";
 @import "com/message-summary.less";
-@import "com/message-preview.less";
 @import "com/message-feed.less";
 @import "com/notifications.less";
 @import "com/header-controls.less";
@@ -67,6 +66,7 @@
 @import "com/profile.less";
 @import "com/addresses.less";
 @import "com/suggest-box.less";
+@import "com/hexagon.less";
 
 // Home styles
 html {
@@ -76,34 +76,44 @@ html {
   padding: 0;
   & > .row > div:nth-child(3) {
     padding: 10px 20px;
+    background: #fafafa;
+    border-left: 1px solid #ddd;
+    .well {
+      background: #fefefe;
+    }
   }
 }
 .side-nav {
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  width: 114px;
   white-space: nowrap;
+  background: #2D2D2D;
+  border-right: 2px solid #565656;
+
   p {
     margin: 0;
+    background: #333;
+    border-top: 1px solid #444;
+    border-bottom: 1px solid #222;
     a {
       display: block;
       padding: 1.5em 1em;
       font-weight: 100;
-      color: #555;
-      img {
-        width: 100%;
-        padding: 5px;
-      }
+      color: gray;
       &:hover {
         text-decoration: none;
-        background: #eee;
+        background: #414141;
       }
     }
     &:first-child a {
-      padding: 0;
+      .glyphicon {
+        font-size: 32px;
+        line-height: 38px;
+        display: block;
+      }
+      padding-top: 30px;
+      padding-bottom: 22px;
     }
     &.selected {
+      background: #414141;
       a {
         color: @brand-primary;
       }
@@ -128,6 +138,13 @@ html {
   border: 1px solid #ccc;
   padding: 1em;
   border-radius: 2px;
+}
+.btn {
+  background: transparent;
+  border-color: transparent;
+  &.btn-strong {
+    background: #fff;
+  }
 }
 .btn-xs.btn-strong {
   padding: 3px 5px 1px;

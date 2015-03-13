@@ -1,32 +1,31 @@
 .header-ctrls {
-  padding: 5px 0;
+  display: table;
+  border-collapse: collapse;
+  width: 100%;
 
-  .nav {
+  .navlinks {
+    display: table-cell;
+    white-space: pre;
+    padding-right: 5px;
     a {
       display: inline-block;
-      padding: 0.25em 1em;
+      padding: 0.5em 1em;
       font-weight: 100;
       color: #555;
-      border: 1px solid #aaa;
-      border-top: 0;
-      border-right-width: 0;
-      background: #eee;
 
-      &:last-child {
-        border-right-width: 1px;
-      }
       &:hover {
         text-decoration: none;
-        background: #fafafa;
+        border-bottom: 5px solid #ccc;
       }
       &.selected {
-        border-bottom-width: 2px;      
-        border-bottom-color: @blue-primary;
-        background: #fff;
+        border-bottom: 5px solid @blue-primary;
       }
     }
   }
   form {
+    display: table-cell;
+    width: 100%;
+    padding: 5px;
     input {
       border: 1px solid #aaa;
     }

@@ -18,76 +18,78 @@ function shorten (str, n) {
 function getSummary (app, msg, opts) {
 
   function md (str) {
-    return h('div', { innerHTML: mentions.post(markdown.block(str), app, msg) })
+    return h('.markdown', { innerHTML: mentions.post(markdown.block(str), app, msg) })
   }
 
   var c = msg.value.content
-  var preprocess = (opts && opts.full) ? function(v){return v} : shorten
   try {
     var s = ({
       init: function () {
-        return [com.user(app, msg.value.author), ' account created.']
+        return h('h4', com.icon('off'), ' Created account.')
       },
       post: function () { 
         if (!c.text) return
-        var replyLink = fetchReplyLink(app, msg)
-        if (opts && opts.full)
-          return h('div', com.user(app, msg.value.author), replyLink, md(c.text))
-        return h('div', com.user(app, msg.value.author), replyLink, h('div', { innerHTML: mentions.post(u.escapePlain(c.text), app, msg) }))
+        var attachments = com.messageAttachments(app, msg)
+        if (attachments.length)
+          attachments = h('.attachments', attachments)
+        return [author(app, msg, fetchReplyLink(app, msg)), md(c.text), attachments]
       },
       advert: function () { 
         if (!c.text) return
-        if (opts && opts.full)
-          return h('div', h('small', 'advert by ', com.user(app, msg.value.author)), md(c.text))
-        return h('div', h('small', 'advert by ', com.user(app, msg.value.author)), h('div', shorten(c.text)))
+        return [author(app, msg, h('small.text-muted', ' - advert')), md(c.text)]
       },
       pub: function () {
-        return [com.user(app, msg.value.author), ' says there\'s a public peer at ', c.address]
+        return h('h4', com.icon('cloud'), ' Announced a public peer at ', c.address)
       },
       contact: function () {
-        var changes = []
-        if (c.following === true)
-          changes.push('followed')
-        if (c.following === false)
-          changes.push('unfollowed')
-        if ('trust' in c) {
-          var t = +c.trust|0
-          if (t === 1)
-            changes.push('trusted')
-          else if (t === -1)
-            changes.push('flagged')
-          else if (t === 0)
-            changes.push('untrusted/unflagged')
-        }
-        if (c.master) {
-          if (c.master.feed === msg.value.author)
-            changes.push('claimed ownership of')
-          else
-            changes.push('claimed an owner')
-        }
-        if (c.myuser === false)
-          changes.push('removed master')
-        if ('name' in c)
-          changes.push('named')
-        if ('profilePic' in c)
-          changes.push('set a profile pic for')
-        if (changes.length===0)
-          changes.push('published a contact link to')
-        return [
-          com.user(app, msg.value.author),
-          ' ', changes.join(', '), ' ',
-          mlib.asLinks(c.contact).map(function (l) {
+        function subjects () {
+          return mlib.asLinks(c.contact).map(function (l) {
             if (l.feed === msg.value.author)
               return 'self'
             return com.user(app, l.feed)
           })
-        ]
+        }
+
+        var items = []
+        if (c.following === true)
+          items.push(h('h4', com.icon('plus'), ' Followed ', subjects()))
+        if (c.following === false)
+          items.push(h('h4', com.icon('minus'), ' Unfollowed ', subjects()))
+
+        if ('trust' in c) {
+          var t = +c.trust|0
+          if (t === 1)
+            items.push(h('h4', com.icon('lock'), ' Trusted ', subjects()))
+          else if (t === -1)
+            items.push(h('h4', com.icon('flag'), ' Flagged ', subjects()))
+          else if (t === 0)
+            items.push(h('h4', com.icon('erase'), ' Untrusted/Unflagged ', subjects()))
+        }
+
+        if (c.master) {
+          if (c.master.feed === msg.value.author)
+            items.push(h('h4', com.icon('link'), ' Claimed ownership of ', subjects()))
+          else
+            items.push(h('h4', com.icon('link'), ' Claimed an owner for ', subjects()))
+        }
+        if (c.master === false)
+          items.push(h('h4', com.icon('erase'), ' Claimed no ownership for ', subjects()))
+
+        if ('name' in c)
+          items.push(h('h4', com.icon('tag'), ' Named ', subjects(), ' ', c.name))
+
+        if ('profilePic' in c)
+          items.push(h('h4', com.icon('picture'), ' Set a profile pic for ', subjects()))
+
+        if (items.length===0)
+          items.push(h('h4', com.icon('option-horizontal'), ' Published a contact for ', subjects()))
+        return items
       }
     })[c.type]()
     if (!s || s.length == 0)
       s = false
     return s
-  } catch (e) { return '' }
+  } catch (e) { console.log(e); return '' }
 }
 
 var attachmentOpts = { toext: true, rel: 'attachment' }
@@ -100,18 +102,14 @@ module.exports = function (app, msg, opts) {
 
   // markup
 
-  var viz = com.messageVisuals(app, msg)
   var content = getSummary(app, msg, opts)
   if (!content) {
-    viz = { cls: '.rawmsg', icon: null }
-    var raw = com.prettyRaw(app, msg.value.content).slice(0,4)
-    content = h('div', h('span.pretty-raw', com.user(app, msg.value.author)), raw)
+    content = [author(app, msg), h('table.raw', com.prettyRaw.table(app, msg.value.content))]
   }
 
-  var msgSummary = h('tr.message-summary'+viz.cls, { 'data-msg': msg.key },
-    h('td', viz.icon ? com.icon(viz.icon) : undefined),
-    h('td', content),
-    h('td.text-muted', ago(msg))
+  var msgSummary = h('tr.message-summary', { 'data-msg': msg.key },
+    h('td', com.userHexagon(app, msg.value.author)),
+    h('td', content)
   )
 
   return msgSummary
@@ -131,15 +129,19 @@ module.exports.setRowState = function (el, state) {
 function ago (msg) {
   var str = u.prettydate(new Date(msg.value.timestamp))
   if (str === 'yesterday')
-    return '1d'
-  return str
+    str = '1d'
+  return h('small.text-muted', str, ' ago')
 }
+
+function author (app, msg, addition) {
+    return h('p', com.user(app, msg.value.author), ' ', ago(msg), addition)
+  }
 
 function fetchReplyLink (app, msg) {
   var link = mlib.asLinks(msg.value.content.repliesTo)[0]
   if (!link || !link.msg)
     return
-  var span = h('span', ' replied to ')
+  var span = h('span', ' ', com.icon('share-alt'), ' ')
   app.ssb.get(link.msg, function (err, msg2) {
     var str
     if (msg2) {

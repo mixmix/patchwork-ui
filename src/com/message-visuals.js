@@ -11,5 +11,5 @@ module.exports = function getVisuals (app, msg) {
     })[msg.value.content.type]()
   } catch (e) { }
 
-  return { cls: '.rawmsg', icon: null }
+  return { cls: '.rawmsg', icon: 'th-list' }
 }

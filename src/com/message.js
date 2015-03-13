@@ -28,7 +28,7 @@ function getContent (app, msg, opts) {
     return ({
       post: function () { 
         if (!c.text) return
-        return h('div', h('div', { innerHTML: mentions.post(markdown.block(c.text), app, msg) }), getAttachments(app, msg))
+        return h('div', h('div.markdown', { innerHTML: mentions.post(markdown.block(c.text), app, msg) }), getAttachments(app, msg))
       }
     })[c.type]()
   } catch (e) { }
@@ -53,6 +53,7 @@ var messageShell = function (app, msg, content, opts) {
 
   var msgbody = h('.panel-body', content)
   var msgpanel = h('.panel.panel-default.message',
+    com.userHexagon(app, msg.value.author),
     h('.panel-heading',
       com.userlink(msg.value.author, app.names[msg.value.author]), com.nameConfidence(msg.value.author, app),
       ' ', com.a('#/msg/'+msg.key, u.prettydate(new Date(msg.value.timestamp), true), { title: 'View message thread' }),
