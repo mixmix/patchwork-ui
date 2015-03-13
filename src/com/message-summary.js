@@ -105,7 +105,7 @@ module.exports = function (app, msg, opts) {
   }
 
   var msgSummary = h('tr.message-summary', { 'data-msg': msg.key },
-    h('td', com.a('#/profile/'+msg.value.author, com.hexagon(com.profilePicUrl(app, msg.value.author)))),
+    h('td', com.userHexagon(app, msg.value.author)),
     h('td', content)
   )
 

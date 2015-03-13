@@ -41,9 +41,20 @@
 
   }
 
-  ul.list-inline li.type {
-    padding: 7px 12px;
-    color: #fff;
+  ul.list-inline {
+    li.type {
+      padding: 7px 12px;
+      color: #fff;
+    }
+    li.hex {
+      width: 30px;
+      position: relative;
+      .user-hexagon {
+        position: absolute;
+        top: -10px;
+        left: 5px;
+      }
+    }
   }
   .in-response-to {
     a {

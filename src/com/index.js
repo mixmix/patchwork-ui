@@ -64,11 +64,16 @@ exports.userlinkThin = function (id, text, opts) {
   return userlink(id, text, opts)
 }
 
+var hexagon =
 exports.hexagon = function (img) {
   img = img ? 'url('+img+')' : 'none'
   return h('.hexagon',
     h('.hexatop',
       h('.hexabottom', { style: 'background-image: '+img })))
+}
+
+exports.userHexagon = function (app, id) {
+  return h('a.user-hexagon', { href: '#/profile/'+id }, hexagon(profilePicUrl(app, id)))
 }
 
 var toEmoji =
