@@ -43,7 +43,7 @@ module.exports = function (app) {
     app.setPage('message', h('.row',
       h('.col-xs-1', com.sidenav(app)),
       h('.col-xs-8', content),
-      h('.col-xs-3',
+      h('.col-xs-3.full-height',
         com.notifications(app),
         com.adverts(app),
         com.sidehelp(app)

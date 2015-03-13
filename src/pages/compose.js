@@ -8,7 +8,7 @@ module.exports = function (app) {
     h('.col-xs-8',
       com.postForm(app)
     ),
-    h('.col-xs-3',
+    h('.col-xs-3.full-height',
       com.notifications(app),
       com.adverts(app),
       com.sidehelp(app)

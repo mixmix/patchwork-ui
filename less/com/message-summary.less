@@ -2,7 +2,6 @@
   font-family: @font-family-sans-serif;
   background: #fff;
   position: relative;
-  height: 50px;
   overflow: hidden;
   cursor: pointer;
   color: #555;
@@ -11,6 +10,7 @@
     vertical-align: top;
     word-break: break-word;
     padding-top: 2px;
+    border-bottom: 1px solid #ccc;
     &:nth-child(1) {
       width: 50px;
       padding-left: 10px;
@@ -18,16 +18,13 @@
     }
   }
 
-  &:first-child td {
-    padding-top: 10px;
-  }
   &:hover td {
     background: #eee;
   }
 
   .markdown {
     margin-top: 10px;
-    font-size: 17px;
+    font-size: 16px;
     & > :first-child {
       margin-top: 0;
     }
@@ -41,7 +38,7 @@
   }
 
   .raw {
-    margin-bottom: 1em;
+    margin: 1em 0;
     .pretty-raw {
       font-size: 15px;
       td {  

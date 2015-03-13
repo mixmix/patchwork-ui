@@ -71,8 +71,7 @@ module.exports = function (app) {
         }),
         h('form', { onsubmit: onsearch }, searchInput)),
       feed),
-    h('.col-xs-3',
-      // h('hr'),
+    h('.col-xs-3.full-height',
       com.notifications(app),
       com.adverts(app),
       com.sidehelp(app)
