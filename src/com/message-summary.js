@@ -29,7 +29,10 @@ function getSummary (app, msg, opts) {
       },
       post: function () { 
         if (!c.text) return
-        return [author(app, msg, fetchReplyLink(app, msg)), md(c.text)]
+        var attachments = com.messageAttachments(app, msg)
+        if (attachments.length)
+          attachments = h('.attachments', attachments)
+        return [author(app, msg, fetchReplyLink(app, msg)), md(c.text), attachments]
       },
       advert: function () { 
         if (!c.text) return
@@ -86,7 +89,7 @@ function getSummary (app, msg, opts) {
     if (!s || s.length == 0)
       s = false
     return s
-  } catch (e) { return '' }
+  } catch (e) { console.log(e); return '' }
 }
 
 var attachmentOpts = { toext: true, rel: 'attachment' }
