@@ -17,10 +17,6 @@ function shorten (str, n) {
 
 function getSummary (app, msg, opts) {
 
-  function author() {
-    return h('p', com.user(app, msg.value.author), ' ', ago(msg))
-  }
-
   function md (str) {
     return h('.markdown', { innerHTML: mentions.post(markdown.block(str), app, msg) })
   }
@@ -33,11 +29,11 @@ function getSummary (app, msg, opts) {
       },
       post: function () { 
         if (!c.text) return
-        return md(c.text)
+        return [author(app, msg, fetchReplyLink(app, msg)), md(c.text)]
       },
       advert: function () { 
         if (!c.text) return
-        return md(c.text)
+        return [author(app, msg, h('small.text-muted', ' - advert')), md(c.text)]
       },
       pub: function () {
         return h('h4', com.icon('cloud'), ' Announced a public peer at ', c.address)
@@ -105,7 +101,7 @@ module.exports = function (app, msg, opts) {
 
   var content = getSummary(app, msg, opts)
   if (!content) {
-    content = h('table.raw', com.prettyRaw.table(app, msg.value.content))
+    content = [author(app, msg), h('table.raw', com.prettyRaw.table(app, msg.value.content))]
   }
 
   var msgSummary = h('tr.message-summary', { 'data-msg': msg.key },
@@ -134,11 +130,15 @@ function ago (msg) {
   return h('small.text-muted', str, ' ago')
 }
 
+function author (app, msg, addition) {
+    return h('p', com.user(app, msg.value.author), ' ', ago(msg), addition)
+  }
+
 function fetchReplyLink (app, msg) {
   var link = mlib.asLinks(msg.value.content.repliesTo)[0]
   if (!link || !link.msg)
     return
-  var span = h('span', ' replied to ')
+  var span = h('span', ' ', com.icon('share-alt'), ' ')
   app.ssb.get(link.msg, function (err, msg2) {
     var str
     if (msg2) {

@@ -15,15 +15,23 @@
       width: 50px;
       padding-left: 10px;
       padding-right: 5px;
+      .hexagon {
+        opacity: 0.75;
+      }
+    }
+    &:nth-child(2) {
+      padding: 10px 0 0;
     }
   }
 
-  &:hover td {
+  &:hover > td {
     background: #eee;
+    &:nth-child(1) .hexagon {
+      opacity: 1;
+    }
   }
 
   .markdown {
-    margin-top: 10px;
     font-size: 16px;
     & > :first-child {
       margin-top: 0;
@@ -34,11 +42,11 @@
   }
   :not(.markdown) h4 {
     font-size: 15px;
-    margin-top: 10px;
+    margin-top: 3px;
   }
 
   .raw {
-    margin: 1em 0;
+    margin: -0.5em 0 1em;
     .pretty-raw {
       font-size: 15px;
       td {  
