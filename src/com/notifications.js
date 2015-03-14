@@ -8,9 +8,9 @@ module.exports = function (app) {
   var notes = []
   for (var k in app.actionItems) {
     var item = app.actionItems[k]
-    if (item.action == 'confirm-app') {
+    if (item.action == 'confirm-alias') {
       notes.push(h('.note.well', 
-        h('p', com.user(app, item.subid), ' claims it\'s your application. Alias it to your account?'),
+        h('p', com.user(app, item.secondaryId), ' claims it\'s your application. Alias it to your account?'),
         h('div', 
           h('button.btn.btn-success.btn-strong', { onclick: confirmApp(item) }, com.icon('ok'), ' Confirm'),
           ' ',
@@ -27,12 +27,12 @@ module.exports = function (app) {
       e.preventDefault()
 
       var contact = {}
-      if (app.names[item.subid])
-        contact.name = app.names[item.subid]
-      contact.master = { feed: app.myid }
+      if (app.names[item.secondaryId])
+        contact.name = app.names[item.secondaryId]
+      contact.alias = 'secondary'
       contact.following = true
 
-      app.updateContact(item.subid, contact, function (err) {
+      app.updateContact(item.secondaryId, contact, function (err) {
         if (err) swal('Error While Publishing', err.message, 'error')
         else app.refreshPage()
       })
@@ -42,7 +42,7 @@ module.exports = function (app) {
   function denyApp (item) {
     return function (e) {
       e.preventDefault()
-      app.updateContact(item.subid, { master: false, trust: -1 }, function (err) {
+      app.updateContact(item.secondaryId, { alias: false, trust: -1 }, function (err) {
         if (err) swal('Error While Publishing', err.message, 'error')
         else app.refreshPage()
       })

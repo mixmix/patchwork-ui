@@ -23,11 +23,11 @@ module.exports = function (app) {
     var profile = app.profiles[pid]
     var name = com.userName(app, pid)
     var profileImg = com.profilePicUrl(app, pid)
-    var master
+    var primary
 
-    // subfeeds (applications)
-    if (profile && profile.master) {
-      master = profile.master
+    // secondary feeds (applications)
+    if (profile && profile.primary) {
+      primary = profile.primary
       if (profile.self.name) // use own name
         name = profile.self.name
     }
@@ -126,12 +126,12 @@ module.exports = function (app) {
     // applications
     var apps = []
     if (profile) {
-      for (var subid in profile.subfeeds) {
-        var sub = app.profiles[subid]
-        if (sub)
-          apps.push(h('li', com.userlinkThin(subid, sub.self.name)))
+      for (var sid in profile.secondaries) {
+        var sec = app.profiles[sid]
+        if (sec)
+          apps.push(h('li', com.userlinkThin(sid, sec.self.name)))
         else
-          apps.push(h('li', com.userlinkThin(subid)))
+          apps.push(h('li', com.userlinkThin(sid)))
       }
     }
 
@@ -148,8 +148,8 @@ module.exports = function (app) {
           h('.section',
             h('a.profpic', { href: makeUri({ view: 'pics' }) }, h('img', { src: profileImg })),
             h('h2', name, com.nameConfidence(pid, app), renamebtn),
-            (master) ?
-              h('h2', h('small', com.user(app, master), '\'s feed')) :
+            (primary) ?
+              h('h2', h('small', com.user(app, primary), '\'s feed')) :
               '',
             h('p.text-muted', 'joined '+joinDate)
           ),
@@ -164,7 +164,7 @@ module.exports = function (app) {
           trusters.length  ? h('.section', h('strong.text-success', com.icon('ok'), ' Trusted by'), h('br'), h('ul.list-unstyled', trusters)) : '',
           flaggers.length  ? h('.section', h('strong.text-danger', com.icon('flag'), ' Flagged by'), h('br'), h('ul.list-unstyled', flaggers)) : '',
           followers.length ? h('.section', h('strong', 'Followed By'), h('br'), h('ul.list-unstyled', followers)) : '',
-          apps.length      ? h('.section', h('strong', 'Subfeeds'), h('br'), h('ul.list-unstyled', apps)) : '',
+          apps.length      ? h('.section', h('strong', 'Applications'), h('br'), h('ul.list-unstyled', apps)) : '',
           follows.length   ? h('.section', h('strong', 'Followed'), h('br'), h('ul.list-unstyled', follows)) : '',
           trusts.length    ? h('.section', h('strong', 'Trusted'), h('br'), h('ul.list-unstyled', trusts)) : '',
           flags.length     ? h('.section', h('strong', 'Flagged'), h('br'), h('ul.list-unstyled', flags)) : ''))))
@@ -196,7 +196,7 @@ module.exports = function (app) {
       var arr = []
       if (g[pid]) {
         for (var userid in g[pid]) {
-          if (g[pid][userid] == v && !profile.subfeeds[userid])
+          if (g[pid][userid] == v && !profile.secondaries[userid])
             arr.push(h('li', com.userlinkThin(userid, app.names[userid])))
         }
       }
@@ -206,7 +206,7 @@ module.exports = function (app) {
     function inEdges(g, v) {
       var arr = []
       for (var userid in g) {
-        if (g[userid][pid] == v && !profile.subfeeds[userid])
+        if (g[userid][pid] == v && !profile.secondaries[userid])
           arr.push(h('li', com.userlinkThin(userid, app.names[userid])))
       }
       return arr      
