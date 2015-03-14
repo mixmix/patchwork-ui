@@ -66,14 +66,14 @@ function getSummary (app, msg, opts) {
             items.push(h('h4', com.icon('erase'), ' Untrusted/Unflagged ', subjects()))
         }
 
-        if (c.master) {
-          if (c.master.feed === msg.value.author)
+        if (c.alias) {
+          if (c.alias === 'primary')
+            items.push(h('h4', com.icon('link'), ' Claimed to be a secondary feed owned by ', subjects()))
+          else if (c.alias === 'secondary')
             items.push(h('h4', com.icon('link'), ' Claimed ownership of ', subjects()))
-          else
-            items.push(h('h4', com.icon('link'), ' Claimed an owner for ', subjects()))
         }
-        if (c.master === false)
-          items.push(h('h4', com.icon('erase'), ' Claimed no ownership for ', subjects()))
+        if ('alias' in c && !c.alias)
+          items.push(h('h4', com.icon('erase'), ' Claimed no alias for ', subjects()))
 
         if ('name' in c)
           items.push(h('h4', com.icon('tag'), ' Named ', subjects(), ' ', c.name))
