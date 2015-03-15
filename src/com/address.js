@@ -16,12 +16,12 @@ module.exports = function (app, msg, profiles, follows) {
 
   var followbtn, renamebtn
   if (id === app.myid) {
-    followbtn = h('span.text-muted', 'you!')
+    followbtn = h('span.text-muted.pull-right', { style: 'padding-right: 1em' }, 'you!')
   } else {
     if (!follows[app.myid][id])
-      followbtn = h('button.btn.btn-primary', { title: 'Follow', onclick: f }, com.icon('plus'))
+      followbtn = h('button.btn.btn-primary', { title: 'Follow', onclick: f }, com.icon('plus'), ' Follow')
     else
-      followbtn = h('button.btn.btn-primary', { title: 'Unfollow', onclick: unf }, com.icon('minus'))
+      followbtn = h('button.btn.btn-primary', { title: 'Unfollow', onclick: unf }, com.icon('minus'), ' Unfollow')
   }
   renamebtn = h('button.btn.btn-primary.btn-xs', { title: 'Rename', onclick: r }, com.icon('pencil'))
 
