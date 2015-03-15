@@ -72,8 +72,23 @@ exports.hexagon = function (img) {
     h('.hexagon-inner2'))
 }
 
+var userHexagon =
 exports.userHexagon = function (app, id) {
-  return h('a.user-hexagon', { href: '#/profile/'+id }, hexagon(profilePicUrl(app, id)))
+  return h('a.user-hexagon', { href: '#/profile/'+id, title: userName(app, id) }, hexagon(profilePicUrl(app, id)))
+}
+
+var userHexagrid =
+exports.userHexagrid = function (app, profiles, rowLen) {
+  rowLen = rowLen || 3
+  var els = [], row = []
+  for (var k in profiles) {
+    row.push(userHexagon(app, profiles[k].id))
+    if (row.length >= rowLen) {
+      els.push(h('div', row))
+      row = []
+    }
+  }
+  return h('.user-hexagrid', els)
 }
 
 var toEmoji =

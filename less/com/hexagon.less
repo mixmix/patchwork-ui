@@ -42,3 +42,29 @@
   transform-origin: right top;
   transform: rotate(60deg) translate(110px, 0);
 }
+
+.user-hexagrid {
+  display: inline-block;
+  margin-bottom: 2em;
+  border-radius: 5px;
+  background: #ECECEC;
+
+  > div {
+    &:nth-child(even) {
+      margin-left: 30px;
+    }
+    .user-hexagon {
+      display: inline-block;
+      margin-right: 1px;
+      opacity: 0.75;
+      &:hover {
+        opacity: 1;
+      }
+      .hexagon {
+        width: 60px;
+        height: 35px;
+        background-size: 76px;
+      }
+    }
+  }
+}
