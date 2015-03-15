@@ -32,10 +32,13 @@ module.exports = function (app) {
       h('.header-ctrls', h('form', { onsubmit: onsearch }, searchInput)),
       content
     ),
-    h('.col-xs-3.full-height',
-      com.notifications(app),
-      h('.well.well-sm', 'Create ads to let your friends know about events, websites, etc. ', com.a('#/help/adverts', 'About')),
-      com.advertForm(app)
+    h('.col-xs-3.right-column.full-height',
+      h('.right-column-inner', { style: 'padding: 10px' },
+        com.notifications(app),
+        h('.well.well-sm', 'Create ads to let your friends know about events, websites, etc. ', com.a('#/help/adverts', 'About')),
+        com.advertForm(app)
+      ),
+      com.sidehelp(app)
     )
   ))
 

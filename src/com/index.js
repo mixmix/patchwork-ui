@@ -158,11 +158,11 @@ exports.sidenav = function (app) {
 
 var sidehelp =
 exports.sidehelp = function (app, opts) {
-  return h('ul.list-unstyled',
-    h('li', h('button.btn.btn-primary', { onclick: app.showUserId }, 'Get your id')),
-    h('li', h('button.btn.btn-primary', { onclick: app.followPrompt }, 'Add a contact')),
-    h('li', h('button.btn.btn-primary', { onclick: app.followPrompt }, 'Use an invite')),
-    (!opts || !opts.noMore) ? h('li', h('span', {style:'display: inline-block; padding: 6px 12px'}, a('#/help', 'More help'))) : ''
+  return h('ul.list-unstyled.sidehelp',
+    h('li', h('button.btn.btn-link', { onclick: app.showUserId }, 'Get your id')),
+    h('li', h('button.btn.btn-link', { onclick: app.followPrompt }, 'Add a contact')),
+    h('li', h('button.btn.btn-link', { onclick: app.followPrompt }, 'Use an invite')),
+    (!opts || !opts.noMore) ? h('li', h('span', {style:'display: inline-block; padding: 6px 14px'}, a('#/help', 'More help'))) : ''
   )
 }
 

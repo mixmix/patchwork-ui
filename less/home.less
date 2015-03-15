@@ -74,19 +74,11 @@ html {
 }
 #page {
   padding: 0;
-  & > .row > div:nth-child(3) {
-    padding: 10px 20px;
-    background: #fafafa;
-    border-left: 1px solid #ddd;
-    .well {
-      background: #fefefe;
-    }
-  }
 }
 .side-nav {
   white-space: nowrap;
   background: #2D2D2D;
-  border-right: 2px solid #565656;
+  border-right: 3px solid #565656;
 
   p {
     margin: 0;
@@ -118,6 +110,25 @@ html {
         color: @brand-primary;
       }
     }
+  }
+}
+.right-column {
+  padding: 10px 20px;
+  background: #2D2D2D;
+  border-left: 3px solid #565656;
+  .right-column-inner {
+    display: inline-block;
+    background: #fff;
+    border-radius: 4px;
+    padding: 5px 10px;
+    margin-bottom: 1em;
+    border: 2px solid #565656;
+  }
+  .well {
+    background: #eee;
+  }
+  .sidehelp a, .sidehelp .btn-link {
+    color: #aaa;
   }
 }
 .user-link {
