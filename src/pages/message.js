@@ -41,7 +41,7 @@ module.exports = function (app) {
 
     app.setPage('message', h('.row',
       h('.col-xs-1', com.sidenav(app)),
-      h('.col-xs-8.full-height', content),
+      h('.col-xs-8', content),
       h('.col-xs-3.right-column.full-height',
         h('.right-column-inner',
           com.notifications(app),

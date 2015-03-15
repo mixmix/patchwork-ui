@@ -2,24 +2,26 @@
   display: table;
   border-collapse: collapse;
   width: 100%;
-  background: #565656;
+  background: #eee;
 
   .navlinks {
     display: table-cell;
     white-space: pre;
-    padding-right: 6px;
     a {
       display: inline-block;
       padding: 4px 15px;
       font-weight: 100;
-      color: #bbb;
+      color: #555;
+      margin-right: 5px;
+      border: 1px solid transparent;
 
       &:hover {
         text-decoration: none;
-        border-bottom: 5px solid #aaa;
+        background: #ddd;
       }
       &.selected {
-        border-bottom: 5px solid #487CC0;
+        border-color: #ccc;
+        background: #fff;
       }
     }
   }
@@ -28,24 +30,8 @@
     width: 100%;
     padding: 3px 0;
     input {
-      border: 0;
+      border: 1px solid #ccc;
       padding: 5px 10px;
-      background: gray;
-      color: #eee;
-      &::-webkit-input-placeholder { // WebKit browsers
-        color: #bbb;
-      }
-      &:-moz-placeholder { // Mozilla Firefox 4 to 18
-       color: #bbb;
-       opacity: 1;
-      }
-      &::-moz-placeholder { // Mozilla Firefox 19+
-       color: #bbb;
-       opacity: 1;
-      }
-      &:-ms-input-placeholder { // Internet Explorer 10+
-       color: #bbb;
-      }
     }
   }
 }

@@ -46,7 +46,7 @@ module.exports = function (app, thread, opts) {
     h('.replies-meta', subscribeBtn))
 
   app.ssb.phoenix.isSubscribed(thread.key, setSubscribeState)
-  return h('.message-thread', threadInner, replies(app, thread, opts))
+  return h('.message-thread.full-height', threadInner, replies(app, thread, opts))
 
   // handlers
 
