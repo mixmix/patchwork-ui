@@ -34,7 +34,7 @@ module.exports = function (app, thread, opts) {
   var threadInner = h(viz.cls,
     h('div.in-response-to'), // may be populated by the message page
     h('ul.threadmeta.list-inline',
-      h('li.type', com.icon(viz.icon)),
+      // h('li.type', com.icon(viz.icon)),
       h('li.hex', com.userHexagon(app, thread.value.author)),
       h('li', com.userlink(thread.value.author, app.names[thread.value.author]), com.nameConfidence(thread.value.author, app)),
       h('li', com.a('#/', u.prettydate(new Date(thread.value.timestamp), true), { title: 'View message thread' })),
