@@ -51,13 +51,6 @@ module.exports = function (app) {
     return false
   }
 
-  var friends = {}
-  for (var k in app.profiles) {
-    var p = app.profiles[k]
-    if (p.assignedBy[app.myid] && p.assignedBy[app.myid].following)
-      friends[k] = p
-  }
-
   // markup
 
   var searchInput = h('input.search', { type: 'text', placeholder: 'Search', value: queryStr })
@@ -81,7 +74,7 @@ module.exports = function (app) {
     h('.col-xs-3.full-height',
       com.notifications(app),
       h('h4.text-muted', 'Friends'),
-      com.userHexagrid(app, friends),
+      com.friendsHexagrid(app),
       com.adverts(app),
       com.sidehelp(app)
     )

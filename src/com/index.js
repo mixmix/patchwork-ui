@@ -91,6 +91,17 @@ exports.userHexagrid = function (app, profiles, rowLen) {
   return h('.user-hexagrid', els)
 }
 
+var friendsHexagrid =
+exports.friendsHexagrid = function (app, rowLen) {
+  var friends = {}
+  for (var k in app.profiles) {
+    var p = app.profiles[k]
+    if (p.assignedBy[app.myid] && p.assignedBy[app.myid].following)
+      friends[k] = p
+  }
+  return userHexagrid(app, friends, rowLen)
+}
+
 var toEmoji =
 exports.toEmoji = function (buf, size) {
   size = size || 20

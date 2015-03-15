@@ -39,6 +39,8 @@ module.exports = function (app) {
       content),
     h('.col-xs-3.full-height',
       com.notifications(app),
+      h('h4.text-muted', 'Friends'),
+      com.friendsHexagrid(app),
       com.adverts(app),
       com.sidehelp(app)
     )
