@@ -67,9 +67,9 @@ exports.userlinkThin = function (id, text, opts) {
 var hexagon =
 exports.hexagon = function (img) {
   img = img ? 'url('+img+')' : 'none'
-  return h('.hexagon',
-    h('.hexatop',
-      h('.hexabottom', { style: 'background-image: '+img })))
+  return h('.hexagon', { style: 'background-image: '+img },
+    h('.hexagon-inner1'),
+    h('.hexagon-inner2'))
 }
 
 exports.userHexagon = function (app, id) {
