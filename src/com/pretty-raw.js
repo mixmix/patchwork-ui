@@ -43,6 +43,8 @@ module.exports = function (app, obj, path) {
 var prettyRawTable =
 module.exports.table = function (app, obj, path) {
   function row (k, v) {
+    if (typeof v === 'boolean')
+      v = com.icon(v ? 'ok' : 'remove')
     return h('tr.pretty-raw', h('td', path+k), h('td', v))
   }
 
@@ -58,7 +60,7 @@ module.exports.table = function (app, obj, path) {
     else if (k == 'feed')
       els.push(row(k, com.user(app, obj.feed)))
     else
-      els.push(row(k, ''+obj[k]))
+      els.push(row(k, obj[k]))
 
   }
 
