@@ -1,18 +1,19 @@
 .address {
   color: #555;
-  height: 80px;
+  height: 55px;
 
   .profpic {
-    width: 100px;
-    padding-left: 3px;
-    padding-top: 3px;
-    img {
-      max-width: 80px;
-      max-height: 80px;
-      border-radius: 2px;
+    width: 116px;
+    padding-left: 10px;
+    .hexagon {
+      width: 60px;
+      height: 35px;
+      background-size: 76px;
+      margin: 0;
     }
   }
   .details {
+    padding-left: 10px;
     p {
       margin: 0;
       overflow: hidden;
@@ -28,8 +29,23 @@
   .actions {
     width: 50px;
   }
+
+  &:nth-child(odd) {
+    .profpic .hexagon {
+      margin-left: 32px;
+    }
+    td {
+      background: #eee;
+    }
+  }
 }
 
 .peers {
   margin: 0;
+}
+
+.address-book-page {
+  .message-feed-container {
+    padding-top: 10px;
+  }
 }

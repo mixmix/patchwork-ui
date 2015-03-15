@@ -26,10 +26,10 @@ module.exports = function (app, msg, profiles, follows) {
   renamebtn = h('button.btn.btn-primary.btn-xs', { title: 'Rename', onclick: r }, com.icon('pencil'))
 
   return h('tr.address',
-    h('td.profpic', com.a('#/profile/'+id, h('img', { src: com.profilePicUrl(app, id) }))),
+    h('td.profpic', com.userHexagon(app, id)),
     h('td.details',
       h('p.name', 
-        h('strong', com.a('#/profile/'+id, u.shortString(app.names[id]||id, 20)), com.nameConfidence(id, app), ' ', renamebtn)),
+        h('strong', com.a('#/profile/'+id, app.names[id]||u.shortString(id, 20)), com.nameConfidence(id, app), ' ', renamebtn)),
       h('p',
         (otherNames.length)
           ? h('small.text-muted', 'aka ', otherNames.join(', '))
