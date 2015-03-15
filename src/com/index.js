@@ -99,7 +99,8 @@ exports.friendsHexagrid = function (app, rowLen) {
     if (p.assignedBy[app.myid] && p.assignedBy[app.myid].following)
       friends[k] = p
   }
-  return userHexagrid(app, friends, rowLen)
+  if (Object.keys(friends).length)
+    return [h('h4.text-muted', 'Friends'), userHexagrid(app, friends, rowLen)]
 }
 
 var toEmoji =
