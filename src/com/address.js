@@ -16,20 +16,20 @@ module.exports = function (app, msg, profiles, follows) {
 
   var followbtn, renamebtn
   if (id === app.myid) {
-    followbtn = h('span.text-muted', 'you!')
+    followbtn = h('span.text-muted.pull-right', { style: 'padding-right: 1em' }, 'you!')
   } else {
     if (!follows[app.myid][id])
-      followbtn = h('button.btn.btn-primary', { title: 'Follow', onclick: f }, com.icon('plus'))
+      followbtn = h('button.btn.btn-primary', { title: 'Follow', onclick: f }, com.icon('plus'), ' Follow')
     else
-      followbtn = h('button.btn.btn-primary', { title: 'Unfollow', onclick: unf }, com.icon('minus'))
+      followbtn = h('button.btn.btn-primary', { title: 'Unfollow', onclick: unf }, com.icon('minus'), ' Unfollow')
   }
   renamebtn = h('button.btn.btn-primary.btn-xs', { title: 'Rename', onclick: r }, com.icon('pencil'))
 
   return h('tr.address',
-    h('td.profpic', com.a('#/profile/'+id, h('img', { src: com.profilePicUrl(app, id) }))),
+    h('td.profpic', com.userHexagon(app, id)),
     h('td.details',
       h('p.name', 
-        h('strong', com.a('#/profile/'+id, u.shortString(app.names[id]||id, 20)), com.nameConfidence(id, app), ' ', renamebtn)),
+        h('strong', com.a('#/profile/'+id, app.names[id]||u.shortString(id, 20)), com.nameConfidence(id, app), ' ', renamebtn)),
       h('p',
         (otherNames.length)
           ? h('small.text-muted', 'aka ', otherNames.join(', '))

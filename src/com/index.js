@@ -67,13 +67,40 @@ exports.userlinkThin = function (id, text, opts) {
 var hexagon =
 exports.hexagon = function (img) {
   img = img ? 'url('+img+')' : 'none'
-  return h('.hexagon',
-    h('.hexatop',
-      h('.hexabottom', { style: 'background-image: '+img })))
+  return h('.hexagon', { style: 'background-image: '+img },
+    h('.hexagon-inner1'),
+    h('.hexagon-inner2'))
 }
 
+var userHexagon =
 exports.userHexagon = function (app, id) {
-  return h('a.user-hexagon', { href: '#/profile/'+id }, hexagon(profilePicUrl(app, id)))
+  return h('a.user-hexagon', { href: '#/profile/'+id, title: userName(app, id) }, hexagon(profilePicUrl(app, id)))
+}
+
+var userHexagrid =
+exports.userHexagrid = function (app, profiles, rowLen) {
+  rowLen = rowLen || 3
+  var els = [], row = []
+  for (var k in profiles) {
+    row.push(userHexagon(app, profiles[k].id))
+    if (row.length >= rowLen) {
+      els.push(h('div', row))
+      row = []
+    }
+  }
+  return h('.user-hexagrid', els)
+}
+
+var friendsHexagrid =
+exports.friendsHexagrid = function (app, rowLen) {
+  var friends = {}
+  for (var k in app.profiles) {
+    var p = app.profiles[k]
+    if (p.assignedBy[app.myid] && p.assignedBy[app.myid].following)
+      friends[k] = p
+  }
+  if (Object.keys(friends).length)
+    return [h('h4.text-muted', 'Friends'), userHexagrid(app, friends, rowLen)]
 }
 
 var toEmoji =
@@ -110,7 +137,7 @@ var sidenav =
 exports.sidenav = function (app) {
   var pages = [
   //[id, path, label],
-    ['posts', '', [icon('globe'), h('span', { style: 'padding-left: 2px' }, 'feed')]],
+    ['posts', '', icon('globe')],// h('span', { style: 'padding-left: 2px' }, 'feed')]],
     ['inbox', 'inbox', 'inbox ('+app.indexCounts.inboxUnread+')'],
     ['compose', 'compose', 'compose'],
     ['address-book', 'address-book', 'network'],
@@ -131,11 +158,11 @@ exports.sidenav = function (app) {
 
 var sidehelp =
 exports.sidehelp = function (app, opts) {
-  return h('ul.list-unstyled',
-    h('li', h('button.btn.btn-primary', { onclick: app.showUserId }, 'Get your id')),
-    h('li', h('button.btn.btn-primary', { onclick: app.followPrompt }, 'Add a contact')),
-    h('li', h('button.btn.btn-primary', { onclick: app.followPrompt }, 'Use an invite')),
-    (!opts || !opts.noMore) ? h('li', h('span', {style:'display: inline-block; padding: 6px 12px'}, a('#/help', 'More help'))) : ''
+  return h('ul.list-unstyled.sidehelp',
+    h('li', h('button.btn.btn-link', { onclick: app.showUserId }, 'Get your id')),
+    h('li', h('button.btn.btn-link', { onclick: app.followPrompt }, 'Add a contact')),
+    h('li', h('button.btn.btn-link', { onclick: app.followPrompt }, 'Use an invite')),
+    (!opts || !opts.noMore) ? h('li', h('span', {style:'display: inline-block; padding: 6px 14px'}, a('#/help', 'More help'))) : ''
   )
 }
 

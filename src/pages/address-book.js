@@ -89,13 +89,14 @@ module.exports = function (app) {
             onsearch: onsearch
           })),
         com.messageFeed(app, { feed: listFn, filter: filterFn, cursor: cursorFn, renderMsg: renderMsgFn })),
-      h('.col-xs-3.full-height',
-        com.notifications(app),
-        h('table.table.peers',
-          h('thead', h('tr', h('th', 'Gossip Network'))),
-          h('tbody', com.peers(app, peers))
+      h('.col-xs-3.right-column.full-height',
+        h('.right-column-inner',
+          com.notifications(app),
+          h('table.table.peers',
+            h('thead', h('tr', h('th', 'Gossip Network'))),
+            h('tbody', com.peers(app, peers))
+          )
         ),
-        h('hr'),
         com.sidehelp(app))
     ))
 

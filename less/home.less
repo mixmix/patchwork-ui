@@ -72,21 +72,16 @@
 html {
   overflow-y: scroll; // always show scrollbar
 }
+body {
+  background: #eee;
+}
 #page {
   padding: 0;
-  & > .row > div:nth-child(3) {
-    padding: 10px 20px;
-    background: #fafafa;
-    border-left: 1px solid #ddd;
-    .well {
-      background: #fefefe;
-    }
-  }
 }
 .side-nav {
   white-space: nowrap;
   background: #2D2D2D;
-  border-right: 2px solid #565656;
+  border-right: 10px solid #eee;
 
   p {
     margin: 0;
@@ -95,7 +90,7 @@ html {
     border-bottom: 1px solid #222;
     a {
       display: block;
-      padding: 1.5em 1em;
+      padding: 1em;
       font-weight: 100;
       color: gray;
       &:hover {
@@ -108,16 +103,33 @@ html {
         font-size: 32px;
         line-height: 38px;
         display: block;
+        padding-left: 16px;
       }
-      padding-top: 30px;
-      padding-bottom: 22px;
     }
     &.selected {
       background: #414141;
       a {
-        color: @brand-primary;
+        color: #bbb;
       }
     }
+  }
+}
+.right-column {
+  padding: 10px;
+  background: #eee;
+  .right-column-inner {
+    display: inline-block;
+    background: #fff;
+    border-radius: 2px;
+    padding: 5px 10px;
+    margin-bottom: 1em;
+    border: 1px solid #ccc;
+  }
+  .well {
+    background: #eee;
+  }
+  .sidehelp a, .sidehelp .btn-link {
+    color: #666;
   }
 }
 .user-link {

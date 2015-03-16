@@ -37,9 +37,12 @@ module.exports = function (app) {
     h('.col-xs-8', 
       h('.header-ctrls', h('form', { onsubmit: onsearch }, searchInput)),
       content),
-    h('.col-xs-3.full-height',
-      com.notifications(app),
-      com.adverts(app),
+    h('.col-xs-3.right-column.full-height',
+      h('.right-column-inner',
+        com.notifications(app),
+        com.friendsHexagrid(app),
+        com.adverts(app)
+      ),
       com.sidehelp(app)
     )
   ))

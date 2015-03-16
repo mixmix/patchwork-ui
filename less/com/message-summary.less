@@ -9,12 +9,11 @@
   & > td {
     vertical-align: top;
     word-break: break-word;
-    padding-top: 2px;
-    border-bottom: 1px solid #ccc;
+    height: 45px;
+    border-bottom: 1px solid #eee;
     &:nth-child(1) {
       width: 50px;
-      padding-left: 10px;
-      padding-right: 5px;
+      padding: 2px 5px 2px 10px;
       .hexagon {
         opacity: 0.75;
       }
@@ -25,14 +24,13 @@
   }
 
   &:hover > td {
-    background: #eee;
+
     &:nth-child(1) .hexagon {
       opacity: 1;
     }
   }
 
   .markdown {
-    font-size: 16px;
     & > :first-child {
       margin-top: 0;
     }
@@ -47,6 +45,8 @@
       img {
         max-width: 200px;
         max-height: 200px;
+        border: 1px solid #999;
+        border-radius: 2px;
       }
     }
   }
@@ -58,7 +58,6 @@
   .raw {
     margin: -0.5em 0 1em;
     .pretty-raw {
-      font-size: 15px;
       td {  
         padding: 2px 7px;
         vertical-align: top;

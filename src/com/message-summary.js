@@ -89,7 +89,7 @@ function getSummary (app, msg, opts) {
     if (!s || s.length == 0)
       s = false
     return s
-  } catch (e) { console.log(e); return '' }
+  } catch (e) { return '' }
 }
 
 var attachmentOpts = { toext: true, rel: 'attachment' }
