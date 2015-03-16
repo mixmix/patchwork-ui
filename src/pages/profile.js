@@ -35,20 +35,27 @@ module.exports = function (app) {
     // name confidence controls
     var nameTrustDlg
     if (app.nameTrustRanks[pid] !== 1) {
-      nameTrustDlg = h('.well', { style: 'margin-top: 0.5em; border-color: #aaa' },
+      var mutualFollowers = inEdges(graphs.follow, true, followedByMe)
+      mutualFollowers = (mutualFollowers.length) ?
+        h('p', h('strong', 'Mutual Followers:'), h('ul.list-inline', mutualFollowers)) :
+        h('p.text-danger', 'Warning: This user is not followed by anyone you follow.')
+
+      nameTrustDlg = h('.well', { style: 'margin-top: 5px; background: #fff' },
         h('h3', { style: 'margin-top: 0' }, (!!app.names[pid]) ? 'Is this "'+app.names[pid]+'?"' : 'Who is this user?'),
         h('p',
-          'Users whose identity you haven\'t confirmed will have a ',
+          'Users whose names you haven\'t confirmed will have a ',
           h('span.text-muted', com.icon('user'), '?'),
-          ' next to their name.'
+          ' next to them.'
         ),
-        (!!app.names[pid]) ?
+        mutualFollowers,
+        h('p', (!!app.names[pid]) ?
           [
-            h('button.btn.btn-primary', { onclick: confirmName }, 'Confirm This Name'),
+            h('button.btn.btn-primary.btn-strong', { onclick: confirmName }, 'Use "'+app.names[pid]+'"'),
             ' or ',
-            h('button.btn.btn-primary', { onclick: rename }, 'Choose Another Name')
+            h('button.btn.btn-primary.btn-strong', { onclick: rename }, 'Choose Another Name')
           ] :
-          h('button.btn.btn-primary', { onclick: rename }, 'Choose a Name')
+          h('button.btn.btn-primary', { onclick: rename }, 'Choose a Name')),
+        h('small.text-muted', 'Beware of trolls pretending to be people you know!')
       )
     }
 
@@ -116,12 +123,12 @@ module.exports = function (app) {
     }
 
     // follows, trusts, blocks
-    var follows   = outEdges(graphs.follow, true)
-    var followers = inEdges(graphs.follow, true)
-    var trusts    = outEdges(graphs.trust, 1)
-    var trusters  = inEdges(graphs.trust, 1)
-    var flags     = outEdges(graphs.trust, -1)
-    var flaggers  = inEdges(graphs.trust, -1)
+    var follows   = outEdges(graphs.follow, true, notTheirSecondary)
+    var followers = inEdges (graphs.follow, true, notTheirSecondary)
+    var trusts    = outEdges(graphs.trust,  1,    notTheirSecondary)
+    var trusters  = inEdges (graphs.trust,  1,    notTheirSecondary)
+    var flags     = outEdges(graphs.trust,  -1,   notTheirSecondary)
+    var flaggers  = inEdges (graphs.trust,  -1,   notTheirSecondary)
 
     // applications
     var apps = []
@@ -142,32 +149,33 @@ module.exports = function (app) {
       h('.col-xs-8', 
         nameTrustDlg,
         content),
-      h('.col-xs-3.full-height',
-        com.notifications(app),
-        h('.profile-controls',
-          h('.section',
-            h('a.profpic', { href: makeUri({ view: 'pics' }) }, h('img', { src: profileImg })),
-            h('h2', name, com.nameConfidence(pid, app), renamebtn),
-            (primary) ?
-              h('h2', h('small', com.user(app, primary), '\'s feed')) :
-              '',
-            h('p.text-muted', 'joined '+joinDate)
-          ),
-          h('.section', h('p', followbtn), h('p', trustbtn), h('p', flagbtn)),
-          (givenNames.length)
-            ? h('.section',
-              h('strong', 'Nicknames'),
-              h('br'),
-              h('ul.list-unstyled', givenNames)
-            )
-            : '',
-          trusters.length  ? h('.section', h('strong.text-success', com.icon('ok'), ' Trusted by'), h('br'), h('ul.list-unstyled', trusters)) : '',
-          flaggers.length  ? h('.section', h('strong.text-danger', com.icon('flag'), ' Flagged by'), h('br'), h('ul.list-unstyled', flaggers)) : '',
-          followers.length ? h('.section', h('strong', 'Followed By'), h('br'), h('ul.list-unstyled', followers)) : '',
-          apps.length      ? h('.section', h('strong', 'Applications'), h('br'), h('ul.list-unstyled', apps)) : '',
-          follows.length   ? h('.section', h('strong', 'Followed'), h('br'), h('ul.list-unstyled', follows)) : '',
-          trusts.length    ? h('.section', h('strong', 'Trusted'), h('br'), h('ul.list-unstyled', trusts)) : '',
-          flags.length     ? h('.section', h('strong', 'Flagged'), h('br'), h('ul.list-unstyled', flags)) : ''))))
+      h('.col-xs-3.right-column.full-height',
+        h('.right-column-inner',
+          com.notifications(app),
+          h('.profile-controls',
+            h('.section',
+              h('a.profpic', { href: makeUri({ view: 'pics' }) }, h('img', { src: profileImg })),
+              h('h2', name, com.nameConfidence(pid, app), renamebtn),
+              (primary) ?
+                h('h2', h('small', com.user(app, primary), '\'s feed')) :
+                '',
+              h('p.text-muted', 'joined '+joinDate)
+            ),
+            h('.section', h('p', followbtn), h('p', trustbtn), h('p', flagbtn)),
+            (givenNames.length)
+              ? h('.section',
+                h('strong', 'Nicknames'),
+                h('br'),
+                h('ul.list-unstyled', givenNames)
+              )
+              : '',
+            trusters.length  ? h('.section', h('strong.text-success', com.icon('ok'), ' Trusted by'), h('br'), h('ul.list-unstyled', trusters)) : '',
+            flaggers.length  ? h('.section', h('strong.text-danger', com.icon('flag'), ' Flagged by'), h('br'), h('ul.list-unstyled', flaggers)) : '',
+            followers.length ? h('.section', h('strong', 'Followed By'), h('br'), h('ul.list-unstyled', followers)) : '',
+            apps.length      ? h('.section', h('strong', 'Applications'), h('br'), h('ul.list-unstyled', apps)) : '',
+            follows.length   ? h('.section', h('strong', 'Followed'), h('br'), h('ul.list-unstyled', follows)) : '',
+            trusts.length    ? h('.section', h('strong', 'Trusted'), h('br'), h('ul.list-unstyled', trusts)) : '',
+            flags.length     ? h('.section', h('strong', 'Flagged'), h('br'), h('ul.list-unstyled', flags)) : '')))))
 
     function makeUri (opts) {
       var qs=''
@@ -192,21 +200,29 @@ module.exports = function (app) {
       )
     }
 
-    function outEdges(g, v) {
+    function notTheirSecondary (id) {
+      return !profile.secondaries[id]
+    }
+
+    function followedByMe (id) {
+      return graphs.follow[app.myid][id]
+    }
+
+    function outEdges (g, v, filter) {
       var arr = []
       if (g[pid]) {
         for (var userid in g[pid]) {
-          if (g[pid][userid] == v && !profile.secondaries[userid])
+          if (g[pid][userid] == v && (!filter || filter(userid, g)))
             arr.push(h('li', com.userlinkThin(userid, app.names[userid])))
         }
       }
       return arr
     }
 
-    function inEdges(g, v) {
+    function inEdges (g, v, filter) {
       var arr = []
       for (var userid in g) {
-        if (g[userid][pid] == v && !profile.secondaries[userid])
+        if (g[userid][pid] == v && (!filter || filter(userid, g)))
           arr.push(h('li', com.userlinkThin(userid, app.names[userid])))
       }
       return arr      
