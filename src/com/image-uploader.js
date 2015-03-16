@@ -41,9 +41,38 @@ module.exports = function (app, opts) {
 
   function draw () {
     var ctx = canvas.getContext('2d')
+    ctx.globalCompositeOperation = 'source-over'
     ctx.fillStyle = bgColorSelect.value
     ctx.fillRect(0, 0, canvas.width, canvas.height)
     ctx.drawImage(img, ox, oy, img.width * zoom, img.height * zoom)
+
+    if (dragging)
+      drawHexagonOverlay()
+  }
+  function drawHexagonOverlay () {
+    // hexagon coords (based on the behavior of the css hexagon)
+    var left = 20
+    var right = canvas.width - 20
+    var w12 = canvas.width / 2
+    var h14 = canvas.height / 4
+    var h34 = h14 * 3
+
+    var ctx = canvas.getContext('2d')
+    ctx.save()
+    ctx.fillStyle = '#fff'
+    ctx.globalAlpha = 0.75;
+    ctx.globalCompositeOperation = 'overlay'
+    ctx.beginPath()
+    ctx.moveTo(w12,   0)
+    ctx.lineTo(right, h14)
+    ctx.lineTo(right, h34)
+    ctx.lineTo(w12,   canvas.height)
+    ctx.lineTo(left,  h34)
+    ctx.lineTo(left,  h14)
+    ctx.lineTo(w12,   0)
+    ctx.closePath()
+    ctx.fill()
+    ctx.restore()
   }
 
   function fileChosen (e) {
@@ -66,11 +95,13 @@ module.exports = function (app, opts) {
     dragging = true
     mx = e.clientX
     my = e.clientY
+    draw()
   }
 
   function onmouseup (e) {
     e.preventDefault()
     dragging = false
+    draw()
   }
 
   function onmousemove (e) {

@@ -108,7 +108,7 @@ module.exports = function (app, msg, opts) {
   }
 
   var msgSummary = h('tr.message-summary', { 'data-msg': msg.key },
-    h('td', com.userHexagon(app, msg.value.author)),
+    h('td', com.userHexagon(app, msg.value.author, 30)),
     h('td', content)
   )
 

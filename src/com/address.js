@@ -26,7 +26,7 @@ module.exports = function (app, msg, profiles, follows) {
   renamebtn = h('button.btn.btn-primary.btn-xs', { title: 'Rename', onclick: r }, com.icon('pencil'))
 
   return h('tr.address',
-    h('td.profpic', com.userHexagon(app, id)),
+    h('td.profpic', com.userHexagon(app, id, 60)),
     h('td.details',
       h('p.name', 
         h('strong', com.a('#/profile/'+id, app.names[id]||u.shortString(id, 20)), com.nameConfidence(id, app), ' ', renamebtn)),

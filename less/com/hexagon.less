@@ -1,46 +1,210 @@
-.hexagon {
+// courtesy of csshexagon.com
+
+.hexagon-30 {
   position: relative;
-  margin-top: 12px;
-  width: 30px;
-  height: 17px;
-  background-position: center center;
-  background-size: 30px;
-  z-index: 1;
-}
-.hexagon .hexagon-inner1,
-.hexagon .hexagon-inner2 {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  background: inherit;
-  z-index: -1;
-  /* Keeps borders smooth in webkit */
-  backface-visibility: hidden;
-}
-.hexagon .hexagon-inner1:before,
-.hexagon .hexagon-inner2:before {
-  content: '';
-  position: absolute;
-  width: 220px;
-  height: 220px;
-  background: inherit;
+  width: 30px; 
+  height: 17.32px;
+  margin: 8.66px 0;
+  background-size: auto 34.6410px;
+  background-position: center;
+
+  .hexTop,
+  .hexBottom {
+    position: absolute;
+    z-index: 1;
+    width: 21.21px;
+    height: 21.21px;
+    overflow: hidden;
+    -webkit-transform: scaleY(0.5774) rotate(-45deg);
+    -ms-transform: scaleY(0.5774) rotate(-45deg);
+    transform: scaleY(0.5774) rotate(-45deg);
+    background: inherit;
+    left: 4.39px;
+
+    /* Keeps borders smooth in webkit */
+    backface-visibility: hidden;
+  }
+
+  /*counter transform the bg image on the caps*/
+  .hexTop:after,
+  .hexBottom:after {
+    content: "";
+    position: absolute;
+    width: 30.0000px;
+    height: 17.320508075688775px;
+    -webkit-transform:  rotate(45deg) scaleY(1.7321) translateY(-8.6603px);
+    -ms-transform:      rotate(45deg) scaleY(1.7321) translateY(-8.6603px);
+    transform:          rotate(45deg) scaleY(1.7321) translateY(-8.6603px);
+    -webkit-transform-origin: 0 0;
+    -ms-transform-origin: 0 0;
+    transform-origin: 0 0;
+    background: inherit;
+  }
+
+  .hexTop {
+    top: -10.6066px;
+  }
+
+  .hexTop:after {
+    background-position: center top;
+  }
+
+  .hexBottom {
+    bottom: -10.6066px;
+  }
+
+  .hexBottom:after {
+    background-position: center bottom;
+  }
+
+  &:after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 30.0000px;
+    height: 17.3205px;
+    z-index: 2;
+    background: inherit;
+  }
 }
 
-.hexagon .hexagon-inner1 { transform: rotate(60deg); }
-.hexagon .hexagon-inner1:before {
-  left: 0;
-  transform-origin: left top;
-  transform: rotate(-60deg) translate(-110px, 0);
+.hexagon-45 {
+  position: relative;
+  width: 45px; 
+  height: 25.98px;
+  margin: 12.99px 0;
+  background-size: auto 51.9615px;
+  background-position: center;
+
+  .hexTop,
+  .hexBottom {
+    position: absolute;
+    z-index: 1;
+    width: 31.82px;
+    height: 31.82px;
+    overflow: hidden;
+    -webkit-transform: scaleY(0.5774) rotate(-45deg);
+    -ms-transform: scaleY(0.5774) rotate(-45deg);
+    transform: scaleY(0.5774) rotate(-45deg);
+    background: inherit;
+    left: 6.59px;
+
+    /* Keeps borders smooth in webkit */
+    backface-visibility: hidden;
+  }
+
+  /*counter transform the bg image on the caps*/
+  .hexTop:after,
+  .hexBottom:after {
+    content: "";
+    position: absolute;
+    width: 45.0000px;
+    height: 25.98076211353316px;
+    -webkit-transform:  rotate(45deg) scaleY(1.7321) translateY(-12.9904px);
+    -ms-transform:      rotate(45deg) scaleY(1.7321) translateY(-12.9904px);
+    transform:          rotate(45deg) scaleY(1.7321) translateY(-12.9904px);
+    -webkit-transform-origin: 0 0;
+    -ms-transform-origin: 0 0;
+    transform-origin: 0 0;
+    background: inherit;
+  }
+
+  .hexTop {
+    top: -15.9099px;
+  }
+
+  .hexTop:after {
+    background-position: center top;
+  }
+
+  .hexBottom {
+    bottom: -15.9099px;
+  }
+
+  .hexBottom:after {
+    background-position: center bottom;
+  }
+
+  &:after {
+    content: "";
+    position: absolute;
+    top: 0.0000px;
+    left: 0;
+    width: 45.0000px;
+    height: 25.9808px;
+    z-index: 2;
+    background: inherit;
+  }
 }
 
-.hexagon .hexagon-inner2 { transform: rotate(-60deg); }
-.hexagon .hexagon-inner2:before {
-  right: 0;
-  transform-origin: right top;
-  transform: rotate(60deg) translate(110px, 0);
+.hexagon-60 {
+  position: relative;
+  width: 60px; 
+  height: 34.64px;
+  margin: 17.32px 0;
+  background-size: auto 69.2820px;
+  background-position: center;
+
+  .hexTop,
+  .hexBottom {
+    position: absolute;
+    z-index: 1;
+    width: 42.43px;
+    height: 42.43px;
+    overflow: hidden;
+    -webkit-transform: scaleY(0.5774) rotate(-45deg);
+    -ms-transform: scaleY(0.5774) rotate(-45deg);
+    transform: scaleY(0.5774) rotate(-45deg);
+    background: inherit;
+    left: 8.79px;
+
+    /* Keeps borders smooth in webkit */
+    backface-visibility: hidden;
+  }
+
+  /*counter transform the bg image on the caps*/
+  .hexTop:after,
+  .hexBottom:after {
+    content: "";
+    position: absolute;
+    width: 60.0000px;
+    height: 34.64101615137755px;
+    -webkit-transform:  rotate(45deg) scaleY(1.7321) translateY(-17.3205px);
+    -ms-transform:      rotate(45deg) scaleY(1.7321) translateY(-17.3205px);
+    transform:          rotate(45deg) scaleY(1.7321) translateY(-17.3205px);
+    -webkit-transform-origin: 0 0;
+    -ms-transform-origin: 0 0;
+    transform-origin: 0 0;
+    background: inherit;
+  }
+
+  .hexTop {
+    top: -21.2132px;
+  }
+
+  .hexTop:after {
+    background-position: center top;
+  }
+
+  .hexBottom {
+    bottom: -21.2132px;
+  }
+
+  .hexBottom:after {
+    background-position: center bottom;
+  }
+
+  &:after {
+    content: "";
+    position: absolute;
+    top: 0.0000px;
+    left: 0;
+    width: 60.0000px;
+    height: 34.6410px;
+    z-index: 2;
+    background: inherit;
+  }
 }
 
 .user-hexagrid {
@@ -55,15 +219,10 @@
     }
     .user-hexagon {
       display: inline-block;
-      margin-right: 1px;
+      margin: -11px 1px -11px 0;
       opacity: 0.75;
       &:hover {
         opacity: 1;
-      }
-      .hexagon {
-        width: 60px;
-        height: 35px;
-        background-size: 76px;
       }
     }
   }
