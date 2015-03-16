@@ -6,9 +6,11 @@ var com = require('../com')
 var util = require('../lib/util')
 
 module.exports = function (app) {
-  var view = app.page.qs.view || 'feed'
+  var pid      = app.page.param
+  var view     = app.page.qs.view || 'feed'
+  var queryStr = app.page.qs.q || ''
+  var list     = app.page.qs.list || 'posts'
 
-  var pid = app.page.param
   var done = multicb({ pluck: 1 })
   app.ssb.friends.all('follow', done())
   app.ssb.friends.all('trust', done())
@@ -80,6 +82,7 @@ module.exports = function (app) {
 
     var content
     if (view == 'pics') {
+      // profile pics
       var pics = []
       if (profile) {
         if (profile.self.profilePic)
@@ -91,7 +94,7 @@ module.exports = function (app) {
         })
       }
       content = h('.profile-pics',
-        h('p', h('a.btn.btn-primary', { href: makeUri(), innerHTML: '&laquo; Back to Feed'})),
+        h('p', h('a.btn.btn-primary', { href: makeUri(false), innerHTML: '&laquo; Back to Feed'})),
         com.imageUploader(app, { onupload: onImageUpload }),
         h('br'),
         pics)
@@ -100,13 +103,21 @@ module.exports = function (app) {
       // messages
       content = [
         h('.header-ctrls',
+          com.nav({
+            current: list,
+            items: [
+              ['posts',    makeUri({ view: '', list: 'posts' }),    'Posts'],
+              ['allposts', makeUri({ view: '', list: 'allposts' }), 'Posts & Replies'],
+              ['data',     makeUri({ view: '', list: 'data' }),     'Data'],
+              ['actions',  makeUri({ view: '', list: 'actions' }),  'Actions'],
+              ['all',      makeUri({ view: '', list: 'all' }),      'All']
+            ]
+          }),
           com.search({
-            value: '',
-            onsearch: null
+            value: queryStr,
+            onsearch: onsearch
           })),
-        com.messageFeed(app, { feed: app.ssb.createFeedStream, filter: function (msg) {
-          return msg.value.author == pid
-        }})
+        com.messageFeed(app, { feed: app.ssb.createFeedStream, filter: msgFeedFilter })
       ]
     }
 
@@ -179,9 +190,12 @@ module.exports = function (app) {
 
     function makeUri (opts) {
       var qs=''
-      if (opts) {
-        opts.v = ('view' in opts) ? opts.view : ''
-        qs = '?view=' + encodeURIComponent(opts.view)
+      if (opts !== false) {
+        opts = opts || {}
+        opts.view = ('view' in opts) ? opts.view : view
+        opts.q    = ('q'    in opts) ? opts.q    : queryStr
+        opts.list = ('list' in opts) ? opts.list : list
+        qs = '?view=' + encodeURIComponent(opts.view) + '&q=' + encodeURIComponent(opts.q) + '&list=' + encodeURIComponent(opts.list)
       }
       return '#/profile/'+pid+qs
     }
@@ -226,6 +240,42 @@ module.exports = function (app) {
           arr.push(h('li', com.userlinkThin(userid, app.names[userid])))
       }
       return arr      
+    }
+
+    function msgFeedFilter (msg) {
+      var c = msg.value.content
+
+      if (msg.value.author !== pid)
+        return false
+
+      if (list == 'posts') {
+        if (c.type !== 'post' || c.repliesTo)
+          return false
+      }
+      else if (list == 'allposts') {
+        if (c.type !== 'post')
+          return false
+      }
+      else if (list == 'data') {
+        // no standard message types
+        if (c.type === 'init' || c.type === 'post' || c.type === 'advert' || c.type === 'contact' || c.type === 'pub')
+          return false
+      }
+      else if (list == 'actions') {
+        if (c.type !== 'init' && c.type !== 'contact' && c.type !== 'pub')
+          return false
+      }
+
+      if (!queryStr)
+        return true
+
+      var author = app.names[msg.value.author] || msg.value.author
+      var regex = new RegExp(queryStr.replace(/\s/g, '|'))
+      if (regex.exec(author) || regex.exec(c.type))
+        return true
+      if ((c.type == 'post' || c.type == 'advert') && regex.exec(c.text))
+        return true
+      return false
     }
 
     // handlers
@@ -336,6 +386,11 @@ module.exports = function (app) {
         if (err) swal('Error While Publishing', err.message, 'error')
         else app.refreshPage()        
       })
+    }
+
+    function onsearch (e) {
+      e.preventDefault()
+      window.location.hash = makeUri({ q: e.target.search.value })
     }
 
   })
