@@ -30,20 +30,21 @@ module.exports = function (app, thread, opts) {
 
   opts.onRender && opts.onRender(thread)
 
-  var subscribeBtn = h('a.btn.btn-primary.btn-strong.btn-xs', { href: '#', onclick: onsubscribe })
+  var subscribeBtn = h('a', { href: '#', onclick: onsubscribe })
   var threadInner = h(viz.cls,
     h('div.in-response-to'), // may be populated by the message page
-    h('ul.threadmeta.list-inline',
-      // h('li.type', com.icon(viz.icon)),
-      h('li.hex', com.userHexagon(app, thread.value.author)),
-      h('li', com.userlink(thread.value.author, app.names[thread.value.author]), com.nameConfidence(thread.value.author, app)),
-      h('li', com.a('#/', u.prettydate(new Date(thread.value.timestamp), true), { title: 'View message thread' })),
-      h('li.button', h('a', { href: '#', onclick: onmarkunread }, 'Mark Unread')),
-      h('li.button.strong.pull-right', h('a', { href: '#', onclick: onreply }, 'Reply')),
-      h('li.button.pull-right', h('a', { href: '/msg/'+thread.key, target: '_blank' }, 'as JSON'))),
-    h('.message.top', content),
-    h('.attachments', attachments),
-    h('.replies-meta', subscribeBtn))
+    h('.message-thread-top',
+      h('ul.threadmeta.list-inline',
+        // h('li.type', com.icon(viz.icon)),
+        h('li.hex', com.userHexagon(app, thread.value.author)),
+        h('li', com.userlink(thread.value.author, app.names[thread.value.author]), com.nameConfidence(thread.value.author, app)),
+        h('li', com.a('#/', u.prettydate(new Date(thread.value.timestamp), true), { title: 'View message thread' })),
+        h('li.button', h('a', { href: '#', onclick: onmarkunread }, 'Mark Unread')),
+        h('li.button.strong.pull-right', h('a', { href: '#', onclick: onreply }, 'Reply')),
+        h('li.button.pull-right', subscribeBtn),
+        h('li.button.pull-right', h('a', { href: '/msg/'+thread.key, target: '_blank' }, 'as JSON'))),
+      h('.message', content),
+      h('.attachments', attachments)))
 
   app.ssb.phoenix.isSubscribed(thread.key, setSubscribeState)
   return h('.message-thread.full-height', threadInner, replies(app, thread, opts))
@@ -79,9 +80,9 @@ module.exports = function (app, thread, opts) {
     var count = thread.count || 0
     var replies = count + ((count === 1) ? ' reply' : ' replies')
     if (subscribed) {
-      subscribeBtn.innerHTML = '&ndash; Unsubscribe <small>'+replies+'</small>'
+      subscribeBtn.innerHTML = 'Unsubscribe <small>'+replies+'</small>'
     } else {
-      subscribeBtn.innerHTML = '+ Subscribe <small>'+replies+'</small>'
+      subscribeBtn.innerHTML = 'Subscribe <small>'+replies+'</small>'
     }
   }
 }
