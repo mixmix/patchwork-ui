@@ -65,16 +65,17 @@ exports.userlinkThin = function (id, text, opts) {
 }
 
 var hexagon =
-exports.hexagon = function (img) {
+exports.hexagon = function (img, size) {
   img = img ? 'url('+img+')' : 'none'
-  return h('.hexagon', { style: 'background-image: '+img },
-    h('.hexagon-inner1'),
-    h('.hexagon-inner2'))
+  size = size || 30
+  return h('.hexagon-'+size, { style: 'background-image: '+img },
+    h('.hexTop'),
+    h('.hexBottom'))
 }
 
 var userHexagon =
-exports.userHexagon = function (app, id) {
-  return h('a.user-hexagon', { href: '#/profile/'+id, title: userName(app, id) }, hexagon(profilePicUrl(app, id)))
+exports.userHexagon = function (app, id, size) {
+  return h('a.user-hexagon', { href: '#/profile/'+id, title: userName(app, id) }, hexagon(profilePicUrl(app, id), size))
 }
 
 var userHexagrid =
@@ -82,7 +83,7 @@ exports.userHexagrid = function (app, profiles, rowLen) {
   rowLen = rowLen || 3
   var els = [], row = []
   for (var k in profiles) {
-    row.push(userHexagon(app, profiles[k].id))
+    row.push(userHexagon(app, profiles[k].id, 60))
     if (row.length >= rowLen) {
       els.push(h('div', row))
       row = []
