@@ -40,7 +40,7 @@ module.exports = function (app) {
       }
 
       if (currentList == 'following') {
-        if (id === app.myid || (follows[app.myid][id] && trusts[app.myid][id] !== -1))
+        if ((id === app.myid || (follows[app.myid][id] && trusts[app.myid][id] !== -1)) && !primary)
           return true
       }
       else if (currentList == 'trusted') {
