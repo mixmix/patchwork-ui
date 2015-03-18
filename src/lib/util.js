@@ -67,8 +67,8 @@ exports.stringByteLength = function (str) {
   return s;
 }
 
-exports.calcThreadStats = function (thread) {
-  var stats = { comments: 0, vote: 0 }
+exports.calcThreadStats = function (app, thread) {
+  var stats = { comments: 0, votes: 0 }
   function process (t, depth) {
     if (!t.related)
       return
@@ -76,14 +76,20 @@ exports.calcThreadStats = function (thread) {
       var c = r.value.content
       // only process votes for immediate children
       if (depth === 0 && c.type === 'vote') {
+        // tally
+        // :TODO: one vote per person
         if (c.vote === 1)
-          stats.vote++
+          stats.votes++
         else if (c.vote === -1)
-          stats.vote--
+          stats.votes--
+
+        // user's vote
+        if (r.value.author === app.myid)
+          stats.uservote = c.vote
       }
       else if (c.type !== 'vote')
         stats.comments++
-      
+
       // recurse
       process(r)
     })

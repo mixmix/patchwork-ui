@@ -109,7 +109,7 @@ module.exports = function (app, msg, opts) {
       h('.footer',
         h('span.stat',
           h('a.upvote', { href: '#' }, com.icon('triangle-top')),
-          h('span.vote', { 'data-amt': 0 }),
+          h('span.votes', { 'data-amt': 0 }),
           h('a.downvote', { href: '#' }, com.icon('triangle-bottom'))),
         h('span.stat.comments', { 'data-amt': 0 }, com.icon('comment')))))
 
@@ -124,7 +124,7 @@ module.exports.fetchRowState = function (app, el, mid) {
   if (!mid) return
   app.ssb.relatedMessages({ id: mid, count: true }, function (err, thread) {
     if (thread)
-      setRowState(el, u.calcThreadStats(thread))
+      setRowState(el, u.calcThreadStats(app, thread))
   })
 }
 
@@ -132,8 +132,14 @@ var setRowState =
 module.exports.setRowState = function (el, state) {
   if ('comments' in state)
     el.querySelector('.footer .comments').dataset.amt = state.comments
-  if ('vote' in state)
-    el.querySelector('.footer .vote').dataset.amt = state.vote
+  if ('votes' in state)
+    el.querySelector('.footer .votes').dataset.amt = state.votes
+  if ('uservote' in state) {
+    var up   = (state.uservote === 1)  ? 'add' : 'remove'
+    var down = (state.uservote === -1) ? 'add' : 'remove'
+    el.querySelector('.footer .upvote').classList[up]('selected')
+    el.querySelector('.footer .downvote').classList[down]('selected')
+  }
 }
 
 function ago (msg) {

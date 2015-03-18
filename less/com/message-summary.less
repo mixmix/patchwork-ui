@@ -25,13 +25,13 @@
   .footer {
     margin-bottom: 8px;
     color: #8899a6;
+    .glyphicon {
+      color: #ccd6dd;
+      position: relative;
+    }
     .stat {
       display: inline-block;
       padding: 0 28px 0 0;
-      .glyphicon {
-        color: #ccd6dd;
-        position: relative;
-      }
       .glyphicon-comment {
         font-size: 16px;
         top: 3px;
@@ -39,21 +39,25 @@
       .glyphicon-triangle-top {
         font-size: 18px;
         top: 4px;
-        &:hover {
-          color: @blue-primary;
-        }
       }
       .glyphicon-triangle-bottom {
         font-size: 18px;
         top: 4px;
-        &:hover {
-          color: rgb(253, 82, 52);
-        }
       }
     }
-    .comments:after, .vote:after {
+    .comments:after, .votes:after {
       content: attr(data-amt);
       padding: 0 5px;
+    }
+    .upvote {
+      &:hover .glyphicon, &.selected .glyphicon {
+        color: @blue-primary;
+      }
+    }
+    .downvote {
+      &:hover .glyphicon, &.selected .glyphicon {
+        color: rgb(253, 82, 52);
+      }
     }
   }
 
