@@ -104,41 +104,35 @@ module.exports = function (app, msg, opts) {
 
   var msgSummary = h('tr.message-summary', { 'data-msg': msg.key },
     h('td', com.userHexagon(app, msg.value.author, 30)),
-    h('td',
-      content,
-      h('.footer',
-        h('span.stat',
-          h('a.upvote', { href: '#' }, com.icon('triangle-top')),
-          h('span.votes', { 'data-amt': 0 }),
-          h('a.downvote', { href: '#' }, com.icon('triangle-bottom'))),
-        h('span.stat.comments', { 'data-amt': 0 }, com.icon('comment')))))
+    h('td', content, com.messageStats(app)))
 
   fetchRowState(app, msgSummary, msg.key)
 
   return msgSummary
 }
 
+var statsOpts = { recursive: true }
 var fetchRowState =
 module.exports.fetchRowState = function (app, el, mid) {
   mid = mid || el.dataset.msg
   if (!mid) return
   app.ssb.relatedMessages({ id: mid, count: true }, function (err, thread) {
     if (thread)
-      setRowState(el, u.calcThreadStats(app, thread))
+      setRowState(el, u.calcMessageStats(app, thread, statsOpts))
   })
 }
 
 var setRowState =
 module.exports.setRowState = function (el, state) {
   if ('comments' in state)
-    el.querySelector('.footer .comments').dataset.amt = state.comments
+    el.querySelector('.message-stats .comments').dataset.amt = state.comments
   if ('votes' in state)
-    el.querySelector('.footer .votes').dataset.amt = state.votes
+    el.querySelector('.message-stats .votes').dataset.amt = state.votes
   if ('uservote' in state) {
     var up   = (state.uservote === 1)  ? 'add' : 'remove'
     var down = (state.uservote === -1) ? 'add' : 'remove'
-    el.querySelector('.footer .upvote').classList[up]('selected')
-    el.querySelector('.footer .downvote').classList[down]('selected')
+    el.querySelector('.message-stats .upvote').classList[up]('selected')
+    el.querySelector('.message-stats .downvote').classList[down]('selected')
   }
 }
 

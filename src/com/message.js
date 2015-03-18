@@ -47,11 +47,12 @@ function getAttachments (app, msg) {
   return els
 }
 
+var statsOpts = { handlers: true }
 var messageShell = function (app, msg, content, opts) {
 
   // markup 
 
-  var msgbody = h('.panel-body', content)
+  var msgbody = h('.panel-body', content, com.messageStats(app, u.calcMessageStats(app, msg), statsOpts))
   var msgpanel = h('.panel.panel-default.message',
     com.userHexagon(app, msg.value.author),
     h('.panel-heading',

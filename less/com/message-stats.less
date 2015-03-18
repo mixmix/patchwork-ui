@@ -1,0 +1,34 @@
+.message-stats {
+  margin-bottom: 8px;
+  color: #8899a6;
+  .glyphicon {
+    color: #ccd6dd;
+    position: relative;
+    &:hover {
+      color: darken(#8899a6, 5%);
+    }
+  }
+  .selected .glyphicon {
+    color: darken(#8899a6, 5%);
+  }
+  .stat {
+    display: inline-block;
+    padding: 0 28px 0 0;
+    .glyphicon-comment {
+      font-size: 16px;
+      top: 3px;
+    }
+    .glyphicon-triangle-top {
+      font-size: 18px;
+      top: 4px;
+    }
+    .glyphicon-triangle-bottom {
+      font-size: 18px;
+      top: 4px;
+    }
+  }
+  .comments:after, .votes:after {
+    content: attr(data-amt);
+    padding: 0 5px;
+  }
+}

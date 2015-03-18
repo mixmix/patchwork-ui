@@ -67,7 +67,7 @@ exports.stringByteLength = function (str) {
   return s;
 }
 
-exports.calcThreadStats = function (app, thread) {
+exports.calcMessageStats = function (app, thread, opts) {
   var stats = { comments: 0, votes: 0 }
   var voteMatrix = {} // who voted what, so-named because it sounds cool
 
@@ -89,7 +89,8 @@ exports.calcThreadStats = function (app, thread) {
       }
 
       // recurse
-      process(r)
+      if (opts && opts.recursive)
+        process(r)
     })
   }
   process(thread, 0)
