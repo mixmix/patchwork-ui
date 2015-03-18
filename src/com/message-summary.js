@@ -121,7 +121,8 @@ module.exports = function (app, msg, opts) {
 function fetchRowState (app, el, mid) {
   mid = mid || el.dataset.msg
   app.ssb.relatedMessages({ id: mid, count: true }, function (err, thread) {
-    setRowState(el, { comments: thread.count||0, vote: 0 })
+    if (thread)
+      setRowState(el, u.calcThreadStats(thread))
   })
 }
 

@@ -66,3 +66,28 @@ exports.stringByteLength = function (str) {
   }
   return s;
 }
+
+exports.calcThreadStats = function (thread) {
+  var stats = { comments: 0, vote: 0 }
+  function process (t, depth) {
+    if (!t.related)
+      return
+    t.related.forEach(function (r) {
+      var c = r.value.content
+      // only process votes for immediate children
+      if (depth === 0 && c.type === 'vote') {
+        if (c.vote === 1)
+          stats.vote++
+        else if (c.vote === -1)
+          stats.vote--
+      }
+      else if (c.type !== 'vote')
+        stats.comments++
+      
+      // recurse
+      process(r)
+    })
+  }
+  process(thread, 0)
+  return stats
+}
