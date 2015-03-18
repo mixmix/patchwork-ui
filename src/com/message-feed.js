@@ -178,6 +178,12 @@ module.exports = function (app, opts) {
     var row = el.parentNode.parentNode.parentNode.parentNode // a bit brittle...
     var key = row.dataset.msg
     if (key) {
+      // get current state by checking if the control is selected
+      // this won't always be the most recent info, but it will be close and harmless to get wrong,
+      // plus it will reflect what the user expects to happen happening
+      var selected = el.classList.contains('selected')
+      if (selected)
+        vote = 0 // toggle behavior: unset
       // :TODO: use msg-schemas
       app.ssb.publish({ type: 'vote', subject: { msg: key }, vote: vote }, function (err) {
         if (err) swal('Error While Publishing', err.message, 'error')
