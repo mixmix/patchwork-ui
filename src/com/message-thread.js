@@ -28,7 +28,7 @@ module.exports = function (app, thread, opts) {
   var content = getContent(app, thread) || h('table', com.prettyRaw.table(app, thread.value.content))
   var viz = com.messageVisuals(app, thread)
   var attachments = com.messageAttachments(app, thread)
-  var stats = com.messageStats(app, u.calcMessageStats(app, thread), statsOpts)
+  var stats = com.messageStats(app, thread, statsOpts)
 
   opts.onRender && opts.onRender(thread)
 
