@@ -108,9 +108,9 @@ module.exports = function (app, msg, opts) {
       content,
       h('.footer',
         h('span.stat',
-          h('a', { href: '#' }, com.icon('triangle-top')),
+          h('a.upvote', { href: '#' }, com.icon('star')),
           h('span.vote', { 'data-amt': 0 }),
-          h('a', { href: '#' }, com.icon('triangle-bottom'))),
+          h('a.downvote', { href: '#' }, com.icon('fire'))),
         h('span.stat.comments', { 'data-amt': 0 }, com.icon('comment')))))
 
   fetchRowState(app, msgSummary, msg.key)
@@ -118,8 +118,10 @@ module.exports = function (app, msg, opts) {
   return msgSummary
 }
 
-function fetchRowState (app, el, mid) {
+var fetchRowState =
+module.exports.fetchRowState = function (app, el, mid) {
   mid = mid || el.dataset.msg
+  if (!mid) return
   app.ssb.relatedMessages({ id: mid, count: true }, function (err, thread) {
     if (thread)
       setRowState(el, u.calcThreadStats(thread))
