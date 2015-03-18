@@ -32,7 +32,7 @@ module.exports = function (app, thread, opts) {
 
   opts.onRender && opts.onRender(thread)
 
-  var subscribeBtn = h('a', { href: '#', onclick: onsubscribe })
+  var subscribeBtn = h('a.subscribe-toggle', { href: '#', onclick: onsubscribe })
   var threadInner = h(viz.cls,
     h('div.in-response-to'), // may be populated by the message page
     h('.message-thread-top',
@@ -79,12 +79,13 @@ module.exports = function (app, thread, opts) {
   // ui state
 
   function setSubscribeState (err, subscribed) {
-    var count = thread.count || 0
-    var replies = count + ((count === 1) ? ' reply' : ' replies')
+    subscribeBtn.innerHTML = ''
     if (subscribed) {
-      subscribeBtn.innerHTML = 'Unsubscribe <small>'+replies+'</small>'
+      subscribeBtn.classList.add('selected')
+      subscribeBtn.appendChild(com.icon('star'))
     } else {
-      subscribeBtn.innerHTML = 'Subscribe <small>'+replies+'</small>'
+      subscribeBtn.classList.remove('selected')
+      subscribeBtn.appendChild(com.icon('star-empty'))
     }
   }
 }
