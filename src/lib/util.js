@@ -69,31 +69,40 @@ exports.stringByteLength = function (str) {
 
 exports.calcThreadStats = function (app, thread) {
   var stats = { comments: 0, votes: 0 }
+  var voteMatrix = {} // who voted what, so-named because it sounds cool
+
   function process (t, depth) {
     if (!t.related)
       return
+
     t.related.forEach(function (r) {
       var c = r.value.content
+
       // only process votes for immediate children
       if (depth === 0 && c.type === 'vote') {
-        // tally
-        // :TODO: one vote per person
-        if (c.vote === 1)
-          stats.votes++
-        else if (c.vote === -1)
-          stats.votes--
-
-        // user's vote
-        if (r.value.author === app.myid)
-          stats.uservote = c.vote
+        // track latest choice, dont tally yet in case multiple votes by one user
+        voteMatrix[r.value.author] = c.vote
       }
-      else if (c.type !== 'vote')
+      else if (c.type !== 'vote') {
+        // count non-votes as a comment
         stats.comments++
+      }
 
       // recurse
       process(r)
     })
   }
   process(thread, 0)
+
+  // now tally the votes
+  for (var author in voteMatrix) {
+    var v = voteMatrix[author]
+    if (v === 1)
+      stats.votes++
+    else if (v === -1)
+      stats.votes--
+  }
+  stats.uservote = voteMatrix[app.myid] || 0
+
   return stats
 }
