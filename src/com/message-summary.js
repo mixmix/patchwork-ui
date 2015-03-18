@@ -108,9 +108,9 @@ module.exports = function (app, msg, opts) {
       content,
       h('.footer',
         h('span.stat',
-          h('a.upvote', { href: '#' }, com.icon('star')),
+          h('a.upvote', { href: '#' }, com.icon('triangle-top')),
           h('span.vote', { 'data-amt': 0 }),
-          h('a.downvote', { href: '#' }, com.icon('fire'))),
+          h('a.downvote', { href: '#' }, com.icon('triangle-bottom'))),
         h('span.stat.comments', { 'data-amt': 0 }, com.icon('comment')))))
 
   fetchRowState(app, msgSummary, msg.key)
