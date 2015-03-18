@@ -95,11 +95,6 @@ function getSummary (app, msg, opts) {
 var attachmentOpts = { toext: true, rel: 'attachment' }
 module.exports = function (app, msg, opts) {
 
-  var done = multicb({ pluck: 1 })
-  app.ssb.phoenix.isRead(msg.key, function (err, read) {
-    setRowState(msgSummary, { read: !!read })
-  })
-
   // markup
 
   var content = getSummary(app, msg, opts)
@@ -109,21 +104,33 @@ module.exports = function (app, msg, opts) {
 
   var msgSummary = h('tr.message-summary', { 'data-msg': msg.key },
     h('td', com.userHexagon(app, msg.value.author, 30)),
-    h('td', content)
-  )
+    h('td',
+      content,
+      h('.footer',
+        h('span.stat',
+          h('a', { href: '#' }, com.icon('triangle-top')),
+          h('span.vote', { 'data-amt': 0 }),
+          h('a', { href: '#' }, com.icon('triangle-bottom'))),
+        h('span.stat.comments', { 'data-amt': 0 }, com.icon('comment')))))
+
+  fetchRowState(app, msgSummary, msg.key)
 
   return msgSummary
 }
 
+function fetchRowState (app, el, mid) {
+  mid = mid || el.dataset.msg
+  app.ssb.relatedMessages({ id: mid, count: true }, function (err, thread) {
+    setRowState(el, { comments: thread.count||0, vote: 0 })
+  })
+}
+
 var setRowState =
-module.exports.setRowState = function (el, state) {   
-  if ('read' in state) {
-    if (state.read) {   
-      el.classList.add('read')   
-    } else {   
-      el.classList.remove('read')
-    }
-  }
+module.exports.setRowState = function (el, state) {
+  if ('comments' in state)
+    el.querySelector('.footer .comments').dataset.amt = state.comments
+  if ('vote' in state)
+    el.querySelector('.footer .vote').dataset.amt = state.vote
 }
 
 function ago (msg) {
