@@ -214,16 +214,39 @@
   background: #ECECEC;
 
   > div {
-    &:nth-child(even) {
-      margin-left: 30px;
-    }
     .user-hexagon {
       display: inline-block;
-      margin: -11px 1px -11px 0;
       opacity: 0.75;
       &:hover {
         opacity: 1;
       }
+    }
+  }
+  
+}
+
+.user-hexagrid-30 {
+  .user-hexagrid;
+
+  > div {
+    &:nth-child(even) {
+      margin-left: 15px;
+    }
+    .user-hexagon {
+      margin: -3px 1px -9px 0;
+    }
+  }
+}
+
+.user-hexagrid-60 {
+  .user-hexagrid;
+
+  > div {
+    &:nth-child(even) {
+      margin-left: 30px;
+    }
+    .user-hexagon {
+      margin: -11px 1px -11px 0;
     }
   }
 }

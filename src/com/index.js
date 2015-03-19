@@ -79,29 +79,33 @@ exports.userHexagon = function (app, id, size) {
 }
 
 var userHexagrid =
-exports.userHexagrid = function (app, profiles, rowLen) {
-  rowLen = rowLen || 3
+exports.userHexagrid = function (app, uids, opts) {
+  var nrow = (opts && opts.nrow) ? opts.nrow : 3
+  var size = (opts && opts.size) ? opts.size : 60
+
   var els = [], row = []
-  for (var k in profiles) {
-    row.push(userHexagon(app, profiles[k].id, 60))
-    if (row.length >= rowLen) {
+  uids.forEach(function (uid) {
+    row.push(userHexagon(app, uid, size))
+    if (row.length >= nrow) {
       els.push(h('div', row))
       row = []
     }
-  }
-  return h('.user-hexagrid', els)
+  })
+  if (row.length)
+    els.push(h('div', row))
+  return h('.user-hexagrid-'+size, els)
 }
 
 var friendsHexagrid =
-exports.friendsHexagrid = function (app, rowLen) {
-  var friends = {}
+exports.friendsHexagrid = function (app, opts) {
+  var friends = []
   for (var k in app.profiles) {
     var p = app.profiles[k]
     if (p.assignedBy[app.myid] && p.assignedBy[app.myid].following)
-      friends[k] = p
+      friends.push(p.id)
   }
-  if (Object.keys(friends).length)
-    return [h('h4.text-muted', 'Friends'), userHexagrid(app, friends, rowLen)]
+  if (friends.length)
+    return [h('h4.text-muted', 'Friends'), userHexagrid(app, friends, opts)]
 }
 
 var toEmoji =

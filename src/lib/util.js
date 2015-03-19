@@ -68,8 +68,7 @@ exports.stringByteLength = function (str) {
 }
 
 exports.calcMessageStats = function (app, thread, opts) {
-  var stats = { comments: 0, votes: 0 }
-  var voteMatrix = {} // who voted what, so-named because it sounds cool
+  var stats = { comments: 0, voteTally: 0, votes: {} }
 
   function process (t, depth) {
     if (!t.related)
@@ -81,7 +80,7 @@ exports.calcMessageStats = function (app, thread, opts) {
       // only process votes for immediate children
       if (depth === 0 && c.type === 'vote') {
         // track latest choice, dont tally yet in case multiple votes by one user
-        voteMatrix[r.value.author] = c.vote
+        stats.votes[r.value.author] = c.vote
       }
       else if (c.type !== 'vote') {
         // count non-votes as a comment
@@ -96,14 +95,14 @@ exports.calcMessageStats = function (app, thread, opts) {
   process(thread, 0)
 
   // now tally the votes
-  for (var author in voteMatrix) {
-    var v = voteMatrix[author]
+  for (var author in stats.votes) {
+    var v = stats.votes[author]
     if (v === 1)
-      stats.votes++
+      stats.voteTally++
     else if (v === -1)
-      stats.votes--
+      stats.voteTally--
   }
-  stats.uservote = voteMatrix[app.myid] || 0
+  stats.uservote = stats.votes[app.myid] || 0
 
   return stats
 }

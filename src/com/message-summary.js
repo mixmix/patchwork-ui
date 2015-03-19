@@ -126,8 +126,8 @@ var setRowState =
 module.exports.setRowState = function (el, state) {
   if ('comments' in state)
     el.querySelector('.message-stats .comments').dataset.amt = state.comments
-  if ('votes' in state)
-    el.querySelector('.message-stats .votes').dataset.amt = state.votes
+  if ('voteTally' in state)
+    el.querySelector('.message-stats .vote-tally').dataset.amt = state.voteTally
   if ('uservote' in state) {
     var up   = (state.uservote === 1)  ? 'add' : 'remove'
     var down = (state.uservote === -1) ? 'add' : 'remove'

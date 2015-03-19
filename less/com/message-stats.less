@@ -1,6 +1,8 @@
 .message-stats {
   margin-bottom: 8px;
   color: #8899a6;
+  overflow: hidden;
+
   .glyphicon {
     color: #ccd6dd;
     position: relative;
@@ -27,8 +29,36 @@
       top: 4px;
     }
   }
-  .comments:after, .votes:after {
+  .comments:after, .vote-tally:after {
     content: attr(data-amt);
     padding: 0 5px;
+  }
+  .user-hexagrid-30 {
+    margin: 1em 0 0;
+    border: 1px solid #ccc;
+    padding: 5px 5px 0;
+    background: #fafafa;
+    .user-hexagon {
+      margin: -9px 1px -3px 0;
+    }
+  }
+  .upvoters {
+    position: relative;
+    &:after {
+      content: ' +1';
+      position: absolute;
+      right: -22px;
+      top: 5px;
+    }
+  }
+  .downvoters {
+    float: right;
+    position: relative;
+    &:after {
+      content: '-1';
+      position: absolute;
+      left: -22px;
+      top: 5px;
+    }
   }
 }
