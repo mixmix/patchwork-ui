@@ -12,6 +12,31 @@
     display: inline-block;
     margin-right: 1em;
   }
+  .subpage-btns {
+    position: relative;
+    top: -9px;
+    left: 9px;
+  }
+  .subpage-btn {
+    position: relative;
+    display: inline-block;
+    width: 84px;
+    height: 60px;
+    margin: 1px;
+    border-radius: 2px;
+    font-size: 22px;
+    background: #282C32;
+    color: #2778E2;
+    &:last-child {
+      width: 83px;
+    }
+    span {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+  }
 
   .profpic {
     position: relative;
@@ -43,7 +68,6 @@
     position: relative;
     width: 275px;
     height: 318px;
-    margin-bottom: 1em;
 
     .corner {
       position: absolute;

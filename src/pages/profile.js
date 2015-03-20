@@ -161,6 +161,12 @@ module.exports = function (app) {
       h('a.corner.botright', h('.corner-inner', com.icon('triangle-bottom'), 3)),
       h('a.profpic', { href: makeUri({ view: 'pics' }) }, com.hexagon(profileImg, 275)))
 
+    // subpage nav
+    var subpageBtns = h('.subpage-btns',
+      h('a.subpage-btn', com.icon('th-list')),
+      h('a.subpage-btn', com.icon('info-sign')),
+      h('a.subpage-btn', com.icon('book')))
+
     // totem colors derived from the image
     var tmpImg = document.createElement('img')
     tmpImg.src = profileImg
@@ -169,10 +175,12 @@ module.exports = function (app) {
       if (rgb) {
         var avg = (rgb.r + rgb.g + rgb.b) / 3
         var textcolor = (avg < 128) ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.5)'
-        Array.prototype.forEach.call(totem.querySelectorAll('.corner'), function (el) {
+        function setColors (el) {
           el.style.background = 'rgb('+rgb.r+','+rgb.g+','+rgb.b+')'
           el.style.color = textcolor
-        })
+        }
+        Array.prototype.forEach.call(totem.querySelectorAll('.corner'), setColors)
+        Array.prototype.forEach.call(subpageBtns.childNodes, setColors)
       }
     }
 
@@ -187,15 +195,15 @@ module.exports = function (app) {
         h('.right-column-inner',
           com.notifications(app),
           h('.profile-controls',
-            h('.section',
-              totem,
-              h('h2', name, com.nameConfidence(pid, app), renamebtn),
-              (primary) ?
-                h('h2', h('small', com.user(app, primary), '\'s feed')) :
-                '',
-              h('p.text-muted', 'joined '+joinDate)
-            ),
-            h('.section', h('p', followbtn), h('p', trustbtn), h('p', flagbtn)),
+            totem,
+            subpageBtns,
+            h('h2', name, com.nameConfidence(pid, app), renamebtn),
+            (primary) ?
+              h('h2', h('small', com.user(app, primary), '\'s feed')) :
+              '',
+            h('p.text-muted', 'joined '+joinDate),
+            // h('.section', h('p', followbtn), h('p', trustbtn), h('p', flagbtn)),
+            com.friendsHexagrid(app, { nrow: 4 })/*,
             (givenNames.length)
               ? h('.section',
                 h('strong', 'Nicknames'),
@@ -209,7 +217,7 @@ module.exports = function (app) {
             apps.length      ? h('.section', h('strong', 'Applications'), h('br'), h('ul.list-unstyled', apps)) : '',
             follows.length   ? h('.section', h('strong', 'Followed'), h('br'), h('ul.list-unstyled', follows)) : '',
             trusts.length    ? h('.section', h('strong', 'Trusted'), h('br'), h('ul.list-unstyled', trusts)) : '',
-            flags.length     ? h('.section', h('strong', 'Flagged'), h('br'), h('ul.list-unstyled', flags)) : '')))))
+            flags.length     ? h('.section', h('strong', 'Flagged'), h('br'), h('ul.list-unstyled', flags)) : ''*/)))))
 
     function makeUri (opts) {
       var qs=''
