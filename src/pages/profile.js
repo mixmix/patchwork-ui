@@ -161,13 +161,19 @@ module.exports = function (app) {
       h('a.corner.botright', h('.corner-inner', 3, com.icon('triangle-bottom'))),
       h('a.profpic', { href: makeUri({ view: 'pics' }) }, com.hexagon(profileImg, 275)))
 
-    // profpic background color for totem
+    // totem colors derived from the image
     var tmpImg = document.createElement('img')
     tmpImg.src = profileImg
     tmpImg.onload = function () {
       var rgb = u.getAverageRGB(tmpImg)
-      if (rgb)
-        totem.style.background = 'rgba('+rgb.r+','+rgb.g+','+rgb.b+', 0.75)'
+      if (rgb) {
+        var avg = (rgb.r + rgb.g + rgb.b) / 3
+        var textcolor = (avg < 128) ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.5)'
+        Array.prototype.forEach.call(totem.querySelectorAll('.corner'), function (el) {
+          el.style.background = 'rgb('+rgb.r+','+rgb.g+','+rgb.b+')'
+          el.style.color = textcolor
+        })
+      }
     }
 
     // render page
