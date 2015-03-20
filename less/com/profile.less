@@ -5,32 +5,104 @@
   h2, p {
     margin: 0;
   }
-  .profpic {
-    position: relative;
-    display: inline-block;
-    margin-bottom: 1em;
-    img {
-      max-width: 100%;
-      border-radius: 2px;
-    }
-    &:hover::before {
-      content: 'Change Profile Pic';
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      background: rgba(0,0,0,0.75);
-      font-weight: 100;
-      padding: 1em 2em;
-      color: #fff;
-      border-radius: 2px;
-    }
-  }
   .section {
     margin-bottom: 24px;
   }
   li {
     display: inline-block;
     margin-right: 1em;
+  }
+
+  .profpic {
+    position: relative;
+    display: inline-block;
+    .hexagon-275 {
+      z-index: 10;
+    }
+    .hexTop, .hexBottom {
+      outline: 5px solid #eee;
+    }
+    &:hover::before {
+      content: 'Change Profile Pic';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      z-index: 1000;
+      transform: translate(-50%, -50%);
+      width: 180px;
+      padding: 1em 2em;
+
+      font-weight: 100;
+      color: #fff;
+      background: rgba(0,0,0,0.75);
+      border-radius: 2px;
+    }
+  }
+
+  .totem {
+    position: relative;
+    width: 275px;
+    height: 318px;
+    margin-bottom: 1em;
+    border-radius: 2px;
+
+    .corner {
+      position: absolute;
+      z-index: 5;
+      display: block;
+      width: 130px;
+      height: 100px;
+      background: #282C32;
+      color: #2778E2;
+      border-radius: 2px;
+      font-family: @font-family-monospace;
+      font-size: 21px;
+      &:hover {
+        background: #091927;
+      }
+      .corner-inner {
+        position: absolute;
+      }
+      &.selected {
+        color: #BCD8FD;
+        text-shadow: 0 0 8px rgb(39, 120, 226);
+      }
+    }
+    .topleft {
+      top: 10px;
+      left: 10px;
+      .corner-inner {
+        left: 6px;
+        top: 2px;
+      }
+    }
+    .topright {
+      top: 10px;
+      right: 10px;
+      .corner-inner {
+        right: 9px;
+        top: 2px;
+      }
+    }
+    .botleft {
+      bottom: 10px;
+      left: 10px;
+      .corner-inner {
+        left: 4px;
+        top: 68px;
+      }
+    }
+    .botright {
+      bottom: 10px;
+      right: 10px;
+      .corner-inner {
+        right: 7px;
+        top: 68px;
+      }
+    }
+    .glyphicon {
+      font-size: 12px;
+    }
   }
 }
 

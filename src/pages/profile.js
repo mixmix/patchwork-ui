@@ -3,7 +3,7 @@ var h = require('hyperscript')
 var multicb = require('multicb')
 var schemas = require('ssb-msg-schemas')
 var com = require('../com')
-var util = require('../lib/util')
+var u = require('../lib/util')
 
 module.exports = function (app) {
   var pid      = app.page.param
@@ -153,19 +153,36 @@ module.exports = function (app) {
       }
     }
 
+    // profile ctrl totem
+    var totem = h('.totem',
+      h('a.corner.topleft', h('.corner-inner', com.icon('plus'), followers.length)),
+      h('a.corner.topright', h('.corner-inner', trusters.length, com.icon('lock'))),
+      h('a.corner.botleft', h('.corner-inner', com.icon('triangle-top'), 15)),
+      h('a.corner.botright', h('.corner-inner', 3, com.icon('triangle-bottom'))),
+      h('a.profpic', { href: makeUri({ view: 'pics' }) }, com.hexagon(profileImg, 275)))
+
+    // profpic background color for totem
+    var tmpImg = document.createElement('img')
+    tmpImg.src = profileImg
+    tmpImg.onload = function () {
+      var rgb = u.getAverageRGB(tmpImg)
+      if (rgb)
+        totem.style.background = 'rgba('+rgb.r+','+rgb.g+','+rgb.b+', 0.75)'
+    }
+
     // render page
-    var joinDate = (profile) ? util.prettydate(new Date(profile.createdAt), true) : '-'
+    var joinDate = (profile) ? u.prettydate(new Date(profile.createdAt), true) : '-'
     app.setPage('profile', h('.row',
       h('.col-xs-1', com.sidenav(app)),
       h('.col-xs-8', 
         nameTrustDlg,
         content),
-      h('.col-xs-3.right-column.full-height',
+      h('.col-xs-3.full-height',
         h('.right-column-inner',
           com.notifications(app),
           h('.profile-controls',
             h('.section',
-              h('a.profpic', { href: makeUri({ view: 'pics' }) }, h('img', { src: profileImg })),
+              totem,
               h('h2', name, com.nameConfidence(pid, app), renamebtn),
               (primary) ?
                 h('h2', h('small', com.user(app, primary), '\'s feed')) :
@@ -283,7 +300,7 @@ module.exports = function (app) {
     function trustPrompt (e) {
       e.preventDefault()
       swal({
-        title: 'Trust '+util.escapePlain(name)+'?',
+        title: 'Trust '+u.escapePlain(name)+'?',
         text: [
           'Use their data (names, trusts, flags) in your own account?',
           'Only do this if you know this account is your friend\'s, you trust them, and you think other people should too!'
@@ -303,7 +320,7 @@ module.exports = function (app) {
     function flagPrompt (e) {
       e.preventDefault()
       swal({
-        title: 'Flag '+util.escapePlain(name)+'?',
+        title: 'Flag '+u.escapePlain(name)+'?',
         text: [
           'Warn people about this user?',
           'This will hurt their network reputation and cause fewer people to trust them.',
