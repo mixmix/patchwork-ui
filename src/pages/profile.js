@@ -155,10 +155,10 @@ module.exports = function (app) {
 
     // profile ctrl totem
     var totem = h('.totem',
-      h('a.corner.topleft', h('.corner-inner', com.icon('plus'), followers.length)),
-      h('a.corner.topright', h('.corner-inner', trusters.length, com.icon('lock'))),
-      h('a.corner.botleft', h('.corner-inner', com.icon('triangle-top'), 15)),
-      h('a.corner.botright', h('.corner-inner', 3, com.icon('triangle-bottom'))),
+      h('a.corner.topleft', h('.corner-inner', followers.length, com.icon('user'))),
+      // h('a.corner.topright', h('.corner-inner', com.icon('lock'), trusters.length)), :TODO: use this?
+      h('a.corner.botleft', h('.corner-inner', 15, com.icon('triangle-top'))),
+      h('a.corner.botright', h('.corner-inner', com.icon('triangle-bottom'), 3)),
       h('a.profpic', { href: makeUri({ view: 'pics' }) }, com.hexagon(profileImg, 275)))
 
     // totem colors derived from the image
