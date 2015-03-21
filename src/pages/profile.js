@@ -62,7 +62,7 @@ module.exports = function (app) {
     }
 
     // profile controls
-    var followbtn, trustbtn, flagbtn, renamebtn
+    /*var followbtn, trustbtn, flagbtn, renamebtn
     renamebtn = h('button.btn.btn-primary', {title: 'Rename', onclick: rename}, com.icon('pencil'))
     if (pid !== app.myid) {
       followbtn = (isFollowing)
@@ -78,7 +78,7 @@ module.exports = function (app) {
         : (!graphs.trust[app.myid][pid])
           ? h('button.btn.btn-primary',{ onclick: flagPrompt },  com.icon('flag'), ' Flag')
           : ''
-    }
+    }*/
 
     var content
     if (view == 'pics') {
@@ -155,11 +155,11 @@ module.exports = function (app) {
 
     // profile ctrl totem
     var totem = h('.totem',
-      h('a.corner.topleft', h('.corner-inner', followers.length, com.icon('user'))),
+      h('a.corner.topleft'+(isFollowing?'.selected':''), { href: '#', onclick: toggleFollow }, h('.corner-inner', followers.length, com.icon('user'))),
       // h('a.corner.topright', h('.corner-inner', com.icon('lock'), trusters.length)), :TODO: use this?
       h('a.corner.botleft', h('.corner-inner', 15, com.icon('triangle-top'))),
       h('a.corner.botright', h('.corner-inner', com.icon('triangle-bottom'), 3)),
-      h('a.profpic', { href: makeUri({ view: 'pics' }), 'data-overlay': 'About '+name }, com.hexagon(profileImg, 275)))
+      h('a.profpic', { href: makeUri({ view: 'pics' }) }, com.hexagon(profileImg, 275)))
 
     // profile title
     var joinDate = (profile) ? u.prettydate(new Date(profile.createdAt), true) : '-'
@@ -177,14 +177,19 @@ module.exports = function (app) {
       var rgb = u.getAverageRGB(tmpImg)
       if (rgb) {
         var avg = (rgb.r + rgb.g + rgb.b) / 3
-        var textcolor = (avg < 128) ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.5)'
         var rgb2 = { r: ((rgb.r/2)|0), g: ((rgb.g/2)|0), b: ((rgb.b/2)|0) }
-        title.querySelector('h2').style.color = 'rgb('+rgb2.r+','+rgb2.g+','+rgb2.b+')'
+
+        try { title.querySelector('h2').style.color = 'rgb('+rgb2.r+','+rgb2.g+','+rgb2.b+')' } catch (e) {}
         try { title.querySelector('h3').style.color = 'rgba('+rgb2.r+','+rgb2.g+','+rgb2.b+', 0.75)' } catch (e) {}
-        title.querySelector('p').style.color = 'rgba('+rgb2.r+','+rgb2.g+','+rgb2.b+', 0.75)'
+        try { title.querySelector('p').style.color  = 'rgba('+rgb2.r+','+rgb2.g+','+rgb2.b+', 0.75)' } catch (e) {}
         function setColors (el) {
-          el.style.background = 'rgb('+rgb.r+','+rgb.g+','+rgb.b+')'
-          el.style.color = textcolor
+          if (el.classList.contains('selected')) {
+            el.style.color = 'rgb('+rgb.r+','+rgb.g+','+rgb.b+')'
+            el.style.background = 'rgba('+rgb.r+','+rgb.g+','+rgb.b+',0.5)'
+          } else {
+            el.style.color = (avg < 128) ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.5)'
+            el.style.background = 'rgb('+rgb.r+','+rgb.g+','+rgb.b+')'
+          }
         }
         Array.prototype.forEach.call(totem.querySelectorAll('.corner'), setColors)
       }
@@ -359,24 +364,12 @@ module.exports = function (app) {
       })
     }
     
-    function follow (e) {
+    function toggleFollow (e) {
       e.preventDefault()
-      if (!graphs.follow[app.myid][pid]) {
-        app.updateContact(pid, { following: true }, function(err) {
-          if (err) swal('Error While Publishing', err.message, 'error')
-          else app.refreshPage()
-        })
-      }
-    }
-
-    function unfollow (e) {
-      e.preventDefault()
-      if (graphs.follow[app.myid][pid]) {
-        app.updateContact(pid, { following: false }, function(err) {
-          if (err) swal('Error While Publishing', err.message, 'error')
-          else app.refreshPage()
-        })
-      }
+      app.updateContact(pid, { following: !isFollowing }, function(err) {
+        if (err) swal('Error While Publishing', err.message, 'error')
+        else app.refreshPage()
+      })
     }
 
     function rename (e) {
