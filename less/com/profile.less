@@ -1,6 +1,6 @@
 
 .profile-controls {
-  margin: 1em;
+  margin: 5px 1em;
   
   h2, p {
     margin: 0;
@@ -12,29 +12,20 @@
     display: inline-block;
     margin-right: 1em;
   }
-  .subpage-btns {
-    position: relative;
-    top: -9px;
-    left: 9px;
-  }
-  .subpage-btn {
-    position: relative;
-    display: inline-block;
-    width: 84px;
-    height: 60px;
-    margin: 1px;
-    border-radius: 2px;
-    font-size: 22px;
-    background: #282C32;
-    color: #2778E2;
-    &:last-child {
-      width: 83px;
+  .title {
+    width: 275px;
+    text-align: center;
+    margin: 15px 0 30px;
+
+    h2 {
+      font-weight: bold;
     }
-    span {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
+    h3 {
+      margin: 1px 0 0;
+      font-size: 21px;
+      .user-link {
+        color: inherit;
+      }
     }
   }
 
@@ -48,19 +39,19 @@
       outline: 5px solid #eee;
     }
     &:hover::before {
-      content: 'Change Profile Pic';
+      content: attr(data-overlay);
       position: absolute;
       top: 50%;
       left: 50%;
       z-index: 1000;
-      transform: translate(-50%, -50%);
-      width: 180px;
-      padding: 1em 2em;
-
-      font-weight: 100;
+      transform: translate(-50%, 0);
+      padding: 8px 15px;
+      white-space: pre;
       color: #fff;
-      background: rgba(0,0,0,0.75);
-      border-radius: 2px;
+      background: rgba(0, 0, 0, 0.75);
+      border-radius: 10px;
+      font-size: 23px;
+      font-weight: 100;
     }
   }
 
