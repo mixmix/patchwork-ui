@@ -202,7 +202,7 @@ module.exports = function (app) {
           totem,
           title,
           // h('.section', h('p', followbtn), h('p', trustbtn), h('p', flagbtn)),
-          com.friendsHexagrid(app, { nrow: 4 })/*,
+          h('.relations', com.friendsHexagrid(app, { nrow: 4 }))/*,
           (givenNames.length)
             ? h('.section',
               h('strong', 'Nicknames'),
