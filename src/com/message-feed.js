@@ -175,7 +175,7 @@ module.exports = function (app, opts) {
   function vote (e, el, vote) {
     e.preventDefault()
     e.stopPropagation()
-    var row = el.parentNode.parentNode.parentNode.parentNode // a bit brittle...
+    var row = el.parentNode.parentNode.parentNode.parentNode.parentNode // a bit brittle...
     var key = row.dataset.msg
     if (key) {
       // get current state by checking if the control is selected
