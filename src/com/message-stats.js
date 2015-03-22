@@ -83,7 +83,7 @@ module.exports = function (app, msg, opts) {
     var newvote = (wasSelected) ? 0 : btnVote // toggle behavior: unset
     el.classList.toggle('selected') // optimistice ui update
     // :TODO: use msg-schemas
-    app.ssb.publish({ type: 'vote', subject: { msg: msg.key }, vote: newvote }, function (err) {
+    app.ssb.publish({ type: 'vote', voteTopic: { msg: msg.key }, vote: newvote }, function (err) {
       voting = false
       if (err) {
         el.classList.toggle('selected') // undo

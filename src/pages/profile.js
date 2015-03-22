@@ -10,24 +10,21 @@ module.exports = function (app) {
   var view     = app.page.qs.view || 'feed'
   var queryStr = app.page.qs.q || ''
   var list     = app.page.qs.list || 'posts'
+  var profile  = app.profiles[pid]
+  var name     = com.userName(app, pid)
 
   var done = multicb({ pluck: 1 })
   app.ssb.friends.all('follow', done())
-  app.ssb.friends.all('trust', done())
+  u.fetchFeedVotes(app, pid, done())
   done(function (err, datas) {
-    var graphs = {
-      follow: datas[0],
-      trust:  datas[1]
-    }
+    var graphs = { follow: datas[0] }
+    var voteStats = datas[1]
     graphs.follow[app.myid] = graphs.follow[app.myid] || {}
-    graphs.trust [app.myid] = graphs.trust [app.myid] || {}
+    var followers = inEdges(graphs.follow, true)
     var isFollowing = graphs.follow[app.myid][pid]
-    var profile = app.profiles[pid]
-    var name = com.userName(app, pid)
-    var profileImg = com.profilePicUrl(app, pid)
-    var primary
 
     // secondary feeds (applications)
+    var primary
     if (profile && profile.primary) {
       primary = profile.primary
       if (profile.self.name) // use own name
@@ -60,25 +57,9 @@ module.exports = function (app) {
         h('small.text-muted', 'Beware of trolls pretending to be people you know!')
       )
     }
-
-    // profile controls
-    /*var followbtn, trustbtn, flagbtn, renamebtn
-    renamebtn = h('button.btn.btn-primary', {title: 'Rename', onclick: rename}, com.icon('pencil'))
-    if (pid !== app.myid) {
-      followbtn = (isFollowing)
-        ? h('button.btn.btn-primary', { onclick: unfollow }, com.icon('minus'), ' Unfollow')
-        : h('button.btn.btn-primary', { onclick: follow }, com.icon('plus'), ' Follow')
-      trustbtn = (graphs.trust[app.myid][pid] == 1)
-        ? h('button.btn.btn-primary', { onclick: detrust }, com.icon('remove'), ' Untrust')
-        : (!graphs.trust[app.myid][pid])
-          ? h('button.btn.btn-primary', { onclick: trustPrompt }, com.icon('lock'), ' Trust')
-          : ''
-      flagbtn = (graphs.trust[app.myid][pid] == -1)
-        ? h('button.btn.btn-primary', { onclick: detrust }, com.icon('ok'), ' Unflag')
-        : (!graphs.trust[app.myid][pid])
-          ? h('button.btn.btn-primary',{ onclick: flagPrompt },  com.icon('flag'), ' Flag')
-          : ''
-    }*/
+    function followedByMe (id) {
+      return graphs.follow[app.myid][id]
+    }
 
     var content
     if (view == 'pics') {
@@ -121,44 +102,13 @@ module.exports = function (app) {
       ]
     }
 
-    // given names
-    var givenNames = []
-    if (profile) {
-      if (profile.self.name)
-        givenNames.push(h('li', profile.self.name + ' (self-assigned)'))
-      Object.keys(profile.assignedBy).forEach(function(userid) {
-        var given = profile.assignedBy[userid]
-        if (given.name)
-          givenNames.push(h('li', given.name + ' by ', com.userlinkThin(userid, app.names[userid])))
-      })
-    }
-
-    // follows, trusts, blocks
-    var follows   = outEdges(graphs.follow, true, notTheirSecondary)
-    var followers = inEdges (graphs.follow, true, notTheirSecondary)
-    var trusts    = outEdges(graphs.trust,  1,    notTheirSecondary)
-    var trusters  = inEdges (graphs.trust,  1,    notTheirSecondary)
-    var flags     = outEdges(graphs.trust,  -1,   notTheirSecondary)
-    var flaggers  = inEdges (graphs.trust,  -1,   notTheirSecondary)
-
-    // applications
-    var apps = []
-    if (profile) {
-      for (var sid in profile.secondaries) {
-        var sec = app.profiles[sid]
-        if (sec)
-          apps.push(h('li', com.userlinkThin(sid, sec.self.name)))
-        else
-          apps.push(h('li', com.userlinkThin(sid)))
-      }
-    }
-
     // profile ctrl totem
+    var profileImg = com.profilePicUrl(app, pid)
     var totem = h('.totem',
       h('a.corner.topleft'+(isFollowing?'.selected':''), { href: '#', onclick: toggleFollow }, h('.corner-inner', followers.length, com.icon('user'))),
       // h('a.corner.topright', h('.corner-inner', com.icon('lock'), trusters.length)), :TODO: use this?
-      h('a.corner.botleft', h('.corner-inner', 15, com.icon('triangle-top'))),
-      h('a.corner.botright', h('.corner-inner', com.icon('triangle-bottom'), 3)),
+      h('a.corner.botleft'+(voteStats.uservote===1?'.selected':''), { href: '#', onclick: makeVoteCb(1) }, h('.corner-inner', voteStats.upvoters.length, com.icon('triangle-top'))),
+      h('a.corner.botright'+(voteStats.uservote===-1?'.selected':''), { href: '#', onclick: makeVoteCb(-1) }, h('.corner-inner', com.icon('triangle-bottom'), voteStats.downvoters.length)),
       h('a.profpic', { href: makeUri({ view: 'pics' }) }, com.hexagon(profileImg, 275)))
 
     // profile title
@@ -206,22 +156,8 @@ module.exports = function (app) {
         h('.profile-controls',
           totem,
           title,
-          // h('.section', h('p', followbtn), h('p', trustbtn), h('p', flagbtn)),
-          h('.relations', com.friendsHexagrid(app, { nrow: 4 }))/*,
-          (givenNames.length)
-            ? h('.section',
-              h('strong', 'Nicknames'),
-              h('br'),
-              h('ul.list-unstyled', givenNames)
-            )
-            : '',
-          trusters.length  ? h('.section', h('strong.text-success', com.icon('ok'), ' Trusted by'), h('br'), h('ul.list-unstyled', trusters)) : '',
-          flaggers.length  ? h('.section', h('strong.text-danger', com.icon('flag'), ' Flagged by'), h('br'), h('ul.list-unstyled', flaggers)) : '',
-          followers.length ? h('.section', h('strong', 'Followed By'), h('br'), h('ul.list-unstyled', followers)) : '',
-          apps.length      ? h('.section', h('strong', 'Applications'), h('br'), h('ul.list-unstyled', apps)) : '',
-          follows.length   ? h('.section', h('strong', 'Followed'), h('br'), h('ul.list-unstyled', follows)) : '',
-          trusts.length    ? h('.section', h('strong', 'Trusted'), h('br'), h('ul.list-unstyled', trusts)) : '',
-          flags.length     ? h('.section', h('strong', 'Flagged'), h('br'), h('ul.list-unstyled', flags)) : ''*/))))
+          (voteStats.upvoters.length) ? h('.relations', h('h4', com.icon('triangle-top'), 's'), com.userHexagrid(app, voteStats.upvoters, { nrow: 4 })) : '',
+          (voteStats.downvoters.length) ? h('.relations', h('h4', com.icon('triangle-bottom'), 's'), com.userHexagrid(app, voteStats.downvoters, { nrow: 4 })) : ''))))
 
     function makeUri (opts) {
       var qs=''
@@ -247,14 +183,6 @@ module.exports = function (app) {
         h('a', { href: '#', onclick: setProfilePic(pic) }, h('img', { src: '/ext/'+pic.ext })),
         h('p', 'by ', com.userlinkThin(author, authorName))
       )
-    }
-
-    function notTheirSecondary (id) {
-      return !profile.secondaries[id]
-    }
-
-    function followedByMe (id) {
-      return graphs.follow[app.myid][id]
     }
 
     function outEdges (g, v, filter) {
@@ -315,61 +243,25 @@ module.exports = function (app) {
 
     // handlers
 
-    function trustPrompt (e) {
-      e.preventDefault()
-      swal({
-        title: 'Trust '+u.escapePlain(name)+'?',
-        text: [
-          'Use their data (names, trusts, flags) in your own account?',
-          'Only do this if you know this account is your friend\'s, you trust them, and you think other people should too!'
-        ].join(' '),
-        type: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#12b812',
-        confirmButtonText: 'Trust'
-      }, function() {
-        app.updateContact(pid, { trust: 1 }, function (err) {
-          if (err) swal('Error While Publishing', err.message, 'error')
-          else app.refreshPage()
-        })
-      })
-    }
-
-    function flagPrompt (e) {
-      e.preventDefault()
-      swal({
-        title: 'Flag '+u.escapePlain(name)+'?',
-        text: [
-          'Warn people about this user?',
-          'This will hurt their network reputation and cause fewer people to trust them.',
-          'Only do this if you believe they are a spammer, troll, or attacker.'
-        ].join(' '),
-        type: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#d9534f',
-        confirmButtonText: 'Flag'
-      }, function() {
-        app.updateContact(pid, { trust: -1 }, function (err) {
-          if (err) swal('Error While Publishing', err.message, 'error')
-          else app.refreshPage()
-        })
-      })
-    }
-
-    function detrust (e) {
-      e.preventDefault()
-      app.updateContact(pid, { trust: 0 }, function(err) {
-        if (err) swal('Error While Publishing', err.message, 'error')
-        else app.refreshPage()
-      })
-    }
-    
     function toggleFollow (e) {
       e.preventDefault()
       app.updateContact(pid, { following: !isFollowing }, function(err) {
         if (err) swal('Error While Publishing', err.message, 'error')
         else app.refreshPage()
       })
+    }
+
+    function makeVoteCb (newvote) {
+      return function (e) {
+        e.preventDefault()
+        // :TODO: use msg-schemas
+        if (voteStats.uservote === newvote) // toggle behavior
+          newvote = 0
+        app.ssb.publish({ type: 'vote', voteTopic: { feed: pid }, vote: newvote }, function (err) {
+          if (err) swal('Error While Publishing', err.message, 'error')
+          else app.refreshPage()
+        })
+      }
     }
 
     function rename (e) {

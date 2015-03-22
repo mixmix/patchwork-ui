@@ -186,7 +186,7 @@ module.exports = function (app, opts) {
         vote = 0 // toggle behavior: unset
       el.classList.toggle('selected') // do optimistic update for ui smoothness
       // :TODO: use msg-schemas
-      app.ssb.publish({ type: 'vote', subject: { msg: key }, vote: vote }, function (err) {
+      app.ssb.publish({ type: 'vote', voteTopic: { msg: key }, vote: vote }, function (err) {
         if (err) swal('Error While Publishing', err.message, 'error')
         else {
           com.messageSummary.fetchRowState(app, row, key)

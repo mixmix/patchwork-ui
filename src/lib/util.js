@@ -1,3 +1,5 @@
+var pull = require('pull-stream')
+
 exports.getJson = function(path, cb) {
   var xhr = new XMLHttpRequest()
   xhr.open('GET', path, true)
@@ -109,8 +111,48 @@ exports.getAverageRGB = function (imgEl) {
   return rgb
 }
 
+function votesFetcher (fetchFn) {
+  return function (app, voteTopic, cb) {
+    var stats = { uservote: 0, voteTally: 0, votes: {}, upvoters: [], downvoters: [] }
+    pull(
+      app.ssb[fetchFn]({ id: voteTopic, rel: 'voteTopic' }), 
+      pull.asyncMap(function (link, cb2) { app.ssb.get(link.message, cb2) }),
+      pull.collect(function (err, voteMsgs) {
+        if (err)
+          return cb(err)
+        // collect final votes
+        voteMsgs.forEach(function (m) {
+          if (m.content.type !== 'vote')
+            return
+          if (m.content.vote === 1 || m.content.vote === 0 || m.content.vote === -1)
+            stats.votes[m.author] = m.content.vote
+        })
+        // tally the votes
+        for (var author in stats.votes) {
+          var v = stats.votes[author]
+          if (v === 1) {
+            stats.upvoters.push(author)
+            stats.voteTally++
+          }
+          else if (v === -1) {
+            stats.downvoters.push(author)
+            stats.voteTally--
+          }
+        }
+        stats.uservote = stats.votes[app.myid] || 0
+        cb(null, stats)
+      })
+    )
+  }
+}
+
+// :TODO: cant do fetchMsgVotes because the messagesLinkedToMessage fetcher works differently than all the others
+//        see https://github.com/ssbc/secure-scuttlebutt/issues/99
+exports.fetchFeedVotes = votesFetcher('messagesLinkedToFeed')
+exports.fetchExtVotes  = votesFetcher('feedsLinkedToExternal')
+
 exports.calcMessageStats = function (app, thread, opts) {
-  var stats = { comments: 0, voteTally: 0, votes: {} }
+  var stats = { comments: 0, uservote: 0, voteTally: 0, votes: {} }
 
   function process (t, depth) {
     if (!t.related)
@@ -139,10 +181,12 @@ exports.calcMessageStats = function (app, thread, opts) {
   // now tally the votes
   for (var author in stats.votes) {
     var v = stats.votes[author]
-    if (v === 1)
+    if (v === 1) {
       stats.voteTally++
-    else if (v === -1)
+    }
+    else if (v === -1) {
       stats.voteTally--
+    }
   }
   stats.uservote = stats.votes[app.myid] || 0
 
