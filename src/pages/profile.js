@@ -127,6 +127,12 @@ module.exports = function (app) {
       var rgb = u.getAverageRGB(tmpImg)
       if (rgb) {
         var avg = (rgb.r + rgb.g + rgb.b) / 3
+        while (avg > 128) {
+          rgb.r = (rgb.r/2)|0
+          rgb.g = (rgb.g/2)|0
+          rgb.b = (rgb.b/2)|0
+          avg = (rgb.r + rgb.g + rgb.b) / 3
+        }
         var rgb2 = { r: ((rgb.r/2)|0), g: ((rgb.g/2)|0), b: ((rgb.b/2)|0) }
 
         try { title.querySelector('h2').style.color = 'rgb('+rgb2.r+','+rgb2.g+','+rgb2.b+')' } catch (e) {}
@@ -137,7 +143,7 @@ module.exports = function (app) {
             el.style.color = 'rgb('+rgb.r+','+rgb.g+','+rgb.b+')'
             el.style.background = 'rgba('+rgb.r+','+rgb.g+','+rgb.b+',0.5)'
           } else {
-            el.style.color = (avg < 128) ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.5)'
+            el.style.color = 'rgba(255,255,255,0.5)'//(avg < 128) ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.5)'
             el.style.background = 'rgb('+rgb.r+','+rgb.g+','+rgb.b+')'
           }
         }
