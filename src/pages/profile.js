@@ -3,31 +3,28 @@ var h = require('hyperscript')
 var multicb = require('multicb')
 var schemas = require('ssb-msg-schemas')
 var com = require('../com')
-var util = require('../lib/util')
+var u = require('../lib/util')
 
 module.exports = function (app) {
   var pid      = app.page.param
   var view     = app.page.qs.view || 'feed'
   var queryStr = app.page.qs.q || ''
   var list     = app.page.qs.list || 'posts'
+  var profile  = app.profiles[pid]
+  var name     = com.userName(app, pid)
 
   var done = multicb({ pluck: 1 })
   app.ssb.friends.all('follow', done())
-  app.ssb.friends.all('trust', done())
+  u.fetchFeedVotes(app, pid, done())
   done(function (err, datas) {
-    var graphs = {
-      follow: datas[0],
-      trust:  datas[1]
-    }
+    var graphs = { follow: datas[0] }
+    var voteStats = datas[1]
     graphs.follow[app.myid] = graphs.follow[app.myid] || {}
-    graphs.trust [app.myid] = graphs.trust [app.myid] || {}
+    var followers = inEdges(graphs.follow, true)
     var isFollowing = graphs.follow[app.myid][pid]
-    var profile = app.profiles[pid]
-    var name = com.userName(app, pid)
-    var profileImg = com.profilePicUrl(app, pid)
-    var primary
 
     // secondary feeds (applications)
+    var primary
     if (profile && profile.primary) {
       primary = profile.primary
       if (profile.self.name) // use own name
@@ -60,24 +57,8 @@ module.exports = function (app) {
         h('small.text-muted', 'Beware of trolls pretending to be people you know!')
       )
     }
-
-    // profile controls
-    var followbtn, trustbtn, flagbtn, renamebtn
-    renamebtn = h('button.btn.btn-primary', {title: 'Rename', onclick: rename}, com.icon('pencil'))
-    if (pid !== app.myid) {
-      followbtn = (isFollowing)
-        ? h('button.btn.btn-primary', { onclick: unfollow }, com.icon('minus'), ' Unfollow')
-        : h('button.btn.btn-primary', { onclick: follow }, com.icon('plus'), ' Follow')
-      trustbtn = (graphs.trust[app.myid][pid] == 1)
-        ? h('button.btn.btn-primary', { onclick: detrust }, com.icon('remove'), ' Untrust')
-        : (!graphs.trust[app.myid][pid])
-          ? h('button.btn.btn-primary', { onclick: trustPrompt }, com.icon('lock'), ' Trust')
-          : ''
-      flagbtn = (graphs.trust[app.myid][pid] == -1)
-        ? h('button.btn.btn-primary', { onclick: detrust }, com.icon('ok'), ' Unflag')
-        : (!graphs.trust[app.myid][pid])
-          ? h('button.btn.btn-primary',{ onclick: flagPrompt },  com.icon('flag'), ' Flag')
-          : ''
+    function followedByMe (id) {
+      return graphs.follow[app.myid][id]
     }
 
     var content
@@ -121,72 +102,68 @@ module.exports = function (app) {
       ]
     }
 
-    // given names
-    var givenNames = []
-    if (profile) {
-      if (profile.self.name)
-        givenNames.push(h('li', profile.self.name + ' (self-assigned)'))
-      Object.keys(profile.assignedBy).forEach(function(userid) {
-        var given = profile.assignedBy[userid]
-        if (given.name)
-          givenNames.push(h('li', given.name + ' by ', com.userlinkThin(userid, app.names[userid])))
-      })
-    }
+    // profile ctrl totem
+    var profileImg = com.profilePicUrl(app, pid)
+    var totem = h('.totem',
+      h('a.corner.topleft'+(isFollowing?'.selected':''), { href: '#', onclick: toggleFollow }, h('.corner-inner', followers.length, com.icon('user'))),
+      // h('a.corner.topright', h('.corner-inner', com.icon('lock'), trusters.length)), :TODO: use this?
+      h('a.corner.botleft'+(voteStats.uservote===1?'.selected':''), { href: '#', onclick: makeVoteCb(1) }, h('.corner-inner', voteStats.upvoters.length, com.icon('triangle-top'))),
+      h('a.corner.botright'+(voteStats.uservote===-1?'.selected':''), { href: '#', onclick: makeVoteCb(-1) }, h('.corner-inner', com.icon('triangle-bottom'), voteStats.downvoters.length)),
+      h('a.profpic', { href: makeUri({ view: 'pics' }) }, com.hexagon(profileImg, 275)))
 
-    // follows, trusts, blocks
-    var follows   = outEdges(graphs.follow, true, notTheirSecondary)
-    var followers = inEdges (graphs.follow, true, notTheirSecondary)
-    var trusts    = outEdges(graphs.trust,  1,    notTheirSecondary)
-    var trusters  = inEdges (graphs.trust,  1,    notTheirSecondary)
-    var flags     = outEdges(graphs.trust,  -1,   notTheirSecondary)
-    var flaggers  = inEdges (graphs.trust,  -1,   notTheirSecondary)
+    // profile title
+    var joinDate = (profile) ? u.prettydate(new Date(profile.createdAt), true) : '-'
+    var title = h('.title',
+      h('h2', name, com.nameConfidence(pid, app)),
+      (primary) ?
+        h('h3', com.user(app, primary), '\'s feed') :
+        '',
+      h('p.text-muted', 'joined '+joinDate))
 
-    // applications
-    var apps = []
-    if (profile) {
-      for (var sid in profile.secondaries) {
-        var sec = app.profiles[sid]
-        if (sec)
-          apps.push(h('li', com.userlinkThin(sid, sec.self.name)))
-        else
-          apps.push(h('li', com.userlinkThin(sid)))
+    // totem colors derived from the image
+    var tmpImg = document.createElement('img')
+    tmpImg.src = profileImg
+    tmpImg.onload = function () {
+      var rgb = u.getAverageRGB(tmpImg)
+      if (rgb) {
+        var avg = (rgb.r + rgb.g + rgb.b) / 3
+        if (avg > 128) {
+          rgb.r = (rgb.r/2)|0
+          rgb.g = (rgb.g/2)|0
+          rgb.b = (rgb.b/2)|0
+          avg = (rgb.r + rgb.g + rgb.b) / 3
+        }
+        var rgb2 = { r: ((rgb.r/2)|0), g: ((rgb.g/2)|0), b: ((rgb.b/2)|0) }
+
+        try { title.querySelector('h2').style.color = 'rgb('+rgb2.r+','+rgb2.g+','+rgb2.b+')' } catch (e) {}
+        try { title.querySelector('h3').style.color = 'rgba('+rgb2.r+','+rgb2.g+','+rgb2.b+', 0.75)' } catch (e) {}
+        try { title.querySelector('p').style.color  = 'rgba('+rgb2.r+','+rgb2.g+','+rgb2.b+', 0.75)' } catch (e) {}
+        function setColors (el) {
+          if (el.classList.contains('selected')) {
+            el.style.color = 'rgb('+rgb.r+','+rgb.g+','+rgb.b+')'
+            el.style.background = 'rgba('+rgb.r+','+rgb.g+','+rgb.b+',0.5)'
+          } else {
+            el.style.color = 'rgba(255,255,255,0.5)'//(avg < 128) ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.5)'
+            el.style.background = 'rgb('+rgb.r+','+rgb.g+','+rgb.b+')'
+          }
+        }
+        Array.prototype.forEach.call(totem.querySelectorAll('.corner'), setColors)
       }
     }
 
     // render page
-    var joinDate = (profile) ? util.prettydate(new Date(profile.createdAt), true) : '-'
     app.setPage('profile', h('.row',
       h('.col-xs-1', com.sidenav(app)),
       h('.col-xs-8', 
         nameTrustDlg,
         content),
-      h('.col-xs-3.right-column.full-height',
-        h('.right-column-inner',
-          com.notifications(app),
-          h('.profile-controls',
-            h('.section',
-              h('a.profpic', { href: makeUri({ view: 'pics' }) }, h('img', { src: profileImg })),
-              h('h2', name, com.nameConfidence(pid, app), renamebtn),
-              (primary) ?
-                h('h2', h('small', com.user(app, primary), '\'s feed')) :
-                '',
-              h('p.text-muted', 'joined '+joinDate)
-            ),
-            h('.section', h('p', followbtn), h('p', trustbtn), h('p', flagbtn)),
-            (givenNames.length)
-              ? h('.section',
-                h('strong', 'Nicknames'),
-                h('br'),
-                h('ul.list-unstyled', givenNames)
-              )
-              : '',
-            trusters.length  ? h('.section', h('strong.text-success', com.icon('ok'), ' Trusted by'), h('br'), h('ul.list-unstyled', trusters)) : '',
-            flaggers.length  ? h('.section', h('strong.text-danger', com.icon('flag'), ' Flagged by'), h('br'), h('ul.list-unstyled', flaggers)) : '',
-            followers.length ? h('.section', h('strong', 'Followed By'), h('br'), h('ul.list-unstyled', followers)) : '',
-            apps.length      ? h('.section', h('strong', 'Applications'), h('br'), h('ul.list-unstyled', apps)) : '',
-            follows.length   ? h('.section', h('strong', 'Followed'), h('br'), h('ul.list-unstyled', follows)) : '',
-            trusts.length    ? h('.section', h('strong', 'Trusted'), h('br'), h('ul.list-unstyled', trusts)) : '',
-            flags.length     ? h('.section', h('strong', 'Flagged'), h('br'), h('ul.list-unstyled', flags)) : '')))))
+      h('.col-xs-3.full-height',
+        com.notifications(app),
+        h('.profile-controls',
+          totem,
+          title,
+          (voteStats.upvoters.length) ? h('.relations', h('h4', com.icon('triangle-top'), 's'), com.userHexagrid(app, voteStats.upvoters, { nrow: 4 })) : '',
+          (voteStats.downvoters.length) ? h('.relations', h('h4', com.icon('triangle-bottom'), 's'), com.userHexagrid(app, voteStats.downvoters, { nrow: 4 })) : ''))))
 
     function makeUri (opts) {
       var qs=''
@@ -212,14 +189,6 @@ module.exports = function (app) {
         h('a', { href: '#', onclick: setProfilePic(pic) }, h('img', { src: '/ext/'+pic.ext })),
         h('p', 'by ', com.userlinkThin(author, authorName))
       )
-    }
-
-    function notTheirSecondary (id) {
-      return !profile.secondaries[id]
-    }
-
-    function followedByMe (id) {
-      return graphs.follow[app.myid][id]
     }
 
     function outEdges (g, v, filter) {
@@ -280,69 +249,21 @@ module.exports = function (app) {
 
     // handlers
 
-    function trustPrompt (e) {
+    function toggleFollow (e) {
       e.preventDefault()
-      swal({
-        title: 'Trust '+util.escapePlain(name)+'?',
-        text: [
-          'Use their data (names, trusts, flags) in your own account?',
-          'Only do this if you know this account is your friend\'s, you trust them, and you think other people should too!'
-        ].join(' '),
-        type: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#12b812',
-        confirmButtonText: 'Trust'
-      }, function() {
-        app.updateContact(pid, { trust: 1 }, function (err) {
-          if (err) swal('Error While Publishing', err.message, 'error')
-          else app.refreshPage()
-        })
-      })
-    }
-
-    function flagPrompt (e) {
-      e.preventDefault()
-      swal({
-        title: 'Flag '+util.escapePlain(name)+'?',
-        text: [
-          'Warn people about this user?',
-          'This will hurt their network reputation and cause fewer people to trust them.',
-          'Only do this if you believe they are a spammer, troll, or attacker.'
-        ].join(' '),
-        type: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#d9534f',
-        confirmButtonText: 'Flag'
-      }, function() {
-        app.updateContact(pid, { trust: -1 }, function (err) {
-          if (err) swal('Error While Publishing', err.message, 'error')
-          else app.refreshPage()
-        })
-      })
-    }
-
-    function detrust (e) {
-      e.preventDefault()
-      app.updateContact(pid, { trust: 0 }, function(err) {
+      app.updateContact(pid, { following: !isFollowing }, function(err) {
         if (err) swal('Error While Publishing', err.message, 'error')
         else app.refreshPage()
       })
     }
-    
-    function follow (e) {
-      e.preventDefault()
-      if (!graphs.follow[app.myid][pid]) {
-        app.updateContact(pid, { following: true }, function(err) {
-          if (err) swal('Error While Publishing', err.message, 'error')
-          else app.refreshPage()
-        })
-      }
-    }
 
-    function unfollow (e) {
-      e.preventDefault()
-      if (graphs.follow[app.myid][pid]) {
-        app.updateContact(pid, { following: false }, function(err) {
+    function makeVoteCb (newvote) {
+      return function (e) {
+        e.preventDefault()
+        // :TODO: use msg-schemas
+        if (voteStats.uservote === newvote) // toggle behavior
+          newvote = 0
+        app.ssb.publish({ type: 'vote', voteTopic: { feed: pid }, vote: newvote }, function (err) {
           if (err) swal('Error While Publishing', err.message, 'error')
           else app.refreshPage()
         })

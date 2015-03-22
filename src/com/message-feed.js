@@ -36,17 +36,12 @@ module.exports = function (app, opts) {
     // update message states
     var stateObj = { read: false }
     Array.prototype.forEach.call(feedState.tbody.querySelectorAll('tr'), function (el) {   
-      var key = el.dataset.msg   
-      if (!key) return   
-      app.ssb.phoenix.isRead(key, function (err, read) {
-        stateObj.read = !!read
-        com.messageSummary.setRowState(el, stateObj)   
-      })   
+      com.messageSummary.fetchRowState(app, el)
     })
   }
 
   feedContainer = h('.message-feed-container.full-height', h('table.message-feed', feedState.tbody))
-  feedState.tbody.onclick = navtoMsg
+  feedState.tbody.onclick = onclick
   feedContainer.onscroll = onscroll
 
   // message fetch
@@ -151,23 +146,53 @@ module.exports = function (app, opts) {
 
   // handlers
 
-  function navtoMsg (e) {
-    // clicked on a row? abort if clicked on a sub-link
+  // bubble-up click handler to make re-binding events easier when dom elements used from memory
+  function onclick (e) {
+    // find a click target
     var el = e.target
     while (el) {
-      if (el.tagName == 'A' || el.className == 'message-feed') {
-        return
-      }
-      if (el.classList.contains('message-summary'))
+      if (el.tagName == 'A' || el.className == 'message-feed' || el.classList.contains('message-summary'))
         break
       el = el.parentNode
     }
 
+    // act on el
+    if (el.classList.contains('message-summary'))
+      navToMsg(e, el)
+    if (el.classList.contains('upvote'))
+      vote(e, el, 1)
+    if (el.classList.contains('downvote'))
+      vote(e, el, -1)
+  }
+
+  function navToMsg (e, el) {
     e.preventDefault()
     e.stopPropagation()
     var key = el.dataset.msg
     if (key)
       window.location.hash = '#/msg/'+key
+  }
+  function vote (e, el, vote) {
+    e.preventDefault()
+    e.stopPropagation()
+    var row = el.parentNode.parentNode.parentNode.parentNode.parentNode // a bit brittle...
+    var key = row.dataset.msg
+    if (key) {
+      // get current state by checking if the control is selected
+      // this won't always be the most recent info, but it will be close and harmless to get wrong,
+      // plus it will reflect what the user expects to happen happening
+      var selected = el.classList.contains('selected')
+      if (selected)
+        vote = 0 // toggle behavior: unset
+      el.classList.toggle('selected') // do optimistic update for ui smoothness
+      // :TODO: use msg-schemas
+      app.ssb.publish({ type: 'vote', voteTopic: { msg: key }, vote: vote }, function (err) {
+        if (err) swal('Error While Publishing', err.message, 'error')
+        else {
+          com.messageSummary.fetchRowState(app, row, key)
+        }
+      })
+    }
   }
 
   function onscroll (e) {

@@ -95,11 +95,6 @@ function getSummary (app, msg, opts) {
 var attachmentOpts = { toext: true, rel: 'attachment' }
 module.exports = function (app, msg, opts) {
 
-  var done = multicb({ pluck: 1 })
-  app.ssb.phoenix.isRead(msg.key, function (err, read) {
-    setRowState(msgSummary, { read: !!read })
-  })
-
   // markup
 
   var content = getSummary(app, msg, opts)
@@ -109,20 +104,35 @@ module.exports = function (app, msg, opts) {
 
   var msgSummary = h('tr.message-summary', { 'data-msg': msg.key },
     h('td', com.userHexagon(app, msg.value.author, 30)),
-    h('td', content)
-  )
+    h('td', content, com.messageStats(app)))
+
+  fetchRowState(app, msgSummary, msg.key)
 
   return msgSummary
 }
 
+var statsOpts = { recursive: true }
+var fetchRowState =
+module.exports.fetchRowState = function (app, el, mid) {
+  mid = mid || el.dataset.msg
+  if (!mid) return
+  app.ssb.relatedMessages({ id: mid, count: true }, function (err, thread) {
+    if (thread)
+      setRowState(el, u.calcMessageStats(app, thread, statsOpts))
+  })
+}
+
 var setRowState =
-module.exports.setRowState = function (el, state) {   
-  if ('read' in state) {
-    if (state.read) {   
-      el.classList.add('read')   
-    } else {   
-      el.classList.remove('read')
-    }
+module.exports.setRowState = function (el, state) {
+  if ('comments' in state)
+    el.querySelector('.message-stats .comments').dataset.amt = state.comments
+  if ('voteTally' in state)
+    el.querySelector('.message-stats .vote-tally').dataset.amt = state.voteTally
+  if ('uservote' in state) {
+    var up   = (state.uservote === 1)  ? 'add' : 'remove'
+    var down = (state.uservote === -1) ? 'add' : 'remove'
+    el.querySelector('.message-stats .upvote').classList[up]('selected')
+    el.querySelector('.message-stats .downvote').classList[down]('selected')
   }
 }
 

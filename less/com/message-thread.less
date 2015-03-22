@@ -69,6 +69,22 @@
       margin-top: 5px;
       margin-right: 5px;
     }
+    .subscribe-toggle {
+      min-width: 130px;
+
+      &:after {
+        content: ' Unsubscribed';
+      }
+      &:hover:after {
+        content: ' Subscribe';
+      }
+      &.selected:after {
+        content: ' Subscribed';
+      }
+      &.selected:hover:after {
+        content: ' Unsubscribe';
+      }
+    }
     .message {
       margin: 1em 2em;
     }
@@ -76,7 +92,7 @@
       &:empty {
         display: none;
       }
-      padding: 0 2em 2em;
+      margin: 0 2em 1em;
       a {
         margin-right: 1em;
         img {
@@ -86,6 +102,9 @@
           border-radius: 2px;
         }
       }
+    }
+    .message-stats {
+      margin: 0 2em 1em;
     }
   }
   .message-replies {

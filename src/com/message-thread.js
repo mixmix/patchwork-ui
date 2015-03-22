@@ -20,6 +20,7 @@ function getContent (app, msg) {
   } catch (e) { }
 }
 
+var statsOpts = { handlers: true }
 module.exports = function (app, thread, opts) {
 
   // markup
@@ -27,15 +28,15 @@ module.exports = function (app, thread, opts) {
   var content = getContent(app, thread) || h('table', com.prettyRaw.table(app, thread.value.content))
   var viz = com.messageVisuals(app, thread)
   var attachments = com.messageAttachments(app, thread)
+  var stats = com.messageStats(app, thread, statsOpts)
 
   opts.onRender && opts.onRender(thread)
 
-  var subscribeBtn = h('a', { href: '#', onclick: onsubscribe })
+  var subscribeBtn = h('a.subscribe-toggle', { href: '#', onclick: onsubscribe })
   var threadInner = h(viz.cls,
     h('div.in-response-to'), // may be populated by the message page
     h('.message-thread-top',
       h('ul.threadmeta.list-inline',
-        // h('li.type', com.icon(viz.icon)),
         h('li.hex', com.userHexagon(app, thread.value.author)),
         h('li', com.userlink(thread.value.author, app.names[thread.value.author]), com.nameConfidence(thread.value.author, app)),
         h('li', com.a('#/', u.prettydate(new Date(thread.value.timestamp), true), { title: 'View message thread' })),
@@ -44,7 +45,8 @@ module.exports = function (app, thread, opts) {
         h('li.button.pull-right', subscribeBtn),
         h('li.button.pull-right', h('a', { href: '/msg/'+thread.key, target: '_blank' }, 'as JSON'))),
       h('.message', content),
-      h('.attachments', attachments)))
+      h('.attachments', attachments),
+      stats))
 
   app.ssb.phoenix.isSubscribed(thread.key, setSubscribeState)
   return h('.message-thread.full-height', threadInner, replies(app, thread, opts))
@@ -77,12 +79,13 @@ module.exports = function (app, thread, opts) {
   // ui state
 
   function setSubscribeState (err, subscribed) {
-    var count = thread.count || 0
-    var replies = count + ((count === 1) ? ' reply' : ' replies')
+    subscribeBtn.innerHTML = ''
     if (subscribed) {
-      subscribeBtn.innerHTML = 'Unsubscribe <small>'+replies+'</small>'
+      subscribeBtn.classList.add('selected')
+      subscribeBtn.appendChild(com.icon('star'))
     } else {
-      subscribeBtn.innerHTML = 'Subscribe <small>'+replies+'</small>'
+      subscribeBtn.classList.remove('selected')
+      subscribeBtn.appendChild(com.icon('star-empty'))
     }
   }
 }
@@ -95,6 +98,9 @@ function replies (app, thread, opts) {
     var subreplies = replies(app, reply, opts)
     if (subreplies)
       r.unshift(subreplies)
+
+    if (reply.value.content.type === 'vote')
+      return // dont render vote messages, it'd be a mess
 
     var el = com.message(app, reply, replyOpts)
     if (el) {
