@@ -127,7 +127,7 @@ module.exports = function (app) {
       var rgb = u.getAverageRGB(tmpImg)
       if (rgb) {
         var avg = (rgb.r + rgb.g + rgb.b) / 3
-        while (avg > 128) {
+        if (avg > 128) {
           rgb.r = (rgb.r/2)|0
           rgb.g = (rgb.g/2)|0
           rgb.b = (rgb.b/2)|0
