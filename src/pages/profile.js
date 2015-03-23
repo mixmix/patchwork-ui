@@ -21,6 +21,7 @@ module.exports = function (app) {
     var voteStats = datas[1]
     graphs.follow[app.myid] = graphs.follow[app.myid] || {}
     var followers = inEdges(graphs.follow, true)
+    var isSelf = (pid == app.myid)
     var isFollowing = graphs.follow[app.myid][pid]
 
     // secondary feeds (applications)
@@ -105,10 +106,15 @@ module.exports = function (app) {
     // profile ctrl totem
     var profileImg = com.profilePicUrl(app, pid)
     var totem = h('.totem',
-      h('a.corner.topleft'+(isFollowing?'.selected':''), { href: '#', onclick: toggleFollow }, h('.corner-inner', followers.length, com.icon('user'))),
-      // h('a.corner.topright', h('.corner-inner', com.icon('lock'), trusters.length)), :TODO: use this?
-      h('a.corner.botleft'+(voteStats.uservote===1?'.selected':''), { href: '#', onclick: makeVoteCb(1) }, h('.corner-inner', voteStats.upvoters.length, com.icon('triangle-top'))),
-      h('a.corner.botright'+(voteStats.uservote===-1?'.selected':''), { href: '#', onclick: makeVoteCb(-1) }, h('.corner-inner', com.icon('triangle-bottom'), voteStats.downvoters.length)),
+      h('a.corner.topleft'+(isFollowing?'.selected':''),
+        { href: '#', onclick: toggleFollow, 'data-overlay': (isSelf?'Your Followers':(isFollowing?'Unfollow':'Follow')) }, 
+        h('.corner-inner', followers.length, com.icon('user'))),
+      h('a.corner.botleft'+(voteStats.uservote===1?'.selected':''),
+        { href: '#', onclick: makeVoteCb(1), 'data-overlay': (isSelf?'Your Upvotes':(voteStats.uservote===1?'Undo Upvote':'Upvote')) }, 
+        h('.corner-inner', voteStats.upvoters.length, com.icon('triangle-top'))),
+      h('a.corner.botright'+(voteStats.uservote===-1?'.selected':''),
+        { href: '#', onclick: makeVoteCb(-1), 'data-overlay': (isSelf?'Your Downvotes':(voteStats.uservote===-1?'Undo Downvotes':'Downvote')) },
+         h('.corner-inner',com.icon('triangle-bottom'), voteStats.downvoters.length)),
       h('a.profpic', { href: makeUri({ view: 'pics' }) }, com.hexagon(profileImg, 275)))
 
     // profile title
@@ -251,6 +257,10 @@ module.exports = function (app) {
 
     function toggleFollow (e) {
       e.preventDefault()
+      if (isSelf) {
+        window.location.hash = makeUri({ view: 'pics' })
+        return
+      }
       app.updateContact(pid, { following: !isFollowing }, function(err) {
         if (err) swal('Error While Publishing', err.message, 'error')
         else app.refreshPage()
@@ -260,6 +270,10 @@ module.exports = function (app) {
     function makeVoteCb (newvote) {
       return function (e) {
         e.preventDefault()
+        if (isSelf) {
+          window.location.hash = makeUri({ view: 'pics' })
+          return
+        }
         // :TODO: use msg-schemas
         if (voteStats.uservote === newvote) // toggle behavior
           newvote = 0
