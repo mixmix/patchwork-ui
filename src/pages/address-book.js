@@ -23,10 +23,6 @@ module.exports = function (app) {
 
     // markup
 
-    function listFn (opts) {
-      opts.type = 'init'
-      return app.ssb.messagesByType(opts)
-    }
     function filterFn (msg) {
       var id = msg.value.author
       var prof = app.profiles[id]
@@ -62,18 +58,11 @@ module.exports = function (app) {
 
       return false
     }
-    function cursorFn (msg) {
-      if (msg)
-        return msg.value.timestamp
-    }
-    function renderMsgFn (msg) {
-      return com.address(app, msg, app.profiles, follows)
-    }
 
     app.setPage('address-book', h('.row',
       h('.col-xs-1', com.sidenav(app)),
       h('.col-xs-8',
-        h('.header-ctrls',
+        h('.header-ctrls.light',
           com.nav({
             current: currentList,
             items: [
@@ -88,7 +77,7 @@ module.exports = function (app) {
             value: queryStr,
             onsearch: onsearch
           })),
-        com.messageFeed(app, { feed: listFn, filter: filterFn, cursor: cursorFn, renderMsg: renderMsgFn })),
+        com.contactFeed(app, { filter: filterFn, follows: follows })),
       h('.col-xs-3.right-column.full-height',
         h('.right-column-inner',
           com.notifications(app),

@@ -9,7 +9,7 @@ module.exports = function (app) {
   var pid      = app.page.param
   var view     = app.page.qs.view || 'feed'
   var queryStr = app.page.qs.q || ''
-  var list     = app.page.qs.list || 'posts'
+  var list     = app.page.qs.list || 'all'
   var profile  = app.profiles[pid]
   var name     = com.userName(app, pid)
 

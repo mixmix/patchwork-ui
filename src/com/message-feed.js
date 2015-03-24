@@ -58,19 +58,19 @@ module.exports = function (app, opts) {
     fetchTopBy(30)
     function fetchTopBy (amt) {
       var fetchopts = { reverse: false }
-      fetchopts[(feedState.msgs.length == 0) ? 'gte' : 'gt'] = cursor(feedState.frontCursor)
+      fetchopts[(feedState.msgs.length == 0) ? 'gte' : 'gt'] = cursor(feedState.topCursor)
       var topmsgEl = feedState.tbody.children[0]
 
       doFetch(fetchopts, function (err, _msgs) {
         if (_msgs && _msgs.length) {
           // nothing new? stop
-          if (feedState.frontCursor && feedState.frontCursor.key == _msgs[_msgs.length - 1].key)
+          if (feedState.topCursor && feedState.topCursor.key == _msgs[_msgs.length - 1].key)
             return (cb && cb())
 
           // advance cursors
-          feedState.frontCursor = _msgs[_msgs.length - 1]
-          if (!feedState.backCursor)
-            feedState.backCursor = _msgs[0]
+          feedState.topCursor = _msgs[_msgs.length - 1]
+          if (!feedState.bottomCursor)
+            feedState.bottomCursor = _msgs[0]
 
           // filter
           if (opts.filter)
@@ -101,18 +101,18 @@ module.exports = function (app, opts) {
     fetchBottomBy(30)
     function fetchBottomBy (amt) {
       var fetchopts = { reverse: true }
-      fetchopts[(feedState.msgs.length == 0) ? 'lte' : 'lt'] = cursor(feedState.backCursor)
+      fetchopts[(feedState.msgs.length == 0) ? 'lte' : 'lt'] = cursor(feedState.bottomCursor)
       
       doFetch(fetchopts, function (err, _msgs) {
         if (_msgs && _msgs.length) {
           // nothing new? stop
-          if (feedState.backCursor && feedState.backCursor.key == _msgs[_msgs.length - 1].key)
+          if (feedState.bottomCursor && feedState.bottomCursor.key == _msgs[_msgs.length - 1].key)
             return (cb && cb())
 
           // advance cursors
-          feedState.backCursor = _msgs[_msgs.length - 1]
-          if (!feedState.frontCursor)
-            feedState.frontCursor = _msgs[0]
+          feedState.bottomCursor = _msgs[_msgs.length - 1]
+          if (!feedState.topCursor)
+            feedState.topCursor = _msgs[0]
 
           // filter
           if (opts.filter)
@@ -199,8 +199,8 @@ module.exports = function (app, opts) {
 module.exports.makeStateObj = function () {
   return {
     msgs: [],
-    frontCursor: null,
-    backCursor: null,
+    topCursor: null,
+    bottomCursor: null,
     tbody: null,
     lastScrollTop: 0
   } 
