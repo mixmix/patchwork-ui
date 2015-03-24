@@ -58,7 +58,7 @@ module.exports = function (app, opts) {
     fetchTopBy(30)
     function fetchTopBy (amt) {
       var fetchopts = { reverse: false }
-      fetchopts[(feedState.msgs.length == 0) ? 'gte' : 'gt'] = cursor(feedState.topCursor)
+      fetchopts.gt = cursor(feedState.topCursor)
       var topmsgEl = feedState.tbody.children[0]
 
       doFetch(fetchopts, function (err, _msgs) {
@@ -101,7 +101,7 @@ module.exports = function (app, opts) {
     fetchBottomBy(30)
     function fetchBottomBy (amt) {
       var fetchopts = { reverse: true }
-      fetchopts[(feedState.msgs.length == 0) ? 'lte' : 'lt'] = cursor(feedState.bottomCursor)
+      fetchopts.lt = cursor(feedState.bottomCursor)
       
       doFetch(fetchopts, function (err, _msgs) {
         if (_msgs && _msgs.length) {
