@@ -15,14 +15,14 @@ module.exports = function (app) {
 
   var done = multicb({ pluck: 1 })
   app.ssb.friends.all('follow', done())
-  u.fetchFeedVotes(app, pid, done())
   done(function (err, datas) {
     var graphs = { follow: datas[0] }
-    var voteStats = datas[1]
     graphs.follow[app.myid] = graphs.follow[app.myid] || {}
+    profile.assignedBy[app.myid] = profile.assignedBy[app.myid] || {}
     var followers = inEdges(graphs.follow, true)
     var isSelf = (pid == app.myid)
     var isFollowing = graphs.follow[app.myid][pid]
+    var myvote = profile.assignedBy[app.myid].vote
 
     // secondary feeds (applications)
     var primary
@@ -30,6 +30,15 @@ module.exports = function (app) {
       primary = profile.primary
       if (profile.self.name) // use own name
         name = profile.self.name
+    }
+
+    // votes
+    var upvoters = [], downvoters = []
+    for (var userid in profile.assignedBy) {
+      if (profile.assignedBy[userid].vote === 1)
+        upvoters.push(userid)
+      if (profile.assignedBy[userid].vote === -1)
+        downvoters.push(userid)
     }
 
     // name confidence controls
@@ -109,12 +118,12 @@ module.exports = function (app) {
       h('a.corner.topleft'+(isFollowing?'.selected':''),
         { href: '#', onclick: toggleFollow, 'data-overlay': (isSelf?'Your Followers':(isFollowing?'Unfollow':'Follow')) }, 
         h('.corner-inner', followers.length, com.icon('user'))),
-      h('a.corner.botleft'+(voteStats.uservote===1?'.selected':''),
-        { href: '#', onclick: makeVoteCb(1), 'data-overlay': (isSelf?'Your Upvotes':(voteStats.uservote===1?'Undo Upvote':'Upvote')) }, 
-        h('.corner-inner', voteStats.upvoters.length, com.icon('triangle-top'))),
-      h('a.corner.botright'+(voteStats.uservote===-1?'.selected':''),
-        { href: '#', onclick: makeVoteCb(-1), 'data-overlay': (isSelf?'Your Downvotes':(voteStats.uservote===-1?'Undo Downvotes':'Downvote')) },
-         h('.corner-inner',com.icon('triangle-bottom'), voteStats.downvoters.length)),
+      h('a.corner.botleft'+(myvote===1?'.selected':''),
+        { href: '#', onclick: makeVoteCb(1), 'data-overlay': (isSelf?'Your Upvotes':(myvote===1?'Undo Upvote':'Upvote')) }, 
+        h('.corner-inner', profile.upvotes, com.icon('triangle-top'))),
+      h('a.corner.botright'+(myvote===-1?'.selected':''),
+        { href: '#', onclick: makeVoteCb(-1), 'data-overlay': (isSelf?'Your Downvotes':(myvote===-1?'Undo Downvotes':'Downvote')) },
+         h('.corner-inner',com.icon('triangle-bottom'), profile.downvotes)),
       h('a.profpic', { href: makeUri({ view: 'pics' }) }, com.hexagon(profileImg, 275)))
 
     // profile title
@@ -168,8 +177,8 @@ module.exports = function (app) {
         h('.profile-controls',
           totem,
           title,
-          (voteStats.upvoters.length) ? h('.relations', h('h4', com.icon('triangle-top'), 's'), com.userHexagrid(app, voteStats.upvoters, { nrow: 4 })) : '',
-          (voteStats.downvoters.length) ? h('.relations', h('h4', com.icon('triangle-bottom'), 's'), com.userHexagrid(app, voteStats.downvoters, { nrow: 4 })) : ''))))
+          (profile.upvotes) ? h('.relations', h('h4', com.icon('triangle-top'), 's'), com.userHexagrid(app, upvoters, { nrow: 4 })) : '',
+          (profile.downvotes) ? h('.relations', h('h4', com.icon('triangle-bottom'), 's'), com.userHexagrid(app, downvoters, { nrow: 4 })) : ''))))
 
     function makeUri (opts) {
       var qs=''
@@ -275,7 +284,7 @@ module.exports = function (app) {
           return
         }
         // :TODO: use msg-schemas
-        if (voteStats.uservote === newvote) // toggle behavior
+        if (myvote === newvote) // toggle behavior
           newvote = 0
         app.ssb.publish({ type: 'vote', voteTopic: { feed: pid }, vote: newvote }, function (err) {
           if (err) swal('Error While Publishing', err.message, 'error')

@@ -9,9 +9,11 @@ module.exports = function (app, msg, follows) {
   var contactId   = msg.value.author
   var profile     = app.profiles[contactId]
   var name        = com.userName(app, contactId)
-  var otherNames  = app.getOtherNames(profile)
+//  var otherNames  = app.getOtherNames(profile) :TODO: use these?
+  var followers   = inEdges(follows, true)
   var isSelf      = (contactId == app.myid)
   var isFollowing = follows[app.myid][contactId]
+  var myvote      = (profile.assignedBy[app.myid]) ? profile.assignedBy[app.myid].vote : 0
 
   // secondary feeds (applications)
   var primary
@@ -29,21 +31,21 @@ module.exports = function (app, msg, follows) {
         onclick: toggleFollow,
         'data-overlay': (isSelf ? 'Your Followers' : (isFollowing ? 'Unfollow' : 'Follow'))
       }, 
-      h('.corner-inner', 0/*:TODO: followers.length*/, com.icon('user'))),
-    h('a.corner.botleft' + (0/*:TODO: voteStats.uservote*/===1 ? '.selected' : ''),
+      h('.corner-inner', followers.length, com.icon('user'))),
+    h('a.corner.botleft' + (myvote===1 ? '.selected' : ''),
       {
         href: '#',
         onclick: makeVoteCb(1),
-        'data-overlay': (isSelf ? 'Your Upvotes' : (0/*:TODO: voteStats.uservote*/===1 ? 'Undo Upvote' : 'Upvote'))
+        'data-overlay': (isSelf ? 'Your Upvotes' : (myvote===1 ? 'Undo Upvote' : 'Upvote'))
       }, 
-      h('.corner-inner', 0/*:TODO: voteStats.upvoters.length*/, com.icon('triangle-top'))),
-    h('a.corner.botright' + (0/*:TODO: voteStats.uservote*/===-1 ? '.selected' : ''),
+      h('.corner-inner', profile.upvotes, com.icon('triangle-top'))),
+    h('a.corner.botright' + (myvote===-1 ? '.selected' : ''),
       {
         href: '#',
         onclick: makeVoteCb(-1),
-        'data-overlay': (isSelf ? 'Your Downvotes' : (0/*:TODO: voteStats.uservote*/===-1 ? 'Undo Downvotes' : 'Downvote'))
+        'data-overlay': (isSelf ? 'Your Downvotes' : (myvote===-1 ? 'Undo Downvotes' : 'Downvote'))
       },
-       h('.corner-inner',com.icon('triangle-bottom'), 0/*:TODO: voteStats.downvoters.length*/)),
+      h('.corner-inner',com.icon('triangle-bottom'), profile.downvotes)),
     h('a.profpic', { href: '#/profile/'+contactId }, com.hexagon(profileImg, 275)))
 
 
@@ -116,7 +118,7 @@ module.exports = function (app, msg, follows) {
         return
       }
       // :TODO: use msg-schemas
-      if (voteStats.uservote === newvote) // toggle behavior
+      if (myvote == newvote) // toggle behavior
         newvote = 0
       app.ssb.publish({ type: 'vote', voteTopic: { feed: contactId }, vote: newvote }, function (err) {
         if (err) swal('Error While Publishing', err.message, 'error')
@@ -124,4 +126,13 @@ module.exports = function (app, msg, follows) {
       })
     }
   }
+
+  function inEdges (g, v, filter) {
+      var arr = []
+      for (var userid in g) {
+        if (g[userid][contactId] == v && (!filter || filter(userid, g)))
+          arr.push(h('li', com.userlinkThin(userid, app.names[userid])))
+      }
+      return arr      
+    }
 }
