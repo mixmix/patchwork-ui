@@ -2,12 +2,11 @@ var h = require('hyperscript')
 var com = require('./index')
 var u = require('../lib/util')
 
-module.exports = function (app, msg, follows) {
+module.exports = function (app, profile, follows) {
 
   // markup 
 
-  var contactId   = msg.value.author
-  var profile     = app.profiles[contactId]
+  var contactId   = profile.id
   var name        = com.userName(app, contactId)
 //  var otherNames  = app.getOtherNames(profile) :TODO: use these?
   var followers   = inEdges(follows, true)

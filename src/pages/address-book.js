@@ -23,13 +23,12 @@ module.exports = function (app) {
 
     // markup
 
-    function filterFn (msg) {
-      var id = msg.value.author
-      var prof = app.profiles[id]
+    function filterFn (prof) {
+      var id = prof.id
       var primary = (prof && prof.primary) ? prof.primary : false
 
       if (queryStr) {
-        var author = app.names[msg.value.author] || msg.value.author
+        var author = app.names[id] || id
         var regex = new RegExp(queryStr.replace(/\s/g, '|'))
         if (!regex.exec(author))
           return false
