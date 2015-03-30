@@ -23,7 +23,7 @@ module.exports = function (app, opts) {
 
   // markup
  
-  var feed = h('.contact-feed')
+  var feed = h('table.contact-feed')
   var feedContainer = infiniscroll(h('.contact-feed-container.full-height', feed), { fetchBottom: fetchBottom })
 
   // profile fetching
@@ -33,9 +33,9 @@ module.exports = function (app, opts) {
     if (cursor > contacts.length) // no more
       return (cb && cb())
 
-    var end = cursor + 9
+    var end = cursor + 30
     for (cursor; cursor < end && cursor < contacts.length; cursor++) {
-      var el = com.contactSummary(app, contacts[cursor], opts.follows)
+      var el = com.contactListing(app, contacts[cursor], opts.follows)
       el && feed.appendChild(el)
     }
 
