@@ -35,12 +35,21 @@
     }
   }
 
+  &.big {
+    font-size: 18px;
+  }
+
   &.light {
-    .navlinks a.selected {
-      border-color: transparent;
-      background: #353535;
-      color: #eee;
-      border-radius: 2px;
+    .navlinks a {
+      color: #777;
+      &:hover {
+        color: #555;
+      }
+      &.selected {
+        border-color: transparent;
+        background: transparent;
+        color: #333;
+      }
     }
   }
 }

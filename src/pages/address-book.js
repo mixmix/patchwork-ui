@@ -57,7 +57,7 @@ module.exports = function (app) {
     app.setPage('address-book', h('.row',
       h('.col-xs-1', com.sidenav(app)),
       h('.col-xs-8',
-        h('.header-ctrls.light',
+        h('.header-ctrls',
           com.nav({
             current: currentList,
             items: [

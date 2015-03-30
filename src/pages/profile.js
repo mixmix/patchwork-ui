@@ -63,7 +63,7 @@ module.exports = function (app) {
     }
 
     var content
-    if (view == 'pics') {
+    if (view == 'avatar') {
       // profile pics
       var pics = []
       if (profile) {
@@ -76,7 +76,6 @@ module.exports = function (app) {
         })
       }
       content = h('.profile-pics',
-        h('p', h('a.btn.btn-primary', { href: makeUri(false), innerHTML: '&laquo; Back to Feed'})),
         com.imageUploader(app, { onupload: onImageUpload }),
         h('br'),
         pics)
@@ -88,11 +87,11 @@ module.exports = function (app) {
           com.nav({
             current: list,
             items: [
+              ['all',      makeUri({ view: '', list: 'all' }),      'All'],
               ['posts',    makeUri({ view: '', list: 'posts' }),    'Posts'],
               ['allposts', makeUri({ view: '', list: 'allposts' }), 'Posts & Replies'],
               ['data',     makeUri({ view: '', list: 'data' }),     'Data'],
-              ['actions',  makeUri({ view: '', list: 'actions' }),  'Actions'],
-              ['all',      makeUri({ view: '', list: 'all' }),      'All']
+              ['actions',  makeUri({ view: '', list: 'actions' }),  'Actions']
             ]
           }),
           com.search({
@@ -107,6 +106,16 @@ module.exports = function (app) {
     app.setPage('profile', h('.row',
       h('.col-xs-1', com.sidenav(app)),
       h('.col-xs-8', 
+        h('.header-ctrls.big.light',
+          com.nav({
+            current: view,
+            items: [
+              ['feed',      makeUri({ view: 'feed', list: '' }),      [com.icon('list'), ' Feed']],
+              ['contacts',  makeUri({ view: 'contacts', list: '' }),  [com.icon('book'), ' Contacts']],
+              ['about',     makeUri({ view: 'about', list: '' }),     [com.icon('question-sign'), ' About']],
+              ['avatar',    makeUri({ view: 'avatar', list: '' }),    [com.icon('picture'), ' Avatar']]
+            ]
+          })),
         nameTrustDlg,
         content),
       h('.col-xs-3.full-height',
