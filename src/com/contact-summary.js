@@ -110,7 +110,7 @@ module.exports = function (app, profile, follows) {
   function toggleFollow (e) {
     e.preventDefault()
     if (isSelf) {
-      window.location.hash = makeUri({ view: 'pics' })
+      window.location.hash = '#/profile/'+contactId
       return
     }
     app.updateContact(contactId, { following: !isFollowing }, function(err) {
@@ -123,7 +123,7 @@ module.exports = function (app, profile, follows) {
     return function (e) {
       e.preventDefault()
       if (isSelf) {
-        window.location.hash = makeUri({ view: 'pics' })
+        window.location.hash = '#/profile/'+contactId
         return
       }
       // :TODO: use msg-schemas
