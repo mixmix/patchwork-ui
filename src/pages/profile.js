@@ -22,15 +22,6 @@ module.exports = function (app) {
     var followers = inEdges(graphs.follow, true)
     var isSelf = (pid == app.myid)
     var isFollowing = graphs.follow[app.myid][pid]
-    var myvote = profile.assignedBy[app.myid].vote
-
-    // secondary feeds (applications)
-    var primary
-    if (profile && profile.primary) {
-      primary = profile.primary
-      if (profile.self.name) // use own name
-        name = profile.self.name
-    }
 
     // votes
     var upvoters = [], downvoters = []
@@ -112,60 +103,6 @@ module.exports = function (app) {
       ]
     }
 
-    // profile ctrl totem
-    var profileImg = com.profilePicUrl(app, pid)
-    var totem = h('.totem',
-      h('a.corner.topleft'+(isFollowing?'.selected':''),
-        { href: '#', onclick: toggleFollow, 'data-overlay': (isSelf?'Your Followers':(isFollowing?'Unfollow':'Follow')) }, 
-        h('.corner-inner', followers.length, com.icon('user'))),
-      h('a.corner.botleft'+(myvote===1?'.selected':''),
-        { href: '#', onclick: makeVoteCb(1), 'data-overlay': (isSelf?'Your Upvotes':(myvote===1?'Undo Upvote':'Upvote')) }, 
-        h('.corner-inner', profile.upvotes, com.icon('triangle-top'))),
-      h('a.corner.botright'+(myvote===-1?'.selected':''),
-        { href: '#', onclick: makeVoteCb(-1), 'data-overlay': (isSelf?'Your Downvotes':(myvote===-1?'Undo Downvotes':'Downvote')) },
-         h('.corner-inner',com.icon('triangle-bottom'), profile.downvotes)),
-      h('a.profpic', { href: makeUri({ view: 'pics' }) }, com.hexagon(profileImg, 275)))
-
-    // profile title
-    var joinDate = (profile) ? u.prettydate(new Date(profile.createdAt), true) : '-'
-    var title = h('.title',
-      h('h2', name, com.nameConfidence(pid, app)),
-      (primary) ?
-        h('h3', com.user(app, primary), '\'s feed') :
-        '',
-      h('p.text-muted', 'joined '+joinDate))
-
-    // totem colors derived from the image
-    var tmpImg = document.createElement('img')
-    tmpImg.src = profileImg
-    tmpImg.onload = function () {
-      var rgb = u.getAverageRGB(tmpImg)
-      if (rgb) {
-        var avg = (rgb.r + rgb.g + rgb.b) / 3
-        if (avg > 128) {
-          rgb.r = (rgb.r/2)|0
-          rgb.g = (rgb.g/2)|0
-          rgb.b = (rgb.b/2)|0
-          avg = (rgb.r + rgb.g + rgb.b) / 3
-        }
-        var rgb2 = { r: ((rgb.r/2)|0), g: ((rgb.g/2)|0), b: ((rgb.b/2)|0) }
-
-        try { title.querySelector('h2').style.color = 'rgb('+rgb2.r+','+rgb2.g+','+rgb2.b+')' } catch (e) {}
-        try { title.querySelector('h3').style.color = 'rgba('+rgb2.r+','+rgb2.g+','+rgb2.b+', 0.75)' } catch (e) {}
-        try { title.querySelector('p').style.color  = 'rgba('+rgb2.r+','+rgb2.g+','+rgb2.b+', 0.75)' } catch (e) {}
-        function setColors (el) {
-          if (el.classList.contains('selected')) {
-            el.style.color = 'rgb('+rgb.r+','+rgb.g+','+rgb.b+')'
-            el.style.background = 'rgba('+rgb.r+','+rgb.g+','+rgb.b+',0.5)'
-          } else {
-            el.style.color = 'rgba(255,255,255,0.5)'//(avg < 128) ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.5)'
-            el.style.background = 'rgb('+rgb.r+','+rgb.g+','+rgb.b+')'
-          }
-        }
-        Array.prototype.forEach.call(totem.querySelectorAll('.corner'), setColors)
-      }
-    }
-
     // render page
     app.setPage('profile', h('.row',
       h('.col-xs-1', com.sidenav(app)),
@@ -175,8 +112,7 @@ module.exports = function (app) {
       h('.col-xs-3.full-height',
         com.notifications(app),
         h('.profile-controls',
-          totem,
-          title,
+          com.contactSummary(app, profile, graphs.follow),
           (profile.upvotes) ? h('.relations', h('h4', com.icon('triangle-top'), 's'), com.userHexagrid(app, upvoters, { nrow: 4 })) : '',
           (profile.downvotes) ? h('.relations', h('h4', com.icon('triangle-bottom'), 's'), com.userHexagrid(app, downvoters, { nrow: 4 })) : ''))))
 
@@ -263,35 +199,6 @@ module.exports = function (app) {
     }
 
     // handlers
-
-    function toggleFollow (e) {
-      e.preventDefault()
-      if (isSelf) {
-        window.location.hash = makeUri({ view: 'pics' })
-        return
-      }
-      app.updateContact(pid, { following: !isFollowing }, function(err) {
-        if (err) swal('Error While Publishing', err.message, 'error')
-        else app.refreshPage()
-      })
-    }
-
-    function makeVoteCb (newvote) {
-      return function (e) {
-        e.preventDefault()
-        if (isSelf) {
-          window.location.hash = makeUri({ view: 'pics' })
-          return
-        }
-        // :TODO: use msg-schemas
-        if (myvote === newvote) // toggle behavior
-          newvote = 0
-        app.ssb.publish({ type: 'vote', voteTopic: { feed: pid }, vote: newvote }, function (err) {
-          if (err) swal('Error While Publishing', err.message, 'error')
-          else app.refreshPage()
-        })
-      }
-    }
 
     function rename (e) {
       e.preventDefault()
