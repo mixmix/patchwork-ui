@@ -37,18 +37,35 @@
 
   &.big {
     font-size: 18px;
+
+    .navlinks a {
+      padding: 15px;
+    }
   }
 
   &.light {
+
     .navlinks a {
       color: #777;
+      background: #fff;
+      border: 0;
+      border-top: 1px solid #ccc;
+      border-bottom: 3px solid #ccc;
+      margin-right: 0;
+
+      &:first-child {
+        border-left: 1px solid #ccc;
+      }
+      &:last-child {
+        border-right: 1px solid #ccc;
+      }
+
       &:hover {
         color: #555;
       }
       &.selected {
-        border-color: transparent;
-        background: transparent;
         color: #333;
+        border-bottom-color: #777;
       }
     }
   }

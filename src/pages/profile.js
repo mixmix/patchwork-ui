@@ -125,22 +125,22 @@ module.exports = function (app) {
     app.setPage('profile', h('.row',
       h('.col-xs-1', com.sidenav(app)),
       h('.col-xs-8', 
-        h('.header-ctrls.big.light',
-          com.nav({
-            current: view,
-            items: [
-              ['feed',      makeUri({ view: 'feed', list: '' }),      [com.icon('list'), ' Feed']],
-              ['contacts',  makeUri({ view: 'contacts', list: '' }),  [com.icon('book'), ' Contacts']],
-              // ['about',     makeUri({ view: 'about', list: '' }),     [com.icon('question-sign'), ' About']],
-              ['avatar',    makeUri({ view: 'avatar', list: '' }),    [com.icon('picture'), ' Avatar']]
-            ]
-          })),
         nameTrustDlg,
         content),
       h('.col-xs-3.full-height',
         com.notifications(app),
         h('.profile-controls',
           com.contactSummary(app, profile, graphs.follow),
+          h('.header-ctrls.big.light',
+            com.nav({
+              current: view,
+              items: [
+                ['feed',      makeUri({ view: 'feed', list: '' }),      [com.icon('list'), ' Feed']],
+                ['contacts',  makeUri({ view: 'contacts', list: '' }),  [com.icon('book'), ' Contacts']],
+                // ['about',     makeUri({ view: 'about', list: '' }),     [com.icon('question-sign'), ' About']],
+                ['avatar',    makeUri({ view: 'avatar', list: '' }),    [com.icon('picture'), ' Avatar']]
+              ]
+            })),
           (profile.upvotes) ? h('.relations', h('h4', com.icon('triangle-top'), 's'), com.userHexagrid(app, upvoters, { nrow: 4 })) : '',
           (profile.downvotes) ? h('.relations', h('h4', com.icon('triangle-bottom'), 's'), com.userHexagrid(app, downvoters, { nrow: 4 })) : ''))))
 
