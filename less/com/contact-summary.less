@@ -39,20 +39,6 @@
     .hexTop, .hexBottom {
       outline: 5px solid #eee;
     }
-    &:hover::before {
-      content: 'User Info';
-      position: absolute;
-      top: 60%;
-      left: 50%;
-      z-index: 1000;
-      transform: translate(-50%, 0);
-      padding: 6px 15px 2px;
-      white-space: pre;
-      color: #E0E0E0;
-      background: rgba(0, 0, 0, 0.75);
-      border-radius: 5px;
-      font-size: 21px;
-    }
   }
 
   .totem {
@@ -74,11 +60,15 @@
       .corner-inner {
         position: absolute;
       }
-      /*&.selected {
-        text-shadow: 0 0 10px #49A10D;
-        color: #4B8822;
-        background: #222;
-      }*/
+      &:hover:after {
+        content: attr(data-overlay);
+        position: absolute;
+        background: inherit;
+        border-radius: 2px;
+        width: 100%;
+        font-family: @font-family-sans-serif;
+        font-size: 15px;
+      }
     }
     .topleft {
       top: 10px;
@@ -88,12 +78,9 @@
         top: 4px;
       }
       &:hover:after {
-        content: attr(data-overlay);
-        position: absolute;
-        top: -12px;
-        left: 0px;
-        font-size: 9px;
-        color: #555;
+        top: 0;
+        left: 0;
+        padding: 4px 6px 50px;
       }
     }
     .topright {
@@ -112,12 +99,9 @@
         top: 68px;
       }
       &:hover:after {
-        content: attr(data-overlay);
-        position: absolute;
-        bottom: -12px;
-        left: 0px;
-        font-size: 9px;
-        color: #555;
+        bottom: 0;
+        left: 0;
+        padding: 50px 6px 4px;
       }
     }
     .botright {
@@ -128,12 +112,10 @@
         top: 68px;
       }
       &:hover:after {
-        content: attr(data-overlay);
-        position: absolute;
-        bottom: -12px;
-        right: 0px;
-        font-size: 9px;
-        color: #555;
+        bottom: 0;
+        right: 0;
+        padding: 50px 6px 4px;
+        text-align: right;
       }
     }
     .glyphicon {
