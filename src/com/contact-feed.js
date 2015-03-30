@@ -15,11 +15,6 @@ module.exports = function (app, opts) {
     if (!opts.filter || opts.filter(app.profiles[uid]))
       contacts.push(app.profiles[uid])
   }
-  contacts.sort(function (a, b) {
-    var avotes = (a.upvotes|0) - (a.downvotes|0)
-    var bvotes = (b.upvotes|0) - (b.downvotes|0)
-    return (bvotes - avotes)
-  })
 
   // markup
  

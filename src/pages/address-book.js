@@ -38,10 +38,6 @@ module.exports = function (app) {
         if ((id === app.myid || (follows[app.myid][id] && trusts[app.myid][id] !== -1)) && !primary)
           return true
       }
-      else if (currentList == 'trusted') {
-        if (id !== app.myid && trusts[app.myid][id] === 1)
-          return true
-      }
       else if (currentList == 'others') {
         if (id !== app.myid && !follows[app.myid][id] && !trusts[app.myid][id] && !primary)
           return true
@@ -66,8 +62,7 @@ module.exports = function (app) {
             current: currentList,
             items: [
               ['following', makeUri({ list: 'following' }), 'Following'],
-              ['trusted',   makeUri({ list: 'trusted' }),   'Trusted'],
-              ['others',    makeUri({ list: 'others' }),    'Other Users'],
+              ['others',    makeUri({ list: 'others' }),    'Others'],
               ['apps',      makeUri({ list: 'apps' }),      'Applications'],
               ['flagged',   makeUri({ list: 'flagged' }),   'Flagged']
             ]
