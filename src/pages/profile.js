@@ -9,7 +9,7 @@ module.exports = function (app) {
   var pid      = app.page.param
   var view     = app.page.qs.view || 'feed'
   var queryStr = app.page.qs.q || ''
-  var list     = app.page.qs.list || 'all'
+  var list     = app.page.qs.list || ''
   var profile  = app.profiles[pid]
   var name     = com.userName(app, pid)
 
@@ -80,8 +80,27 @@ module.exports = function (app) {
         h('br'),
         pics)
     }
+    else if (view == 'contacts') {
+      list = list || 'following'
+      content = [
+        h('.header-ctrls',
+          com.nav({
+            current: list,
+            items: [
+              ['following', makeUri({ list: 'following' }), 'Following'],
+              ['apps',      makeUri({ list: 'apps' }),      'Applications']
+            ]
+          }),
+          com.search({
+            value: queryStr,
+            onsearch: onsearch
+          })),
+        com.contactFeed(app, { filter: contactFeedFilter, follows: graphs.follow })
+      ]
+    }
     else {
       // messages
+      list = list || 'all'
       content = [
         h('.header-ctrls',
           com.nav({
@@ -112,7 +131,7 @@ module.exports = function (app) {
             items: [
               ['feed',      makeUri({ view: 'feed', list: '' }),      [com.icon('list'), ' Feed']],
               ['contacts',  makeUri({ view: 'contacts', list: '' }),  [com.icon('book'), ' Contacts']],
-              ['about',     makeUri({ view: 'about', list: '' }),     [com.icon('question-sign'), ' About']],
+              // ['about',     makeUri({ view: 'about', list: '' }),     [com.icon('question-sign'), ' About']],
               ['avatar',    makeUri({ view: 'avatar', list: '' }),    [com.icon('picture'), ' Avatar']]
             ]
           })),
@@ -204,6 +223,29 @@ module.exports = function (app) {
         return true
       if ((c.type == 'post' || c.type == 'advert') && regex.exec(c.text))
         return true
+      return false
+    }
+
+    function contactFeedFilter (prof) {
+      var id = prof.id
+      var primary = (prof && prof.primary) ? prof.primary : false
+
+      if (queryStr) {
+        var author = app.names[id] || id
+        var regex = new RegExp(queryStr.replace(/\s/g, '|'))
+        if (!regex.exec(author))
+          return false
+      }
+
+      if (list == 'following') {
+        if (graphs.follow[pid][id] && !primary)
+          return true
+      }
+      else if (list == 'apps') {
+        if (primary === pid)
+          return true
+      }
+
       return false
     }
 
