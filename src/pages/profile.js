@@ -88,6 +88,7 @@ module.exports = function (app) {
             current: list,
             items: [
               ['following', makeUri({ list: 'following' }), 'Following'],
+              ['followers', makeUri({ list: 'followers' }), 'Followers'],
               ['apps',      makeUri({ list: 'apps' }),      'Applications']
             ]
           }),
@@ -238,7 +239,11 @@ module.exports = function (app) {
       }
 
       if (list == 'following') {
-        if (graphs.follow[pid][id] && !primary)
+        if (graphs.follow[pid] && graphs.follow[pid][id] && !primary)
+          return true
+      }
+      else if (list == 'followers') {
+        if (graphs.follow[id] && graphs.follow[id][pid] && !primary)
           return true
       }
       else if (list == 'apps') {
