@@ -22,20 +22,16 @@ module.exports = function (app) {
     var c = msg.value.content
 
     if (list == 'posts') {
-      if (c.type !== 'post' || c.repliesTo)
-        return false
-    }
-    else if (list == 'allposts') {
       if (c.type !== 'post')
         return false
     }
     else if (list == 'data') {
       // no standard message types
-      if (c.type === 'init' || c.type === 'post' || c.type === 'advert' || c.type === 'contact' || c.type === 'pub')
+      if (c.type === 'init' || c.type === 'post' || c.type === 'advert' || c.type === 'contact' || c.type === 'vote' || c.type === 'pub')
         return false
     }
     else if (list == 'actions') {
-      if (c.type !== 'init' && c.type !== 'contact' && c.type !== 'pub')
+      if (c.type !== 'init' && c.type !== 'contact' && c.type !== 'vote' && c.type !== 'pub')
         return false
     }
 
@@ -63,7 +59,6 @@ module.exports = function (app) {
           current: list,
           items: [
             ['posts',    makeUri({ list: 'posts' }),    'Posts'],
-            ['allposts', makeUri({ list: 'allposts' }), 'Posts & Replies'],
             ['data',     makeUri({ list: 'data' }),     'Data'],
             ['actions',  makeUri({ list: 'actions' }),  'Actions'],
             ['all',      makeUri({ list: 'all' }),      'All']

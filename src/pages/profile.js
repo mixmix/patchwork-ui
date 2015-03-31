@@ -9,26 +9,27 @@ module.exports = function (app) {
   var pid      = app.page.param
   var view     = app.page.qs.view || 'feed'
   var queryStr = app.page.qs.q || ''
-  var list     = app.page.qs.list || 'posts'
+  var list     = app.page.qs.list || ''
   var profile  = app.profiles[pid]
   var name     = com.userName(app, pid)
 
   var done = multicb({ pluck: 1 })
   app.ssb.friends.all('follow', done())
-  u.fetchFeedVotes(app, pid, done())
   done(function (err, datas) {
     var graphs = { follow: datas[0] }
-    var voteStats = datas[1]
     graphs.follow[app.myid] = graphs.follow[app.myid] || {}
+    profile.assignedBy[app.myid] = profile.assignedBy[app.myid] || {}
     var followers = inEdges(graphs.follow, true)
+    var isSelf = (pid == app.myid)
     var isFollowing = graphs.follow[app.myid][pid]
 
-    // secondary feeds (applications)
-    var primary
-    if (profile && profile.primary) {
-      primary = profile.primary
-      if (profile.self.name) // use own name
-        name = profile.self.name
+    // votes
+    var upvoters = [], downvoters = []
+    for (var userid in profile.assignedBy) {
+      if (profile.assignedBy[userid].vote === 1)
+        upvoters.push(userid)
+      if (profile.assignedBy[userid].vote === -1)
+        downvoters.push(userid)
     }
 
     // name confidence controls
@@ -62,7 +63,7 @@ module.exports = function (app) {
     }
 
     var content
-    if (view == 'pics') {
+    if (view == 'avatar') {
       // profile pics
       var pics = []
       if (profile) {
@@ -75,23 +76,42 @@ module.exports = function (app) {
         })
       }
       content = h('.profile-pics',
-        h('p', h('a.btn.btn-primary', { href: makeUri(false), innerHTML: '&laquo; Back to Feed'})),
         com.imageUploader(app, { onupload: onImageUpload }),
         h('br'),
         pics)
     }
-    else {
-      // messages
+    else if (view == 'contacts') {
+      list = list || 'following'
       content = [
         h('.header-ctrls',
           com.nav({
             current: list,
             items: [
+              ['following', makeUri({ list: 'following' }), 'Following'],
+              ['followers', makeUri({ list: 'followers' }), 'Followers'],
+              ['apps',      makeUri({ list: 'apps' }),      'Applications']
+            ]
+          }),
+          com.search({
+            value: queryStr,
+            onsearch: onsearch
+          })),
+        com.contactFeed(app, { filter: contactFeedFilter, follows: graphs.follow })
+      ]
+    }
+    else {
+      // messages
+      list = list || 'all'
+      content = [
+        h('.header-ctrls',
+          com.nav({
+            current: list,
+            items: [
+              ['all',      makeUri({ view: '', list: 'all' }),      'All'],
               ['posts',    makeUri({ view: '', list: 'posts' }),    'Posts'],
               ['allposts', makeUri({ view: '', list: 'allposts' }), 'Posts & Replies'],
               ['data',     makeUri({ view: '', list: 'data' }),     'Data'],
-              ['actions',  makeUri({ view: '', list: 'actions' }),  'Actions'],
-              ['all',      makeUri({ view: '', list: 'all' }),      'All']
+              ['actions',  makeUri({ view: '', list: 'actions' }),  'Actions']
             ]
           }),
           com.search({
@@ -100,55 +120,6 @@ module.exports = function (app) {
           })),
         com.messageFeed(app, { feed: app.ssb.createFeedStream, filter: msgFeedFilter })
       ]
-    }
-
-    // profile ctrl totem
-    var profileImg = com.profilePicUrl(app, pid)
-    var totem = h('.totem',
-      h('a.corner.topleft'+(isFollowing?'.selected':''), { href: '#', onclick: toggleFollow }, h('.corner-inner', followers.length, com.icon('user'))),
-      // h('a.corner.topright', h('.corner-inner', com.icon('lock'), trusters.length)), :TODO: use this?
-      h('a.corner.botleft'+(voteStats.uservote===1?'.selected':''), { href: '#', onclick: makeVoteCb(1) }, h('.corner-inner', voteStats.upvoters.length, com.icon('triangle-top'))),
-      h('a.corner.botright'+(voteStats.uservote===-1?'.selected':''), { href: '#', onclick: makeVoteCb(-1) }, h('.corner-inner', com.icon('triangle-bottom'), voteStats.downvoters.length)),
-      h('a.profpic', { href: makeUri({ view: 'pics' }) }, com.hexagon(profileImg, 275)))
-
-    // profile title
-    var joinDate = (profile) ? u.prettydate(new Date(profile.createdAt), true) : '-'
-    var title = h('.title',
-      h('h2', name, com.nameConfidence(pid, app)),
-      (primary) ?
-        h('h3', com.user(app, primary), '\'s feed') :
-        '',
-      h('p.text-muted', 'joined '+joinDate))
-
-    // totem colors derived from the image
-    var tmpImg = document.createElement('img')
-    tmpImg.src = profileImg
-    tmpImg.onload = function () {
-      var rgb = u.getAverageRGB(tmpImg)
-      if (rgb) {
-        var avg = (rgb.r + rgb.g + rgb.b) / 3
-        if (avg > 128) {
-          rgb.r = (rgb.r/2)|0
-          rgb.g = (rgb.g/2)|0
-          rgb.b = (rgb.b/2)|0
-          avg = (rgb.r + rgb.g + rgb.b) / 3
-        }
-        var rgb2 = { r: ((rgb.r/2)|0), g: ((rgb.g/2)|0), b: ((rgb.b/2)|0) }
-
-        try { title.querySelector('h2').style.color = 'rgb('+rgb2.r+','+rgb2.g+','+rgb2.b+')' } catch (e) {}
-        try { title.querySelector('h3').style.color = 'rgba('+rgb2.r+','+rgb2.g+','+rgb2.b+', 0.75)' } catch (e) {}
-        try { title.querySelector('p').style.color  = 'rgba('+rgb2.r+','+rgb2.g+','+rgb2.b+', 0.75)' } catch (e) {}
-        function setColors (el) {
-          if (el.classList.contains('selected')) {
-            el.style.color = 'rgb('+rgb.r+','+rgb.g+','+rgb.b+')'
-            el.style.background = 'rgba('+rgb.r+','+rgb.g+','+rgb.b+',0.5)'
-          } else {
-            el.style.color = 'rgba(255,255,255,0.5)'//(avg < 128) ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.5)'
-            el.style.background = 'rgb('+rgb.r+','+rgb.g+','+rgb.b+')'
-          }
-        }
-        Array.prototype.forEach.call(totem.querySelectorAll('.corner'), setColors)
-      }
     }
 
     // render page
@@ -160,10 +131,19 @@ module.exports = function (app) {
       h('.col-xs-3.full-height',
         com.notifications(app),
         h('.profile-controls',
-          totem,
-          title,
-          (voteStats.upvoters.length) ? h('.relations', h('h4', com.icon('triangle-top'), 's'), com.userHexagrid(app, voteStats.upvoters, { nrow: 4 })) : '',
-          (voteStats.downvoters.length) ? h('.relations', h('h4', com.icon('triangle-bottom'), 's'), com.userHexagrid(app, voteStats.downvoters, { nrow: 4 })) : ''))))
+          com.contactSummary(app, profile, graphs.follow),
+          h('.header-ctrls.big.light',
+            com.nav({
+              current: view,
+              items: [
+                ['feed',      makeUri({ view: 'feed', list: '' }),      [com.icon('list'), ' Feed']],
+                ['contacts',  makeUri({ view: 'contacts', list: '' }),  [com.icon('book'), ' Contacts']],
+                // ['about',     makeUri({ view: 'about', list: '' }),     [com.icon('question-sign'), ' About']],
+                ['avatar',    makeUri({ view: 'avatar', list: '' }),    [com.icon('picture'), ' Avatar']]
+              ]
+            })),
+          (profile.upvotes) ? h('.relations', h('h4', com.icon('triangle-top'), 's'), com.userHexagrid(app, upvoters, { nrow: 4 })) : '',
+          (profile.downvotes) ? h('.relations', h('h4', com.icon('triangle-bottom'), 's'), com.userHexagrid(app, downvoters, { nrow: 4 })) : ''))))
 
     function makeUri (opts) {
       var qs=''
@@ -247,28 +227,34 @@ module.exports = function (app) {
       return false
     }
 
-    // handlers
+    function contactFeedFilter (prof) {
+      var id = prof.id
+      var primary = (prof && prof.primary) ? prof.primary : false
 
-    function toggleFollow (e) {
-      e.preventDefault()
-      app.updateContact(pid, { following: !isFollowing }, function(err) {
-        if (err) swal('Error While Publishing', err.message, 'error')
-        else app.refreshPage()
-      })
-    }
-
-    function makeVoteCb (newvote) {
-      return function (e) {
-        e.preventDefault()
-        // :TODO: use msg-schemas
-        if (voteStats.uservote === newvote) // toggle behavior
-          newvote = 0
-        app.ssb.publish({ type: 'vote', voteTopic: { feed: pid }, vote: newvote }, function (err) {
-          if (err) swal('Error While Publishing', err.message, 'error')
-          else app.refreshPage()
-        })
+      if (queryStr) {
+        var author = app.names[id] || id
+        var regex = new RegExp(queryStr.replace(/\s/g, '|'))
+        if (!regex.exec(author))
+          return false
       }
+
+      if (list == 'following') {
+        if (graphs.follow[pid] && graphs.follow[pid][id] && !primary)
+          return true
+      }
+      else if (list == 'followers') {
+        if (graphs.follow[id] && graphs.follow[id][pid] && !primary)
+          return true
+      }
+      else if (list == 'apps') {
+        if (primary === pid)
+          return true
+      }
+
+      return false
     }
+
+    // handlers
 
     function rename (e) {
       e.preventDefault()

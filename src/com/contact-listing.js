@@ -2,12 +2,11 @@ var h = require('hyperscript')
 var com = require('./index')
 var u = require('../lib/util')
 
-module.exports = function (app, msg, profiles, follows) {
+module.exports = function (app, profile, follows) {
 
   // markup 
 
-  var id = msg.value.author
-  var profile = profiles[id]
+  var id = profile.id
   var otherNames = app.getOtherNames(profile)
 
   function f (e) { follow(e, id) }
@@ -25,7 +24,7 @@ module.exports = function (app, msg, profiles, follows) {
   }
   renamebtn = h('button.btn.btn-primary.btn-xs', { title: 'Rename', onclick: r }, com.icon('pencil'))
 
-  return h('tr.address',
+  return h('tr.contact-listing',
     h('td.profpic', com.userHexagon(app, id, 60)),
     h('td.details',
       h('p.name', 

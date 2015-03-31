@@ -23,17 +23,12 @@ module.exports = function (app) {
 
     // markup
 
-    function listFn (opts) {
-      opts.type = 'init'
-      return app.ssb.messagesByType(opts)
-    }
-    function filterFn (msg) {
-      var id = msg.value.author
-      var prof = app.profiles[id]
+    function filterFn (prof) {
+      var id = prof.id
       var primary = (prof && prof.primary) ? prof.primary : false
 
       if (queryStr) {
-        var author = app.names[msg.value.author] || msg.value.author
+        var author = app.names[id] || id
         var regex = new RegExp(queryStr.replace(/\s/g, '|'))
         if (!regex.exec(author))
           return false
@@ -41,10 +36,6 @@ module.exports = function (app) {
 
       if (currentList == 'following') {
         if ((id === app.myid || (follows[app.myid][id] && trusts[app.myid][id] !== -1)) && !primary)
-          return true
-      }
-      else if (currentList == 'trusted') {
-        if (id !== app.myid && trusts[app.myid][id] === 1)
           return true
       }
       else if (currentList == 'others') {
@@ -62,13 +53,6 @@ module.exports = function (app) {
 
       return false
     }
-    function cursorFn (msg) {
-      if (msg)
-        return msg.value.timestamp
-    }
-    function renderMsgFn (msg) {
-      return com.address(app, msg, app.profiles, follows)
-    }
 
     app.setPage('address-book', h('.row',
       h('.col-xs-1', com.sidenav(app)),
@@ -78,8 +62,7 @@ module.exports = function (app) {
             current: currentList,
             items: [
               ['following', makeUri({ list: 'following' }), 'Following'],
-              ['trusted',   makeUri({ list: 'trusted' }),   'Trusted'],
-              ['others',    makeUri({ list: 'others' }),    'Other Users'],
+              ['others',    makeUri({ list: 'others' }),    'Others'],
               ['apps',      makeUri({ list: 'apps' }),      'Applications'],
               ['flagged',   makeUri({ list: 'flagged' }),   'Flagged']
             ]
@@ -88,7 +71,7 @@ module.exports = function (app) {
             value: queryStr,
             onsearch: onsearch
           })),
-        com.messageFeed(app, { feed: listFn, filter: filterFn, cursor: cursorFn, renderMsg: renderMsgFn })),
+        com.contactFeed(app, { filter: filterFn, follows: follows })),
       h('.col-xs-3.right-column.full-height',
         h('.right-column-inner',
           com.notifications(app),

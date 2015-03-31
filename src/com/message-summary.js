@@ -84,6 +84,30 @@ function getSummary (app, msg, opts) {
         if (items.length===0)
           items.push(h('h4', com.icon('option-horizontal'), ' Published a contact for ', subjects()))
         return items
+      },
+      vote: function () {
+        var items
+        if (c.vote === 1)
+          items = [com.icon('triangle-top'), ' Upvoted ']
+        else if (c.vote === 0)
+          items = [com.icon('erase'), ' Removed vote for ']
+        else if (c.vote === -1)
+          items = [com.icon('triangle-bottom'), ' Downvoted ']
+        else
+          return false
+
+        if (!c.voteTopic)
+          return false
+        if (c.voteTopic.msg)
+          items.push(fetchMsgLink(app, c.voteTopic.msg))
+        else if (c.voteTopic.feed)
+          items.push(com.user(app, c.voteTopic.feed))
+        else if (c.voteTopic.ext)
+          items.push(com.a('/ext/'+c.voteTopic.ext, 'this file'))
+        else
+          return false
+
+        return h('h4', items)
       }
     })[c.type]()
     if (!s || s.length == 0)
@@ -144,8 +168,8 @@ function ago (msg) {
 }
 
 function author (app, msg, addition) {
-    return h('p', com.user(app, msg.value.author), ' ', ago(msg), addition)
-  }
+  return h('p', com.user(app, msg.value.author), ' ', ago(msg), addition)
+}
 
 function fetchReplyLink (app, msg) {
   var link = mlib.asLinks(msg.value.content.repliesTo)[0]
@@ -162,4 +186,13 @@ function fetchReplyLink (app, msg) {
     span.appendChild(h('a.text-muted', { href: '#/msg/'+link.msg }, str))
   })
   return span
+}
+
+function fetchMsgLink (app, mid) {
+  var link = com.a('#/msg/'+mid, 'this message')
+  app.ssb.get(mid, function (err, msg) {
+    if (msg)
+      link.innerText = shorten((msg.content.type == 'post') ? msg.content.text : msg.content.type, 40) + ' by ' + com.userName(app, msg.author)
+  })
+  return link
 }
