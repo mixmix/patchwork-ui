@@ -27,11 +27,11 @@ module.exports = function (app) {
     }
     else if (list == 'data') {
       // no standard message types
-      if (c.type === 'init' || c.type === 'post' || c.type === 'advert' || c.type === 'contact' || c.type === 'pub')
+      if (c.type === 'init' || c.type === 'post' || c.type === 'advert' || c.type === 'contact' || c.type === 'vote' || c.type === 'pub')
         return false
     }
     else if (list == 'actions') {
-      if (c.type !== 'init' && c.type !== 'contact' && c.type !== 'pub')
+      if (c.type !== 'init' && c.type !== 'contact' && c.type !== 'vote' && c.type !== 'pub')
         return false
     }
 
