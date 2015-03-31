@@ -17,9 +17,15 @@ module.exports = function (app) {
   }
   lastQueryStr = queryStr
   lastList = list
+  var myprofile = app.profiles[app.myid]
 
   function filterFn (msg) {
+    var a = msg.value.author
     var c = msg.value.content
+
+    // filter out people not followed directly
+    if (a !== app.myid && (!myprofile.assignedTo[a] || !myprofile.assignedTo[a].following))
+      return false
 
     if (list == 'posts') {
       if (c.type !== 'post')
@@ -38,7 +44,7 @@ module.exports = function (app) {
     if (!queryStr)
       return true
 
-    var author = app.names[msg.value.author] || msg.value.author
+    var author = app.names[a] || a
     var regex = new RegExp(queryStr.replace(/\s/g, '|'))
     if (regex.exec(author) || regex.exec(c.type))
       return true
