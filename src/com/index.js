@@ -142,7 +142,7 @@ var sidenav =
 exports.sidenav = function (app) {
   var pages = [
   //[id, path, label],
-    ['posts', '', icon('globe')],// h('span', { style: 'padding-left: 2px' }, 'feed')]],
+    ['feed', '', icon('globe')],// h('span', { style: 'padding-left: 2px' }, 'feed')]],
     ['compose', 'compose', 'compose'],
     ['address-book', 'address-book', 'network'],
     ['help', 'help', 'help']
