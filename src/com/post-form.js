@@ -111,11 +111,7 @@ module.exports = function (app, parent) {
           else {
             // auto-subscribe
             app.ssb.phoenix.subscribe(msg.key)
-
-            if (parent)
-              app.refreshPage()
-            else
-              window.location.hash = '#/'
+            app.refreshPage()
           }
         })
       })
@@ -124,10 +120,7 @@ module.exports = function (app, parent) {
 
   function cancel (e) {
     e.preventDefault()
-    if (parent)
-      form.parentNode.removeChild(form)
-    else
-      window.location.hash = '#/'
+    form.parentNode.removeChild(form)
   }
 
   function addFile (e) {

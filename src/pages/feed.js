@@ -11,10 +11,11 @@ module.exports = function (app) {
 
   var queryStr = app.page.qs.q || ''
   var list = app.page.qs.list || 'latest'
-  if (!feedState || lastQueryStr != queryStr || lastList != list) {
+  // :TODO: feed-state resumption disabled temporarily because it needs work
+  // if (!feedState || lastQueryStr != queryStr || lastList != list) {
     // new query, reset the feed
     feedState = com.messageFeed.makeStateObj()
-  }
+  // }
   lastQueryStr = queryStr
   lastList = list
   var myprofile = app.profiles[app.myid]
@@ -49,6 +50,7 @@ module.exports = function (app) {
   // markup
 
   var searchInput = h('input.search', { type: 'text', placeholder: 'Search', value: queryStr })
+  var composeContainer = h('div')
   var feed = com.messageFeed(app, { feed: feedFn, filter: filterFn, state: feedState })
   app.setPage('feed', h('.row',
     h('.col-xs-1', com.sidenav(app)),
@@ -62,7 +64,9 @@ module.exports = function (app) {
             ['all',    makeUri({ list: 'all' }),    'All']
           ]
         }),
-        h('form', { onsubmit: onsearch }, searchInput)),
+        h('form', { onsubmit: onsearch }, searchInput),
+        h('a.btn.btn-primary', {onclick: oncompose, style: 'margin-left: 5px'}, 'Compose')),
+      composeContainer,
       feed),
     h('.col-xs-3.right-column.full-height',
       h('.right-column-inner',
@@ -85,6 +89,12 @@ module.exports = function (app) {
   function onsearch (e) {
     e.preventDefault()
     window.location.hash = makeUri({ q: searchInput.value })
+  }
+
+  function oncompose (e) {
+    e.preventDefault()
+    if (!composeContainer.hasChildNodes())
+      composeContainer.appendChild(com.postForm(app))
   }
 }
 module.exports.isHubPage = true
