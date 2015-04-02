@@ -113,7 +113,7 @@ function refreshPage (e) {
   app.setPendingCount(0)
 
   // run the router
-  var route = router('#'+(location.href.split('#')[1]||''), 'posts')
+  var route = router('#'+(location.href.split('#')[1]||''), 'feed')
   app.page.id    = route[0]
   app.page.param = route[1]
   app.page.qs    = route[2] || {}

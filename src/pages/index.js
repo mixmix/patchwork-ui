@@ -18,7 +18,6 @@ module.exports = {
   inbox:          require('./inbox'),
   msg:            require('./message'),
   ext:            require('./ext'),
-  posts:          require('./posts'),
   notfound:       notfound,
   profile:        require('./profile'),
   setup:          require('./setup')
