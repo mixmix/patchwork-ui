@@ -10,7 +10,7 @@ var lastQueryStr, lastList
 module.exports = function (app) {
 
   var queryStr = app.page.qs.q || ''
-  var list = app.page.qs.list || 'posts'
+  var list = app.page.qs.list || 'latest'
   if (!feedState || lastQueryStr != queryStr || lastList != list) {
     // new query, reset the feed
     feedState = com.messageFeed.makeStateObj()
@@ -19,27 +19,20 @@ module.exports = function (app) {
   lastList = list
   var myprofile = app.profiles[app.myid]
 
+  var feedFn = app.ssb.createFeedStream
+  if (list == 'inbox')
+    feedFn = app.ssb.phoenix.createInboxStream
+
   function filterFn (msg) {
     var a = msg.value.author
     var c = msg.value.content
 
     // filter out people not followed directly
-    if (a !== app.myid && (!myprofile.assignedTo[a] || !myprofile.assignedTo[a].following))
+    if (list != 'inbox' && a !== app.myid && (!myprofile.assignedTo[a] || !myprofile.assignedTo[a].following))
       return false
 
-    if (list == 'posts') {
-      if (c.type !== 'post')
-        return false
-    }
-    else if (list == 'data') {
-      // no standard message types
-      if (c.type === 'init' || c.type === 'post' || c.type === 'contact' || c.type === 'vote' || c.type === 'pub')
-        return false
-    }
-    else if (list == 'actions') {
-      if (c.type !== 'init' && c.type !== 'contact' && c.type !== 'vote' && c.type !== 'pub')
-        return false
-    }
+    if (list == 'latest' && c.type !== 'post')
+      return false
 
     if (!queryStr)
       return true
@@ -56,7 +49,7 @@ module.exports = function (app) {
   // markup
 
   var searchInput = h('input.search', { type: 'text', placeholder: 'Search', value: queryStr })
-  var feed = com.messageFeed(app, { feed: app.ssb.createFeedStream, filter: filterFn, state: feedState })
+  var feed = com.messageFeed(app, { feed: feedFn, filter: filterFn, state: feedState })
   app.setPage('feed', h('.row',
     h('.col-xs-1', com.sidenav(app)),
     h('.col-xs-8', 
@@ -64,10 +57,9 @@ module.exports = function (app) {
         com.nav({
           current: list,
           items: [
-            ['posts',    makeUri({ list: 'posts' }),    'Posts'],
-            ['data',     makeUri({ list: 'data' }),     'Data'],
-            ['actions',  makeUri({ list: 'actions' }),  'Actions'],
-            ['all',      makeUri({ list: 'all' }),      'All']
+            ['latest', makeUri({ list: 'latest' }), 'Latest'],
+            ['inbox',  makeUri({ list: 'inbox' }),  'Inbox ('+app.indexCounts.inboxUnread+')'],            
+            ['all',    makeUri({ list: 'all' }),    'All']
           ]
         }),
         h('form', { onsubmit: onsearch }, searchInput)),

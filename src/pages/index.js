@@ -14,7 +14,6 @@ module.exports = {
   compose:        require('./compose'),
   feed:           require('./feed'),
   help:           require('./help'),
-  inbox:          require('./inbox'),
   msg:            require('./message'),
   ext:            require('./ext'),
   notfound:       notfound,

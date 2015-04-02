@@ -218,7 +218,7 @@ function setPendingCount (n) {
 function setInboxUnreadCount (n) {
   this.indexCounts.inboxUnread = n
   try {
-    document.querySelector('.side-nav .side-nav-inbox a').textContent = 'inbox ('+n+')'
+    document.querySelector('.navlinks .navlink-inbox').textContent = 'inbox ('+n+')'
   } catch (e) { }  
 }
 

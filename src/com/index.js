@@ -124,9 +124,9 @@ exports.toEmoji = function (buf, size) {
 var nav =
 exports.nav = function (opts) {
   var items = opts.items.map(function (item) {
-    var cls = ''
+    var cls = '.navlink-'+item[0]
     if (item[0] == opts.current)
-      cls = '.selected'
+      cls += '.selected'
     return h('a'+cls, { href: item[1] }, item[2])
   })
   return h('.navlinks', items)
@@ -143,7 +143,6 @@ exports.sidenav = function (app) {
   var pages = [
   //[id, path, label],
     ['posts', '', icon('globe')],// h('span', { style: 'padding-left: 2px' }, 'feed')]],
-    ['inbox', 'inbox', 'inbox ('+app.indexCounts.inboxUnread+')'],
     ['compose', 'compose', 'compose'],
     ['address-book', 'address-book', 'network'],
     ['help', 'help', 'help']
