@@ -33,7 +33,7 @@ module.exports = function (app) {
     }
     else if (list == 'data') {
       // no standard message types
-      if (c.type === 'init' || c.type === 'post' || c.type === 'advert' || c.type === 'contact' || c.type === 'vote' || c.type === 'pub')
+      if (c.type === 'init' || c.type === 'post' || c.type === 'contact' || c.type === 'vote' || c.type === 'pub')
         return false
     }
     else if (list == 'actions') {
@@ -48,7 +48,7 @@ module.exports = function (app) {
     var regex = new RegExp(queryStr.replace(/\s/g, '|'))
     if (regex.exec(author) || regex.exec(c.type))
       return true
-    if ((c.type == 'post' || c.type == 'advert') && regex.exec(c.text))
+    if (c.type == 'post' && regex.exec(c.text))
       return true
     return false
   }
@@ -75,8 +75,7 @@ module.exports = function (app) {
     h('.col-xs-3.right-column.full-height',
       h('.right-column-inner',
         com.notifications(app),
-        com.friendsHexagrid(app),
-        com.adverts(app)
+        com.friendsHexagrid(app)
       ),
       com.sidehelp(app)
     )

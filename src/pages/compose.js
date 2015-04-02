@@ -11,8 +11,7 @@ module.exports = function (app) {
     h('.col-xs-3.right-column.full-height',
       h('.right-column-inner',
         com.notifications(app),
-        com.friendsHexagrid(app),
-        com.adverts(app)
+        com.friendsHexagrid(app)
       ),
       com.sidehelp(app)
     )

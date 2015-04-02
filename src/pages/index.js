@@ -11,7 +11,6 @@ function notfound (app) {
 
 module.exports = {
   'address-book': require('./address-book'),
-  adverts:        require('./adverts'),
   compose:        require('./compose'),
   feed:           require('./feed'),
   help:           require('./help'),

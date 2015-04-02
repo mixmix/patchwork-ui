@@ -146,7 +146,6 @@ exports.sidenav = function (app) {
     ['inbox', 'inbox', 'inbox ('+app.indexCounts.inboxUnread+')'],
     ['compose', 'compose', 'compose'],
     ['address-book', 'address-book', 'network'],
-    ['adverts', 'adverts', 'adverts'],
     ['help', 'help', 'help']
   ]
 
@@ -219,8 +218,6 @@ exports.page = function (app, id, content) {
 }
 
 exports.prettyRaw = require('./pretty-raw')
-exports.advertForm = require('./advert-form')
-exports.adverts = require('./adverts')
 exports.messageVisuals = require('./message-visuals')
 exports.messageFeed = require('./message-feed')
 exports.message = require('./message')
