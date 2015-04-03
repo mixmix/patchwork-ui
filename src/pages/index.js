@@ -17,5 +17,6 @@ module.exports = {
   ext:            require('./ext'),
   notfound:       notfound,
   profile:        require('./profile'),
+  programs:       require('./programs'),
   setup:          require('./setup')
 }

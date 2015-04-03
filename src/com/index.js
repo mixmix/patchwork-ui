@@ -142,9 +142,10 @@ var sidenav =
 exports.sidenav = function (app) {
   var pages = [
   //[id, path, label],
-    ['feed', '', 'feed'],
+    ['feed',         '',             'messages'],
+    ['programs',     'programs',     'programs'],
     ['address-book', 'address-book', 'network'],
-    ['help', 'help', 'help']
+    ['help',         'help',         'help']
   ]
 
   return h('.side-nav.full-height',
@@ -226,6 +227,8 @@ exports.messageStats = require('./message-stats')
 exports.contactFeed = require('./contact-feed')
 exports.contactSummary = require('./contact-summary')
 exports.contactListing = require('./contact-listing')
+exports.programFeed = require('./program-feed')
+exports.programSummary = require('./program-summary')
 exports.notifications = require('./notifications')
 exports.peers = require('./peers')
 exports.postForm = require('./post-form')
