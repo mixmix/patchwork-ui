@@ -12,14 +12,16 @@ module.exports = function (app) {
 
   var edContainer = h('.editor-container',
     h('.editor-ctrls',
-      h('a', { href: '#/program-editor' }, 'Save'),
-      h('a', 'Eval')))
+      h('a', { href: '#/program-editor', 'data-overlay': 'Save' }, com.icon('floppy-disk')),
+      h('a', { href: '#/program-editor', 'data-overlay': 'Eval' }, com.icon('play')),
+      h('a.disabled', { href: '#/program-editor', 'data-overlay': 'Stop' }, com.icon('stop'))))
 
   app.setPage('new-program', h('.row',
     h('.col-xs-1', com.sidenav(app)),
     h('.col-xs-8', edContainer),
     h('.col-xs-3.right-column.full-height',
       h('.right-column-inner', com.notifications(app)),
+      com.editorNav(app, {  }),
       com.sidehelp(app))
   ))
 

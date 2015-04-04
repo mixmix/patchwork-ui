@@ -14,15 +14,79 @@
       border-radius: 2px;
       border: 1px solid transparent;
       margin-left: 5px;
+      font-size: 17px;
 
-      .highlighted {
+      &.highlighted {
         border: 1px solid #154F9B;
+      }
+      &.disabled {
+        color: gray;
       }
 
       &:hover {
+        position: relative;
         text-decoration: none;
-        background: #1C1D18;
+        background: #191A14;
+        color: #0071FF;
+        &.disabled {
+          color: gray;
+          cursor: default;
+        }
+
+        &:after {
+          content: attr(data-overlay);
+          position: absolute;
+          bottom: -30px;
+          left: 5px;
+        }
       }
+    }
+  }
+}
+
+.editor-nav {
+  margin: 2px 0 8px;
+
+  .navlinks {
+    display: table-cell;
+    white-space: pre;
+    a {
+      position: relative;
+      display: inline-block;
+      padding: 6px 22px 0 19px;
+      font-weight: 100;
+      color: #555;
+      margin-right: 5px;
+      border: 1px solid transparent;
+
+      &:hover {
+        text-decoration: none;
+        background: #ddd;
+      }
+      &.selected {
+        border-color: #ccc;
+        background: #fff;
+
+        // hide the border under the selected item
+        &:after {
+          content: '';
+          display: block;
+          position: absolute;
+          bottom: -2px;
+          left: 0;
+          width: 100%;
+          height: 4px;
+          background: #fff;
+        }
+      }
+    }
+  }
+  .editor-nav-body {
+    background: #fff;
+    border: 1px solid #ccc;
+    padding: 0 5px;
+    p {
+      margin: 6px 0;
     }
   }
 }
