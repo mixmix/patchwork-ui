@@ -1,0 +1,28 @@
+.editor-container {
+  position: relative;
+  .editor-ctrls {
+    position: absolute;
+    z-index: 500;
+    right: 10px;
+    top: 6px;
+    text-align: right;
+    
+    a {
+      display: inline-block;
+      padding: 6px 15px;
+      background: rgb(52, 53, 45);
+      border-radius: 2px;
+      border: 1px solid transparent;
+      margin-left: 5px;
+
+      .highlighted {
+        border: 1px solid #154F9B;
+      }
+
+      &:hover {
+        text-decoration: none;
+        background: #1C1D18;
+      }
+    }
+  }
+}

@@ -50,6 +50,14 @@
 @import "bootstrap/utilities.less";
 @import "bootstrap/responsive-utilities.less";
 
+// CodeMirror
+@import "codemirror/codemirror.less";
+@import "codemirror/theme-monokai.less";
+.CodeMirror pre {
+  font-size: 12px;
+  font-family: Consolas, Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace, serif;
+}
+
 // Phoenix styles
 @import "com/message.less";
 @import "com/message-thread.less";
@@ -61,6 +69,7 @@
 @import "com/contact-listing.less";
 @import "com/program-summary.less";
 @import "com/program-feed.less";
+@import "com/program-editor.less";
 @import "com/notifications.less";
 @import "com/header-controls.less";
 @import "com/ext.less";
@@ -86,7 +95,7 @@ body {
 .side-nav {
   white-space: nowrap;
   background: #2D2D2D;
-  border-right: 10px solid #eee;
+  border-right: 2px solid #eee;
 
   p {
     margin: 0;

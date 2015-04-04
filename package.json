@@ -22,6 +22,7 @@
   "dependencies": {
     "base-emoji": "~0.3.0",
     "blake2s": "~1.0.0",
+    "codemirror": "~5.1.0",
     "dom-walk": "~0.1.0",
     "eccjs": "git://github.com/dominictarr/eccjs.git#586f6d47507184a2efe84684ed0a30605cbc43a5",
     "emoji-named-characters": "^1.0.1",
