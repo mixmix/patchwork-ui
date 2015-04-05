@@ -11,26 +11,30 @@
       display: inline-block;
       padding: 6px 15px;
       background: rgb(52, 53, 45);
+      color: #5A6573;
       border-radius: 2px;
       border: 1px solid transparent;
+      box-shadow: 0 0 3px rgba(0,0,0,1);
       margin-left: 5px;
-      font-size: 17px;
 
       &.highlighted {
-        border: 1px solid #154F9B;
+        border-color: #154F9B;
+        color: #2778e2;
       }
 
       &:hover {
-        position: relative;
+        color: #747D88;
         text-decoration: none;
-        background: #191A14;
-        color: #0071FF;
-
-        &:after {
-          content: attr(data-overlay);
-          position: absolute;
-          bottom: -30px;
-          left: 5px;
+        background: #3F4137;
+        box-shadow: 0 0 15px rgba(0,0,0,1);
+        border-color: transparent;
+        &.blue {
+          background: @blue-primary;
+          color: @blue-tertiary;
+        }
+        &.yellow {
+          background: @yellow-primary;
+          color: @yellow-secondary;
         }
       }
     }

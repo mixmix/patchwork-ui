@@ -25,11 +25,11 @@ module.exports = function (app) {
 
   // markup
 
-  var saveBtn = h('a', { href: '#', onclick: onsave, 'data-overlay': 'Save' }, com.icon('floppy-disk'))
+  var saveBtn = h('a.blue', { href: '#', onclick: onsave }, 'Save')
   var edContainer = h('.editor-container',
     h('.editor-ctrls',
       saveBtn,
-      h('a', { href: '#/program-editor', 'data-overlay': 'Eval' }, com.icon('play'))))
+      h('a.yellow', { href: '#/program-editor' }, 'Eval')))
   var editorNav = com.editorNav(app, {  })
   app.setPage('new-program', h('.row',
     h('.col-xs-1', com.sidenav(app)),
@@ -63,17 +63,14 @@ module.exports = function (app) {
 
   var lastGen
   editor.on('change', function () {
-    if (lastGen) {
-      var hadChanges = hasChanges
-      hasChanges = !editor.isClean(lastGen)
-      if (hadChanges !== hasChanges) {
-        if (hasChanges)
-          saveBtn.classList.add('highlighted')
-        else
-          saveBtn.classList.remove('highlighted')
-      }
+    var hadChanges = hasChanges
+    hasChanges = !editor.isClean(lastGen)
+    if (hadChanges !== hasChanges) {
+      if (hasChanges)
+        saveBtn.classList.add('highlighted')
+      else
+        saveBtn.classList.remove('highlighted')
     }
-    lastGen = editor.changeGeneration()
   })
 
   // handlers
@@ -85,6 +82,7 @@ module.exports = function (app) {
     buff.meta.name = editorNav.getName()
     buff.text = editor.getValue()
     buffers.save(buff)
+    lastGen = editor.changeGeneration()
 
     if (app.page.param != buff.id)
       window.location = '#/program-editor/'+buff.id
