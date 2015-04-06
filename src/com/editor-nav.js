@@ -7,6 +7,13 @@ module.exports = function (app, opts) {
 
   // markup
 
+  var buflist = buffers.list()
+  var buflinks = []
+  for (var id in buflist) {
+    var selected = (opts.selectedBuff == id) ? '.selected' : ''
+    buflinks.push(h('li'+selected, h('a', { href: '#/program-editor/'+id }, buflist[id].name)))
+  }
+
   var nameInput = h('input.form-control', { placeholder: 'Name' })
   var nav = h('.editor-nav',
     com.nav({
@@ -17,12 +24,9 @@ module.exports = function (app, opts) {
       ]
     }),
     h('.editor-nav-body',
-      h('p', nameInput)))
-      // h('p', 
-        // h('a.btn.btn-primary', com.icon('play')),
-        // h('a.btn.btn-warning', com.icon('stop'))),
-      // h('p.checkbox',
-        // h('label', h('input', { type: 'checkbox' }), 'Eval on page load'))))
+      h('p', h('a.btn.btn-default.btn-xs', { href: '#/program-editor' }, 'New')),
+      // h('p', nameInput),
+      h('ul.buffer-list', buflinks)))
 
   // handlers
 

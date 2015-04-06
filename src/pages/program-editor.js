@@ -9,9 +9,7 @@ var u = require('../lib/util')
 
 /**
  * TODO
- * - domstorage-blobspace
  * - save ui
- * - list/load ui
  * - evaler
  * - env globals
  * - com registry
@@ -30,7 +28,7 @@ module.exports = function (app) {
     h('.editor-ctrls',
       saveBtn,
       h('a.yellow', { href: '#/program-editor' }, 'Eval')))
-  var editorNav = com.editorNav(app, {  })
+  var editorNav = com.editorNav(app, { selectedBuff: buff.id })
   app.setPage('new-program', h('.row',
     h('.col-xs-1', com.sidenav(app)),
     h('.col-xs-8', edContainer),
