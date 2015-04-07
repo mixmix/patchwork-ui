@@ -124,9 +124,9 @@ exports.toEmoji = function (buf, size) {
 var nav =
 exports.nav = function (opts) {
   var items = opts.items.map(function (item) {
-    var cls = ''
+    var cls = '.navlink-'+item[0]
     if (item[0] == opts.current)
-      cls = '.selected'
+      cls += '.selected'
     return h('a'+cls, { href: item[1] }, item[2])
   })
   return h('.navlinks', items)
@@ -142,12 +142,10 @@ var sidenav =
 exports.sidenav = function (app) {
   var pages = [
   //[id, path, label],
-    ['posts', '', icon('globe')],// h('span', { style: 'padding-left: 2px' }, 'feed')]],
-    ['inbox', 'inbox', 'inbox ('+app.indexCounts.inboxUnread+')'],
-    ['compose', 'compose', 'compose'],
+    ['feed',         '',             'feed'],
     ['address-book', 'address-book', 'network'],
-    ['adverts', 'adverts', 'adverts'],
-    ['help', 'help', 'help']
+    ['programs',     'programs',     'plugins'],
+    ['help',         'help',         'help']
   ]
 
   return h('.side-nav.full-height',
@@ -219,8 +217,6 @@ exports.page = function (app, id, content) {
 }
 
 exports.prettyRaw = require('./pretty-raw')
-exports.advertForm = require('./advert-form')
-exports.adverts = require('./adverts')
 exports.messageVisuals = require('./message-visuals')
 exports.messageFeed = require('./message-feed')
 exports.message = require('./message')
@@ -231,6 +227,9 @@ exports.messageStats = require('./message-stats')
 exports.contactFeed = require('./contact-feed')
 exports.contactSummary = require('./contact-summary')
 exports.contactListing = require('./contact-listing')
+exports.programFeed = require('./program-feed')
+exports.programSummary = require('./program-summary')
+exports.editorNav = require('./editor-nav')
 exports.notifications = require('./notifications')
 exports.peers = require('./peers')
 exports.postForm = require('./post-form')

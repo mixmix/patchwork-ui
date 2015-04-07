@@ -18,7 +18,7 @@ module.exports = function (app) {
     }
   }
 
-  return h('.notifications', notes)
+  return (notes.length) ? h('.notifications', notes) : null
 
   // handlers
 

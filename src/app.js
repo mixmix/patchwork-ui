@@ -113,7 +113,7 @@ function refreshPage (e) {
   app.setPendingCount(0)
 
   // run the router
-  var route = router('#'+(location.href.split('#')[1]||''), 'posts')
+  var route = router('#'+(location.href.split('#')[1]||''), 'feed')
   app.page.id    = route[0]
   app.page.param = route[1]
   app.page.qs    = route[2] || {}
@@ -218,7 +218,7 @@ function setPendingCount (n) {
 function setInboxUnreadCount (n) {
   this.indexCounts.inboxUnread = n
   try {
-    document.querySelector('.side-nav .side-nav-inbox a').textContent = 'inbox ('+n+')'
+    document.querySelector('.navlinks .navlink-inbox').textContent = 'inbox ('+n+')'
   } catch (e) { }  
 }
 

@@ -160,19 +160,6 @@ module.exports = function (app) {
         'If somebody is behaving poorly (spamming, trolling) you can flag their account to signal to other users that they should be avoided.'
       ])
     ]
-  } else if (app.page.param == 'adverts') {
-    content = [
-      com.panel('Advertisements', [
-        'Advertisements are placed by the users. ',
-        'They\'re mostly for fun, but they can be useful too.',
-      ]),
-      com.panel('Which Ads Do I See?', [
-        'Scuttlebutt rotates the last 30 adverts at random.',
-      ]),
-      com.panel('Do the Ads Track Me?', [
-        'There\'s no tracking involved or allowed.'
-      ])
-    ]
   } else {
     content = [
       com.panel('About', [

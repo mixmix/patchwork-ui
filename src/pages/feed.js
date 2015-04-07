@@ -1,42 +1,100 @@
 'use strict'
 var h = require('hyperscript')
+var mlib = require('ssb-msgs')
+var pull = require('pull-stream')
+var multicb = require('multicb')
 var com = require('../com')
 
-var rawOpts = {raw: true}
+var feedState
+var lastQueryStr, lastList
 module.exports = function (app) {
-  var opts = { limit: 30, reverse: true }
-  app.ssb.phoenix.getFeed(opts, function (err, msgs) {
-    var lastMsg = msgs.slice(-1)[0]
 
-    // markup
+  var queryStr = app.page.qs.q || ''
+  var list = app.page.qs.list || 'latest'
+  // :TODO: feed-state resumption disabled temporarily because it needs work
+  // if (!feedState || lastQueryStr != queryStr || lastList != list) {
+    // new query, reset the feed
+    feedState = com.messageFeed.makeStateObj()
+  // }
+  lastQueryStr = queryStr
+  lastList = list
+  var myprofile = app.profiles[app.myid]
 
-    var loadMoreBtn = (msgs.length === 30) ? h('p', h('button.btn.btn-primary.btn-block', { onclick: loadMore }, 'Load More')) : ''
-    var content = h('.message-feed', msgs.map(function (msg) { return com.message(app, msg, rawOpts) }))
-    app.setPage('feed', h('.row',
-      h('.col-xs-2.col-md-1', com.sidenav(app)),
-      h('.col-xs-10.col-md-9', content, loadMoreBtn),
-      h('.hidden-xs.hidden-sm.col-md-2',
-        com.adverts(app),
-        h('hr'),
-        com.sidehelp(app)
-      )
-    ))
+  var feedFn = app.ssb.createFeedStream
+  if (list == 'inbox')
+    feedFn = app.ssb.phoenix.createInboxStream
 
-    // handlers
+  function filterFn (msg) {
+    var a = msg.value.author
+    var c = msg.value.content
 
-    function loadMore (e) {
-      e.preventDefault()
-      opts.lt = lastMsg
-      app.ssb.phoenix.getFeed(opts, function (err, moreMsgs) {
-        if (moreMsgs.length > 0) {
-          moreMsgs.forEach(function (msg) { content.appendChild(com.message(app, msg, rawOpts)) })
-          lastMsg = moreMsgs.slice(-1)[0]
-        }
-        // remove load more btn if it looks like there arent any more to load
-        if (moreMsgs.length < 30)
-          loadMoreBtn.parentNode.removeChild(loadMoreBtn)
-      })
-    }
+    // filter out people not followed directly
+    if (list != 'inbox' && a !== app.myid && (!myprofile.assignedTo[a] || !myprofile.assignedTo[a].following))
+      return false
 
-  })
+    if (list == 'latest' && c.type !== 'post')
+      return false
+
+    if (!queryStr)
+      return true
+
+    var author = app.names[a] || a
+    var regex = new RegExp(queryStr.replace(/\s/g, '|'))
+    if (regex.exec(author) || regex.exec(c.type))
+      return true
+    if (c.type == 'post' && regex.exec(c.text))
+      return true
+    return false
+  }
+
+  // markup
+
+  var searchInput = h('input.search', { type: 'text', placeholder: 'Search', value: queryStr })
+  var composeContainer = h('div')
+  var feed = com.messageFeed(app, { feed: feedFn, filter: filterFn, state: feedState })
+  app.setPage('feed', h('.row',
+    h('.col-xs-1', com.sidenav(app)),
+    h('.col-xs-8', 
+      h('.header-ctrls',
+        com.nav({
+          current: list,
+          items: [
+            ['latest', makeUri({ list: 'latest' }), 'Latest'],
+            ['inbox',  makeUri({ list: 'inbox' }),  'Inbox ('+app.indexCounts.inboxUnread+')'],            
+            ['all',    makeUri({ list: 'all' }),    'All']
+          ]
+        }),
+        h('form', { onsubmit: onsearch }, searchInput),
+        h('a.btn.btn-primary', {onclick: oncompose, style: 'margin-left: 5px'}, 'Compose')),
+      composeContainer,
+      feed),
+    h('.col-xs-3.right-column.full-height',
+      h('.right-column-inner',
+        com.notifications(app),
+        com.friendsHexagrid(app)
+      ),
+      com.sidehelp(app)
+    )
+  ))
+  feed.scrollTop = feedState.lastScrollTop
+
+  function makeUri (opts) {
+    opts.q = ('q' in opts) ? opts.q : queryStr
+    opts.v = ('list' in opts) ? opts.list : list
+    return '#/feed?q=' + encodeURIComponent(opts.q) + '&list=' + encodeURIComponent(opts.v)
+  }
+
+  // handlers
+
+  function onsearch (e) {
+    e.preventDefault()
+    window.location.hash = makeUri({ q: searchInput.value })
+  }
+
+  function oncompose (e) {
+    e.preventDefault()
+    if (!composeContainer.hasChildNodes())
+      composeContainer.appendChild(com.postForm(app))
+  }
 }
+module.exports.isHubPage = true

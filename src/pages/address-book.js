@@ -84,9 +84,9 @@ module.exports = function (app) {
     ))
 
     function makeUri (opts) {
-      opts.q = ('q' in opts) ? opts.q : queryStr
-      opts.v = ('list' in opts) ? opts.list : currentList
-      return '#/address-book?q=' + encodeURIComponent(opts.q) + '&list=' + encodeURIComponent(opts.v)
+      opts.q    = ('q' in opts) ? opts.q : queryStr
+      opts.list = ('list' in opts) ? opts.list : currentList
+      return '#/address-book?q=' + encodeURIComponent(opts.q) + '&list=' + encodeURIComponent(opts.list)
     }
 
     // handlers

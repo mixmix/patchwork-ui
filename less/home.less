@@ -50,6 +50,14 @@
 @import "bootstrap/utilities.less";
 @import "bootstrap/responsive-utilities.less";
 
+// CodeMirror
+@import "codemirror/codemirror.less";
+@import "codemirror/theme-monokai.less";
+.CodeMirror pre {
+  font-size: 12px;
+  font-family: Consolas, Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace, serif;
+}
+
 // Phoenix styles
 @import "com/message.less";
 @import "com/message-thread.less";
@@ -59,6 +67,9 @@
 @import "com/contact-summary.less";
 @import "com/contact-feed.less";
 @import "com/contact-listing.less";
+@import "com/program-summary.less";
+@import "com/program-feed.less";
+@import "com/program-editor.less";
 @import "com/notifications.less";
 @import "com/header-controls.less";
 @import "com/ext.less";
@@ -127,6 +138,10 @@ body {
     padding: 5px 10px;
     margin-bottom: 1em;
     border: 1px solid #ccc;
+
+    &:empty {
+      display: none;
+    }
   }
   .well {
     background: #eee;

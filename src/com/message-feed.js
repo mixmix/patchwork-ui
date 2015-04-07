@@ -18,18 +18,9 @@ module.exports = function (app, opts) {
   if (!opts.feed)
     opts.feed = app.ssb.createFeedStream
 
-  // choose cursor-creation function based on the index being used
-  var cursor
-  if (opts.feed === app.ssb.createFeedStream) {
-    cursor = function (msg) {
-      if (msg)
-        return [msg.value.timestamp, msg.value.author]
-    }
-  } else {
-    cursor = function (msg) {
-      if (msg)
-        return msg.value.timestamp
-    }    
+  var cursor = function (msg) {
+    if (msg)
+      return [msg.value.timestamp, msg.value.author]
   }
 
   // markup

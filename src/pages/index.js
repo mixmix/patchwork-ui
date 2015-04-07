@@ -10,16 +10,14 @@ function notfound (app) {
 }
 
 module.exports = {
-  'address-book': require('./address-book'),
-  adverts:        require('./adverts'),
-  compose:        require('./compose'),
-  feed:           require('./feed'),
-  help:           require('./help'),
-  inbox:          require('./inbox'),
-  msg:            require('./message'),
-  ext:            require('./ext'),
-  posts:          require('./posts'),
-  notfound:       notfound,
-  profile:        require('./profile'),
-  setup:          require('./setup')
+  'address-book':   require('./address-book'),
+  feed:             require('./feed'),
+  help:             require('./help'),
+  msg:              require('./message'),
+  ext:              require('./ext'),
+  // 'program-editor': require('./program-editor'),
+  notfound:         notfound,
+  profile:          require('./profile'),
+  programs:         require('./programs'),
+  setup:            require('./setup')
 }
