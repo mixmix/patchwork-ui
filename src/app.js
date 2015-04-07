@@ -6,7 +6,7 @@ var pull       = require('pull-stream')
 var schemas    = require('ssb-msg-schemas')
 var com        = require('./com')
 var pages      = require('./pages')
-var util       = require('./lib/util')
+var u          = require('./lib/util')
 
 module.exports = function (ssb) {
 
@@ -52,6 +52,25 @@ module.exports = function (ssb) {
 
   // periodically poll and rerender the current connections
   setInterval(app.pollPeers, 5000)
+
+  // plugins
+  u.getJson('/plugins.json', function (err, plugins) {
+    if (err) {
+      console.error('Failed to load plugins')
+      console.error(err)
+      if (plugins)
+        console.error(plugins)
+      return
+    }
+    for (var k in plugins.files) {
+      try {
+        console.log('Executing plugin', k)
+        eval('(function() {\n"use strict"\n\n'+plugins.files[k]+'\n\n})()')
+      } catch (e) {
+        console.error(e)
+      }
+    }
+  })
 
   return app
 }
@@ -139,7 +158,7 @@ function refreshPage (e) {
     app.suggestOptions['@'] = []
     for (var k in app.profiles) {
       var name = app.names[k] || k
-      app.suggestOptions['@'].push({ title: name, subtitle: app.getOtherNames(app.profiles[k]) + ' ' + util.shortString(k), value: name })
+      app.suggestOptions['@'].push({ title: name, subtitle: app.getOtherNames(app.profiles[k]) + ' ' + u.shortString(k), value: name })
     }
 
     // re-route to setup if needed
