@@ -7,15 +7,6 @@ require('codemirror/keymap/sublime')
 var com = require('../com')
 var u = require('../lib/util')
 
-/**
- * TODO
- * - save ui
- * - evaler
- * - env globals
- * - com registry
- * - active com ui
- */
-
 module.exports = function (app) {
 
   var hasChanges = false

@@ -26,8 +26,8 @@ module.exports = function (app) {
         com.search({
           value: queryStr,
           onsearch: onsearch
-        }),
-        h('a.btn.btn-primary', { href: '#/program-editor', style: 'margin-left: 5px' }, 'New Program')),
+        })),
+        // h('a.btn.btn-primary', { href: '#/program-editor', style: 'margin-left: 5px' }, 'New Program')),
       com.programFeed(app, { filter: filterFn })),
     h('.col-xs-3.right-column.full-height',
       h('.right-column-inner',
