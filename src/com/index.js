@@ -142,9 +142,9 @@ var sidenav =
 exports.sidenav = function (app) {
   var pages = [
   //[id, path, label],
-    ['feed',         '',             'messages'],
-    ['programs',     'programs',     'programs'],
+    ['feed',         '',             'feed'],
     ['address-book', 'address-book', 'network'],
+    ['programs',     'programs',     'plugins'],
     ['help',         'help',         'help']
   ]
 
