@@ -49,10 +49,9 @@ module.exports = function (ssb) {
   app.setStatus          = setStatus.bind(app) // :TODO: generalize
   app.followPrompt       = followPrompt.bind(app) // :TODO: generalize
   app.setNamePrompt      = setNamePrompt.bind(app) // :TODO: generalize
-  app.pollPeers          = pollPeers.bind(app) // :TODO: make private
 
   // periodically poll and rerender the current connections
-  setInterval(app.pollPeers, 5000)
+  setInterval(pollPeers.bind(app), 5000)
 
   // plugins
   u.getJson('/plugins.json', function (err, plugins) {
