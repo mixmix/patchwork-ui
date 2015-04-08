@@ -8,6 +8,7 @@ var com        = require('./com')
 var pages      = require('./pages')
 var u          = require('./lib/util')
 
+var newMessageCount = 0
 module.exports = function (ssb) {
 
   // master state object
@@ -25,7 +26,6 @@ module.exports = function (ssb) {
     },
 
     // :TODO: all of these need updating
-    pendingCount: 0, // :TODO: make private
     suggestOptions: require('./lib/suggest-options') // :TODO: take off app
   }
 
@@ -42,7 +42,6 @@ module.exports = function (ssb) {
 
   // :TODO: all of these need updating
   app.showUserId         = showUserId.bind(app) // :TODO: generalize
-  app.setPendingCount    = setPendingCount.bind(app) // :TODO: generalize
   app.setStatus          = setStatus.bind(app) // :TODO: generalize
   app.followPrompt       = followPrompt.bind(app) // :TODO: generalize
   app.setNamePrompt      = setNamePrompt.bind(app) // :TODO: generalize
@@ -115,7 +114,7 @@ function setupRpcConnection () {
   var app = this
   pull(app.ssb.phoenix.createEventStream(), pull.drain(function (event) {
     if (event.type == 'message')
-      app.setPendingCount(app.pendingCount + 1)
+      setNewMessageCount(newMessageCount + 1)
   }))
 }
 
@@ -124,7 +123,7 @@ function refreshPage (e) {
   e && e.preventDefault()
 
   // clear pending messages
-  app.setPendingCount(0)
+  setNewMessageCount(0)
 
   // run the router
   var route = router('#'+(location.href.split('#')[1]||''), 'feed')
@@ -178,18 +177,14 @@ function showUserId () {
   swal('Here is your contact id', this.myid)
 }
 
-function setPendingCount (n) {
-  this.pendingCount = n
+function setNewMessageCount (n) {
+  newMessageCount = n
   try {
     if (n) {
       document.title = '('+n+') secure scuttlebutt'
-      document.getElementById('get-latest').classList.remove('hidden')
-      document.querySelector('#get-latest .btn').textContent = 'Get Latest ('+n+')'
     }
     else {
       document.title = 'secure scuttlebutt'
-      document.getElementById('get-latest').classList.add('hidden')
-      document.querySelector('#get-latest .btn').textContent = 'Get Latest'
     }
   } catch (e) {}
 }
