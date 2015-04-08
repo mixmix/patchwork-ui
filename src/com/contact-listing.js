@@ -8,7 +8,7 @@ module.exports = function (app, profile, follows) {
   // markup 
 
   var id = profile.id
-  var otherNames = app.getOtherNames(profile)
+  var otherNames = u.getOtherNames(app, profile)
 
   function f (e) { follow(e, id) }
   function unf (e) { unfollow(e, id) }

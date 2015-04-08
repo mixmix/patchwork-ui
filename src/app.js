@@ -43,7 +43,6 @@ module.exports = function (ssb) {
   app.updateCounts       = updateCounts.bind(app)
 
   // :TODO: all of these need updating
-  app.getOtherNames      = getOtherNames.bind(app) // :TODO: move to util
   app.showUserId         = showUserId.bind(app) // :TODO: generalize
   app.setPendingCount    = setPendingCount.bind(app) // :TODO: generalize
   app.setInboxUnreadCount= setInboxUnreadCount.bind(app) // :TODO: take off app
@@ -160,7 +159,7 @@ function refreshPage (e) {
     app.suggestOptions['@'] = []
     for (var k in app.profiles) {
       var name = app.names[k] || k
-      app.suggestOptions['@'].push({ title: name, subtitle: app.getOtherNames(app.profiles[k]) + ' ' + u.shortString(k), value: name })
+      app.suggestOptions['@'].push({ title: name, subtitle: u.getOtherNames(app, app.profiles[k]) + ' ' + u.shortString(k), value: name })
     }
 
     // re-route to setup if needed
@@ -188,26 +187,6 @@ function updateCounts () {
   this_.ssb.phoenix.getIndexCounts(function (err, counts) {
     this_.setInboxUnreadCount(counts.inboxUnread)
   })
-}
-
-function getOtherNames (profile) {
-  // todo - replace with ranked names
-  var name = this.names[profile.id] || profile.id
-
-  var names = []
-  function add(n) {
-    if (n && n !== name && !~names.indexOf(n))
-      names.push(n)
-  }
-
-  // get 3 of the given or self-assigned names
-  add(profile.self.name)
-  for (var k in profile.assignedBy) {
-    if (names.length >= 3)
-      break
-    add(profile.assignedBy[k].name)
-  }
-  return names
 }
 
 function showUserId () { 
