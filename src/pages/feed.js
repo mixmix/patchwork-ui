@@ -97,4 +97,3 @@ module.exports = function (app) {
       composeContainer.appendChild(com.postForm(app))
   }
 }
-module.exports.isHubPage = true

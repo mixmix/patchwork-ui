@@ -23,10 +23,11 @@ module.exports = function (ssb) {
       id: 'feed',
       param: null
     },
-    lastHubPage: '#/',
-    pendingCount: 0,
-    indexCounts: { inboxUnread: 0 },
-    suggestOptions: require('./lib/suggest-options'),
+
+    // :TODO: all of these need updating
+    pendingCount: 0, // :TODO: make private
+    indexCounts: { inboxUnread: 0 }, // :TODO: take off app
+    suggestOptions: require('./lib/suggest-options') // :TODO: take off app
   }
 
   // page behaviors
@@ -38,17 +39,19 @@ module.exports = function (ssb) {
   // toplevel & common methods
   app.setupRpcConnection = setupRpcConnection.bind(app)
   app.refreshPage        = refreshPage.bind(app)
-  app.updateCounts       = updateCounts.bind(app)
-  app.updateContact      = updateContact.bind(app)
-  app.getOtherNames      = getOtherNames.bind(app)
-  app.showUserId         = showUserId.bind(app)
-  app.setPendingCount    = setPendingCount.bind(app)
-  app.setInboxUnreadCount= setInboxUnreadCount.bind(app)
-  app.setStatus          = setStatus.bind(app)
-  app.followPrompt       = followPrompt.bind(app)
-  app.setNamePrompt      = setNamePrompt.bind(app)
   app.setPage            = setPage.bind(app)
-  app.pollPeers          = pollPeers.bind(app)
+  app.updateCounts       = updateCounts.bind(app)
+
+  // :TODO: all of these need updating
+  app.updateContact      = updateContact.bind(app) // :TODO: move to util
+  app.getOtherNames      = getOtherNames.bind(app) // :TODO: move to util
+  app.showUserId         = showUserId.bind(app) // :TODO: generalize
+  app.setPendingCount    = setPendingCount.bind(app) // :TODO: generalize
+  app.setInboxUnreadCount= setInboxUnreadCount.bind(app) // :TODO: take off app
+  app.setStatus          = setStatus.bind(app) // :TODO: generalize
+  app.followPrompt       = followPrompt.bind(app) // :TODO: generalize
+  app.setNamePrompt      = setNamePrompt.bind(app) // :TODO: generalize
+  app.pollPeers          = pollPeers.bind(app) // :TODO: make private
 
   // periodically poll and rerender the current connections
   setInterval(app.pollPeers, 5000)
@@ -177,8 +180,6 @@ function refreshPage (e) {
     var page = pages[app.page.id]
     if (!page)
       page = pages.notfound
-    if (page.isHubPage)
-      app.lastHubPage = window.location.hash
     page(app)
   })
 }
