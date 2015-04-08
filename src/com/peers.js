@@ -12,7 +12,7 @@ module.exports = function (app, peers) {
     var id = '', status = '', history = ''
 
     if (peer.id) {
-      id = com.userlink(peer.id, app.names[peer.id])
+      id = com.userlink(peer.id, app.users.names[peer.id])
     } else
       id = peer.host
 

@@ -16,17 +16,22 @@ module.exports = function (ssb) {
 
   var app = {
     ssb: ssb,
-    myid: null,
-    names: null,
-    nameTrustRanks: null,
-    profiles: null,
-    actionItems: null,
     page: {
       id: 'feed',
       param: null
     },
     ui: {
-      suggestOptions: { ':': [], '@': [] }
+      suggestOptions: { ':': [], '@': [] },
+      actionItems: null
+    },
+    user: {
+      id: null,
+      profile: null
+    },
+    users: {
+      names: null,
+      nameTrustRanks: null,
+      profiles: null
     }
   }
 
@@ -153,21 +158,22 @@ function refreshPage (e) {
   app.ssb.phoenix.getActionItems(done())
   done(function (err, data) {
     if (err) throw err.message
-    app.myid = data[0].id
-    app.names = data[1]
-    app.nameTrustRanks = data[2]
-    app.profiles = data[3]
-    app.actionItems = data[4]
+    app.user.id = data[0].id
+    app.users.names = data[1]
+    app.users.nameTrustRanks = data[2]
+    app.users.profiles = data[3]
+    app.ui.actionItems = data[4]
+    app.user.profile = app.users.profiles[app.user.id]
 
     // refresh suggest options for usernames
     app.ui.suggestOptions['@'] = []
-    for (var k in app.profiles) {
-      var name = app.names[k] || k
-      app.ui.suggestOptions['@'].push({ title: name, subtitle: u.getOtherNames(app, app.profiles[k]) + ' ' + u.shortString(k), value: name })
+    for (var k in app.users.profiles) {
+      var name = app.users.names[k] || k
+      app.ui.suggestOptions['@'].push({ title: name, subtitle: u.getOtherNames(app, app.users.profiles[k]) + ' ' + u.shortString(k), value: name })
     }
 
     // re-route to setup if needed
-    if (!app.names[app.myid]) {
+    if (!app.users.names[app.user.id]) {
       if (window.location.hash != '#/setup') {      
         window.location.hash = '#/setup'
         return

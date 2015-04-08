@@ -38,7 +38,7 @@ module.exports = function (app, thread, opts) {
     h('.message-thread-top',
       h('ul.threadmeta.list-inline',
         h('li.hex', com.userHexagon(app, thread.value.author)),
-        h('li', com.userlink(thread.value.author, app.names[thread.value.author]), com.nameConfidence(thread.value.author, app)),
+        h('li', com.userlink(thread.value.author, app.users.names[thread.value.author]), com.nameConfidence(thread.value.author, app)),
         h('li', com.a('#/', u.prettydate(new Date(thread.value.timestamp), true), { title: 'View message thread' })),
         // h('li.button', h('a', { href: '#', onclick: onmarkunread }, 'Mark Unread')),
         h('li.button.strong.pull-right', h('a', { href: '#', onclick: onreply }, 'Reply')),

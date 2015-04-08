@@ -7,8 +7,8 @@ module.exports = function (app) {
   // markup
 
   var notes = []
-  for (var k in app.actionItems) {
-    var item = app.actionItems[k]
+  for (var k in app.ui.actionItems) {
+    var item = app.ui.actionItems[k]
     if (item.action == 'confirm-alias') {
       notes.push(h('.note.well', 
         h('p', com.user(app, item.secondaryId), ' claims it\'s your application. Alias it to your account?'),
@@ -28,8 +28,8 @@ module.exports = function (app) {
       e.preventDefault()
 
       var contact = {}
-      if (app.names[item.secondaryId])
-        contact.name = app.names[item.secondaryId]
+      if (app.users.names[item.secondaryId])
+        contact.name = app.users.names[item.secondaryId]
       contact.alias = 'secondary'
       contact.following = true
 

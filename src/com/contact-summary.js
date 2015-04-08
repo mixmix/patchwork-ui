@@ -11,9 +11,9 @@ module.exports = function (app, profile, follows) {
   var name        = com.userName(app, contactId)
 //  var otherNames  = app.getOtherNames(profile) :TODO: use these?
   var followers   = inEdges(follows, true)
-  var isSelf      = (contactId == app.myid)
-  var isFollowing = follows[app.myid][contactId]
-  var myvote      = (profile.assignedBy[app.myid]) ? profile.assignedBy[app.myid].vote : 0
+  var isSelf      = (contactId == app.user.id)
+  var isFollowing = follows[app.user.id][contactId]
+  var myvote      = (profile.assignedBy[app.user.id]) ? profile.assignedBy[app.user.id].vote : 0
 
   // secondary feeds (applications)
   var primary
@@ -141,7 +141,7 @@ module.exports = function (app, profile, follows) {
       var arr = []
       for (var userid in g) {
         if (g[userid][contactId] == v && (!filter || filter(userid, g)))
-          arr.push(h('li', com.userlinkThin(userid, app.names[userid])))
+          arr.push(h('li', com.userlinkThin(userid, app.users.names[userid])))
       }
       return arr      
     }

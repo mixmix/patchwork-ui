@@ -29,7 +29,7 @@ module.exports = function (app) {
       com.panel('Mentions', [
         'Posts can "@-mention" users. ',
         'Check your ', com.a('#/inbox', 'Inbox'), ' to find messages that mention you.',
-         h('.text-muted', { style: 'padding: 20px; padding-bottom: 10px' }, 'eg "Hello ', com.userlink(app.myid, '@'+app.names[app.myid]), '!"')
+         h('.text-muted', { style: 'padding: 20px; padding-bottom: 10px' }, 'eg "Hello ', com.userlink(app.user.id, '@'+app.users.names[app.user.id]), '!"')
       ]),
       com.panel('Emojis', [
         'Emojis are written as words surrounded by colons. ',
@@ -50,7 +50,7 @@ module.exports = function (app) {
         com.a('https://blake2.net/', 'blake2s'),' hashes of public ',
         com.a('https://en.wikipedia.org/wiki/Elliptic_curve_cryptography', 'elliptic-curve'), ' keys.'
       ]),
-      com.panel('Your ID:', app.myid)
+      com.panel('Your ID:', app.user.id)
     ]
   } else if (app.page.param == 'pubs') {
     content = [
@@ -131,7 +131,7 @@ module.exports = function (app) {
       ]),
       com.panel('Conflicting Names', [
         'Names are not unique in Secure Scuttlebutt. ',
-        '(Somebody else could use "', app.names[app.myid], '.")'
+        '(Somebody else could use "', app.users.names[app.user.id], '.")'
       ]),
       com.panel('Assigning Names', [
         'Open your ', com.a('#/address-book', 'address book'), ' and click the pencil next to somebody\'s name to change it.'

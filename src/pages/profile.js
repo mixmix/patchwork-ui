@@ -10,18 +10,18 @@ module.exports = function (app) {
   var view     = app.page.qs.view || 'feed'
   var queryStr = app.page.qs.q || ''
   var list     = app.page.qs.list || ''
-  var profile  = app.profiles[pid]
+  var profile  = app.users.profiles[pid]
   var name     = com.userName(app, pid)
 
   var done = multicb({ pluck: 1 })
   app.ssb.friends.all('follow', done())
   done(function (err, datas) {
     var graphs = { follow: datas[0] }
-    graphs.follow[app.myid] = graphs.follow[app.myid] || {}
-    profile.assignedBy[app.myid] = profile.assignedBy[app.myid] || {}
+    graphs.follow[app.user.id] = graphs.follow[app.user.id] || {}
+    profile.assignedBy[app.user.id] = profile.assignedBy[app.user.id] || {}
     var followers = inEdges(graphs.follow, true)
-    var isSelf = (pid == app.myid)
-    var isFollowing = graphs.follow[app.myid][pid]
+    var isSelf = (pid == app.user.id)
+    var isFollowing = graphs.follow[app.user.id][pid]
 
     // votes
     var upvoters = [], downvoters = []
@@ -34,23 +34,23 @@ module.exports = function (app) {
 
     // name confidence controls
     var nameTrustDlg
-    if (app.nameTrustRanks[pid] !== 1) {
+    if (app.users.nameTrustRanks[pid] !== 1) {
       var mutualFollowers = inEdges(graphs.follow, true, followedByMe)
       mutualFollowers = (mutualFollowers.length) ?
         h('p', h('strong', 'Mutual Followers:'), h('ul.list-inline', mutualFollowers)) :
         h('p.text-danger', 'Warning: This user is not followed by anyone you follow.')
 
       nameTrustDlg = h('.well', { style: 'margin-top: 5px; background: #fff' },
-        h('h3', { style: 'margin-top: 0' }, (!!app.names[pid]) ? 'Is this "'+app.names[pid]+'?"' : 'Who is this user?'),
+        h('h3', { style: 'margin-top: 0' }, (!!app.users.names[pid]) ? 'Is this "'+app.users.names[pid]+'?"' : 'Who is this user?'),
         h('p',
           'Users whose names you haven\'t confirmed will have a ',
           h('span.text-muted', com.icon('user'), '?'),
           ' next to them.'
         ),
         mutualFollowers,
-        h('p', (!!app.names[pid]) ?
+        h('p', (!!app.users.names[pid]) ?
           [
-            h('button.btn.btn-primary.btn-strong', { onclick: confirmName }, 'Use "'+app.names[pid]+'"'),
+            h('button.btn.btn-primary.btn-strong', { onclick: confirmName }, 'Use "'+app.users.names[pid]+'"'),
             ' or ',
             h('button.btn.btn-primary.btn-strong', { onclick: rename }, 'Choose Another Name')
           ] :
@@ -59,7 +59,7 @@ module.exports = function (app) {
       )
     }
     function followedByMe (id) {
-      return graphs.follow[app.myid][id]
+      return graphs.follow[app.user.id][id]
     }
 
     var content
@@ -163,7 +163,7 @@ module.exports = function (app) {
         author = pid
         authorName = name
       } else {
-        authorName = app.names[author]
+        authorName = app.users.names[author]
       }
       return h('.pic',
         h('a', { href: '#', onclick: setProfilePic(pic) }, h('img', { src: '/ext/'+pic.ext })),
@@ -176,7 +176,7 @@ module.exports = function (app) {
       if (g[pid]) {
         for (var userid in g[pid]) {
           if (g[pid][userid] == v && (!filter || filter(userid, g)))
-            arr.push(h('li', com.userlinkThin(userid, app.names[userid])))
+            arr.push(h('li', com.userlinkThin(userid, app.users.names[userid])))
         }
       }
       return arr
@@ -186,7 +186,7 @@ module.exports = function (app) {
       var arr = []
       for (var userid in g) {
         if (g[userid][pid] == v && (!filter || filter(userid, g)))
-          arr.push(h('li', com.userlinkThin(userid, app.names[userid])))
+          arr.push(h('li', com.userlinkThin(userid, app.users.names[userid])))
       }
       return arr      
     }
@@ -218,7 +218,7 @@ module.exports = function (app) {
       if (!queryStr)
         return true
 
-      var author = app.names[msg.value.author] || msg.value.author
+      var author = app.users.names[msg.value.author] || msg.value.author
       var regex = new RegExp(queryStr.replace(/\s/g, '|'))
       if (regex.exec(author) || regex.exec(c.type))
         return true
@@ -232,7 +232,7 @@ module.exports = function (app) {
       var primary = (prof && prof.primary) ? prof.primary : false
 
       if (queryStr) {
-        var author = app.names[id] || id
+        var author = app.users.names[id] || id
         var regex = new RegExp(queryStr.replace(/\s/g, '|'))
         if (!regex.exec(author))
           return false
@@ -263,7 +263,7 @@ module.exports = function (app) {
 
     function confirmName (e) {
       e.preventDefault()
-      schemas.addContact(app.ssb, pid, { name: app.names[pid] }, function (err) {
+      schemas.addContact(app.ssb, pid, { name: app.users.names[pid] }, function (err) {
         if (err) swal('Error While Publishing', err.message, 'error')
         else app.refreshPage()
       })
@@ -272,7 +272,7 @@ module.exports = function (app) {
     function setProfilePic (link) {
       return function (e) {
         e.preventDefault()
-        if (profile && profile.assignedBy[app.myid] && profile.assignedBy[app.myid].profilePic && profile.assignedBy[app.myid].profilePic.ext == link.ext)
+        if (profile && profile.assignedBy[app.user.id] && profile.assignedBy[app.user.id].profilePic && profile.assignedBy[app.user.id].profilePic.ext == link.ext)
           return
         schemas.addContact(app.ssb, pid, { profilePic: link }, function (err) {
           if (err) swal('Error While Publishing', err.message, 'error')

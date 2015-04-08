@@ -17,7 +17,7 @@ exports.icon = function (i) {
 
 var nameConfidence =
 exports.nameConfidence = function (id, app) {
-  if (app.nameTrustRanks[id] !== 1) {
+  if (app.users.nameTrustRanks[id] !== 1) {
     return [' ', h('a', 
       { title: 'This name was self-assigned and needs to be confirmed.', href: '#/profile/'+id },
       h('span.text-muted', icon('user'), '?')
@@ -41,16 +41,16 @@ exports.user = function (app, id) {
 
 var userName =
 exports.userName = function (app, id) {
-  return app.names[id] || u.shortString(id)
+  return app.users.names[id] || u.shortString(id)
 }
 
 var profilePicUrl =
 exports.profilePicUrl = function (app, id) {
   var url = '/img/default-prof-pic.png'
-  var profile = app.profiles[id]
+  var profile = app.users.profiles[id]
   if (profile) {
-    if (profile.assignedBy[app.myid] && profile.assignedBy[app.myid].profilePic)
-      url = '/ext/' + profile.assignedBy[app.myid].profilePic.ext
+    if (profile.assignedBy[app.user.id] && profile.assignedBy[app.user.id].profilePic)
+      url = '/ext/' + profile.assignedBy[app.user.id].profilePic.ext
     else if (profile.self.profilePic)
       url = '/ext/' + profile.self.profilePic.ext
   }
@@ -99,9 +99,9 @@ exports.userHexagrid = function (app, uids, opts) {
 var friendsHexagrid =
 exports.friendsHexagrid = function (app, opts) {
   var friends = []
-  for (var k in app.profiles) {
-    var p = app.profiles[k]
-    if (p.assignedBy[app.myid] && p.assignedBy[app.myid].following)
+  for (var k in app.users.profiles) {
+    var p = app.users.profiles[k]
+    if (p.assignedBy[app.user.id] && p.assignedBy[app.user.id].following)
       friends.push(p.id)
   }
   if (friends.length)

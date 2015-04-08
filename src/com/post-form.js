@@ -16,8 +16,8 @@ module.exports = function (app, parent) {
 
   var attachments = []
   var namesList = {} // a name->name map for the previews
-  for (var id in app.names)
-    namesList[app.names[id]] = app.names[id]
+  for (var id in app.users.names)
+    namesList[app.users.names[id]] = app.users.names[id]
 
   // markup
 

@@ -23,7 +23,7 @@ module.exports = function (app) {
         app.ssb.get(plink.msg, function (err, parent) {
           var summary
           if (parent) {
-            var pauthor = (app.names[parent.author] || util.shortString(parent.author))
+            var pauthor = (app.users.names[parent.author] || util.shortString(parent.author))
             if (parent.content.text)
               summary = pauthor + ': "' + util.shortString(parent.content.text, 100) + '"'
             else
