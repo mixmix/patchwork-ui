@@ -26,7 +26,6 @@ module.exports = function (ssb) {
 
     // :TODO: all of these need updating
     pendingCount: 0, // :TODO: make private
-    indexCounts: { inboxUnread: 0 }, // :TODO: take off app
     suggestOptions: require('./lib/suggest-options') // :TODO: take off app
   }
 
@@ -40,12 +39,10 @@ module.exports = function (ssb) {
   app.setupRpcConnection = setupRpcConnection.bind(app)
   app.refreshPage        = refreshPage.bind(app)
   app.setPage            = setPage.bind(app)
-  app.updateCounts       = updateCounts.bind(app)
 
   // :TODO: all of these need updating
   app.showUserId         = showUserId.bind(app) // :TODO: generalize
   app.setPendingCount    = setPendingCount.bind(app) // :TODO: generalize
-  app.setInboxUnreadCount= setInboxUnreadCount.bind(app) // :TODO: take off app
   app.setStatus          = setStatus.bind(app) // :TODO: generalize
   app.followPrompt       = followPrompt.bind(app) // :TODO: generalize
   app.setNamePrompt      = setNamePrompt.bind(app) // :TODO: generalize
@@ -119,8 +116,6 @@ function setupRpcConnection () {
   pull(app.ssb.phoenix.createEventStream(), pull.drain(function (event) {
     if (event.type == 'message')
       app.setPendingCount(app.pendingCount + 1)
-    if (event.type == 'notification')
-      app.setInboxUnreadCount(app.indexCounts.inboxUnread + 1)
   }))
 }
 
@@ -143,7 +138,6 @@ function refreshPage (e) {
   app.ssb.phoenix.getNamesById(done())
   app.ssb.phoenix.getNameTrustRanks(done())
   app.ssb.phoenix.getAllProfiles(done())
-  app.ssb.phoenix.getIndexCounts(done())
   app.ssb.phoenix.getActionItems(done())
   done(function (err, data) {
     if (err) throw err.message
@@ -151,8 +145,7 @@ function refreshPage (e) {
     app.names = data[1]
     app.nameTrustRanks = data[2]
     app.profiles = data[3]
-    app.indexCounts = data[4]
-    app.actionItems = data[5]
+    app.actionItems = data[4]
 
     // refresh suggest options for usernames
     app.suggestOptions['@'] = []
@@ -181,13 +174,6 @@ function refreshPage (e) {
   })
 }
 
-function updateCounts () {
-  var this_ = this
-  this_.ssb.phoenix.getIndexCounts(function (err, counts) {
-    this_.setInboxUnreadCount(counts.inboxUnread)
-  })
-}
-
 function showUserId () { 
   swal('Here is your contact id', this.myid)
 }
@@ -206,13 +192,6 @@ function setPendingCount (n) {
       document.querySelector('#get-latest .btn').textContent = 'Get Latest'
     }
   } catch (e) {}
-}
-
-function setInboxUnreadCount (n) {
-  this.indexCounts.inboxUnread = n
-  try {
-    document.querySelector('.navlinks .navlink-inbox').textContent = 'inbox ('+n+')'
-  } catch (e) { }  
 }
 
 function setStatus (type, message) {
@@ -292,7 +271,7 @@ function setNamePrompt (userId) {
     if (!confirm('Set nickname to '+name+'?'))
       return
 
-    schemas.addContact(this.ssb, userId, { name: name }, done)
+    schemas.addContact(app.ssb, userId, { name: name }, done)
 
     function done(err) {
       if (err) swal('Error While Publishing', err.message, 'error')

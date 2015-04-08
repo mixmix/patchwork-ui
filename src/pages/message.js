@@ -15,7 +15,6 @@ module.exports = function (app) {
       content = com.messageThread(app, thread, {
         onRender: function (msg) {
           app.ssb.phoenix.markRead(msg.key)
-          app.updateCounts()
         }
       })
 
