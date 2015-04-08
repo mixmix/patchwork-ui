@@ -1,4 +1,5 @@
 var h = require('hyperscript')
+var schemas = require('ssb-msg-schemas')
 var com = require('./index')
 var u = require('../lib/util')
 
@@ -45,7 +46,7 @@ module.exports = function (app, profile, follows) {
   function follow (e, pid) {
     e.preventDefault()
     if (!follows[app.myid][pid]) {
-      app.updateContact(pid, { following: true }, function(err) {
+      schemas.addContact(app.ssb, pid, { following: true }, function(err) {
         if (err) swal('Error While Publishing', err.message, 'error')
         else app.refreshPage()
       })
@@ -55,7 +56,7 @@ module.exports = function (app, profile, follows) {
   function unfollow (e, pid) {
     e.preventDefault()
     if (follows[app.myid][pid]) {
-      app.updateContact(pid, { following: false }, function(err) {
+      schemas.addContact(app.ssb, pid, { following: false }, function(err) {
         if (err) swal('Error While Publishing', err.message, 'error')
         else app.refreshPage()
       })

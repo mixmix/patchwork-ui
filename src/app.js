@@ -43,7 +43,6 @@ module.exports = function (ssb) {
   app.updateCounts       = updateCounts.bind(app)
 
   // :TODO: all of these need updating
-  app.updateContact      = updateContact.bind(app) // :TODO: move to util
   app.getOtherNames      = getOtherNames.bind(app) // :TODO: move to util
   app.showUserId         = showUserId.bind(app) // :TODO: generalize
   app.setPendingCount    = setPendingCount.bind(app) // :TODO: generalize
@@ -191,10 +190,6 @@ function updateCounts () {
   })
 }
 
-function updateContact (id, values, cb) {
-  schemas.addContact(this.ssb, id, values, cb)
-}
-
 function getOtherNames (profile) {
   // todo - replace with ranked names
   var name = this.names[profile.id] || profile.id
@@ -269,7 +264,7 @@ function followPrompt (e) {
     app.ssb.invite.addMe(id, next)
   }
   else
-    app.updateContact(id, { following: true }, next)
+    schemas.addContact(app.ssb, id, { following: true }, next)
     
   function next (err) {
     app.setStatus(false)
@@ -319,10 +314,7 @@ function setNamePrompt (userId) {
     if (!confirm('Set nickname to '+name+'?'))
       return
 
-    if (isSelf)
-      app.updateContact(userId, { name: name }, done)
-    else
-      app.updateContact(userId, { name: name }, done)
+    schemas.addContact(this.ssb, userId, { name: name }, done)
 
     function done(err) {
       if (err) swal('Error While Publishing', err.message, 'error')

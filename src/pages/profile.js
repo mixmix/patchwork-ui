@@ -263,7 +263,7 @@ module.exports = function (app) {
 
     function confirmName (e) {
       e.preventDefault()
-      app.updateContact(pid, { name: app.names[pid] }, function (err) {
+      schemas.addContact(app.ssb, pid, { name: app.names[pid] }, function (err) {
         if (err) swal('Error While Publishing', err.message, 'error')
         else app.refreshPage()
       })
@@ -274,7 +274,7 @@ module.exports = function (app) {
         e.preventDefault()
         if (profile && profile.assignedBy[app.myid] && profile.assignedBy[app.myid].profilePic && profile.assignedBy[app.myid].profilePic.ext == link.ext)
           return
-        app.updateContact(pid, { profilePic: link }, function (err) {
+        schemas.addContact(app.ssb, pid, { profilePic: link }, function (err) {
           if (err) swal('Error While Publishing', err.message, 'error')
           else app.refreshPage()        
         })
@@ -289,7 +289,7 @@ module.exports = function (app) {
         width: 275,
         height: 275
       }
-      app.updateContact(pid, { profilePic: link }, function (err) {
+      schemas.addContact(app.ssb, pid, { profilePic: link }, function (err) {
         if (err) swal('Error While Publishing', err.message, 'error')
         else app.refreshPage()        
       })

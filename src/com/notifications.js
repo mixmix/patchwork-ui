@@ -1,4 +1,5 @@
 var h = require('hyperscript')
+var schemas = require('ssb-msg-schemas')
 var com = require('./index')
 
 module.exports = function (app) {
@@ -32,7 +33,7 @@ module.exports = function (app) {
       contact.alias = 'secondary'
       contact.following = true
 
-      app.updateContact(item.secondaryId, contact, function (err) {
+      schemas.addContact(app.ssb, item.secondaryId, contact, function (err) {
         if (err) swal('Error While Publishing', err.message, 'error')
         else app.refreshPage()
       })
@@ -42,7 +43,7 @@ module.exports = function (app) {
   function denyApp (item) {
     return function (e) {
       e.preventDefault()
-      app.updateContact(item.secondaryId, { alias: false, trust: -1 }, function (err) {
+      schemas.addContact(app.ssb, item.secondaryId, { alias: false, trust: -1 }, function (err) {
         if (err) swal('Error While Publishing', err.message, 'error')
         else app.refreshPage()
       })

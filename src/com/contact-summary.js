@@ -1,4 +1,5 @@
 var h = require('hyperscript')
+var schemas = require('ssb-msg-schemas')
 var com = require('./index')
 var u = require('../lib/util')
 
@@ -113,7 +114,7 @@ module.exports = function (app, profile, follows) {
       window.location.hash = '#/profile/'+contactId
       return
     }
-    app.updateContact(contactId, { following: !isFollowing }, function(err) {
+    schemas.addContact(app.ssb, contactId, { following: !isFollowing }, function(err) {
       if (err) swal('Error While Publishing', err.message, 'error')
       else app.refreshPage()
     })
