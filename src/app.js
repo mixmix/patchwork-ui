@@ -1,12 +1,13 @@
 'use strict'
-var h          = require('hyperscript')
-var multicb    = require('multicb')
-var router     = require('phoenix-router')
-var pull       = require('pull-stream')
-var schemas    = require('ssb-msg-schemas')
-var com        = require('./com')
-var pages      = require('./pages')
-var u          = require('./lib/util')
+var h         = require('hyperscript')
+var multicb   = require('multicb')
+var router    = require('phoenix-router')
+var pull      = require('pull-stream')
+var emojis    = require('emoji-named-characters')
+var schemas   = require('ssb-msg-schemas')
+var com       = require('./com')
+var pages     = require('./pages')
+var u         = require('./lib/util')
 
 var newMessageCount = 0
 module.exports = function (ssb) {
@@ -24,9 +25,21 @@ module.exports = function (ssb) {
       id: 'feed',
       param: null
     },
+    ui: {
+      suggestOptions: { ':': [], '@': [] }
+    }
+  }
 
-    // :TODO: all of these need updating
-    suggestOptions: require('./lib/suggest-options') // :TODO: take off app
+  // data structures
+
+  // options for the suggest box
+  for (var emoji in emojis) {
+    app.ui.suggestOptions[':'].push({
+      image: '/img/emoji/' + emoji + '.png',
+      title: emoji,
+      subtitle: emoji,
+      value: emoji + ':'
+    })
   }
 
   // page behaviors
@@ -147,10 +160,10 @@ function refreshPage (e) {
     app.actionItems = data[4]
 
     // refresh suggest options for usernames
-    app.suggestOptions['@'] = []
+    app.ui.suggestOptions['@'] = []
     for (var k in app.profiles) {
       var name = app.names[k] || k
-      app.suggestOptions['@'].push({ title: name, subtitle: u.getOtherNames(app, app.profiles[k]) + ' ' + u.shortString(k), value: name })
+      app.ui.suggestOptions['@'].push({ title: name, subtitle: u.getOtherNames(app, app.profiles[k]) + ' ' + u.shortString(k), value: name })
     }
 
     // re-route to setup if needed
