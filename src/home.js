@@ -15,7 +15,7 @@ localhost.on('connect', function() {
   auth.getToken(window.location.host, function(err, token) {
     if (err) return localhost.close(), console.error('Token fetch failed', err)
     ssb.auth(token, function(err) {
-      phoenix.setStatus(false)
+      phoenix.ui.setStatus(false)
       phoenix.setupRpcConnection()
       phoenix.refreshPage()
     })
@@ -25,13 +25,13 @@ localhost.on('connect', function() {
 localhost.on('error', function(err) {
   // inform user and attempt a reconnect
   console.log('Connection Error', err)
-  phoenix.setStatus('danger', 'Lost connection to the host program. Please restart the host program. Trying again in 10 seconds.')
+  phoenix.ui.setStatus('danger', 'Lost connection to the host program. Please restart the host program. Trying again in 10 seconds.')
   localhost.reconnect()
 })
 
 localhost.on('reconnecting', function(err) {
   console.log('Attempting Reconnect')
-  phoenix.setStatus('danger', 'Lost connection to the host program. Reconnecting...')
+  phoenix.ui.setStatus('danger', 'Lost connection to the host program. Reconnecting...')
 })
 
 phoenix.h      = require('hyperscript')

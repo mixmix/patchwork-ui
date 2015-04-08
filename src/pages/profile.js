@@ -258,7 +258,7 @@ module.exports = function (app) {
 
     function rename (e) {
       e.preventDefault()
-      app.setNamePrompt(pid)
+      app.ui.setNamePrompt(pid)
     }
 
     function confirmName (e) {

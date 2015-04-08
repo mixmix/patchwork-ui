@@ -162,9 +162,9 @@ exports.sidenav = function (app) {
 var sidehelp =
 exports.sidehelp = function (app, opts) {
   return h('ul.list-unstyled.sidehelp',
-    h('li', h('button.btn.btn-link', { onclick: app.showUserId }, 'Get your id')),
-    h('li', h('button.btn.btn-link', { onclick: app.followPrompt }, 'Add a contact')),
-    h('li', h('button.btn.btn-link', { onclick: app.followPrompt }, 'Use an invite')),
+    h('li', h('button.btn.btn-link', { onclick: app.ui.showUserId }, 'Get your id')),
+    h('li', h('button.btn.btn-link', { onclick: app.ui.followPrompt }, 'Add a contact')),
+    h('li', h('button.btn.btn-link', { onclick: app.ui.followPrompt }, 'Use an invite')),
     (!opts || !opts.noMore) ? h('li', h('span', {style:'display: inline-block; padding: 6px 14px'}, a('#/help', 'More help'))) : ''
   )
 }
@@ -175,7 +175,7 @@ exports.introhelp = function (app) {
       panel(h('span', 'Join a Pub Server ', h('small', 'recommended')),
         h('div',
           h('p', 'Ask the owner of a pub server for an ', a('#/help/pubs', 'invite code'), '.'),
-          h('button.btn.btn-primary', { onclick: app.followPrompt }, 'Use an invite')
+          h('button.btn.btn-primary', { onclick: app.ui.followPrompt }, 'Use an invite')
         )
       )
     ),

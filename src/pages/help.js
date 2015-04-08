@@ -41,7 +41,7 @@ module.exports = function (app) {
     content = [
       com.panel('Contacts / Following', [
         'Scuttlebutt searches the network for messages from your contacts. ',
-        h('button.btn.btn-primary', { onclick: app.followPrompt }, 'Add a contact')
+        h('button.btn.btn-primary', { onclick: app.ui.followPrompt }, 'Add a contact')
       ]),
       com.panel('User IDs', [
         'User IDs are generated with cryptography so that they are globally unique. ',
@@ -63,7 +63,7 @@ module.exports = function (app) {
       com.panel('Invite Codes', [
         'If someone you know is running a pub server, ask them for an invite code. ',
         'You can use the code by pasting it into the ', 
-        h('button.btn.btn-xs.btn-primary', { onclick: app.followPrompt }, 'Use an invite'), 
+        h('button.btn.btn-xs.btn-primary', { onclick: app.ui.followPrompt }, 'Use an invite'), 
         ' dialog.'
       ]),
       com.panel(['Running a Pub Server ', h('small.text-muted', 'advanced')], [

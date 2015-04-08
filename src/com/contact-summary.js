@@ -105,7 +105,7 @@ module.exports = function (app, profile, follows) {
     
   function rename (e, contactId) {
     e.preventDefault()
-    app.setNamePrompt(contactId)
+    app.ui.setNamePrompt(contactId)
   }
 
   function toggleFollow (e) {

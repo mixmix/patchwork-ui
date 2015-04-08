@@ -40,7 +40,7 @@ module.exports = function (app, profile, follows) {
     
   function rename (e, pid) {
     e.preventDefault()
-    app.setNamePrompt(pid)
+    app.ui.setNamePrompt(pid)
   }
 
   function follow (e, pid) {

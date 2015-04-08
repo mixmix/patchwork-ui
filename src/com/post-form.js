@@ -75,7 +75,7 @@ module.exports = function (app, parent) {
     uploadFiles(function (err, extLinks) {
       if (err)
         return enable(), swal('Error Uploading Attachments', err.message, 'error')
-      app.setStatus('info', 'Publishing...')
+      app.ui.setStatus('info', 'Publishing...')
 
       // prep text
       app.ssb.phoenix.getIdsByName(function (err, idsByName) {
@@ -105,7 +105,7 @@ module.exports = function (app, parent) {
         if (mentions.length) post.mentions = mentions
         if (extLinks.length) post.attachments = extLinks
         app.ssb.publish(post, function (err, msg) {
-          app.setStatus(null)
+          app.ui.setStatus(null)
           enable()
           if (err) swal('Error While Publishing', err.message, 'error')
           else {
@@ -147,7 +147,7 @@ module.exports = function (app, parent) {
     if (attachments.length === 0)
       return cb(null, links)
 
-    app.setStatus('info', 'Uploading ('+attachments.length+' files left)...')
+    app.ui.setStatus('info', 'Uploading ('+attachments.length+' files left)...')
     attachments.forEach(function (file) {
       var link = { ext: null, name: null, size: null }
       links.push(link)
@@ -186,15 +186,15 @@ module.exports = function (app, parent) {
       if (n < 0) return
       if (err) {
         n = -1
-        app.setStatus(null)
+        app.ui.setStatus(null)
         return cb (err)
       }
       n++
       if (n === attachments.length) {
-        app.setStatus(null)
+        app.ui.setStatus(null)
         cb(null, links)
       } else
-        app.setStatus('info', 'Uploading ('+(attachments.length-n)+' files left)...')
+        app.ui.setStatus('info', 'Uploading ('+(attachments.length-n)+' files left)...')
     }
   }
 
