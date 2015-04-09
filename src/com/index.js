@@ -142,13 +142,21 @@ exports.search = function (opts) {
 
 var sidenav =
 exports.sidenav = function (app) {
+  var registryPages = app.getAll('page')
+    .map(function(item) {
+      if (item.config.label)
+        return [item.config.id, item.config.id, item.config.label]
+    })
+    .filter(Boolean)
+
   var pages = [
   //[id, path, label],
     ['feed',         '',             'feed'],
-    ['address-book', 'address-book', 'network'],
+    ['address-book', 'address-book', 'network']
+  ].concat(registryPages).concat([
     ['programs',     'programs',     'plugins'],
     ['help',         'help',         'help']
-  ]
+  ])
 
   return h('.side-nav.full-height',
     pages.map(function (page) {

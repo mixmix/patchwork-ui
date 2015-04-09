@@ -225,9 +225,16 @@ function refreshPage (e) {
       return
     }
 
-    // render the page
-    h.cleanup()    
+    // lookup the page
     var page = pages[phoenix.page.id]
+    if (!page) {
+      var pageCom = phoenix.get('page', { id: phoenix.page.id })
+      if (pageCom)
+        page = pageShell(pageCom)
+    }
+
+    // render the page
+    h.cleanup()
     if (!page)
       page = pages.notfound
     page(phoenix)
@@ -289,6 +296,16 @@ function setNewMessageCount (n) {
     document.title = '('+n+') secure scuttlebutt'
   else
     document.title = 'secure scuttlebutt'
+}
+
+// provide a shell for pages from the registry
+function pageShell (pagecom) {
+  return function () {
+    phoenix.setPage('plugin-page',
+      h('.row',
+        h('.col-xs-1', com.sidenav(phoenix)),
+        h('.col-xs-11', pagecom.fn())))
+  }
 }
 
 // render a new page
