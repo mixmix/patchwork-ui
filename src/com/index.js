@@ -127,6 +127,8 @@ exports.nav = function (opts) {
     var cls = '.navlink-'+item[0]
     if (item[0] == opts.current)
       cls += '.selected'
+    if (typeof item[1] == 'function')
+      return h('a'+cls, { href: '#', 'data-item': item[0], onclick: item[1] }, item[2])
     return h('a'+cls, { href: item[1] }, item[2])
   })
   return h('.navlinks', items)
@@ -233,4 +235,5 @@ exports.editorNav = require('./editor-nav')
 exports.notifications = require('./notifications')
 exports.peers = require('./peers')
 exports.postForm = require('./post-form')
+exports.composer = require('./composer')
 exports.imageUploader = require('./image-uploader')

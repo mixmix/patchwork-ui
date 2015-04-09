@@ -71,7 +71,7 @@ module.exports = function (app, thread, opts) {
     e.preventDefault()
 
     if (!threadInner.nextSibling || !threadInner.nextSibling.classList || !threadInner.nextSibling.classList.contains('reply-form')) {
-      var form = com.postForm(app, thread.key)
+      var form = com.composer(app, thread)
       threadInner.parentNode.insertBefore(form, threadInner.nextSibling)
     }
   }

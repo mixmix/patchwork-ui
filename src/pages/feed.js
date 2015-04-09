@@ -96,7 +96,7 @@ module.exports = function (app) {
     function oncompose (e) {
       e.preventDefault()
       if (!composeContainer.hasChildNodes())
-        composeContainer.appendChild(com.postForm(app))
+        composeContainer.appendChild(com.composer(app))
     }
   })
 }

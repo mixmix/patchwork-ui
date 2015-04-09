@@ -29,21 +29,13 @@ module.exports = function (app, parent) {
   var postBtn = h('button.postbtn.btn.btn-primary.btn-strong', { disabled: true }, 'Post')
 
   var form = h('form.post-form' + ((!!parent) ? '.reply-form' : ''), { onsubmit: post },
-    h('p',
-      h('small.text-muted', 
-        'All posts are public. Markdown, @-mentions, and emojis are supported. ',
-        h('a', { href: '#/action/cancel', onclick: cancel }, 'Cancel'))),
-    h('div',
-      h('.post-form-textarea', textarea),
-      preview,
-      h('.post-form-attachments',
-        filesList,
-        h('a', { href: '#', onclick: addFile }, 'Click here to add an attachment'),
-        postBtn,
-        filesInput
-      )
-    )
-  )
+    h('.post-form-textarea', textarea),
+    preview,
+    h('.post-form-attachments',
+      filesList,
+      h('a', { href: '#', onclick: addFile }, 'Click here to add an attachment'),
+      postBtn,
+      filesInput))
 
   function disable () {
     postBtn.setAttribute('disabled', true)

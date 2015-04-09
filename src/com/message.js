@@ -83,7 +83,7 @@ var messageShell = function (app, msg, content, opts) {
     e.preventDefault()
 
     if (!msgbody.nextSibling || !msgbody.nextSibling.classList || !msgbody.nextSibling.classList.contains('reply-form')) {
-      var form = com.postForm(app, msg.key)
+      var form = com.composer(app, msg)
       if (msgbody.nextSibling)
         msgbody.parentNode.insertBefore(form, msgbody.nextSibling)
       else

@@ -1,3 +1,4 @@
+var h = require('hyperscript')
 var schemas = require('ssb-msg-schemas')
 
 module.exports = function (phoenix) {
