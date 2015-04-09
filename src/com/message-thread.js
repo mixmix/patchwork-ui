@@ -7,6 +7,20 @@ var mentions = require('../lib/mentions')
 
 function getContent (app, msg) {
   var c = msg.value.content
+
+  // check the component registry
+  var renderer = app.get('msg-full', { type: c.type })
+  if (renderer) {
+    try {
+      var el = renderer.fn(msg)
+      if (el)
+        return el
+    } catch (e) {
+      console.error('Error rendering type: '+c.type, renderer, msg, e)
+    }
+  }
+
+  // fallback to default renderers
   try {
     return ({
       post: function () { 

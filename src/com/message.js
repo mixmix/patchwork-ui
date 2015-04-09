@@ -24,6 +24,20 @@ module.exports = function (app, msg, opts) {
 
 function getContent (app, msg, opts) {
   var c = msg.value.content
+
+  // check the component registry
+  var renderer = app.get('msg-reply', { type: c.type })
+  if (renderer) {
+    try {
+      var el = renderer.fn(msg)
+      if (el)
+        return el
+    } catch (e) {
+      console.error('Error rendering type: '+c.type, renderer, msg, e)
+    }
+  }
+  
+  // fallback to default behaviors
   try {
     return ({
       post: function () { 

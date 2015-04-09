@@ -26,26 +26,38 @@ function setup() {
 
   // master state object
   window.phoenix = {
+    // sbot rpc connection
     ssb: ssb,
-    refreshPage: refreshPage,
-    setPage: setPage,
 
+    // api
+    refreshPage: refreshPage,
+    setPage: setPage, // :TODO: make internal
+
+    // component registry
+    add: add,
+    get: get,
+    getAll: getAll,
+    registry: {},
+
+    // page params parsed from the url
     page: {
       id: 'feed',
       param: null,
       qs: {}
     },
 
+    // ui data
     ui: {
       suggestOptions: { ':': [], '@': [] },
       actionItems: null
+      // ui helper methods added by `addUi`
     },
 
+    // userdata, fetched every refresh
     user: {
       id: null,
       profile: null
     },
-
     users: {
       names: null,
       nameTrustRanks: null,
@@ -100,6 +112,7 @@ function setup() {
   })
 }
 
+// fetch plugins from sbot and eval them sequentially
 function runPlugins() {
   u.getJson('/plugins.json', function (err, plugins) {
     if (err) {
@@ -120,6 +133,7 @@ function runPlugins() {
   })
 }
 
+// find any controls with the 'full-height' class and expand them vertically to fill
 function resizeControls() {
   function rc (sel) {
     var els = document.querySelectorAll(sel)
@@ -129,8 +143,8 @@ function resizeControls() {
   try { rc('.full-height') } catch (e) {}
 }
 
+// look for link clicks which should trigger same-page refreshes
 function onClick (e) {
-  // look for link clicks which should trigger same-page refreshes
   var el = e.target
   while (el) {
     if (el.tagName == 'A' && el.origin == window.location.origin && el.hash && el.hash == window.location.hash)
@@ -220,8 +234,53 @@ function refreshPage (e) {
   })
 }
 
+// add a component to the registry
+function add (type, config, fn) {
+  var r = phoenix.registry[type]
+  if (!r) r = phoenix.registry[type] = []
+  if (typeof config == 'function') {
+    fn = config
+    config = {}
+  }
+  config.id = r.length
+  r.push({ config: config, fn: fn })
+}
+
+// get a component from the registry
+function get (type, params) {
+  params = params || {}
+  var r = phoenix.registry[type] || []
+  for (var i=0; i < r.length; i++) {
+    if (registryTest(r[i], params))
+      return r[i]
+  }
+  return null
+}
+
+// get components from the registry
+function getAll (type, params) {
+  var c = []
+  params = params || {}
+  var r = phoenix.registry[type] || []
+  for (var i=0; i < r.length; i++) {
+    if (registryTest(r[i], params))
+      c.push(r[i])
+  }
+  return c
+}
+
+// helper for registry queries
+function registryTest (item, params) {
+  for (var k in params) {
+    if (item.config[k] != params[k])
+      return false
+  }
+  return true
+}
+
+// update ui to show new messages are available
 var newMessageCount = 0
-function getNewMessageCount() {
+function getNewMessageCount () {
   return newMessageCount
 }
 function setNewMessageCount (n) {
@@ -232,6 +291,7 @@ function setNewMessageCount (n) {
     document.title = 'secure scuttlebutt'
 }
 
+// render a new page
 function setPage (name, page, opts) {
   var el = document.getElementById('page-container')
   el.innerHTML = ''
