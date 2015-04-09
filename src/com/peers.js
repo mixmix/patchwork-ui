@@ -12,7 +12,7 @@ module.exports = function (app, peers) {
     var id = '', status = '', history = ''
 
     if (peer.id) {
-      id = com.userlink(peer.id, app.names[peer.id])
+      id = com.userlink(peer.id, app.users.names[peer.id])
     } else
       id = peer.host
 
@@ -66,7 +66,15 @@ module.exports = function (app, peers) {
       app.ssb.gossip.connect(p, function (err) {
         if (err)
           console.error(err)
-        app.pollPeers()        
+
+        var node = e.target
+        var parent = node.parentNode
+        if (parent.tagName == 'A') {
+          node = parent
+          parent = node.parentNode
+        }
+        parent.insertBefore(h('span', ' connecting...'), node)
+        parent.removeChild(node)
       })
     }
   }

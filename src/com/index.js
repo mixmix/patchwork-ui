@@ -17,7 +17,7 @@ exports.icon = function (i) {
 
 var nameConfidence =
 exports.nameConfidence = function (id, app) {
-  if (app.nameTrustRanks[id] !== 1) {
+  if (app.users.nameTrustRanks[id] !== 1) {
     return [' ', h('a', 
       { title: 'This name was self-assigned and needs to be confirmed.', href: '#/profile/'+id },
       h('span.text-muted', icon('user'), '?')
@@ -41,16 +41,16 @@ exports.user = function (app, id) {
 
 var userName =
 exports.userName = function (app, id) {
-  return app.names[id] || u.shortString(id)
+  return app.users.names[id] || u.shortString(id)
 }
 
 var profilePicUrl =
 exports.profilePicUrl = function (app, id) {
   var url = '/img/default-prof-pic.png'
-  var profile = app.profiles[id]
+  var profile = app.users.profiles[id]
   if (profile) {
-    if (profile.assignedBy[app.myid] && profile.assignedBy[app.myid].profilePic)
-      url = '/ext/' + profile.assignedBy[app.myid].profilePic.ext
+    if (profile.assignedBy[app.user.id] && profile.assignedBy[app.user.id].profilePic)
+      url = '/ext/' + profile.assignedBy[app.user.id].profilePic.ext
     else if (profile.self.profilePic)
       url = '/ext/' + profile.self.profilePic.ext
   }
@@ -99,9 +99,9 @@ exports.userHexagrid = function (app, uids, opts) {
 var friendsHexagrid =
 exports.friendsHexagrid = function (app, opts) {
   var friends = []
-  for (var k in app.profiles) {
-    var p = app.profiles[k]
-    if (p.assignedBy[app.myid] && p.assignedBy[app.myid].following)
+  for (var k in app.users.profiles) {
+    var p = app.users.profiles[k]
+    if (p.assignedBy[app.user.id] && p.assignedBy[app.user.id].following)
       friends.push(p.id)
   }
   if (friends.length)
@@ -127,6 +127,8 @@ exports.nav = function (opts) {
     var cls = '.navlink-'+item[0]
     if (item[0] == opts.current)
       cls += '.selected'
+    if (typeof item[1] == 'function')
+      return h('a'+cls, { href: '#', 'data-item': item[0], onclick: item[1] }, item[2])
     return h('a'+cls, { href: item[1] }, item[2])
   })
   return h('.navlinks', items)
@@ -140,13 +142,21 @@ exports.search = function (opts) {
 
 var sidenav =
 exports.sidenav = function (app) {
+  var registryPages = app.getAll('page')
+    .map(function(item) {
+      if (item.config.label)
+        return [item.config.id, item.config.id, item.config.label]
+    })
+    .filter(Boolean)
+
   var pages = [
   //[id, path, label],
     ['feed',         '',             'feed'],
-    ['address-book', 'address-book', 'network'],
+    ['address-book', 'address-book', 'network']
+  ].concat(registryPages).concat([
     ['programs',     'programs',     'plugins'],
     ['help',         'help',         'help']
-  ]
+  ])
 
   return h('.side-nav.full-height',
     pages.map(function (page) {
@@ -162,9 +172,9 @@ exports.sidenav = function (app) {
 var sidehelp =
 exports.sidehelp = function (app, opts) {
   return h('ul.list-unstyled.sidehelp',
-    h('li', h('button.btn.btn-link', { onclick: app.showUserId }, 'Get your id')),
-    h('li', h('button.btn.btn-link', { onclick: app.followPrompt }, 'Add a contact')),
-    h('li', h('button.btn.btn-link', { onclick: app.followPrompt }, 'Use an invite')),
+    h('li', h('button.btn.btn-link', { onclick: app.ui.showUserId }, 'Get your id')),
+    h('li', h('button.btn.btn-link', { onclick: app.ui.followPrompt }, 'Add a contact')),
+    h('li', h('button.btn.btn-link', { onclick: app.ui.followPrompt }, 'Use an invite')),
     (!opts || !opts.noMore) ? h('li', h('span', {style:'display: inline-block; padding: 6px 14px'}, a('#/help', 'More help'))) : ''
   )
 }
@@ -175,7 +185,7 @@ exports.introhelp = function (app) {
       panel(h('span', 'Join a Pub Server ', h('small', 'recommended')),
         h('div',
           h('p', 'Ask the owner of a pub server for an ', a('#/help/pubs', 'invite code'), '.'),
-          h('button.btn.btn-primary', { onclick: app.followPrompt }, 'Use an invite')
+          h('button.btn.btn-primary', { onclick: app.ui.followPrompt }, 'Use an invite')
         )
       )
     ),
@@ -233,4 +243,5 @@ exports.editorNav = require('./editor-nav')
 exports.notifications = require('./notifications')
 exports.peers = require('./peers')
 exports.postForm = require('./post-form')
+exports.composer = require('./composer')
 exports.imageUploader = require('./image-uploader')

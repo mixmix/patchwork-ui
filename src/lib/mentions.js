@@ -37,7 +37,7 @@ exports.post = function (str, app, msg, spansOnly) {
     // render
     if (!id)
       return notfound()
-    name = app.names[id] || name // try to use locally-assigned name
+    name = app.users.names[id] || name // try to use locally-assigned name
     return found(id, name)
   }, spansOnly)
 }

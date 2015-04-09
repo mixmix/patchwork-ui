@@ -24,6 +24,20 @@ module.exports = function (app, msg, opts) {
 
 function getContent (app, msg, opts) {
   var c = msg.value.content
+
+  // check the component registry
+  var renderer = app.get('msg-reply', { type: c.type })
+  if (renderer) {
+    try {
+      var el = renderer.fn(msg)
+      if (el)
+        return el
+    } catch (e) {
+      console.error('Error rendering type: '+c.type, renderer, msg, e)
+    }
+  }
+  
+  // fallback to default behaviors
   try {
     return ({
       post: function () { 
@@ -56,7 +70,7 @@ var messageShell = function (app, msg, content, opts) {
   var msgpanel = h('.panel.panel-default.message',
     com.userHexagon(app, msg.value.author),
     h('.panel-heading',
-      com.userlink(msg.value.author, app.names[msg.value.author]), com.nameConfidence(msg.value.author, app),
+      com.userlink(msg.value.author, app.users.names[msg.value.author]), com.nameConfidence(msg.value.author, app),
       ' ', com.a('#/msg/'+msg.key, u.prettydate(new Date(msg.value.timestamp), true), { title: 'View message thread' }),
       h('span', {innerHTML: ' &middot; '}), h('a', { title: 'Reply', href: '#', onclick: reply }, 'reply')
     ),
@@ -69,7 +83,7 @@ var messageShell = function (app, msg, content, opts) {
     e.preventDefault()
 
     if (!msgbody.nextSibling || !msgbody.nextSibling.classList || !msgbody.nextSibling.classList.contains('reply-form')) {
-      var form = com.postForm(app, msg.key)
+      var form = com.composer(app, msg)
       if (msgbody.nextSibling)
         msgbody.parentNode.insertBefore(form, msgbody.nextSibling)
       else

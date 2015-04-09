@@ -18,8 +18,8 @@ module.exports = function (app) {
     var follows  = data[0]
     var trusts   = data[1]
     var peers    = data[2]
-    follows[app.myid] = follows[app.myid] || {}
-    trusts [app.myid] = trusts [app.myid] || {}
+    follows[app.user.id] = follows[app.user.id] || {}
+    trusts [app.user.id] = trusts [app.user.id] || {}
 
     // markup
 
@@ -28,26 +28,26 @@ module.exports = function (app) {
       var primary = (prof && prof.primary) ? prof.primary : false
 
       if (queryStr) {
-        var author = app.names[id] || id
+        var author = app.users.names[id] || id
         var regex = new RegExp(queryStr.replace(/\s/g, '|'))
         if (!regex.exec(author))
           return false
       }
 
       if (currentList == 'following') {
-        if ((id === app.myid || (follows[app.myid][id] && trusts[app.myid][id] !== -1)) && !primary)
+        if ((id === app.user.id || (follows[app.user.id][id] && trusts[app.user.id][id] !== -1)) && !primary)
           return true
       }
       else if (currentList == 'others') {
-        if (id !== app.myid && !follows[app.myid][id] && !trusts[app.myid][id] && !primary)
+        if (id !== app.user.id && !follows[app.user.id][id] && !trusts[app.user.id][id] && !primary)
           return true
       }
       else if (currentList == 'apps') {
-        if (id !== app.myid && primary === app.myid)
+        if (id !== app.user.id && primary === app.user.id)
           return true
       }
       else if (currentList == 'flagged') {
-        if (id !== app.myid && trusts[app.myid][id] === -1)
+        if (id !== app.user.id && trusts[app.user.id][id] === -1)
           return true
       }
 

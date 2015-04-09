@@ -25,21 +25,6 @@ module.exports = function (app, msg, opts) {
     }
   }
 
-  // :DEBUG: fake vote generator, just gonna hold onto this for a bit
-  /*if (stats.votes) {
-    for (var k in app.profiles) {
-      var p = app.profiles[k]
-      if (p.assignedBy[app.myid] && p.assignedBy[app.myid].following) {
-        if (Math.random() > .5)
-          upvoters.push(k)
-        else
-          downvoters.push(k)
-      }
-      if (Math.random() >= .75)
-        break
-    }
-  }*/
-
   var upvotersGrid, downvotersGrid
   if (upvoters.length) {
     upvotersGrid = com.userHexagrid(app, upvoters, hexagridOpts)

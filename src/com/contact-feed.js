@@ -11,9 +11,9 @@ module.exports = function (app, opts) {
   opts = opts || {}
 
   var contacts = []
-  for (var uid in app.profiles) {
-    if (!opts.filter || opts.filter(app.profiles[uid]))
-      contacts.push(app.profiles[uid])
+  for (var uid in app.users.profiles) {
+    if (!opts.filter || opts.filter(app.users.profiles[uid]))
+      contacts.push(app.users.profiles[uid])
   }
 
   // markup

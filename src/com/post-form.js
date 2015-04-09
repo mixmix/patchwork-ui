@@ -16,8 +16,8 @@ module.exports = function (app, parent) {
 
   var attachments = []
   var namesList = {} // a name->name map for the previews
-  for (var id in app.names)
-    namesList[app.names[id]] = app.names[id]
+  for (var id in app.users.names)
+    namesList[app.users.names[id]] = app.users.names[id]
 
   // markup
 
@@ -25,25 +25,17 @@ module.exports = function (app, parent) {
   var filesInput = h('input.hidden', { type: 'file', multiple: true, onchange: filesAdded })  
   var filesList = h('ul')
   var textarea = h('textarea', { name: 'text', placeholder: 'Compose your message', rows: 6, onkeyup: onPostTextChange })
-  suggestBox(textarea, app.suggestOptions) // decorate with suggestbox 
+  suggestBox(textarea, app.ui.suggestOptions) // decorate with suggestbox 
   var postBtn = h('button.postbtn.btn.btn-primary.btn-strong', { disabled: true }, 'Post')
 
   var form = h('form.post-form' + ((!!parent) ? '.reply-form' : ''), { onsubmit: post },
-    h('p',
-      h('small.text-muted', 
-        'All posts are public. Markdown, @-mentions, and emojis are supported. ',
-        h('a', { href: '#/action/cancel', onclick: cancel }, 'Cancel'))),
-    h('div',
-      h('.post-form-textarea', textarea),
-      preview,
-      h('.post-form-attachments',
-        filesList,
-        h('a', { href: '#', onclick: addFile }, 'Click here to add an attachment'),
-        postBtn,
-        filesInput
-      )
-    )
-  )
+    h('.post-form-textarea', textarea),
+    preview,
+    h('.post-form-attachments',
+      filesList,
+      h('a', { href: '#', onclick: addFile }, 'Click here to add an attachment'),
+      postBtn,
+      filesInput))
 
   function disable () {
     postBtn.setAttribute('disabled', true)
@@ -75,7 +67,7 @@ module.exports = function (app, parent) {
     uploadFiles(function (err, extLinks) {
       if (err)
         return enable(), swal('Error Uploading Attachments', err.message, 'error')
-      app.setStatus('info', 'Publishing...')
+      app.ui.setStatus('info', 'Publishing...')
 
       // prep text
       app.ssb.phoenix.getIdsByName(function (err, idsByName) {
@@ -105,7 +97,7 @@ module.exports = function (app, parent) {
         if (mentions.length) post.mentions = mentions
         if (extLinks.length) post.attachments = extLinks
         app.ssb.publish(post, function (err, msg) {
-          app.setStatus(null)
+          app.ui.setStatus(null)
           enable()
           if (err) swal('Error While Publishing', err.message, 'error')
           else {
@@ -147,7 +139,7 @@ module.exports = function (app, parent) {
     if (attachments.length === 0)
       return cb(null, links)
 
-    app.setStatus('info', 'Uploading ('+attachments.length+' files left)...')
+    app.ui.setStatus('info', 'Uploading ('+attachments.length+' files left)...')
     attachments.forEach(function (file) {
       var link = { ext: null, name: null, size: null }
       links.push(link)
@@ -186,15 +178,15 @@ module.exports = function (app, parent) {
       if (n < 0) return
       if (err) {
         n = -1
-        app.setStatus(null)
+        app.ui.setStatus(null)
         return cb (err)
       }
       n++
       if (n === attachments.length) {
-        app.setStatus(null)
+        app.ui.setStatus(null)
         cb(null, links)
       } else
-        app.setStatus('info', 'Uploading ('+(attachments.length-n)+' files left)...')
+        app.ui.setStatus('info', 'Uploading ('+(attachments.length-n)+' files left)...')
     }
   }
 

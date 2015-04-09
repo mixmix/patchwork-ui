@@ -139,7 +139,7 @@ function votesFetcher (fetchFn) {
             stats.voteTally--
           }
         }
-        stats.uservote = stats.votes[app.myid] || 0
+        stats.uservote = stats.votes[app.user.id] || 0
         cb(null, stats)
       })
     )
@@ -188,7 +188,27 @@ exports.calcMessageStats = function (app, thread, opts) {
       stats.voteTally--
     }
   }
-  stats.uservote = stats.votes[app.myid] || 0
+  stats.uservote = stats.votes[app.user.id] || 0
 
   return stats
+}
+
+exports.getOtherNames = function (app, profile) {
+  // todo - replace with ranked names
+  var name = app.users.names[profile.id] || profile.id
+
+  var names = []
+  function add(n) {
+    if (n && n !== name && !~names.indexOf(n))
+      names.push(n)
+  }
+
+  // get 3 of the given or self-assigned names
+  add(profile.self.name)
+  for (var k in profile.assignedBy) {
+    if (names.length >= 3)
+      break
+    add(profile.assignedBy[k].name)
+  }
+  return names
 }

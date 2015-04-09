@@ -22,16 +22,20 @@ module.exports = function (app) {
   app.setPage('programs', h('.row',
     h('.col-xs-1', com.sidenav(app)),
     h('.col-xs-8',
-      h('.header-ctrls',
-        com.search({
-          value: queryStr,
-          onsearch: onsearch
-        })),
-        // h('a.btn.btn-primary', { href: '#/program-editor', style: 'margin-left: 5px' }, 'New Program')),
       com.programFeed(app, { filter: filterFn })),
     h('.col-xs-3.right-column.full-height',
       h('.right-column-inner',
-        com.notifications(app)
+        com.notifications(app),
+        h('h4', 'Plugins Help'),
+        h('p.text-muted', 'This is a developing feature.'),
+        h('pre', 
+          'To add a new plugin,\n',
+          'symlink its .js file into\n',
+          '~/.ssb/plugins.\n',
+          '\n',
+          'On page-load, Phoenix will\n',
+          'fetch and eval() all .js files\n',
+          'in the directory.')
       ),
       com.sidehelp(app))
   ))

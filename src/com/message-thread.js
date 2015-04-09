@@ -7,6 +7,20 @@ var mentions = require('../lib/mentions')
 
 function getContent (app, msg) {
   var c = msg.value.content
+
+  // check the component registry
+  var renderer = app.get('msg-full', { type: c.type })
+  if (renderer) {
+    try {
+      var el = renderer.fn(msg)
+      if (el)
+        return el
+    } catch (e) {
+      console.error('Error rendering type: '+c.type, renderer, msg, e)
+    }
+  }
+
+  // fallback to default renderers
   try {
     return ({
       post: function () { 
@@ -38,9 +52,9 @@ module.exports = function (app, thread, opts) {
     h('.message-thread-top',
       h('ul.threadmeta.list-inline',
         h('li.hex', com.userHexagon(app, thread.value.author)),
-        h('li', com.userlink(thread.value.author, app.names[thread.value.author]), com.nameConfidence(thread.value.author, app)),
+        h('li', com.userlink(thread.value.author, app.users.names[thread.value.author]), com.nameConfidence(thread.value.author, app)),
         h('li', com.a('#/', u.prettydate(new Date(thread.value.timestamp), true), { title: 'View message thread' })),
-        h('li.button', h('a', { href: '#', onclick: onmarkunread }, 'Mark Unread')),
+        // h('li.button', h('a', { href: '#', onclick: onmarkunread }, 'Mark Unread')),
         h('li.button.strong.pull-right', h('a', { href: '#', onclick: onreply }, 'Reply')),
         h('li.button.pull-right', subscribeBtn),
         h('li.button.pull-right', h('a', { href: '/msg/'+thread.key, target: '_blank' }, 'as JSON'))),
@@ -57,7 +71,7 @@ module.exports = function (app, thread, opts) {
     e.preventDefault()
 
     if (!threadInner.nextSibling || !threadInner.nextSibling.classList || !threadInner.nextSibling.classList.contains('reply-form')) {
-      var form = com.postForm(app, thread.key)
+      var form = com.composer(app, thread)
       threadInner.parentNode.insertBefore(form, threadInner.nextSibling)
     }
   }
@@ -66,7 +80,7 @@ module.exports = function (app, thread, opts) {
     e.preventDefault()
 
     app.ssb.phoenix.markUnread(thread.key, function () {
-      window.location.hash = app.lastHubPage
+      // :TODO: ?
     })
   }
 

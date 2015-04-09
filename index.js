@@ -18,12 +18,13 @@ exports.init = function (server) {
         return res.end('Remote access forbidden')
       }
       // CSPs
-      res.setHeader('Content-Security-Policy', 'default-src \'self\' data:; style-src \'self\' \'unsafe-inline\'; connect-src \'self\' ws://localhost:'+server.config.port)
+      res.setHeader('Content-Security-Policy', 'default-src \'self\' data:; style-src \'self\' \'unsafe-inline\'; script-src \'self\' \'unsafe-eval\'; connect-src \'self\' ws://localhost:'+server.config.port)
       next()
     },
     require('./domain-auth')(server),
     require('./msgs')(server),
     require('./blobs')(server),
+    require('./plugins')(server),
     require('stack-assets-builder')({ enabled: server.config.dev, root: __dirname }),
     require('stack-assets-static')({ root: __dirname })
   ))
