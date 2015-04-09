@@ -48,6 +48,7 @@ function setup() {
 
     // ui data
     ui: {
+      emojis: [],
       suggestOptions: { ':': [], '@': [] },
       actionItems: null
       // ui helper methods added by `addUi`
@@ -61,7 +62,8 @@ function setup() {
     users: {
       names: null,
       nameTrustRanks: null,
-      profiles: null
+      profiles: null,
+      link: function (id) { return com.user(phoenix, id) }
     },
 
     // for plugins
@@ -78,8 +80,9 @@ function setup() {
   // periodically poll and rerender the current connections
   setInterval(pollPeers, 5000)
 
-  // options for the suggest box
+  // emojis
   for (var emoji in emojis) {
+    phoenix.ui.emojis.push(emoji)
     phoenix.ui.suggestOptions[':'].push({
       image: '/img/emoji/' + emoji + '.png',
       title: emoji,
