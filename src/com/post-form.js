@@ -93,7 +93,7 @@ module.exports = function (app, parent) {
 
         // post
         var post = schemas.schemas.post(text)
-        if (parent)          post.repliesTo = { msg: parent }
+        if (parent)          post.repliesTo = { msg: parent.key }
         if (mentions.length) post.mentions = mentions
         if (extLinks.length) post.attachments = extLinks
         app.ssb.publish(post, function (err, msg) {
@@ -231,7 +231,7 @@ module.exports = function (app, parent) {
 
     // post
     var post = schemas.schemas.post(text)
-    if (parent) post.repliesTo = { msg: parent }
+    if (parent) post.repliesTo = { msg: parent.key }
     if (mentions.length) post.mentions = mentions
     if (extLinks.length) post.attachments = extLinks
 

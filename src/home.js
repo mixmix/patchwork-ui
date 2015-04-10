@@ -63,7 +63,7 @@ function setup() {
       names: null,
       nameTrustRanks: null,
       profiles: null,
-      link: function (id) { return com.user(phoenix, id) }
+      link: function (id) { return h('span', com.user(phoenix, id)) }
     },
 
     // for plugins
