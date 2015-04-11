@@ -4,7 +4,7 @@ var schemas = require('ssb-msg-schemas')
 module.exports = function (phoenix) {
 
   phoenix.ui.showUserId = function () { 
-    swal('Here is your contact id', this.user.id)
+    swal('Here is your contact id', phoenix.user.id)
   }
 
   phoenix.ui.setStatus = function (type, message) {
