@@ -3,9 +3,15 @@ Phoenix v1
 
 ![phoenix](phoenix.png) **It's distributed!**
 
-Phoenix is the web UI for [scuttlebot](https://github.com/ssbc/scuttlebot) and part of the [secure-scuttlebutt](https://github.com/ssbc/secure-scuttlebutt) decentralized network. Secure Scuttlebutt (SSB) is a fully-decentralized data network designed to replace Web services. It uses cryptographic keypairs to gossip unforgeable data-feeds across the network. "Pub" servers aggregate and redistribute the feeds, but SSB has no central authority: every node is equal, and the network is fully open.
+Phoenix is the web UI for [scuttlebot](https://github.com/ssbc/scuttlebot) and part of the [secure-scuttlebutt](https://github.com/ssbc/secure-scuttlebutt) decentralized network. 
+
+Secure Scuttlebutt (SSB) is a fully-decentralized data network designed to replace Web services. It uses cryptographic keypairs to gossip unforgeable data-feeds across the network. "Pub" servers aggregate and redistribute the feeds, but SSB has no central authority: every node is equal, and the network is fully open.
 
 Join us in #scuttlebutt on freenode.
+
+![phoenix screenshot](screenshot1.jpg)
+![phoenix screenshot](screenshot2.jpg)
+![phoenix screenshot](screenshot3.jpg)
 
 ## Getting Started
 
