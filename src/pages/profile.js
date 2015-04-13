@@ -14,22 +14,17 @@ module.exports = function (app) {
 
   var done = multicb({ pluck: 1 })
   app.ssb.friends.all('follow', done())
+  app.ssb.friends.all('trust', done())
   done(function (err, datas) {
-    var graphs = { follow: datas[0] }
+    var graphs = { follow: datas[0], trust: datas[1] }
     graphs.follow[app.user.id] = graphs.follow[app.user.id] || {}
+    graphs.trust[app.user.id]  = graphs.trust[app.user.id] || {}
     profile.assignedBy[app.user.id] = profile.assignedBy[app.user.id] || {}
-    var followers = inEdges(graphs.follow, true)
+
     var isSelf = (pid == app.user.id)
     var isFollowing = graphs.follow[app.user.id][pid]
-
-    // votes
-    var upvoters = [], downvoters = []
-    for (var userid in profile.assignedBy) {
-      if (profile.assignedBy[userid].vote === 1)
-        upvoters.push(userid)
-      if (profile.assignedBy[userid].vote === -1)
-        downvoters.push(userid)
-    }
+    var followers = Object.keys(graphs.follow).filter(function (id) { return graphs.follow[id][pid] })
+    var flaggers = Object.keys(graphs.trust).filter(function (id) { return graphs.trust[id][pid] === -1 })
 
     // name confidence controls
     var nameTrustDlg
@@ -84,23 +79,17 @@ module.exports = function (app) {
       content = 'todo'
     }
     else if (view == 'contacts') {
-      content = [
-        h('.header-ctrls',
-          com.search({
-            value: queryStr,
-            onsearch: onsearch
-          })),
-        com.contactFeed(app, { filter: contactFeedFilter, follows: graphs.follow })
-      ]
+      content = com.contactFeed(app, { filter: contactFeedFilter, follows: graphs.follow })
     }
     else {
+      var search = com.search({
+        value: queryStr,
+        onsearch: onsearch
+      })
+      search.style.paddingTop = 0
       // messages
       content = [
-        h('.header-ctrls',
-          com.search({
-            value: queryStr,
-            onsearch: onsearch
-          })),
+        h('.header-ctrls', search),
         com.messageFeed(app, { feed: app.ssb.createFeedStream, filter: msgFeedFilter })
       ]
     }
@@ -110,7 +99,7 @@ module.exports = function (app) {
       h('.col-xs-1', com.sidenav(app)),
       h('.col-xs-8',
         nameTrustDlg,
-        h('.header-ctrls', { style: 'margin-top: 3px' },
+        h('.header-ctrls', { style: 'margin: 3px 0' },
           com.nav({
             current: view,
             items: [
@@ -125,8 +114,8 @@ module.exports = function (app) {
         com.notifications(app),
         h('.profile-controls',
           com.contactSummary(app, profile, graphs.follow),
-          (profile.upvotes) ? h('.relations', h('h4', com.icon('triangle-top'), 's'), com.userHexagrid(app, upvoters, { nrow: 4 })) : '',
-          (profile.downvotes) ? h('.relations', h('h4', com.icon('triangle-bottom'), 's'), com.userHexagrid(app, downvoters, { nrow: 4 })) : ''))))
+          (flaggers.length) ? h('.relations', h('h4', 'flagged by'), com.userHexagrid(app, flaggers, { nrow: 4 })) : '',
+          (followers.length) ? h('.relations', h('h4', 'followed by'), com.userHexagrid(app, followers, { nrow: 4 })) : ''))))
 
     function makeUri (opts) {
       var qs=''
