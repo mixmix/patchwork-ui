@@ -9,7 +9,6 @@ module.exports = function (app) {
   var pid      = app.page.param
   var view     = app.page.qs.view || 'feed'
   var queryStr = app.page.qs.q || ''
-  var list     = app.page.qs.list || ''
   var profile  = app.users.profiles[pid]
   var name     = com.userName(app, pid)
 
@@ -75,23 +74,18 @@ module.exports = function (app) {
             pics.push(profilePic(given.profilePic, userid))
         })
       }
+      // :TODO: subnav
       content = h('.profile-pics',
         com.imageUploader(app, { onupload: onImageUpload }),
         h('br'),
         pics)
     }
+    else if (view == 'about') {
+      content = 'todo'
+    }
     else if (view == 'contacts') {
-      list = list || 'following'
       content = [
         h('.header-ctrls',
-          com.nav({
-            current: list,
-            items: [
-              ['following', makeUri({ list: 'following' }), 'Following'],
-              ['followers', makeUri({ list: 'followers' }), 'Followers'],
-              ['apps',      makeUri({ list: 'apps' }),      'Applications']
-            ]
-          }),
           com.search({
             value: queryStr,
             onsearch: onsearch
@@ -101,19 +95,8 @@ module.exports = function (app) {
     }
     else {
       // messages
-      list = list || 'all'
       content = [
         h('.header-ctrls',
-          com.nav({
-            current: list,
-            items: [
-              ['all',      makeUri({ view: '', list: 'all' }),      'All'],
-              ['posts',    makeUri({ view: '', list: 'posts' }),    'Posts'],
-              ['allposts', makeUri({ view: '', list: 'allposts' }), 'Posts & Replies'],
-              ['data',     makeUri({ view: '', list: 'data' }),     'Data'],
-              ['actions',  makeUri({ view: '', list: 'actions' }),  'Actions']
-            ]
-          }),
           com.search({
             value: queryStr,
             onsearch: onsearch
@@ -125,23 +108,23 @@ module.exports = function (app) {
     // render page
     app.setPage('profile', h('.row',
       h('.col-xs-1', com.sidenav(app)),
-      h('.col-xs-8', 
+      h('.col-xs-8',
         nameTrustDlg,
+        h('.header-ctrls', { style: 'margin-top: 3px' },
+          com.nav({
+            current: view,
+            items: [
+              ['about',    makeUri({ view: 'about'}),     'About'],
+              ['feed',     makeUri({ view: 'feed' }),     'Feed'],
+              ['contacts', makeUri({ view: 'contacts' }), 'Contacts'],
+              ['avatar',   makeUri({ view: 'avatar' }),   'Avatar']
+            ]
+          })),
         content),
       h('.col-xs-3.full-height',
         com.notifications(app),
         h('.profile-controls',
           com.contactSummary(app, profile, graphs.follow),
-          h('.header-ctrls.big.light',
-            com.nav({
-              current: view,
-              items: [
-                ['feed',      makeUri({ view: 'feed', list: '' }),      [com.icon('list'), ' Feed']],
-                ['contacts',  makeUri({ view: 'contacts', list: '' }),  [com.icon('book'), ' Contacts']],
-                // ['about',     makeUri({ view: 'about', list: '' }),     [com.icon('question-sign'), ' About']],
-                ['avatar',    makeUri({ view: 'avatar', list: '' }),    [com.icon('picture'), ' Avatar']]
-              ]
-            })),
           (profile.upvotes) ? h('.relations', h('h4', com.icon('triangle-top'), 's'), com.userHexagrid(app, upvoters, { nrow: 4 })) : '',
           (profile.downvotes) ? h('.relations', h('h4', com.icon('triangle-bottom'), 's'), com.userHexagrid(app, downvoters, { nrow: 4 })) : ''))))
 
@@ -151,8 +134,7 @@ module.exports = function (app) {
         opts = opts || {}
         opts.view = ('view' in opts) ? opts.view : view
         opts.q    = ('q'    in opts) ? opts.q    : queryStr
-        opts.list = ('list' in opts) ? opts.list : list
-        qs = '?view=' + encodeURIComponent(opts.view) + '&q=' + encodeURIComponent(opts.q) + '&list=' + encodeURIComponent(opts.list)
+        qs = '?view=' + encodeURIComponent(opts.view) + '&q=' + encodeURIComponent(opts.q)
       }
       return '#/profile/'+pid+qs
     }
@@ -197,24 +179,6 @@ module.exports = function (app) {
       if (msg.value.author !== pid)
         return false
 
-      if (list == 'posts') {
-        if (c.type !== 'post' || c.repliesTo)
-          return false
-      }
-      else if (list == 'allposts') {
-        if (c.type !== 'post')
-          return false
-      }
-      else if (list == 'data') {
-        // no standard message types
-        if (c.type === 'init' || c.type === 'post' || c.type === 'contact' || c.type === 'pub')
-          return false
-      }
-      else if (list == 'actions') {
-        if (c.type !== 'init' && c.type !== 'contact' && c.type !== 'pub')
-          return false
-      }
-
       if (!queryStr)
         return true
 
@@ -229,7 +193,6 @@ module.exports = function (app) {
 
     function contactFeedFilter (prof) {
       var id = prof.id
-      var primary = (prof && prof.primary) ? prof.primary : false
 
       if (queryStr) {
         var author = app.users.names[id] || id
@@ -238,19 +201,13 @@ module.exports = function (app) {
           return false
       }
 
-      if (list == 'following') {
-        if (graphs.follow[pid] && graphs.follow[pid][id] && !primary)
-          return true
-      }
-      else if (list == 'followers') {
+      /*else if (view == 'followers') {
         if (graphs.follow[id] && graphs.follow[id][pid] && !primary)
           return true
-      }
-      else if (list == 'apps') {
-        if (primary === pid)
-          return true
-      }
+      }*/
 
+      if (graphs.follow[pid] && graphs.follow[pid][id])
+        return true
       return false
     }
 
