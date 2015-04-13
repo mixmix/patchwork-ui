@@ -25,7 +25,6 @@ module.exports = function (app) {
 
     function filterFn (prof) {
       var id = prof.id
-      var primary = (prof && prof.primary) ? prof.primary : false
 
       if (queryStr) {
         var author = app.users.names[id] || id
@@ -35,15 +34,11 @@ module.exports = function (app) {
       }
 
       if (currentList == 'following') {
-        if ((id === app.user.id || (follows[app.user.id][id] && trusts[app.user.id][id] !== -1)) && !primary)
+        if ((id === app.user.id || (follows[app.user.id][id] && trusts[app.user.id][id] !== -1)))
           return true
       }
       else if (currentList == 'others') {
-        if (id !== app.user.id && !follows[app.user.id][id] && !trusts[app.user.id][id] && !primary)
-          return true
-      }
-      else if (currentList == 'apps') {
-        if (id !== app.user.id && primary === app.user.id)
+        if (id !== app.user.id && !follows[app.user.id][id] && !trusts[app.user.id][id])
           return true
       }
       else if (currentList == 'flagged') {
@@ -63,7 +58,6 @@ module.exports = function (app) {
             items: [
               ['following', makeUri({ list: 'following' }), 'Following'],
               ['others',    makeUri({ list: 'others' }),    'Others'],
-              ['apps',      makeUri({ list: 'apps' }),      'Applications'],
               ['flagged',   makeUri({ list: 'flagged' }),   'Flagged']
             ]
           }),
