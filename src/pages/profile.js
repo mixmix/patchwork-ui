@@ -18,7 +18,8 @@ module.exports = function (app) {
     if (mlib.isHash(pid)) {
       profile = {
         assignedBy: {},
-        id: pid
+        id: pid,
+        isEmpty: true
       }
     } else {
       app.setPage('profile', h('.row',
@@ -59,7 +60,10 @@ module.exports = function (app) {
       var mutualFollowers = inEdges(graphs.follow, true, followedByMe)
       mutualFollowers = (mutualFollowers.length) ?
         h('p', h('strong', 'Mutual Followers:'), h('ul.list-inline', mutualFollowers)) :
-        h('p.text-danger', 'Warning: This user is not followed by anyone you follow.')
+        h('p.text-danger',
+          (profile.isEmpty) ?
+            'There is no information about this user.' :
+            'Warning: This user is not followed by anyone you follow.')
 
       nameTrustDlg = h('.well', { style: 'margin-top: 5px; background: #fff' },
         h('h3', { style: 'margin-top: 0' }, (!!app.users.names[pid]) ? 'Is this "'+app.users.names[pid]+'?"' : 'Who is this user?'),
