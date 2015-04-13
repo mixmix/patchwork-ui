@@ -26,8 +26,10 @@ module.exports = function (app, profile, graphs) {
 
   var profileImg = com.profilePicUrl(app, contactId)
   var totem = h('.totem',
-    h('span.corner.topleft', { 'data-overlay': 'Follows' }, h('.corner-inner', followers.length, com.icon('user'))),
-    h('span.corner.botleft', { 'data-overlay': 'Flags' }, h('.corner-inner', flaggers.length, com.icon('flag'))),
+    h('span.corner.topleft'),    
+    h('span.corner.topright'),
+    h('span.corner.botleft', { 'data-overlay': 'Follows' }, h('.corner-inner', followers.length, com.icon('user'))),
+    h('span.corner.botright', { 'data-overlay': 'Flags' }, h('.corner-inner', flaggers.length, com.icon('flag'))),
     /*h('a.corner.botright' + (myvote===-1 ? '.selected' : ''),
       {
         href: '#',
