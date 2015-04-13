@@ -50,13 +50,16 @@ module.exports = function (app, profile, follows) {
 
 
   // profile title
-  var joinDate = (profile) ? u.prettydate(new Date(profile.createdAt), true) : '-'
+  var joinDate = (profile && profile.createdAt) &&
+    u.prettydate(new Date(profile.createdAt), true)
   var title = h('.title',
     h('h2', name, com.nameConfidence(contactId, app)),
     (primary) ?
       h('h3', com.user(app, primary), '\'s feed') :
       '',
-    h('p.text-muted', 'joined '+joinDate))
+    (joinDate) ?
+      h('p.text-muted', 'joined '+joinDate) :
+      '')
 
   // totem colors derived from the image
   var tmpImg = document.createElement('img')
