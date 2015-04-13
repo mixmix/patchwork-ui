@@ -1,5 +1,6 @@
 'use strict'
 var h = require('hyperscript')
+var mlib = require('ssb-msgs')
 var multicb = require('multicb')
 var schemas = require('ssb-msg-schemas')
 var com = require('../com')
@@ -12,6 +13,27 @@ module.exports = function (app) {
   var list     = app.page.qs.list || ''
   var profile  = app.users.profiles[pid]
   var name     = com.userName(app, pid)
+
+  if (!profile) {
+    if (mlib.isHash(pid)) {
+      profile = {
+        assignedBy: {},
+        id: pid,
+        isEmpty: true
+      }
+    } else {
+      app.setPage('profile', h('.row',
+        h('.col-xs-1', com.sidenav(app)),
+        h('.col-xs-8',
+          h('.well', { style: 'margin-top: 5px; background: #fff' },
+            h('h3', { style: 'margin-top: 0' }, 'Invalid user ID'),
+            h('p',
+              h('em', pid), ' is not a valid user ID. ',
+                h('img.emoji', { src: '/img/emoji/disappointed.png', title: 'disappointed', width: 20, height: 20, style: 'vertical-align: top' })))),
+        h('.col-xs-3.full-height')))
+      return
+    }
+  }
 
   var done = multicb({ pluck: 1 })
   app.ssb.friends.all('follow', done())
@@ -38,7 +60,10 @@ module.exports = function (app) {
       var mutualFollowers = inEdges(graphs.follow, true, followedByMe)
       mutualFollowers = (mutualFollowers.length) ?
         h('p', h('strong', 'Mutual Followers:'), h('ul.list-inline', mutualFollowers)) :
-        h('p.text-danger', 'Warning: This user is not followed by anyone you follow.')
+        h('p.text-danger',
+          (profile.isEmpty) ?
+            'There is no information about this user.' :
+            'Warning: This user is not followed by anyone you follow.')
 
       nameTrustDlg = h('.well', { style: 'margin-top: 5px; background: #fff' },
         h('h3', { style: 'margin-top: 0' }, (!!app.users.names[pid]) ? 'Is this "'+app.users.names[pid]+'?"' : 'Who is this user?'),
