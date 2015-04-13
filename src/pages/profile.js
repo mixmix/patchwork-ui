@@ -113,7 +113,7 @@ module.exports = function (app) {
       h('.col-xs-3.full-height',
         com.notifications(app),
         h('.profile-controls',
-          com.contactSummary(app, profile, graphs.follow),
+          com.contactPlaque(app, profile, graphs),
           (flaggers.length) ? h('.relations', h('h4', 'flagged by'), com.userHexagrid(app, flaggers, { nrow: 4 })) : '',
           (followers.length) ? h('.relations', h('h4', 'followed by'), com.userHexagrid(app, followers, { nrow: 4 })) : ''))))
 
@@ -210,6 +210,18 @@ module.exports = function (app) {
     function confirmName (e) {
       e.preventDefault()
       schemas.addContact(app.ssb, pid, { name: app.users.names[pid] }, function (err) {
+        if (err) swal('Error While Publishing', err.message, 'error')
+        else app.refreshPage()
+      })
+    }
+
+    function toggleFollow (e) {
+      e.preventDefault()
+      if (isSelf) {
+        window.location.hash = '#/profile/'+contactId
+        return
+      }
+      schemas.addContact(app.ssb, contactId, { following: !isFollowing }, function(err) {
         if (err) swal('Error While Publishing', err.message, 'error')
         else app.refreshPage()
       })
