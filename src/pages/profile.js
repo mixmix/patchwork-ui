@@ -23,6 +23,7 @@ module.exports = function (app) {
 
     var isSelf = (pid == app.user.id)
     var isFollowing = graphs.follow[app.user.id][pid]
+    var isFlagging = (graphs.trust[app.user.id][pid] == -1)
     var followers = Object.keys(graphs.follow).filter(function (id) { return graphs.follow[id][pid] })
     var flaggers = Object.keys(graphs.trust).filter(function (id) { return graphs.trust[id][pid] === -1 })
 
@@ -69,7 +70,6 @@ module.exports = function (app) {
             pics.push(profilePic(given.profilePic, userid))
         })
       }
-      // :TODO: subnav
       content = h('.profile-pics',
         com.imageUploader(app, { onupload: onImageUpload }),
         h('br'),
@@ -114,6 +114,14 @@ module.exports = function (app) {
         com.notifications(app),
         h('.profile-controls',
           com.contactPlaque(app, profile, graphs),
+          (!isSelf) ?
+            h('.btns',
+              h('a.btn.btn-default.btn-strong', { href: '#', onclick: toggleFollow }, com.icon('user'), ((isFollowing) ? ' Unfollow' : ' Follow')),
+              ' ',
+              h('a.btn.btn-default.btn-strong', { href: '#', onclick: rename }, com.icon('pencil'), ' Rename'),
+              ' ',
+              h('a.btn.btn-default.btn-strong', { href: '#', onclick: toggleFlag }, com.icon('flag'), ((isFlagging) ? ' Unflag' : ' Flag')))
+            : '',
           (flaggers.length) ? h('.relations', h('h4', 'flagged by'), com.userHexagrid(app, flaggers, { nrow: 4 })) : '',
           (followers.length) ? h('.relations', h('h4', 'followed by'), com.userHexagrid(app, followers, { nrow: 4 })) : ''))))
 
@@ -217,11 +225,19 @@ module.exports = function (app) {
 
     function toggleFollow (e) {
       e.preventDefault()
-      if (isSelf) {
-        window.location.hash = '#/profile/'+contactId
+      if (isSelf)
         return
-      }
-      schemas.addContact(app.ssb, contactId, { following: !isFollowing }, function(err) {
+      schemas.addContact(app.ssb, pid, { following: !isFollowing }, function(err) {
+        if (err) swal('Error While Publishing', err.message, 'error')
+        else app.refreshPage()
+      })
+    }
+
+    function toggleFlag (e) {
+      e.preventDefault()
+      if (isSelf)
+        return
+      schemas.addContact(app.ssb, pid, { trust: (isFlagging) ? 0 : -1 }, function(err) {
         if (err) swal('Error While Publishing', err.message, 'error')
         else app.refreshPage()
       })
