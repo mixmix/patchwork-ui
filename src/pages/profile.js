@@ -141,7 +141,7 @@ module.exports = function (app) {
       } else {
         authorName = app.users.names[author]
       }
-      return h('.pic',
+      return h('.pic', { 'data-overlay': 'Use for '+name },
         h('a', { href: '#', onclick: setProfilePic(pic) }, h('img', { src: '/ext/'+pic.ext })),
         h('p', 'by ', com.userlinkThin(author, authorName))
       )
