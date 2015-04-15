@@ -2,6 +2,7 @@
 var h = require('hyperscript')
 var multicb = require('multicb')
 var schemas = require('ssb-msg-schemas')
+var pull = require('pull-stream')
 var com = require('../com')
 var u = require('../lib/util')
 
@@ -75,9 +76,6 @@ module.exports = function (app) {
         h('br'),
         pics)
     }
-    else if (view == 'about') {
-      content = 'todo'
-    }
     else if (view == 'contacts') {
       content = com.contactFeed(app, { filter: contactFeedFilter, follows: graphs.follow })
     }
@@ -103,7 +101,6 @@ module.exports = function (app) {
           com.nav({
             current: view,
             items: [
-              ['about',    makeUri({ view: 'about'}),     'About'],
               ['feed',     makeUri({ view: 'feed' }),     'Feed'],
               ['contacts', makeUri({ view: 'contacts' }), 'Contacts'],
               ['avatar',   makeUri({ view: 'avatar' }),   'Avatar']
