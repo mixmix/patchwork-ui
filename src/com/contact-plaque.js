@@ -3,16 +3,17 @@ var schemas = require('ssb-msg-schemas')
 var com = require('./index')
 var u = require('../lib/util')
 
-module.exports = function (app, profile, follows) {
+module.exports = function (app, profile, graphs) {
 
   // markup 
 
   var contactId   = profile.id
   var name        = com.userName(app, contactId)
 //  var otherNames  = app.getOtherNames(profile) :TODO: use these?
-  var followers   = inEdges(follows, true)
+  var followers   = inEdges(graphs.follow, true)
+  var flaggers    = Object.keys(graphs.trust).filter(function (id) { return graphs.trust[id][profile.id] === -1 })
   var isSelf      = (contactId == app.user.id)
-  var isFollowing = follows[app.user.id][contactId]
+  var isFollowing = graphs.follow[app.user.id][contactId]
   var myvote      = (profile.assignedBy[app.user.id]) ? profile.assignedBy[app.user.id].vote : 0
 
   // secondary feeds (applications)
@@ -25,27 +26,17 @@ module.exports = function (app, profile, follows) {
 
   var profileImg = com.profilePicUrl(app, contactId)
   var totem = h('.totem',
-    h('a.corner.topleft' + (isFollowing?'.selected' : ''),
-      {
-        href: '#',
-        onclick: toggleFollow,
-        'data-overlay': (isSelf ? 'Your Followers' : (isFollowing ? 'Unfollow' : 'Follow'))
-      }, 
-      h('.corner-inner', followers.length, com.icon('user'))),
-    h('a.corner.botleft' + (myvote===1 ? '.selected' : ''),
-      {
-        href: '#',
-        onclick: makeVoteCb(1),
-        'data-overlay': (isSelf ? 'Your Upvotes' : (myvote===1 ? 'Undo Upvote' : 'Upvote'))
-      }, 
-      h('.corner-inner', profile.upvotes, com.icon('triangle-top'))),
-    h('a.corner.botright' + (myvote===-1 ? '.selected' : ''),
+    h('span.corner.topleft'),    
+    h('span.corner.topright'),
+    h('span.corner.botleft', { 'data-overlay': 'Follows' }, h('.corner-inner', followers.length, com.icon('user'))),
+    h('span.corner.botright', { 'data-overlay': 'Flags' }, h('.corner-inner', flaggers.length, com.icon('flag'))),
+    /*h('a.corner.botright' + (myvote===-1 ? '.selected' : ''),
       {
         href: '#',
         onclick: makeVoteCb(-1),
         'data-overlay': (isSelf ? 'Your Downvotes' : (myvote===-1 ? 'Undo Downvotes' : 'Downvote'))
       },
-      h('.corner-inner',com.icon('triangle-bottom'), profile.downvotes)),
+      h('.corner-inner',com.icon('triangle-bottom'), profile.downvotes)),*/
     h('a.profpic', { href: '#/profile/'+contactId }, com.hexagon(profileImg, 275)))
 
 
@@ -103,42 +94,6 @@ module.exports = function (app, profile, follows) {
   }
 
   return h('.contact-summary', totem, title)
-
-  // handlers
-    
-  function rename (e, contactId) {
-    e.preventDefault()
-    app.ui.setNamePrompt(contactId)
-  }
-
-  function toggleFollow (e) {
-    e.preventDefault()
-    if (isSelf) {
-      window.location.hash = '#/profile/'+contactId
-      return
-    }
-    schemas.addContact(app.ssb, contactId, { following: !isFollowing }, function(err) {
-      if (err) swal('Error While Publishing', err.message, 'error')
-      else app.refreshPage()
-    })
-  }
-
-  function makeVoteCb (newvote) {
-    return function (e) {
-      e.preventDefault()
-      if (isSelf) {
-        window.location.hash = '#/profile/'+contactId
-        return
-      }
-      // :TODO: use msg-schemas
-      if (myvote == newvote) // toggle behavior
-        newvote = 0
-      app.ssb.publish({ type: 'vote', voteTopic: { feed: contactId }, vote: newvote }, function (err) {
-        if (err) swal('Error While Publishing', err.message, 'error')
-        else app.refreshPage()
-      })
-    }
-  }
 
   function inEdges (g, v, filter) {
       var arr = []

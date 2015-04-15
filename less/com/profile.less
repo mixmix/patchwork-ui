@@ -10,16 +10,12 @@
     margin-right: 1em;
   }
 
-  .header-ctrls.big {
-    margin-top: 3px;
-    margin-left: 5px;
-  }
-  .contact-summary {
-    margin-left: 30px;
+  .btns {
+    margin: 0 0 20px 15px;
   }
 
   .relations {
-    margin: 0 0 0 10px;
+    margin: 0 0 0 20px;
     .user-hexagon {
       opacity: 1;
     }
@@ -38,7 +34,7 @@
       border-radius: 2px;
     }
     &:hover::before {
-      content: 'Use This Picture';
+      content: attr(data-overlay);
       position: absolute;
       bottom: 30px;
       left: 0;
