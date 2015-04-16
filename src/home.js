@@ -22,7 +22,7 @@ runPlugins()
 function setup() {
   // the SSB_MANIFEST variable is created by /manifest.js, which is loaded before the javascript bundle.
   var ssb = muxrpc(SSB_MANIFEST, false, function (stream) { return Serializer(stream, JSON, {split: '\n\n'}) })()
-  var localhost = channel.connect(ssb, 'localhost')
+  var localhost = channel.connect(ssb, window.location.host)
 
   // master state object
   window.phoenix = {
