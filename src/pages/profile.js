@@ -101,6 +101,9 @@ module.exports = function (app) {
         h('br'),
         pics)
     }
+    else if (view == 'apps') {
+      content = com.contactFeed(app, { filter: appsFeedFilter, follows: graphs.follow })
+    }
     else if (view == 'contacts') {
       content = com.contactFeed(app, { filter: contactFeedFilter, follows: graphs.follow })
     }
@@ -128,6 +131,7 @@ module.exports = function (app) {
             items: [
               ['feed',     makeUri({ view: 'feed' }),     'Feed'],
               ['contacts', makeUri({ view: 'contacts' }), 'Contacts'],
+              ['apps',     makeUri({ view: 'apps' }),     'Apps'],
               ['avatar',   makeUri({ view: 'avatar' }),   'Avatar']
             ]
           })),
@@ -212,20 +216,15 @@ module.exports = function (app) {
 
     function contactFeedFilter (prof) {
       var id = prof.id
+      var primary = (prof && prof.primary) ? prof.primary : false
+      if (graphs.follow[pid] && graphs.follow[pid][id] && !primary)
+        return true
+      return false
+    }
 
-      if (queryStr) {
-        var author = app.users.names[id] || id
-        var regex = new RegExp(queryStr.replace(/\s/g, '|'))
-        if (!regex.exec(author))
-          return false
-      }
-
-      /*else if (view == 'followers') {
-        if (graphs.follow[id] && graphs.follow[id][pid] && !primary)
-          return true
-      }*/
-
-      if (graphs.follow[pid] && graphs.follow[pid][id])
+    function appsFeedFilter (prof) {
+      var primary = (prof && prof.primary) ? prof.primary : false
+      if (primary == pid)
         return true
       return false
     }
