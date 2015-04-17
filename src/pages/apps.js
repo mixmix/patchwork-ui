@@ -6,7 +6,7 @@ var u = require('../lib/util')
 
 module.exports = function (app) {
   var queryStr = app.page.qs.q || ''
-  var currentList = app.page.qs.list || 'following'
+  var currentList = app.page.qs.list || 'yours'
   
   // fetch
 
@@ -26,62 +26,67 @@ module.exports = function (app) {
     function filterFn (prof) {
       var id = prof.id
       var primary = (prof && prof.primary) ? prof.primary : false
+      var flagged = trusts[app.user.id][id] === -1
 
-      if (queryStr) {
-        var author = app.users.names[id] || id
-        var regex = new RegExp(queryStr.replace(/\s/g, '|'))
-        if (!regex.exec(author))
+      if (!primary || flagged)
+        return false
+
+      if (currentList == 'yours') {
+        if (primary != app.user.id)
+          return false
+      }
+      else if (currentList == 'others') {
+        if (primary == app.user.id)
           return false
       }
 
-      if (currentList == 'following') {
-        if ((id === app.user.id || (follows[app.user.id][id] && trusts[app.user.id][id] !== -1)) && !primary)
-          return true
-      }
-      else if (currentList == 'others') {
-        if (id !== app.user.id && !follows[app.user.id][id] && !trusts[app.user.id][id] && !primary)
-          return true
-      }
-      else if (currentList == 'flagged') {
-        if (id !== app.user.id && trusts[app.user.id][id] === -1)
-          return true
+      if (queryStr) {
+        var feedname = app.users.names[id] || id
+        var primaryname = app.users.names[primary] || primary
+        var regex = new RegExp(queryStr.replace(/\s/g, '|'))
+        if (!regex.exec(feedname) && !regex.exec(primaryname))
+          return false
       }
 
-      return false
+      return true
     }
 
-    app.setPage('address-book', h('.row',
+    var emptyStr = (currentList == 'others') ?
+      'Empty. Your friends have no apps.' :
+      'Empty. You have no apps.'
+    app.setPage('apps', h('.row',
       h('.col-xs-1', com.sidenav(app)),
       h('.col-xs-8',
         h('.header-ctrls',
           com.nav({
             current: currentList,
             items: [
-              ['following', makeUri({ list: 'following' }), 'Following'],
-              ['others',    makeUri({ list: 'others' }),    'Others'],
-              ['flagged',   makeUri({ list: 'flagged' }),   'Flagged']
+              ['yours',  makeUri({ list: 'yours' }),  'Yours'],
+              ['others', makeUri({ list: 'others' }), 'Others\'']
             ]
           }),
           com.search({
             value: queryStr,
             onsearch: onsearch
           })),
-        com.contactFeed(app, { filter: filterFn, follows: follows })),
+        com.contactFeed(app, { filter: filterFn, follows: follows, empty: emptyStr })),
       h('.col-xs-3.right-column.full-height',
         h('.right-column-inner',
           com.notifications(app),
-          h('table.table.peers',
-            h('thead', h('tr', h('th', 'Gossip Network'))),
-            h('tbody', com.peers(app, peers))
-          )
-        ),
+          h('h4', 'About Apps'),
+          h('p', 
+            'Web sites can create new feeds for you. ',
+            'They\'ll declare you as their primary "alias," meaning, "we represent the same person!"'),
+          h('p',
+            'You\'ll get a notification above here when that happens. ',
+            'Click "Confirm" if you want the alias to exist.')),
         com.sidehelp(app))
     ))
 
     function makeUri (opts) {
       opts.q    = ('q' in opts) ? opts.q : queryStr
       opts.list = ('list' in opts) ? opts.list : currentList
-      return '#/address-book?q=' + encodeURIComponent(opts.q) + '&list=' + encodeURIComponent(opts.list)
+      return '#/apps?q=' + encodeURIComponent(opts.q) + '&list=' + encodeURIComponent(opts.list)
     }
 
     // handlers

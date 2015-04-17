@@ -11,6 +11,7 @@ function notfound (app) {
 
 module.exports = {
   'address-book':   require('./address-book'),
+  apps:             require('./apps'),
   feed:             require('./feed'),
   help:             require('./help'),
   msg:              require('./message'),
@@ -18,6 +19,5 @@ module.exports = {
   // 'program-editor': require('./program-editor'),
   notfound:         notfound,
   profile:          require('./profile'),
-  programs:         require('./programs'),
   setup:            require('./setup')
 }

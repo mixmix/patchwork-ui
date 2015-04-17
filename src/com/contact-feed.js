@@ -18,7 +18,7 @@ module.exports = function (app, opts) {
 
   // markup
  
-  var feed = h('table.contact-feed')
+  var feed = h('table.contact-feed', { 'data-empty-overlay': opts.empty || 'Empty' })
   var feedContainer = infiniscroll(h('.contact-feed-container.full-height', feed), { fetchBottom: fetchBottom })
 
   // profile fetching

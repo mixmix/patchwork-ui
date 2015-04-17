@@ -7,11 +7,11 @@
     margin-top: 10px;
 
     &:empty::before {
-      content: 'Empty';
+      content: attr(data-empty-overlay);
       font-size: 16px;
       font-style: italic;
       color: #777;
-      margin: 1em;
+      margin: 0.25em 1em;
       display: block;
     }
   }

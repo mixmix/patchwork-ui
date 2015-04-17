@@ -154,8 +154,8 @@ exports.sidenav = function (app) {
     ['feed',         '',             'feed'],
     ['address-book', 'address-book', 'network']
   ].concat(registryPages).concat([
-    ['programs',     'programs',     'plugins'],
-    ['help',         'help',         'help']
+    ['apps', 'apps', 'apps'],
+    ['help', 'help', 'help']
   ])
 
   return h('.side-nav.full-height',
