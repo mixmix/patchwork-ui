@@ -22,7 +22,7 @@ module.exports = function (app, parent) {
   // markup
 
   var preview = h('.post-form-preview')
-  var filesInput = h('input.hidden', { type: 'file', multiple: true, onchange: filesAdded })  
+  var filesInput = h('input.hidden', { type: 'file', multiple: true, onchange: filesAdded })
   var filesList = h('ul')
   var textarea = h('textarea', { name: 'text', placeholder: 'Compose your message', rows: 6, onkeyup: onPostTextChange })
   suggestBox(textarea, app.ui.suggestOptions) // decorate with suggestbox 

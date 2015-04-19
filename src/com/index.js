@@ -101,7 +101,7 @@ exports.friendsHexagrid = function (app, opts) {
   var friends = []
   for (var k in app.users.profiles) {
     var p = app.users.profiles[k]
-    if (p.assignedBy[app.user.id] && p.assignedBy[app.user.id].following)
+    if (p.assignedBy[app.user.id] && p.assignedBy[app.user.id].following && p.primary != app.user.id)
       friends.push(p.id)
   }
   if (friends.length)
