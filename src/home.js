@@ -18,6 +18,18 @@ var addUI      = require('./app-ui')
 setup()
 runPlugins()
 
+window.program = {
+  com: com,
+  pages: pages
+/*
+- feeds
+- msgs
+  - post
+    - summary
+    - full
+*/
+}
+
 // create the application object and register handlers
 function setup() {
   // the SSB_MANIFEST variable is created by /manifest.js, which is loaded before the javascript bundle.

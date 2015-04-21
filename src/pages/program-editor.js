@@ -1,6 +1,5 @@
 'use strict'
 var h = require('hyperscript')
-var buffers = require('ls-buffers')
 var CodeMirror = require('codemirror')
 require('codemirror/mode/javascript/javascript')
 require('codemirror/keymap/sublime')
@@ -10,13 +9,19 @@ var u = require('../lib/util')
 module.exports = function (app) {
 
   var hasChanges = false
-  var buff = buffers.load(app.page.param) || {id: null, meta:{}, text:''}
+  var path = app.page.param
+  var text = ''
+  if (path) {
+    var v = lookup(window.program, path.split('.'))
+    if (v)
+      text = v.toString()
+  }
 
   // markup
 
   var saveBtn = h('a.blue', { href: '#', onclick: onsave }, 'Save')
   var edContainer = h('.editor-container', h('.editor-ctrls', saveBtn))
-  var editorNav = com.editorNav(app, { selectedBuff: buff.id })
+  var editorNav = com.editorNav(app)
   app.setPage('program-editor', h('.row',
     h('.col-xs-1', com.sidenav(app)),
     h('.col-xs-8', edContainer),
@@ -33,7 +38,7 @@ module.exports = function (app) {
     edContainer.appendChild(el)
     el.style.height = (window.innerHeight - el.offsetTop) + 'px'
   }, {
-    value: buff.text,
+    value: text,
     mode: 'javascript',
     theme: 'default',
     keyMap: 'sublime',
@@ -70,4 +75,12 @@ module.exports = function (app) {
     hasChanges = false
     saveBtn.classList.remove('highlighted')
   }
+}
+
+function lookup (obj, path) {
+  var k = path.shift()
+  var v = obj[k]
+  if (path.length)
+    return lookup(v, path)
+  return v
 }
