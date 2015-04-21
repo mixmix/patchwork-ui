@@ -9,9 +9,9 @@ module.exports = function (app, opts) {
   var treeEl = h('.obj-tree', objtree(window.program, []))
   var navEl = h('.editor-nav',
     com.nav({
-      current: 'program',
+      current: 'browse',
       items: [
-        ['program', ontab, 'Program'],
+        ['browse', ontab, 'Browse'],
         ['help', ontab, 'Help']
       ]
     }),
@@ -37,8 +37,11 @@ function objtree (obj, path) {
         t = 'null'
     }
 
-    var a = h('a', { href: '#/program-editor/'+(path.concat(k).join('.')) }, k)
-    lis.push(h('li.'+t, a, sub))
+    var content = k
+    if (t == 'function')
+      content = h('a', { href: '#/program-editor/'+(path.concat(k).join('.')) }, k)
+
+    lis.push(h('li.'+t, content, sub))
   }
   return h('ul', lis)
 }

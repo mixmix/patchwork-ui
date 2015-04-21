@@ -18,17 +18,25 @@ var addUI      = require('./app-ui')
 setup()
 runPlugins()
 
+// :DEBUG:
 window.program = {
-  com: com,
-  pages: pages
+  filters: {}
+}
+program.filters.latest = function (msg) {
+  return msg.value.content.type === 'post'
+}
+program.filters.all = function (msg) {
+  return true
+}
 /*
+- com
+- pages
 - feeds
 - msgs
   - post
     - summary
     - full
 */
-}
 
 // create the application object and register handlers
 function setup() {

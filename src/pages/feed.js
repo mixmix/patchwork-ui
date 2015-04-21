@@ -34,8 +34,15 @@ module.exports = function (app) {
       if (list != 'inbox' && a !== app.user.id && (!myprofile.assignedTo[a] || !myprofile.assignedTo[a].following))
         return false
 
-      if (list == 'latest' && c.type !== 'post')
-        return false
+      if (list == 'latest') {
+        if (!window.program.filters.latest(msg))
+          return false
+      }
+
+      if (list == 'all') {
+        if (!window.program.filters.all(msg))
+          return false
+      }
 
       if (!queryStr)
         return true

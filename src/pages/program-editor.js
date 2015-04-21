@@ -68,10 +68,21 @@ module.exports = function (app) {
   function onsave (e) {
     e.preventDefault()
 
-    var text = editor.getValue()
-    // :TODO: save
-    lastGen = editor.changeGeneration()
 
+    // attempt to eval
+    var fn, text = editor.getValue()
+    try {
+      eval('fn = '+text)
+    } catch (e) {
+      console.error(e)
+      return
+    }
+
+    // update program
+    lookup_set(window.program, path.split('.'), fn)
+
+    // update editor
+    lastGen = editor.changeGeneration()
     hasChanges = false
     saveBtn.classList.remove('highlighted')
   }
@@ -83,4 +94,11 @@ function lookup (obj, path) {
   if (path.length)
     return lookup(v, path)
   return v
+}
+
+function lookup_set (obj, path, v) {
+  var k = path.shift()
+  if (path.length)
+    return lookup_set(obj[k], path, v)
+  obj[k] = v
 }
