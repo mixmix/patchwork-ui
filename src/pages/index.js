@@ -15,7 +15,7 @@ module.exports = {
   help:             require('./help'),
   msg:              require('./message'),
   ext:              require('./ext'),
-  // 'program-editor': require('./program-editor'),
+  'program-editor': require('./program-editor'),
   notfound:         notfound,
   profile:          require('./profile'),
   programs:         require('./programs'),

@@ -15,12 +15,9 @@ module.exports = function (app) {
   // markup
 
   var saveBtn = h('a.blue', { href: '#', onclick: onsave }, 'Save')
-  var edContainer = h('.editor-container',
-    h('.editor-ctrls',
-      saveBtn,
-      h('a.yellow', { href: '#/program-editor' }, 'Eval')))
+  var edContainer = h('.editor-container', h('.editor-ctrls', saveBtn))
   var editorNav = com.editorNav(app, { selectedBuff: buff.id })
-  app.setPage('new-program', h('.row',
+  app.setPage('program-editor', h('.row',
     h('.col-xs-1', com.sidenav(app)),
     h('.col-xs-8', edContainer),
     h('.col-xs-3.right-column.full-height',
@@ -31,7 +28,6 @@ module.exports = function (app) {
 
   // post-render decoration
 
-  editorNav.setName(buff.meta.name || '')
   var editor = CodeMirror(function (el) {
     el.classList.add('full-height')
     edContainer.appendChild(el)
@@ -39,7 +35,7 @@ module.exports = function (app) {
   }, {
     value: buff.text,
     mode: 'javascript',
-    theme: 'monokai',
+    theme: 'default',
     keyMap: 'sublime',
     indentUnit: 2,
     smartIndent: true,
@@ -67,16 +63,10 @@ module.exports = function (app) {
   function onsave (e) {
     e.preventDefault()
 
-    console.log(editorNav.getName())
-    buff.meta.name = editorNav.getName()
-    buff.text = editor.getValue()
-    buffers.save(buff)
+    var text = editor.getValue()
+    // :TODO: save
     lastGen = editor.changeGeneration()
 
-    if (app.page.param != buff.id)
-      window.location = '#/program-editor/'+buff.id
-
-    editorNav.setName(buff.meta.name)
     hasChanges = false
     saveBtn.classList.remove('highlighted')
   }

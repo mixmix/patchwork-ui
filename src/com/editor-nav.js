@@ -1,5 +1,4 @@
 var h = require('hyperscript')
-var buffers = require('ls-buffers')
 var com = require('./index')
 
 module.exports = function (app, opts) {
@@ -7,39 +6,20 @@ module.exports = function (app, opts) {
 
   // markup
 
-  var buflist = buffers.list()
-  var buflinks = []
-  for (var id in buflist) {
-    var selected = (opts.selectedBuff == id) ? '.selected' : ''
-    buflinks.push(h('li'+selected, h('a', { href: '#/program-editor/'+id }, buflist[id].name)))
-  }
-
   var nameInput = h('input.form-control', { placeholder: 'Name' })
   var nav = h('.editor-nav',
     com.nav({
-      current: 'file',
+      current: 'code',
       items: [
-        ['file',   ontab, 'File'],
-        ['help',   ontab, 'Help']
+        ['code', ontab, 'Code'],
+        ['help', ontab, 'Help']
       ]
     }),
-    h('.editor-nav-body',
-      h('p', h('a.btn.btn-default.btn-xs', { href: '#/program-editor' }, 'New')),
-      // h('p', nameInput),
-      h('ul.buffer-list', buflinks)))
+    h('.editor-nav-body', 'todo'))
 
   // handlers
 
   var ontab = '' // :TODO:
-
-  // apis
-
-  nav.getName = function () {
-    return nameInput.value
-  }
-  nav.setName = function (v) {
-    nameInput.value = v
-  }
 
   return nav
 }
