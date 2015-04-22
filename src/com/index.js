@@ -151,12 +151,12 @@ exports.sidenav = function (app) {
 
   var pages = [
   //[id, path, label],
-    ['home',         '',             'home'],
-    ['inbox',        'inbox',        'inbox ('+(app.ui.indexCounts.inboxUnread||0)+')'],
-    ['address-book', 'address-book', 'network'],
-    ['feed',         'feed',         'all data'],
+    ['home',         '',             [icon('home'), 'home']],
+    ['inbox',        'inbox',        [icon('inbox'), 'inbox ('+(app.ui.indexCounts.inboxUnread||0)+')']],
+    ['address-book', 'address-book', [icon('user'), 'network']],
+    ['feed',         'feed',         [icon('list'), 'all data']],
   ].concat(registryPages).concat([
-    ['help',         'help',         'help']
+    ['help',         'help',         [icon('question-sign'), 'help']]
   ])
 
   return h('.side-nav.full-height',
