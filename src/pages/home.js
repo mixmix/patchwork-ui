@@ -7,6 +7,7 @@ var com = require('../com')
 
 module.exports = function (app) {
 
+  var myprofile = app.users.profiles[app.user.id]
   var queryStr = app.page.qs.q || ''
   var feedState = com.messageFeed.makeStateObj()
   var feedFn = app.ssb.phoenix.createFeedStream
@@ -14,6 +15,13 @@ module.exports = function (app) {
   function filterFn (msg) {
     var a = msg.value.author
     var c = msg.value.content
+
+    if (c.type !== 'post')
+      return false
+
+    // filter out people not followed directly
+    if (a !== app.user.id && (!myprofile.assignedTo[a] || !myprofile.assignedTo[a].following))
+      return false
 
     if (!queryStr)
       return true

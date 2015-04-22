@@ -151,10 +151,11 @@ exports.sidenav = function (app) {
 
   var pages = [
   //[id, path, label],
-    ['feed',         '',             'feed'],
-    ['address-book', 'address-book', 'network']
+    ['home',         '',             'home'],
+    ['inbox',        'inbox',        'inbox ('+(app.ui.indexCounts.inboxUnread||0)+')'],
+    ['address-book', 'address-book', 'network'],
+    ['feed',         'feed',         'all data'],
   ].concat(registryPages).concat([
-    ['programs',     'programs',     'plugins'],
     ['help',         'help',         'help']
   ])
 

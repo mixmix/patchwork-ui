@@ -9,7 +9,7 @@ module.exports = function (app) {
 
   var queryStr = app.page.qs.q || ''
   var feedState = com.messageFeed.makeStateObj()
-  var feedFn = app.ssb.phoenix.createFeedStream
+  var feedFn = app.ssb.phoenix.createInboxStream
 
   function filterFn (msg) {
     var a = msg.value.author
