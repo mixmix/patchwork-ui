@@ -16,7 +16,6 @@ var addUI      = require('./app-ui')
 
 // program load
 setup()
-runPlugins()
 
 // create the application object and register handlers
 function setup() {
@@ -31,13 +30,7 @@ function setup() {
 
     // api
     refreshPage: refreshPage,
-    setPage: setPage, // :TODO: make internal
-
-    // component registry
-    add: add,
-    get: get,
-    getAll: getAll,
-    registry: {},
+    setPage: setPage,
 
     // page params parsed from the url
     page: {
@@ -112,27 +105,6 @@ function setup() {
   localhost.on('reconnecting', function(err) {
     console.log('Attempting Reconnect')
     phoenix.ui.setStatus('danger', 'Lost connection to the host program. Reconnecting...')
-  })
-}
-
-// fetch plugins from sbot and eval them sequentially
-function runPlugins() {
-  u.getJson('/plugins.json', function (err, plugins) {
-    if (err) {
-      console.error('Failed to load plugins')
-      console.error(err)
-      if (plugins)
-        console.error(plugins)
-      return
-    }
-    for (var k in plugins.files) {
-      try {
-        console.log('Executing plugin', k)
-        eval('(function() {\n"use strict"\n\n'+plugins.files[k]+'\n\n})()')
-      } catch (e) {
-        console.error(e)
-      }
-    }
   })
 }
 
