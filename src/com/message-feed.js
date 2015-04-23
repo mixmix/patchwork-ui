@@ -35,9 +35,7 @@ module.exports = function (app, opts) {
   }
 
   feedContainer = h('.message-feed-container', 
-    h('.header-ctrls', 
-      com.composer.header(app),
-      h('.btns', { style: 'width: 50px' }, h('a', { href: '#' }, com.icon('search')))),
+    h('.header-ctrls', com.composer.header(app)),
     feedState.el)
   feedState.el.onclick = onclick
 
