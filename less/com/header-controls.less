@@ -25,7 +25,23 @@
       }
     }
   }
-  form {
+  .btns {
+    display: table-cell;
+    vertical-align: top;
+    a { 
+      display: block;
+      width: 50px;
+      text-align: center;
+      font-size: 21px;
+      color: gray;
+      position: relative;
+      top: 15px;
+      &:hover {
+        color: #666;
+      }
+    }
+  }
+  & > form {
     display: table-cell;
     width: 100%;
     padding: 3px 0;

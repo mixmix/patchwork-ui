@@ -36,7 +36,12 @@ module.exports = function (app, opts) {
   }
 
   feedContainer = infiniscroll(
-    h('.message-feed-container.full-height', feedState.el),
+    h('.message-feed-container.full-height', 
+      h('.header-ctrls', 
+        com.composer.header(app),
+        h('.btns', { style: 'width: 50px' }, h('a', { href: '#' }, com.icon('search')))
+      ),
+      feedState.el),
     { fetchTop: fetchTop, fetchBottom: fetchBottom }
   )
   feedState.el.onclick = onclick

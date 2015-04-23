@@ -34,9 +34,7 @@ module.exports = function (app) {
   var feed = com.messageFeed(app, { feed: feedFn, filter: filterFn, state: feedState })
   app.setPage('feed', h('.row',
     h('.col-xs-1', com.sidenav(app)),
-    h('.col-xs-8', 
-      h('.header-ctrls', h('form', { onsubmit: onsearch }, searchInput)),
-      feed),
+    h('.col-xs-8', feed),
     h('.col-xs-3.right-column.full-height',
       h('.right-column-inner',
         com.notifications(app),
