@@ -1,25 +1,23 @@
 .message-summary {
   font-family: @font-family-sans-serif;
-  background: #fff;
   position: relative;
   overflow: hidden;
   cursor: pointer;
   color: #555;
+  margin: 5px 0;
 
-  & > td {
-    vertical-align: top;
+  .user-hexagon {
+    float: left;
+    padding: 8px;
+  }
+
+  .message-summary-inner {
+    margin-left: 62px;
     word-break: break-word;
-    height: 45px;
-    border-bottom: 1px solid #ddd;
-    &:nth-child(1) {
-      width: 50px;
-      padding: 5px 5px 5px 10px;
-      opacity: 0.75;
-    }
-    &:nth-child(2) {
-      padding: 10px 0 0;
-      position: relative;
-    }
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    padding: 10px 10px 0;
   }
 
   .markdown {

@@ -138,9 +138,9 @@ module.exports = function (app, msg, opts) {
     content = [author(app, msg), h('table.raw', com.prettyRaw.table(app, msg.value.content))]
   }
 
-  var msgSummary = h('tr.message-summary', { 'data-msg': msg.key },
-    h('td', com.userHexagon(app, msg.value.author, 30)),
-    h('td', content, com.messageStats(app)))
+  var msgSummary = h('.message-summary', { 'data-msg': msg.key },
+    com.userHexagon(app, msg.value.author, 45),
+    h('.message-summary-inner', content, com.messageStats(app)))
 
   fetchRowState(app, msgSummary, msg.key)
 

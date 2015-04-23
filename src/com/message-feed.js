@@ -25,24 +25,25 @@ module.exports = function (app, opts) {
 
   // markup
  
-  if (!feedState.tbody)
-    feedState.tbody = makeUnselectable(h('tbody'))
+  if (!feedState.el)
+    feedState.el = makeUnselectable(h('.message-feed'))
   else {
     // update message states
     var stateObj = { read: false }
-    Array.prototype.forEach.call(feedState.tbody.querySelectorAll('tr'), function (el) {   
+    Array.prototype.forEach.call(feedState.el.querySelectorAll('tr'), function (el) {   
       com.messageSummary.fetchRowState(app, el)
     })
   }
 
-  feedContainer = infiniscroll(h('.message-feed-container.full-height', 
-    h('table.message-feed', feedState.tbody)),
-    { fetchTop: fetchTop, fetchBottom: fetchBottom })
-  feedState.tbody.onclick = onclick
+  feedContainer = infiniscroll(
+    h('.message-feed-container.full-height', feedState.el),
+    { fetchTop: fetchTop, fetchBottom: fetchBottom }
+  )
+  feedState.el.onclick = onclick
 
   // message fetch
 
-  if (!feedState.tbody.hasChildNodes())
+  if (!feedState.el.hasChildNodes())
     fetchBottom()
 
   function fetchTop (cb) {
@@ -50,7 +51,7 @@ module.exports = function (app, opts) {
     function fetchTopBy (amt) {
       var fetchopts = { reverse: false }
       fetchopts.gt = cursor(feedState.topCursor)
-      var topmsgEl = feedState.tbody.children[0]
+      var topmsgEl = feedState.el.children[0]
 
       doFetch(fetchopts, function (err, _msgs) {
         if (_msgs && _msgs.length) {
@@ -68,10 +69,10 @@ module.exports = function (app, opts) {
             _msgs = _msgs.filter(opts.filter)
 
           // render
-          var lastEl = feedState.tbody.firstChild
+          var lastEl = feedState.el.firstChild
           for (var i=_msgs.length-1; i >= 0; i--) {            
             var el = com.messageSummary(app, _msgs[i], mustRenderOpts)
-            el && feedState.tbody.insertBefore(el, lastEl)
+            el && feedState.el.insertBefore(el, lastEl)
           }
 
           // maintain scroll position (fetchTop-only behavior)
@@ -112,7 +113,7 @@ module.exports = function (app, opts) {
           // render
           _msgs.forEach(function (msg) {
             var el = com.messageSummary(app, msg, mustRenderOpts)
-            el && feedState.tbody.appendChild(el)
+            el && feedState.el.appendChild(el)
           })
 
           // fetch more if needed
@@ -192,7 +193,7 @@ module.exports.makeStateObj = function () {
     msgs: [],
     topCursor: null,
     bottomCursor: null,
-    tbody: null,
+    el: null,
     lastScrollTop: 0
   } 
 }
