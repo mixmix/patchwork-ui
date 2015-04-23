@@ -50,8 +50,8 @@ module.exports = function (app) {
     }
 
     app.setPage('address-book', h('.row',
-      h('.col-xs-1', com.sidenav(app)),
-      h('.col-xs-8',
+      h('.col-xs-1'),
+      h('.col-xs-7',
         h('.header-ctrls',
           com.nav({
             current: currentList,
@@ -68,7 +68,6 @@ module.exports = function (app) {
         com.contactFeed(app, { filter: filterFn, follows: follows })),
       h('.col-xs-3.right-column.full-height',
         h('.right-column-inner',
-          com.notifications(app),
           h('table.table.peers',
             h('thead', h('tr', h('th', 'Gossip Network'))),
             h('tbody', com.peers(app, peers))

@@ -23,8 +23,8 @@ module.exports = function (app) {
       }
     } else {
       app.setPage('profile', h('.row',
-        h('.col-xs-1', com.sidenav(app)),
-        h('.col-xs-8',
+        h('.col-xs-1'),
+        h('.col-xs-7',
           h('.well', { style: 'margin-top: 5px; background: #fff' },
             h('h3', { style: 'margin-top: 0' }, 'Invalid user ID'),
             h('p',
@@ -115,8 +115,8 @@ module.exports = function (app) {
 
     // render page
     app.setPage('profile', h('.row',
-      h('.col-xs-1', com.sidenav(app)),
-      h('.col-xs-8',
+      h('.col-xs-1'),
+      h('.col-xs-7',
         nameTrustDlg,
         h('.header-ctrls', { style: (search) ? '' : 'margin: 3px 0' },
           com.nav({
@@ -130,7 +130,6 @@ module.exports = function (app) {
           search),
         content),
       h('.col-xs-3.full-height',
-        com.notifications(app),
         h('.profile-controls',
           com.contactPlaque(app, profile, graphs),
           (!isSelf) ?

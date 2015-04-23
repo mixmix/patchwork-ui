@@ -316,12 +316,21 @@ function pageShell (pagecom) {
 
 // render a new page
 function setPage (name, page, opts) {
-  var el = document.getElementById('page-container')
-  el.innerHTML = ''
+  // render nav
+  var navEl = document.getElementById('page-nav')
+  navEl.innerHTML = ''
+  navEl.appendChild(com.pagenav(phoenix, name, page))
+
+  // render page
+  var pageEl = document.getElementById('page-container')
+  pageEl.innerHTML = ''
   if (!opts || !opts.noHeader)
-    el.appendChild(com.page(phoenix, name, page))
+    pageEl.appendChild(com.page(phoenix, name, page))
   else
-    el.appendChild(h('#page.container-fluid.'+name+'-page', page))
+    pageEl.appendChild(h('#page.container-fluid.'+name+'-page', page))
+
+  // resize any .full-height controls
+  // :TODO: remove?
   resizeControls()
 }
 

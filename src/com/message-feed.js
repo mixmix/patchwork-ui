@@ -36,7 +36,7 @@ module.exports = function (app, opts) {
   }
 
   feedContainer = infiniscroll(
-    h('.message-feed-container.full-height', 
+    h('.message-feed-container', 
       h('.header-ctrls', 
         com.composer.header(app),
         h('.btns', { style: 'width: 50px' }, h('a', { href: '#' }, com.icon('search')))
