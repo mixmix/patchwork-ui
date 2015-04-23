@@ -110,7 +110,7 @@ module.exports = function (app) {
         onsearch: onsearch
       })
       // messages
-      content = com.messageFeed(app, { feed: app.ssb.createFeedStream, filter: msgFeedFilter })
+      content = com.messageFeed(app, { feed: app.ssb.createFeedStream, filter: msgFeedFilter, infinite: true })
     }
 
     // render page

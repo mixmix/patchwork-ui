@@ -31,7 +31,7 @@ module.exports = function (app) {
 
   var searchInput = h('input.search', { type: 'text', placeholder: 'Search', value: queryStr })
   var composeContainer = h('div')
-  var feed = com.messageFeed(app, { feed: feedFn, filter: filterFn, state: feedState })
+  var feed = com.messageFeed(app, { feed: feedFn, filter: filterFn, state: feedState, infinite: true })
   app.setPage('feed', h('.row',
     h('.col-xs-1'),
     h('.col-xs-7', feed),

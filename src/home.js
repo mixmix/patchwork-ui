@@ -239,8 +239,11 @@ function refreshPage (e) {
         page = pageShell(pageCom)
     }
 
-    // render the page
+    // cleanup the old page
     h.cleanup()
+    window.onscroll = null // commonly used for infinite scroll
+
+    // render the page
     if (!page)
       page = pages.notfound
     page(phoenix)

@@ -3,7 +3,6 @@ var h = require('hyperscript')
 var mlib = require('ssb-msgs')
 var pull = require('pull-stream')
 var multicb = require('multicb')
-var infiniscroll = require('infiniscroll')
 var com = require('../com')
 
 var mustRenderOpts = { mustRender: true }
@@ -35,15 +34,11 @@ module.exports = function (app, opts) {
     })
   }
 
-  feedContainer = infiniscroll(
-    h('.message-feed-container', 
-      h('.header-ctrls', 
-        com.composer.header(app),
-        h('.btns', { style: 'width: 50px' }, h('a', { href: '#' }, com.icon('search')))
-      ),
-      feedState.el),
-    { fetchTop: fetchTop, fetchBottom: fetchBottom }
-  )
+  feedContainer = h('.message-feed-container', 
+    h('.header-ctrls', 
+      com.composer.header(app),
+      h('.btns', { style: 'width: 50px' }, h('a', { href: '#' }, com.icon('search')))),
+    feedState.el)
   feedState.el.onclick = onclick
 
   // message fetch
@@ -189,6 +184,29 @@ module.exports = function (app, opts) {
       })
     }
   }
+
+  if (opts.infinite) {
+    var fetching = false
+    window.onscroll = function (e) {
+      if (fetching)
+        return
+
+      if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
+        // hit bottom
+        fetching = true
+        fetchBottom(function (err) {
+          fetching = false
+          if (err)
+            console.error(err)
+        })
+      }
+    }
+  }
+
+  // api
+
+  feedContainer.fetchTop = fetchTop
+  feedContainer.fetchBottom = fetchBottom
 
   return feedContainer
 }
