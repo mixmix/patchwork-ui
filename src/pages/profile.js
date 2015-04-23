@@ -83,7 +83,7 @@ module.exports = function (app) {
       return graphs.follow[app.user.id][id]
     }
 
-    var content
+    var search, content
     if (view == 'avatar') {
       // profile pics
       var pics = []
@@ -105,16 +105,12 @@ module.exports = function (app) {
       content = com.contactFeed(app, { filter: contactFeedFilter, follows: graphs.follow })
     }
     else {
-      var search = com.search({
+      search = com.search({
         value: queryStr,
         onsearch: onsearch
       })
-      search.style.paddingTop = 0
       // messages
-      content = [
-        h('.header-ctrls', search),
-        com.messageFeed(app, { feed: app.ssb.createFeedStream, filter: msgFeedFilter })
-      ]
+      content = com.messageFeed(app, { feed: app.ssb.createFeedStream, filter: msgFeedFilter })
     }
 
     // render page
@@ -122,7 +118,7 @@ module.exports = function (app) {
       h('.col-xs-1', com.sidenav(app)),
       h('.col-xs-8',
         nameTrustDlg,
-        h('.header-ctrls', { style: 'margin: 3px 0' },
+        h('.header-ctrls', { style: (search) ? '' : 'margin: 3px 0' },
           com.nav({
             current: view,
             items: [
@@ -130,7 +126,8 @@ module.exports = function (app) {
               ['contacts', makeUri({ view: 'contacts' }), 'Contacts'],
               ['avatar',   makeUri({ view: 'avatar' }),   'Avatar']
             ]
-          })),
+          }),
+          search),
         content),
       h('.col-xs-3.full-height',
         com.notifications(app),

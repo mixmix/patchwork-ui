@@ -48,7 +48,7 @@ module.exports = function (app) {
 
   function makeUri (opts) {
     opts.q = ('q' in opts) ? opts.q : queryStr
-    return '#/feed?q=' + encodeURIComponent(opts.q)
+    return '#/inbox?q=' + encodeURIComponent(opts.q)
   }
 
   // handlers

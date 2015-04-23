@@ -95,30 +95,25 @@ body {
 }
 .side-nav {
   white-space: nowrap;
-  background: #2D2D2D;
-  border-right: 10px solid #eee;
 
   p {
     margin: 0;
     text-align: right;
-    background: #333;
-    border-top: 1px solid #444;
-    border-bottom: 1px solid #222;
     a {
       display: block;
-      padding: 1em;
+      padding: 1em 2em 1em 0;
       font-weight: 100;
-      color: #aaa;
+      color: gray;
       &:hover {
         text-decoration: none;
-        background: #414141;
+        background: #ddd;
       }
     }
 
     .glyphicon {
       display: block;
-      font-size: 26px;
-      line-height: 36px;
+      font-size: 22px;
+      line-height: 32px;
     }
 
     &:first-child {
@@ -129,9 +124,8 @@ body {
     }
 
     &.selected {
-      background: #414141;
       a {
-        color: #eee;
+        color: #555;
       }
     }
   }
@@ -141,15 +135,7 @@ body {
   background: #eee;
   .right-column-inner {
     display: inline-block;
-    background: #fff;
-    border-radius: 2px;
-    padding: 5px 10px;
-    margin-bottom: 1em;
-    border: 1px solid #ccc;
-
-    &:empty {
-      display: none;
-    }
+    padding-left: 1em;
   }
   .well {
     background: #eee;
