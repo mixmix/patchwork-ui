@@ -10,7 +10,6 @@ var u = require('../lib/util')
 module.exports = function (app) {
   var pid      = app.page.param
   var view     = app.page.qs.view || 'feed'
-  var queryStr = app.page.qs.q || ''
   var profile  = app.users.profiles[pid]
   var name     = com.userName(app, pid)
 
@@ -23,8 +22,8 @@ module.exports = function (app) {
       }
     } else {
       app.setPage('profile', h('.row',
-        h('.col-xs-1', com.sidenav(app)),
-        h('.col-xs-8',
+        h('.col-xs-1'),
+        h('.col-xs-7',
           h('.well', { style: 'margin-top: 5px; background: #fff' },
             h('h3', { style: 'margin-top: 0' }, 'Invalid user ID'),
             h('p',
@@ -61,7 +60,7 @@ module.exports = function (app) {
             'There is no information about this user.' :
             'Warning: This user is not followed by anyone you follow.')
 
-      nameTrustDlg = h('.well', { style: 'margin-top: 5px; background: #fff' },
+      nameTrustDlg = h('.well', { style: 'margin: 0 0 5px 62px; background: #fff' },
         h('h3', { style: 'margin-top: 0' }, (!!app.users.names[pid]) ? 'Is this "'+app.users.names[pid]+'?"' : 'Who is this user?'),
         h('p',
           'Users whose names you haven\'t confirmed will have a ',
@@ -100,29 +99,23 @@ module.exports = function (app) {
         com.imageUploader(app, { onupload: onImageUpload }),
         h('br'),
         pics)
+      content.style.marginLeft = '62px'
     }
     else if (view == 'contacts') {
       content = com.contactFeed(app, { filter: contactFeedFilter, follows: graphs.follow })
+      content.style.marginLeft = '62px'
     }
     else {
-      var search = com.search({
-        value: queryStr,
-        onsearch: onsearch
-      })
-      search.style.paddingTop = 0
       // messages
-      content = [
-        h('.header-ctrls', search),
-        com.messageFeed(app, { feed: app.ssb.createFeedStream, filter: msgFeedFilter })
-      ]
+      content = com.messageFeed(app, { feed: app.ssb.createFeedStream, filter: msgFeedFilter, infinite: true, suggested: '@'+name+' ' })
     }
 
     // render page
     app.setPage('profile', h('.row',
-      h('.col-xs-1', com.sidenav(app)),
-      h('.col-xs-8',
+      h('.col-xs-1'),
+      h('.col-xs-7',
         nameTrustDlg,
-        h('.header-ctrls', { style: 'margin: 3px 0' },
+        h('.header-ctrls', { style: 'margin: 3px 62px' },
           com.nav({
             current: view,
             items: [
@@ -132,8 +125,7 @@ module.exports = function (app) {
             ]
           })),
         content),
-      h('.col-xs-3.full-height',
-        com.notifications(app),
+      h('.col-xs-3',
         h('.profile-controls',
           com.contactPlaque(app, profile, graphs),
           (!isSelf) ?
@@ -152,8 +144,7 @@ module.exports = function (app) {
       if (opts !== false) {
         opts = opts || {}
         opts.view = ('view' in opts) ? opts.view : view
-        opts.q    = ('q'    in opts) ? opts.q    : queryStr
-        qs = '?view=' + encodeURIComponent(opts.view) + '&q=' + encodeURIComponent(opts.q)
+        qs = '?view=' + encodeURIComponent(opts.view)
       }
       return '#/profile/'+pid+qs
     }
@@ -198,27 +189,11 @@ module.exports = function (app) {
       if (msg.value.author !== pid)
         return false
 
-      if (!queryStr)
-        return true
-
-      var author = app.users.names[msg.value.author] || msg.value.author
-      var regex = new RegExp(queryStr.replace(/\s/g, '|'))
-      if (regex.exec(author) || regex.exec(c.type))
-        return true
-      if (c.type == 'post' && regex.exec(c.text))
-        return true
-      return false
+      return true
     }
 
     function contactFeedFilter (prof) {
       var id = prof.id
-
-      if (queryStr) {
-        var author = app.users.names[id] || id
-        var regex = new RegExp(queryStr.replace(/\s/g, '|'))
-        if (!regex.exec(author))
-          return false
-      }
 
       /*else if (view == 'followers') {
         if (graphs.follow[id] && graphs.follow[id][pid] && !primary)
@@ -289,11 +264,6 @@ module.exports = function (app) {
         if (err) swal('Error While Publishing', err.message, 'error')
         else app.refreshPage()        
       })
-    }
-
-    function onsearch (e) {
-      e.preventDefault()
-      window.location.hash = makeUri({ q: e.target.search.value })
     }
 
   })

@@ -138,9 +138,9 @@ module.exports = function (app, msg, opts) {
     content = [author(app, msg), h('table.raw', com.prettyRaw.table(app, msg.value.content))]
   }
 
-  var msgSummary = h('tr.message-summary', { 'data-msg': msg.key },
-    h('td', com.userHexagon(app, msg.value.author, 30)),
-    h('td', content, com.messageStats(app)))
+  var msgSummary = h('.message-summary', { 'data-msg': msg.key },
+    com.userHexagon(app, msg.value.author, 45),
+    h('.message-summary-inner', content, com.messageStats(app)))
 
   fetchRowState(app, msgSummary, msg.key)
 
@@ -152,6 +152,10 @@ var fetchRowState =
 module.exports.fetchRowState = function (app, el, mid) {
   mid = mid || el.dataset.msg
   if (!mid) return
+  app.ssb.phoenix.isRead(mid, function (err, isread) {
+    if (!err && !isread)
+      el.classList.add('unread')
+  })
   app.ssb.relatedMessages({ id: mid, count: true }, function (err, thread) {
     if (thread)
       setRowState(el, u.calcMessageStats(app, thread, statsOpts))

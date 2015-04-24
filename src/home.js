@@ -41,7 +41,7 @@ function setup() {
 
     // page params parsed from the url
     page: {
-      id: 'feed',
+      id: 'home',
       param: null,
       qs: {}
     },
@@ -50,7 +50,8 @@ function setup() {
     ui: {
       emojis: [],
       suggestOptions: { ':': [], '@': [] },
-      actionItems: null
+      actionItems: null,
+      indexCounts: {}
       // ui helper methods added by `addUi`
     },
 
@@ -189,7 +190,7 @@ function refreshPage (e) {
   setNewMessageCount(0)
 
   // run the router
-  var route = router('#'+(location.href.split('#')[1]||''), 'feed')
+  var route = router('#'+(location.href.split('#')[1]||''), 'home')
   phoenix.page.id    = route[0]
   phoenix.page.param = route[1]
   phoenix.page.qs    = route[2] || {}
@@ -201,6 +202,7 @@ function refreshPage (e) {
   phoenix.ssb.phoenix.getNameTrustRanks(done())
   phoenix.ssb.phoenix.getAllProfiles(done())
   phoenix.ssb.phoenix.getActionItems(done())
+  phoenix.ssb.phoenix.getIndexCounts(done())
   done(function (err, data) {
     if (err) throw err.message
     phoenix.user.id = data[0].id
@@ -208,7 +210,8 @@ function refreshPage (e) {
     phoenix.users.nameTrustRanks = data[2]
     phoenix.users.profiles = data[3]
     phoenix.ui.actionItems = data[4]
-    phoenix.user.profile = phoenix.users.profiles[phoenix.user.id]
+    phoenix.ui.indexCounts = data[5]
+   phoenix.user.profile = phoenix.users.profiles[phoenix.user.id]
 
     // refresh suggest options for usernames
     phoenix.ui.suggestOptions['@'] = []
@@ -236,8 +239,11 @@ function refreshPage (e) {
         page = pageShell(pageCom)
     }
 
-    // render the page
+    // cleanup the old page
     h.cleanup()
+    window.onscroll = null // commonly used for infinite scroll
+
+    // render the page
     if (!page)
       page = pages.notfound
     page(phoenix)
@@ -313,12 +319,21 @@ function pageShell (pagecom) {
 
 // render a new page
 function setPage (name, page, opts) {
-  var el = document.getElementById('page-container')
-  el.innerHTML = ''
+  // render nav
+  var navEl = document.getElementById('page-nav')
+  navEl.innerHTML = ''
+  navEl.appendChild(com.pagenav(phoenix, name, page))
+
+  // render page
+  var pageEl = document.getElementById('page-container')
+  pageEl.innerHTML = ''
   if (!opts || !opts.noHeader)
-    el.appendChild(com.page(phoenix, name, page))
+    pageEl.appendChild(com.page(phoenix, name, page))
   else
-    el.appendChild(h('#page.container-fluid.'+name+'-page', page))
+    pageEl.appendChild(h('#page.container-fluid.'+name+'-page', page))
+
+  // resize any .full-height controls
+  // :TODO: remove?
   resizeControls()
 }
 

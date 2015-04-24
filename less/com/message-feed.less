@@ -7,37 +7,18 @@
 
   overflow-y: auto;
   overflow-x: hidden;
-  border: 1px solid #ccc;
-  border-bottom: 0;
-  background: #fff;
 
   .message-feed {
     font-family: @font-family-sans-serif;
     width: 100%;
 
-    thead {
-      background: #fafafa;
-      td {
-        padding: 8px;
-        border: 1px solid #ccc;
-        border-top: 0;
-        &:first-child {
-          border-left: 0;
-        }
-        &:last-child {
-          border-right: 0;
-        }
-      }
-    }
-    tbody {
-      &:empty::before {
-        content: 'Empty';
-        font-size: 16px;
-        font-style: italic;
-        color: #777;
-        margin: 1em;
-        display: block;
-      }
+    &:empty::before {
+      content: 'Empty';
+      font-size: 16px;
+      font-style: italic;
+      color: #777;
+      margin: 1em;
+      display: block;
     }
   }
 

@@ -1,5 +1,4 @@
 .message-thread {
-  background: #eee;
 
   .in-response-to {
     a {
@@ -15,7 +14,7 @@
     background: #fff;
     border: 1px solid #ccc;
     margin: 0.5em 0 5px;
-    border-radius: 2px;
+    border-radius: 3px;
 
     ul.list-inline {
       margin: 0;
@@ -70,19 +69,8 @@
       margin-right: 5px;
     }
     .subscribe-toggle {
-      min-width: 130px;
-
-      &:after {
-        content: ' Unsubscribed';
-      }
-      &:hover:after {
-        content: ' Subscribe';
-      }
-      &.selected:after {
-        content: ' Subscribed';
-      }
-      &.selected:hover:after {
-        content: ' Unsubscribe';
+      &:hover {
+        color: @yellow-primary;
       }
     }
     .message {

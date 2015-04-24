@@ -7,9 +7,11 @@ var com = require('../com')
 
 module.exports = function (app) {
 
+  var feedFn = app.ssb.phoenix.createInboxStream
+
   // markup
 
-  var feed = com.messageFeed(app, { infinite: true })
+  var feed = com.messageFeed(app, { feed: feedFn, infinite: true })
   app.setPage('feed', h('.row',
     h('.col-xs-1'),
     h('.col-xs-7', feed),

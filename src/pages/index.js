@@ -11,11 +11,12 @@ function notfound (app) {
 
 module.exports = {
   'address-book':   require('./address-book'),
+  ext:              require('./ext'),
   feed:             require('./feed'),
   help:             require('./help'),
+  home:             require('./home'),  
+  inbox:            require('./inbox'),
   msg:              require('./message'),
-  ext:              require('./ext'),
-  // 'program-editor': require('./program-editor'),
   notfound:         notfound,
   profile:          require('./profile'),
   programs:         require('./programs'),

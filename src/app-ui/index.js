@@ -7,6 +7,31 @@ module.exports = function (phoenix) {
     swal('Here is your contact id', phoenix.user.id)
   }
 
+  phoenix.ui.modal = function (el) {
+    // create a context so we can release this modal on close
+    var h2 = h.context()
+
+    // markup
+
+    var inner = h2('.modal-inner', el)
+    var modal = h2('.modal', { onclick: onmodalclick }, inner)
+    document.body.appendChild(modal)
+
+    // handlers
+
+    function onmodalclick (e) {
+      if (e.target == modal)
+        close()
+    }
+    window.addEventListener('hashchange', close)
+
+    function close () {
+      document.body.removeChild(modal)
+      window.removeEventListener('hashchange', close)
+      h2.cleanup()
+    }
+  }
+
   phoenix.ui.setStatus = function (type, message) {
     var status = document.getElementById('app-status')
     status.innerHTML = ''

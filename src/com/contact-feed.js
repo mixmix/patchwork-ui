@@ -19,7 +19,7 @@ module.exports = function (app, opts) {
   // markup
  
   var feed = h('table.contact-feed')
-  var feedContainer = infiniscroll(h('.contact-feed-container.full-height', feed), { fetchBottom: fetchBottom })
+  var feedContainer = infiniscroll(h('.contact-feed-container', feed), { fetchBottom: fetchBottom })
 
   // profile fetching
 

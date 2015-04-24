@@ -1,4 +1,5 @@
 var pull = require('pull-stream')
+var mlib = require('ssb-msgs')
 
 exports.getJson = function(path, cb) {
   var xhr = new XMLHttpRequest()
@@ -211,4 +212,36 @@ exports.getOtherNames = function (app, profile) {
     add(profile.assignedBy[k].name)
   }
   return names
+}
+
+exports.getParentThread = function (app, mid, cb) {
+  up()
+  function up () {
+    app.ssb.get(mid, function (err, msg) {
+      if (err)
+        return cb(err)
+
+      // not found? finish here
+      if (!msg)
+        return finish()
+
+      // thread link? go straight to that
+      if (mlib.link(msg.content.thread, 'msg')) {
+        mid = mlib.link(msg.content.thread).msg
+        return finish()
+      }
+
+      // repliesto link? ascend
+      if (mlib.link(msg.content.repliesTo, 'msg')) {
+        mid = mlib.link(msg.content.repliesTo).msg
+        return up()
+      }
+
+      // topmost, finish
+      finish()
+    })
+  }
+  function finish () {
+    app.ssb.relatedMessages({ id: mid, count: true, parent: true }, cb)
+  }
 }

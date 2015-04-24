@@ -3,8 +3,8 @@ var h = require('hyperscript')
 var mlib = require('ssb-msgs')
 var pull = require('pull-stream')
 var multicb = require('multicb')
-var infiniscroll = require('infiniscroll')
 var com = require('../com')
+var u = require('../lib/util')
 
 var mustRenderOpts = { mustRender: true }
 module.exports = function (app, opts) {
@@ -25,24 +25,24 @@ module.exports = function (app, opts) {
 
   // markup
  
-  if (!feedState.tbody)
-    feedState.tbody = makeUnselectable(h('tbody'))
+  if (!feedState.el)
+    feedState.el = makeUnselectable(h('.message-feed'))
   else {
     // update message states
     var stateObj = { read: false }
-    Array.prototype.forEach.call(feedState.tbody.querySelectorAll('tr'), function (el) {   
+    Array.prototype.forEach.call(feedState.el.querySelectorAll('tr'), function (el) {   
       com.messageSummary.fetchRowState(app, el)
     })
   }
 
-  feedContainer = infiniscroll(h('.message-feed-container.full-height', 
-    h('table.message-feed', feedState.tbody)),
-    { fetchTop: fetchTop, fetchBottom: fetchBottom })
-  feedState.tbody.onclick = onclick
+  feedContainer = h('.message-feed-container', 
+    h('.header-ctrls', com.composer.header(app, { suggested: opts.suggested })),
+    feedState.el)
+  feedState.el.onclick = onclick
 
   // message fetch
 
-  if (!feedState.tbody.hasChildNodes())
+  if (!feedState.el.hasChildNodes())
     fetchBottom()
 
   function fetchTop (cb) {
@@ -50,7 +50,7 @@ module.exports = function (app, opts) {
     function fetchTopBy (amt) {
       var fetchopts = { reverse: false }
       fetchopts.gt = cursor(feedState.topCursor)
-      var topmsgEl = feedState.tbody.children[0]
+      var topmsgEl = feedState.el.children[0]
 
       doFetch(fetchopts, function (err, _msgs) {
         if (_msgs && _msgs.length) {
@@ -68,10 +68,10 @@ module.exports = function (app, opts) {
             _msgs = _msgs.filter(opts.filter)
 
           // render
-          var lastEl = feedState.tbody.firstChild
+          var lastEl = feedState.el.firstChild
           for (var i=_msgs.length-1; i >= 0; i--) {            
             var el = com.messageSummary(app, _msgs[i], mustRenderOpts)
-            el && feedState.tbody.insertBefore(el, lastEl)
+            el && feedState.el.insertBefore(el, lastEl)
           }
 
           // maintain scroll position (fetchTop-only behavior)
@@ -112,7 +112,7 @@ module.exports = function (app, opts) {
           // render
           _msgs.forEach(function (msg) {
             var el = com.messageSummary(app, msg, mustRenderOpts)
-            el && feedState.tbody.appendChild(el)
+            el && feedState.el.appendChild(el)
           })
 
           // fetch more if needed
@@ -147,19 +147,24 @@ module.exports = function (app, opts) {
 
     // act on el
     if (el.classList.contains('message-summary'))
-      navToMsg(e, el)
+      expandMsg(e, el)
     if (el.classList.contains('upvote'))
       vote(e, el, 1)
     if (el.classList.contains('downvote'))
       vote(e, el, -1)
   }
 
-  function navToMsg (e, el) {
+  function expandMsg (e, el) {
     e.preventDefault()
     e.stopPropagation()
     var key = el.dataset.msg
-    if (key)
-      window.location.hash = '#/msg/'+key
+    if (key) {
+      u.getParentThread(app, key, function (err, thread) {
+        if (err)
+          return swal('Error While Fetching', err.message, 'error')
+        app.ui.modal(com.messageThread(app, thread))
+      })
+    }
   }
   function vote (e, el, vote) {
     e.preventDefault()
@@ -184,6 +189,29 @@ module.exports = function (app, opts) {
     }
   }
 
+  if (opts.infinite) {
+    var fetching = false
+    window.onscroll = function (e) {
+      if (fetching)
+        return
+
+      if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
+        // hit bottom
+        fetching = true
+        fetchBottom(function (err) {
+          fetching = false
+          if (err)
+            console.error(err)
+        })
+      }
+    }
+  }
+
+  // api
+
+  feedContainer.fetchTop = fetchTop
+  feedContainer.fetchBottom = fetchBottom
+
   return feedContainer
 }
 
@@ -192,7 +220,7 @@ module.exports.makeStateObj = function () {
     msgs: [],
     topCursor: null,
     bottomCursor: null,
-    tbody: null,
+    el: null,
     lastScrollTop: 0
   } 
 }

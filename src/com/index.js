@@ -140,6 +140,24 @@ exports.search = function (opts) {
   return h('form', { onsubmit: opts.onsearch }, searchInput)
 }
 
+var pagenav =
+exports.pagenav = function (app) {
+  var pages = [
+  //[id, path, label],
+    ['home',         '',             [icon('home'), ' home']],
+    ['inbox',        'inbox',        [icon('inbox'), ' inbox ('+(app.ui.indexCounts.inboxUnread||0)+')']],
+    ['feed',         'feed',         [icon('list'), ' all data']],
+    ['address-book', 'address-book', [icon('user'), ' network']],
+    ['help',         'help',         [icon('question-sign'), ' help']]
+  ]
+
+  return h('ul', pages.map(function (page) {
+      if (page[0] == app.page.id)
+        return h('li.selected.side-nav-'+page[0], a('#/'+page[1], page[2]))
+      return h('li.side-nav-'+page[0], a('#/'+page[1], page[2]))
+    }))
+}
+
 var sidenav =
 exports.sidenav = function (app) {
   var registryPages = app.getAll('page')
@@ -151,11 +169,12 @@ exports.sidenav = function (app) {
 
   var pages = [
   //[id, path, label],
-    ['feed',         '',             'feed'],
-    ['address-book', 'address-book', 'network']
+    ['home',         '',             [icon('home'), 'home']],
+    ['inbox',        'inbox',        [icon('inbox'), 'inbox ('+(app.ui.indexCounts.inboxUnread||0)+')']],
+    ['address-book', 'address-book', [icon('user'), 'network']],
+    ['feed',         'feed',         [icon('list'), 'all data']],
   ].concat(registryPages).concat([
-    ['programs',     'programs',     'plugins'],
-    ['help',         'help',         'help']
+    ['help',         'help',         [icon('question-sign'), 'help']]
   ])
 
   return h('.side-nav.full-height',
