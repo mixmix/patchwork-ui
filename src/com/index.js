@@ -146,8 +146,8 @@ exports.pagenav = function (app) {
   //[id, path, label],
     ['home',         '',             [icon('home'), ' home']],
     ['inbox',        'inbox',        [icon('inbox'), ' inbox ('+(app.ui.indexCounts.inboxUnread||0)+')']],
-    ['address-book', 'address-book', [icon('user'), ' network']],
     ['feed',         'feed',         [icon('list'), ' all data']],
+    ['address-book', 'address-book', [icon('user'), ' network']],
     ['help',         'help',         [icon('question-sign'), ' help']]
   ]
 
