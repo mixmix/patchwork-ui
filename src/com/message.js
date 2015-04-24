@@ -66,16 +66,22 @@ var messageShell = function (app, msg, content, opts) {
 
   // markup 
 
+  var subscribeBtn = h('a.subscribe-toggle', { href: '#', onclick: onsubscribe, title: 'Subscribe to replies' })
   var msgbody = h('.panel-body', content, com.messageStats(app, msg, statsOpts))
   var msgpanel = h('.panel.panel-default.message',
     com.userHexagon(app, msg.value.author),
     h('.panel-heading',
-      com.userlink(msg.value.author, app.users.names[msg.value.author]), com.nameConfidence(msg.value.author, app),
-      ' ', com.a('#/msg/'+msg.key, u.prettydate(new Date(msg.value.timestamp), true), { title: 'View message thread' }),
-      h('span', {innerHTML: ' &middot; '}), h('a', { title: 'Reply', href: '#', onclick: reply }, 'reply')
-    ),
+      h('ul.list-inline',
+        h('li', com.userlink(msg.value.author, app.users.names[msg.value.author]), com.nameConfidence(msg.value.author, app)),
+        h('li', com.a('#/msg/'+msg.key, u.prettydate(new Date(msg.value.timestamp), true), { title: 'View message msg' })),
+        h('li', h('a', { title: 'Reply', href: '#', onclick: reply }, 'reply')),
+        h('li.pull-right', subscribeBtn),
+        h('li.pull-right', h('a', { href: '/msg/'+msg.key, target: '_blank' }, 'as JSON')))),
     msgbody
   )
+
+  app.ssb.phoenix.isSubscribed(msg.key, setSubscribeState)
+  return msgpanel
 
   // handlers
 
@@ -91,5 +97,22 @@ var messageShell = function (app, msg, content, opts) {
     }
   }
 
-  return msgpanel
+  function onsubscribe (e) {
+    e.preventDefault()
+
+    app.ssb.phoenix.toggleSubscribed(msg.key, setSubscribeState)
+  }
+
+  // ui state
+
+  function setSubscribeState (err, subscribed) {
+    subscribeBtn.innerHTML = ''
+    if (subscribed) {
+      subscribeBtn.classList.add('selected')
+      subscribeBtn.appendChild(com.icon('star'))
+    } else {
+      subscribeBtn.classList.remove('selected')
+      subscribeBtn.appendChild(com.icon('star-empty'))
+    }
+  }
 }

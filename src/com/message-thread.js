@@ -46,21 +46,21 @@ module.exports = function (app, thread, opts) {
 
   opts && opts.onRender && opts.onRender(thread)
 
-  var subscribeBtn = h('a.subscribe-toggle', { href: '#', onclick: onsubscribe })
+  var subscribeBtn = h('a.subscribe-toggle', { href: '#', onclick: onsubscribe, title: 'Subscribe to replies' })
+  var msgThreadTop = h('.message-thread-top',
+    h('ul.threadmeta.list-inline',
+      h('li.hex', com.userHexagon(app, thread.value.author)),
+      h('li', com.userlink(thread.value.author, app.users.names[thread.value.author]), com.nameConfidence(thread.value.author, app)),
+      h('li', com.a('#/', u.prettydate(new Date(thread.value.timestamp), true), { title: 'View message thread' })),
+      h('li', h('a', { href: '#', onclick: onreply }, 'reply')),
+      h('li.pull-right', subscribeBtn),
+      h('li.pull-right', h('a', { href: '/msg/'+thread.key, target: '_blank' }, 'as JSON'))),
+    h('.message', content),
+    h('.attachments', attachments),
+    stats)
   var threadInner = h(viz.cls,
     h('div.in-response-to'), // may be populated by the message page
-    h('.message-thread-top',
-      h('ul.threadmeta.list-inline',
-        h('li.hex', com.userHexagon(app, thread.value.author)),
-        h('li', com.userlink(thread.value.author, app.users.names[thread.value.author]), com.nameConfidence(thread.value.author, app)),
-        h('li', com.a('#/', u.prettydate(new Date(thread.value.timestamp), true), { title: 'View message thread' })),
-        // h('li.button', h('a', { href: '#', onclick: onmarkunread }, 'Mark Unread')),
-        h('li.button.strong.pull-right', h('a', { href: '#', onclick: onreply }, 'Reply')),
-        h('li.button.pull-right', subscribeBtn),
-        h('li.button.pull-right', h('a', { href: '/msg/'+thread.key, target: '_blank' }, 'as JSON'))),
-      h('.message', content),
-      h('.attachments', attachments),
-      stats))
+    msgThreadTop)
 
   app.ssb.phoenix.isSubscribed(thread.key, setSubscribeState)
   return h('.message-thread', threadInner, replies(app, thread, opts))
@@ -70,18 +70,8 @@ module.exports = function (app, thread, opts) {
   function onreply (e) {
     e.preventDefault()
 
-    if (!threadInner.nextSibling || !threadInner.nextSibling.classList || !threadInner.nextSibling.classList.contains('reply-form')) {
-      var form = com.composer(app, thread)
-      threadInner.parentNode.insertBefore(form, threadInner.nextSibling)
-    }
-  }
-
-  function onmarkunread (e) {
-    e.preventDefault()
-
-    app.ssb.phoenix.markUnread(thread.key, function () {
-      // :TODO: ?
-    })
+    if (!msgThreadTop.querySelector('.reply-form'))
+      msgThreadTop.appendChild(com.composer(app, thread))
   }
 
   function onsubscribe (e) {
