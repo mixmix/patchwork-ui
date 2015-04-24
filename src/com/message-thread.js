@@ -51,7 +51,7 @@ module.exports = function (app, thread, opts) {
     h('ul.threadmeta.list-inline',
       h('li.hex', com.userHexagon(app, thread.value.author)),
       h('li', com.userlink(thread.value.author, app.users.names[thread.value.author]), com.nameConfidence(thread.value.author, app)),
-      h('li', com.a('#/', u.prettydate(new Date(thread.value.timestamp), true), { title: 'View message thread' })),
+      h('li', com.a('#/msg/'+thread.key, u.prettydate(new Date(thread.value.timestamp), true), { title: 'View message thread' })),
       h('li', h('a', { href: '#', onclick: onreply }, 'reply')),
       h('li.pull-right', subscribeBtn),
       h('li.pull-right', h('a', { href: '/msg/'+thread.key, target: '_blank' }, 'as JSON'))),
