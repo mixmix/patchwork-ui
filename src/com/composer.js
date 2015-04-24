@@ -23,8 +23,10 @@ module.exports = function (app, parent) {
   return composer
 }
 
-module.exports.header = function (app) {
-  var input = h('input.form-control', { placeholder: 'What\'s new?', onfocus: onfocus })
+module.exports.header = function (app, opts) {
+  var placeholder = (opts && opts.suggested) ? opts.suggested : 'What\'s new?'
+
+  var input = h('input.form-control', { placeholder: placeholder, onfocus: onfocus })
   var inner = h('.composer-header-inner', input)
   var header = h('.composer-header', inner)
 
@@ -40,6 +42,10 @@ module.exports.header = function (app) {
     var textarea = form.querySelector('textarea')
     textarea.focus()
     textarea.onblur = onblur
+
+    // set suggested text
+    if (opts && opts.suggested && !textarea.value)
+      textarea.value = opts.suggested
   }
 
   function onblur (e) {

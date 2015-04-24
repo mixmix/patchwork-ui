@@ -36,7 +36,7 @@ module.exports = function (app, opts) {
   }
 
   feedContainer = h('.message-feed-container', 
-    h('.header-ctrls', com.composer.header(app)),
+    h('.header-ctrls', com.composer.header(app, { suggested: opts.suggested })),
     feedState.el)
   feedState.el.onclick = onclick
 
