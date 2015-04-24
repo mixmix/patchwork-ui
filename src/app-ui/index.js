@@ -23,9 +23,11 @@ module.exports = function (phoenix) {
       if (e.target == modal)
         close()
     }
+    window.addEventListener('hashchange', close)
 
     function close () {
       document.body.removeChild(modal)
+      window.removeEventListener('hashchange', close)
       h2.cleanup()
     }
   }
