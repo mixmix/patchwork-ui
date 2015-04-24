@@ -4,6 +4,7 @@ var mlib = require('ssb-msgs')
 var pull = require('pull-stream')
 var multicb = require('multicb')
 var com = require('../com')
+var u = require('../lib/util')
 
 var mustRenderOpts = { mustRender: true }
 module.exports = function (app, opts) {
@@ -146,19 +147,24 @@ module.exports = function (app, opts) {
 
     // act on el
     if (el.classList.contains('message-summary'))
-      navToMsg(e, el)
+      expandMsg(e, el)
     if (el.classList.contains('upvote'))
       vote(e, el, 1)
     if (el.classList.contains('downvote'))
       vote(e, el, -1)
   }
 
-  function navToMsg (e, el) {
+  function expandMsg (e, el) {
     e.preventDefault()
     e.stopPropagation()
     var key = el.dataset.msg
-    if (key)
-      window.location.hash = '#/msg/'+key
+    if (key) {
+      u.getParentThread(app, key, function (err, thread) {
+        if (err)
+          return swal('Error While Fetching', err.message, 'error')
+        app.ui.modal(com.messageThread(app, thread))
+      })
+    }
   }
   function vote (e, el, vote) {
     e.preventDefault()

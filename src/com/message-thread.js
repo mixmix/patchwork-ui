@@ -44,7 +44,7 @@ module.exports = function (app, thread, opts) {
   var attachments = com.messageAttachments(app, thread)
   var stats = com.messageStats(app, thread, statsOpts)
 
-  opts.onRender && opts.onRender(thread)
+  opts && opts.onRender && opts.onRender(thread)
 
   var subscribeBtn = h('a.subscribe-toggle', { href: '#', onclick: onsubscribe })
   var threadInner = h(viz.cls,
@@ -63,7 +63,7 @@ module.exports = function (app, thread, opts) {
       stats))
 
   app.ssb.phoenix.isSubscribed(thread.key, setSubscribeState)
-  return h('.message-thread.full-height', threadInner, replies(app, thread, opts))
+  return h('.message-thread', threadInner, replies(app, thread, opts))
 
   // handlers
 
@@ -119,7 +119,7 @@ function replies (app, thread, opts) {
     var el = com.message(app, reply, replyOpts)
     if (el) {
       r.unshift(el)
-      opts.onRender && opts.onRender(reply)
+      opts && opts.onRender && opts.onRender(reply)
     }
   })
 
