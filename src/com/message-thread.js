@@ -26,7 +26,7 @@ function getContent (app, msg) {
       post: function () { 
         if (!c.text) return
         var div = h('div', { innerHTML: mentions.post(markdown.block(c.text), app, msg) })
-        if (div.innerText.length <= 255)
+        if ((div.innerText && div.innerText.length <= 255) || (div.textContent && div.textContent.length <= 255))
           div.style.fontSize = '150%'
         return div
       }
@@ -44,7 +44,7 @@ module.exports = function (app, thread, opts) {
   var attachments = com.messageAttachments(app, thread)
   var stats = com.messageStats(app, thread, statsOpts)
 
-  opts && opts.onRender && opts.onRender(thread)
+  opts && opts.onrender && opts.onrender(thread)
 
   var subscribeBtn = h('a.subscribe-toggle', { href: '#', onclick: onsubscribe, title: 'Subscribe to replies' })
   var msgThreadTop = h('.message-thread-top',
@@ -71,7 +71,7 @@ module.exports = function (app, thread, opts) {
     e.preventDefault()
 
     if (!msgThreadTop.querySelector('.reply-form'))
-      msgThreadTop.appendChild(com.composer(app, thread))
+      msgThreadTop.appendChild(com.composer(app, thread, { onpost: opts && opts.onpost }))
   }
 
   function onsubscribe (e) {
@@ -94,7 +94,6 @@ module.exports = function (app, thread, opts) {
   }
 }
 
-var replyOpts = { mustRender: true }
 function replies (app, thread, opts) {
   // collect replies
   var r = []
@@ -106,10 +105,10 @@ function replies (app, thread, opts) {
     if (reply.value.content.type === 'vote')
       return // dont render vote messages, it'd be a mess
 
-    var el = com.message(app, reply, replyOpts)
+    var el = com.message(app, reply, opts)
     if (el) {
       r.unshift(el)
-      opts && opts.onRender && opts.onRender(reply)
+      opts && opts.onrender && opts.onrender(reply)
     }
   })
 

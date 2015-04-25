@@ -208,7 +208,7 @@ function fetchMsgLink (app, mid) {
   var link = com.a('#/msg/'+mid, 'this message')
   app.ssb.get(mid, function (err, msg) {
     if (msg)
-      link.innerText = shorten((msg.content.type == 'post') ? msg.content.text : msg.content.type, 40) + ' by ' + com.userName(app, msg.author)
+      link.textContent = link.innerText = shorten((msg.content.type == 'post') ? msg.content.text : msg.content.type, 40) + ' by ' + com.userName(app, msg.author)
   })
   return link
 }

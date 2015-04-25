@@ -2,7 +2,7 @@
 var h = require('hyperscript')
 var com = require('./index')
 
-module.exports = function (app, parent) {
+module.exports = function (app, parent, opts) {
 
   // markup
 
@@ -11,9 +11,14 @@ module.exports = function (app, parent) {
       h('small.text-muted', 
         'All posts are public. Markdown, @-mentions, and emojis are supported. ',
         h('a', { href: '#/action/cancel', onclick: cancel }, 'Cancel'))),
-    com.postForm(app, parent))
+    com.postForm(app, parent, { onpost: onpost }))
 
   // handlers
+
+  function onpost () {
+    composer.parentNode.removeChild(composer)
+    opts && opts.onpost && opts.onpost()
+  }
 
   function cancel (e) {
     e.preventDefault()
@@ -34,7 +39,7 @@ module.exports.header = function (app, opts) {
     e.preventDefault()
 
     // replace textarea with full form
-    var form = com.postForm(app)
+    var form = com.postForm(app, null, { onpost: onpost })
     input.style.display = 'none'
     inner.appendChild(form)
 
@@ -56,6 +61,10 @@ module.exports.header = function (app, opts) {
       inner.removeChild(form)
       input.style.display = 'block'
     }
+  }
+
+  function onpost () {
+    app.refreshPage()
   }
 
   return header

@@ -13,8 +13,11 @@ module.exports = function (app) {
     var content
     if (thread) {
       content = com.messageThread(app, thread, {
-        onRender: function (msg) {
+        onrender: function (msg) {
           app.ssb.phoenix.markRead(msg.key)
+        },
+        onpost: function () {
+          app.refreshPage()
         }
       })
 

@@ -147,26 +147,41 @@ module.exports = function (app, opts) {
 
     // act on el
     if (el.classList.contains('message-summary'))
-      expandMsg(e, el)
+      onthreadmodal(e, el)
     if (el.classList.contains('upvote'))
-      vote(e, el, 1)
+      onvote(e, el, 1)
     if (el.classList.contains('downvote'))
-      vote(e, el, -1)
+      onvote(e, el, -1)
   }
 
-  function expandMsg (e, el) {
+  function onthreadmodal (e, el) {
     e.preventDefault()
     e.stopPropagation()
     var key = el.dataset.msg
-    if (key) {
-      u.getParentThread(app, key, function (err, thread) {
-        if (err)
-          return swal('Error While Fetching', err.message, 'error')
-        app.ui.modal(com.messageThread(app, thread))
-      })
-    }
+    if (key)
+      threadmodal(key)
   }
-  function vote (e, el, vote) {
+  function threadmodal (key) {
+    u.getParentThread(app, key, function (err, thread) {
+      if (err)
+        return swal('Error While Fetching', err.message, 'error')
+      var modal = app.ui.modal(com.messageThread(app, thread, {
+        onrender: function (msg) {
+          // update read state
+          app.ssb.phoenix.markRead(msg.key)
+          try {
+            // remove unread highlighting from the feed
+            document.body.querySelector('.message-summary[data-msg="'+msg.key+'"]').classList.remove('unread')
+          } catch (e) {}
+        },
+        onpost: function () {
+          modal.close()
+          threadmodal(key)
+        }
+      }))
+    })
+  }
+  function onvote (e, el, vote) {
     e.preventDefault()
     e.stopPropagation()
     var row = el.parentNode.parentNode.parentNode.parentNode.parentNode // a bit brittle...
