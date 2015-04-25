@@ -147,14 +147,14 @@ module.exports = function (app, opts) {
 
     // act on el
     if (el.classList.contains('message-summary'))
-      expandMsg(e, el)
+      threadmodal(e, el)
     if (el.classList.contains('upvote'))
       vote(e, el, 1)
     if (el.classList.contains('downvote'))
       vote(e, el, -1)
   }
 
-  function expandMsg (e, el) {
+  function threadmodal (e, el) {
     e.preventDefault()
     e.stopPropagation()
     var key = el.dataset.msg
@@ -162,7 +162,14 @@ module.exports = function (app, opts) {
       u.getParentThread(app, key, function (err, thread) {
         if (err)
           return swal('Error While Fetching', err.message, 'error')
-        app.ui.modal(com.messageThread(app, thread))
+        app.ui.modal(com.messageThread(app, thread, {
+          onRender: function (msg) {
+            app.ssb.phoenix.markRead(msg.key)
+            try {
+              document.body.querySelector('.message-summary[data-msg="'+msg.key+'"]').classList.remove('unread')
+            } catch (e) {}
+          }
+        }))
       })
     }
   }
