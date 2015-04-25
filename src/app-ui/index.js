@@ -17,19 +17,22 @@ module.exports = function (phoenix) {
     var modal = h2('.modal', { onclick: onmodalclick }, inner)
     document.body.appendChild(modal)
 
+    modal.close = function () {
+      document.body.removeChild(modal)
+      window.removeEventListener('hashchange', modal.close)
+      h2.cleanup()
+      modal = null
+    }
+
     // handlers
 
     function onmodalclick (e) {
       if (e.target == modal)
-        close()
+        modal.close()
     }
-    window.addEventListener('hashchange', close)
+    window.addEventListener('hashchange', modal.close)
 
-    function close () {
-      document.body.removeChild(modal)
-      window.removeEventListener('hashchange', close)
-      h2.cleanup()
-    }
+    return modal
   }
 
   phoenix.ui.setStatus = function (type, message) {

@@ -12,7 +12,7 @@ var mentions = require('../lib/mentions')
 
 var mentionRegex = /(\s|>|^)@([^\s^<]+)/g
 
-module.exports = function (app, parent) {
+module.exports = function (app, parent, opts) {
 
   var attachments = []
   var namesList = {} // a name->name map for the previews
@@ -103,7 +103,7 @@ module.exports = function (app, parent) {
           else {
             // auto-subscribe
             app.ssb.phoenix.subscribe(msg.key)
-            app.refreshPage()
+            opts && opts.onpost && opts.onpost()
           }
         })
       })
