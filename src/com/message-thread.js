@@ -94,7 +94,6 @@ module.exports = function (app, thread, opts) {
   }
 }
 
-var replyOpts = { mustRender: true }
 function replies (app, thread, opts) {
   // collect replies
   var r = []
@@ -106,7 +105,7 @@ function replies (app, thread, opts) {
     if (reply.value.content.type === 'vote')
       return // dont render vote messages, it'd be a mess
 
-    var el = com.message(app, reply, replyOpts)
+    var el = com.message(app, reply, opts)
     if (el) {
       r.unshift(el)
       opts && opts.onrender && opts.onrender(reply)

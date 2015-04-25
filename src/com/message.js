@@ -13,11 +13,8 @@ module.exports = function (app, msg, opts) {
     content = h('table', com.prettyRaw.table(app, msg.value.content))
   } else {
     content = getContent(app, msg, opts)
-    if (!content) {
-      if (!(opts && opts.mustRender))
-        return ''
+    if (!content)
       content = h('table', com.prettyRaw.table(app, msg.value.content))
-    }
   }    
   return messageShell(app, msg, content, opts)
 }
@@ -89,7 +86,7 @@ var messageShell = function (app, msg, content, opts) {
     e.preventDefault()
 
     if (!msgbody.nextSibling || !msgbody.nextSibling.classList || !msgbody.nextSibling.classList.contains('reply-form')) {
-      var form = com.composer(app, msg)
+      var form = com.composer(app, msg, { onpost: opts && opts.onpost })
       if (msgbody.nextSibling)
         msgbody.parentNode.insertBefore(form, msgbody.nextSibling)
       else
