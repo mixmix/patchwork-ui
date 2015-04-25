@@ -26,7 +26,7 @@ function getContent (app, msg) {
       post: function () { 
         if (!c.text) return
         var div = h('div', { innerHTML: mentions.post(markdown.block(c.text), app, msg) })
-        if (div.innerText.length <= 255)
+        if ((div.innerText && div.innerText.length <= 255) || (div.textContent && div.textContent.length <= 255))
           div.style.fontSize = '150%'
         return div
       }
