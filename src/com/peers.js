@@ -17,7 +17,7 @@ module.exports = function (app, peers) {
       id = peer.host
 
     if (peer.connected) {
-      if (peer.time.connect)
+      if (peer.time && peer.time.connect)
         status = 'connected'
       else {
         if (peer.failure)
