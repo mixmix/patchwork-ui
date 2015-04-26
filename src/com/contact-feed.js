@@ -10,33 +10,14 @@ var mustRenderOpts = { mustRender: true }
 module.exports = function (app, opts) {
   opts = opts || {}
 
-  var contacts = []
-  for (var uid in app.users.profiles) {
-    if (!opts.filter || opts.filter(app.users.profiles[uid]))
-      contacts.push(app.users.profiles[uid])
-  }
-
   // markup
  
   var feed = h('table.contact-feed')
-  var feedContainer = infiniscroll(h('.contact-feed-container', feed), { fetchBottom: fetchBottom })
-
-  // profile fetching
-
-  var cursor=0
-  function fetchBottom (cb) {
-    if (cursor > contacts.length) // no more
-      return (cb && cb())
-
-    var end = cursor + 30
-    for (cursor; cursor < end && cursor < contacts.length; cursor++) {
-      var el = com.contactListing(app, contacts[cursor], opts.follows)
-      el && feed.appendChild(el)
-    }
-
-    cb && cb()
+  var feedContainer = h('.contact-feed-container', feed)
+  for (var uid in app.users.profiles) {
+    if (!opts.filter || opts.filter(app.users.profiles[uid]))
+      feed.appendChild(com.contactListing(app, app.users.profiles[uid], opts.follows))
   }
-  fetchBottom()
 
   return feedContainer
 }
