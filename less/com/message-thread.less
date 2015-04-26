@@ -13,13 +13,16 @@
   .message-thread-top {
     background: #fff;
     border: 1px solid #ccc;
-    margin: 0.5em 0 5px;
+    margin: 0.5em 0 2px;
     border-radius: 3px;
 
-    ul.list-inline {
+    ul.list-inline.threadmeta {
       margin: 0;
+      padding-right: 5px;
+      background: #1E79BA;
+      border-radius: 3px;
       a {
-        color: #777;
+        color: #fafafa;
       }
       li {
         padding: 7px;
@@ -27,32 +30,7 @@
         .user-link {
           margin-left: 5px;
         }
-        &.button {
-          padding: 0;
-          a {
-            color: @brand-primary;
-            display: inline-block;
-            padding: 5px 10px 4px;
-            border: 1px solid transparent;
-            &:hover {
-              background: #ddd;
-              text-decoration: none;
-            }
-          }
-          &.strong {
-            a {
-              border: 1px solid @brand-primary;
-              border-radius: 2px;
-              padding: 5px 19px 4px;
-              margin-left: 2px;         
-            }
-          }
-        }
       }
-
-    }
-
-    ul.list-inline {
       li.hex {
         width: 35px;
         position: relative;
@@ -63,10 +41,6 @@
           opacity: 0.75;
         }
       }
-    }
-    ul.list-inline.threadmeta {
-      margin-top: 5px;
-      margin-right: 5px;
     }
     .subscribe-toggle {
       &:hover {
