@@ -41,10 +41,7 @@ function getSummary (app, msg) {
       },
       post: function () { 
         if (!c.text) return
-        var attachments = com.messageAttachments(app, msg)
-        if (attachments.length)
-          attachments = h('.attachments', attachments)
-        return [author(app, msg, fetchReplyLink(app, msg)), md(c.text), attachments]
+        return [author(app, msg, fetchReplyLink(app, msg)), md(c.text), com.messageAttachments(app, msg)]
       },
       advert: function () { 
         if (!c.text) return

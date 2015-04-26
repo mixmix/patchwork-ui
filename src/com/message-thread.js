@@ -40,9 +40,6 @@ module.exports = function (app, thread, opts) {
   // markup
   
   var content = getContent(app, thread) || h('table', com.prettyRaw.table(app, thread.value.content))
-  var viz = com.messageVisuals(app, thread)
-  var attachments = com.messageAttachments(app, thread)
-  var stats = com.messageStats(app, thread, statsOpts)
 
   opts && opts.onrender && opts.onrender(thread)
 
@@ -56,9 +53,9 @@ module.exports = function (app, thread, opts) {
       h('li.pull-right', subscribeBtn),
       h('li.pull-right', h('a', { href: '/msg/'+thread.key, target: '_blank' }, 'as JSON'))),
     h('.message', content),
-    h('.attachments', attachments),
-    stats)
-  var threadInner = h(viz.cls,
+    com.messageAttachments(app, thread),
+    com.messageStats(app, thread, statsOpts))
+  var threadInner = h('div',
     h('div.in-response-to'), // may be populated by the message page
     msgThreadTop)
 

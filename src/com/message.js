@@ -39,23 +39,10 @@ function getContent (app, msg, opts) {
     return ({
       post: function () { 
         if (!c.text) return
-        return h('div', h('div.markdown', { innerHTML: mentions.post(markdown.block(c.text), app, msg) }), getAttachments(app, msg))
+        return h('div', h('div.markdown', { innerHTML: mentions.post(markdown.block(c.text), app, msg) }))
       }
     })[c.type]()
   } catch (e) { }
-}
-
-function getAttachments (app, msg) {
-  var els = []
-  mlib.indexLinks(msg.value.content, { ext: true }, function (link, rel) {
-    els.push([
-      h('a',
-        { href: '/ext/'+link.ext, target: '_blank' },
-        com.icon('file'), ' ', link.name, ' ', h('small', (('size' in link) ? u.bytesHuman(link.size) : ''), ' ', link.type||'')),
-      h('br')
-    ])
-  })
-  return els
 }
 
 var statsOpts = { handlers: true }
@@ -64,7 +51,7 @@ var messageShell = function (app, msg, content, opts) {
   // markup 
 
   var subscribeBtn = h('a.subscribe-toggle', { href: '#', onclick: onsubscribe, title: 'Subscribe to replies' })
-  var msgbody = h('.panel-body', content, com.messageStats(app, msg, statsOpts))
+  var msgbody = h('.panel-body', content, com.messageAttachments(app, msg), com.messageStats(app, msg, statsOpts))
   var msgpanel = h('.panel.panel-default.message',
     com.userHexagon(app, msg.value.author),
     h('.panel-heading',
