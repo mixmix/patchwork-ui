@@ -25,9 +25,8 @@ function getContent (app, msg) {
     return ({
       post: function () { 
         if (!c.text) return
-        var div = h('div', { innerHTML: mentions.post(markdown.block(c.text), app, msg) })
-        if ((div.innerText && div.innerText.length <= 255) || (div.textContent && div.textContent.length <= 255))
-          div.style.fontSize = '150%'
+        var div = h('.markdown', { innerHTML: mentions.post(markdown.block(c.text), app, msg) })
+        div.style.fontSize = '150%'
         return div
       }
     })[c.type]()
