@@ -25,7 +25,7 @@ module.exports = function (app) {
 
   // markup
 
-  var feed = com.messageFeed(app, { filter: filterFn, infinite: true })
+  var feed = com.messageFeed(app, { filter: filterFn, loadmore: true, infinite: true })
   app.setPage('home', h('.row',
     h('.col-xs-1'),
     h('.col-xs-7', feed),

@@ -303,9 +303,14 @@ function getNewMessageCount () {
 }
 function setNewMessageCount (n) {
   newMessageCount = n
-  if (n)
+  if (n) {
     document.title = '('+n+') secure scuttlebutt'
-  else
+    try { 
+      var loadmore = document.querySelector('.load-more')
+      loadmore.style.display = 'block'
+      loadmore.innerText = loadmore.textContent = 'Load More ('+n+')'
+    } catch (e) {}
+  } else
     document.title = 'secure scuttlebutt'
 }
 function setInboxUnreadCount (n) {
