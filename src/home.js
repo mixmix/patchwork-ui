@@ -108,7 +108,7 @@ function setup() {
     // inform user and attempt a reconnect
     console.log('Connection Error', err)
     phoenix.ui.setStatus('danger', 'Lost connection to the host program. Please restart the host program. Trying again in 10 seconds.')
-    localhost.reconnect()
+    localhost.reconnect({ wait: 10e3 })
   })
   localhost.on('reconnecting', function(err) {
     console.log('Attempting Reconnect')
