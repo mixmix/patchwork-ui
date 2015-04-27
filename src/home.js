@@ -177,10 +177,12 @@ function pollPeers () {
 // should be called each time the rpc connection is (re)established
 function setupRpcConnection () {
   pull(phoenix.ssb.phoenix.createEventStream(), pull.drain(function (event) {
-    if (event.type == 'home-update')
+    if (event.type == 'home-add')
       setNewMessageCount(getNewMessageCount() + 1)
-    if (event.type == 'inbox-update')
+    if (event.type == 'inbox-add')
       setInboxUnreadCount((phoenix.ui.indexCounts.inboxUnread||0) + 1)
+    if (event.type == 'inbox-remove')
+      setInboxUnreadCount((phoenix.ui.indexCounts.inboxUnread||0) - 1)
   }))
 }
 
@@ -302,6 +304,7 @@ function getNewMessageCount () {
   return newMessageCount
 }
 function setNewMessageCount (n) {
+  n = (n<0)?0:n
   newMessageCount = n
   if (n) {
     document.title = '('+n+') secure scuttlebutt'
@@ -314,6 +317,7 @@ function setNewMessageCount (n) {
     document.title = 'secure scuttlebutt'
 }
 function setInboxUnreadCount (n) {
+  n = (n<0)?0:n
   phoenix.ui.indexCounts.inboxUnread = n
   try { document.querySelector('.pagenav-inbox .count').innerHTML = n }
   catch (e) {}
