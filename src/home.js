@@ -177,8 +177,10 @@ function pollPeers () {
 // should be called each time the rpc connection is (re)established
 function setupRpcConnection () {
   pull(phoenix.ssb.phoenix.createEventStream(), pull.drain(function (event) {
-    if (event.type == 'message')
+    if (event.type == 'home-update')
       setNewMessageCount(getNewMessageCount() + 1)
+    if (event.type == 'inbox-update')
+      setInboxUnreadCount((phoenix.ui.indexCounts.inboxUnread||0) + 1)
   }))
 }
 
@@ -211,7 +213,7 @@ function refreshPage (e) {
     phoenix.users.profiles = data[3]
     phoenix.ui.actionItems = data[4]
     phoenix.ui.indexCounts = data[5]
-   phoenix.user.profile = phoenix.users.profiles[phoenix.user.id]
+    phoenix.user.profile = phoenix.users.profiles[phoenix.user.id]
 
     // refresh suggest options for usernames
     phoenix.ui.suggestOptions['@'] = []
@@ -305,6 +307,11 @@ function setNewMessageCount (n) {
     document.title = '('+n+') secure scuttlebutt'
   else
     document.title = 'secure scuttlebutt'
+}
+function setInboxUnreadCount (n) {
+  phoenix.ui.indexCounts.inboxUnread = n
+  try { document.querySelector('.pagenav-inbox .count').innerHTML = n }
+  catch (e) {}
 }
 
 // provide a shell for pages from the registry
