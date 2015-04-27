@@ -29,7 +29,7 @@ module.exports = function (app) {
             h('p',
               h('em', pid), ' is not a valid user ID. ',
                 h('img.emoji', { src: '/img/emoji/disappointed.png', title: 'disappointed', width: 20, height: 20, style: 'vertical-align: top' })))),
-        h('.col-xs-3.full-height')))
+        h('.col-xs-3')))
       return
     }
   }

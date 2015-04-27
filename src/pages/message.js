@@ -44,7 +44,7 @@ module.exports = function (app) {
     app.setPage('message', h('.row',
       h('.col-xs-1'),
       h('.col-xs-7', content),
-      h('.col-xs-3.right-column.full-height',
+      h('.col-xs-3.right-column',
         h('.right-column-inner', com.friendsHexagrid(app)),
         com.sidehelp(app)
       )

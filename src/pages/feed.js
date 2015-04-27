@@ -13,7 +13,7 @@ module.exports = function (app) {
   app.setPage('feed', h('.row',
     h('.col-xs-1'),
     h('.col-xs-7', feed),
-    h('.col-xs-3.right-column.full-height',
+    h('.col-xs-3.right-column',
       h('.right-column-inner', com.friendsHexagrid(app)),
       com.sidehelp(app)
     )

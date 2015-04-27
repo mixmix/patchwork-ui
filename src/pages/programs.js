@@ -23,7 +23,7 @@ module.exports = function (app) {
     h('.col-xs-1', com.sidenav(app)),
     h('.col-xs-8',
       com.programFeed(app, { filter: filterFn })),
-    h('.col-xs-3.right-column.full-height',
+    h('.col-xs-3.right-column',
       h('.right-column-inner',
         com.notifications(app),
         h('h4', 'Plugins Help'),
