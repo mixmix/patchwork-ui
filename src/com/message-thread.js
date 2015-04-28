@@ -42,14 +42,14 @@ module.exports = function (app, thread, opts) {
 
   opts && opts.onrender && opts.onrender(thread)
 
-  var subscribeBtn = h('a.subscribe-toggle', { href: '#', onclick: onsubscribe, title: 'Subscribe to replies' })
+  // var subscribeBtn = h('a.subscribe-toggle', { href: '#', onclick: onsubscribe, title: 'Subscribe to replies' })
   var msgThreadTop = h('.message-thread-top',
     h('ul.threadmeta.list-inline',
       h('li.hex', com.userHexagon(app, thread.value.author)),
       h('li', com.userlink(thread.value.author, app.users.names[thread.value.author]), com.nameConfidence(thread.value.author, app)),
       h('li', com.a('#/msg/'+thread.key, u.prettydate(new Date(thread.value.timestamp), true), { title: 'View message thread' })),
       h('li', h('a', { href: '#', onclick: onreply }, 'reply')),
-      h('li.pull-right', subscribeBtn),
+      // h('li.pull-right', subscribeBtn),
       h('li.pull-right', h('a', { href: '/msg/'+thread.key, target: '_blank' }, 'as JSON'))),
     h('.message', content),
     com.messageAttachments(app, thread),
@@ -58,7 +58,7 @@ module.exports = function (app, thread, opts) {
     h('div.in-response-to'), // may be populated by the message page
     msgThreadTop)
 
-  app.ssb.phoenix.isSubscribed(thread.key, setSubscribeState)
+  // app.ssb.phoenix.isSubscribed(thread.key, setSubscribeState)
   return h('.message-thread', threadInner, replies(app, thread, opts))
 
   // handlers
@@ -70,15 +70,15 @@ module.exports = function (app, thread, opts) {
       msgThreadTop.appendChild(com.composer(app, thread, { onpost: opts && opts.onpost }))
   }
 
-  function onsubscribe (e) {
+  /*function onsubscribe (e) {
     e.preventDefault()
 
     app.ssb.phoenix.toggleSubscribed(thread.key, setSubscribeState)
-  }
+  }*/
 
   // ui state
 
-  function setSubscribeState (err, subscribed) {
+  /*function setSubscribeState (err, subscribed) {
     subscribeBtn.innerHTML = ''
     if (subscribed) {
       subscribeBtn.classList.add('selected')
@@ -87,7 +87,7 @@ module.exports = function (app, thread, opts) {
       subscribeBtn.classList.remove('selected')
       subscribeBtn.appendChild(com.icon('star-empty'))
     }
-  }
+  }*/
 }
 
 function replies (app, thread, opts) {
