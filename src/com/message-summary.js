@@ -51,47 +51,46 @@ function getSummary (app, msg) {
         return h('h4', com.icon('cloud'), ' Announced a public peer at ', c.address)
       },
       contact: function () {
-        function subjects () {
-          return mlib.asLinks(c.contact).map(function (l) {
-            if (l.feed === msg.value.author)
-              return 'self'
-            return com.user(app, l.feed)
-          })
-        }
+        var subjects = mlib.asLinks(c.contact).map(function (l) {
+          if (l.feed === msg.value.author)
+            return 'self'
+          return com.user(app, l.feed)
+        })
+        if (!subjects.length) return
 
         var items = []
         if (c.following === true)
-          items.push(h('h4', com.icon('plus'), ' Followed ', subjects()))
+          items.push(h('h4', com.icon('plus'), ' Followed ', subjects))
         if (c.following === false)
-          items.push(h('h4', com.icon('minus'), ' Unfollowed ', subjects()))
+          items.push(h('h4', com.icon('minus'), ' Unfollowed ', subjects))
 
         if ('trust' in c) {
           var t = +c.trust|0
           if (t === 1)
-            items.push(h('h4', com.icon('lock'), ' Trusted ', subjects()))
+            items.push(h('h4', com.icon('lock'), ' Trusted ', subjects))
           else if (t === -1)
-            items.push(h('h4', com.icon('flag'), ' Flagged ', subjects()))
+            items.push(h('h4', com.icon('flag'), ' Flagged ', subjects))
           else if (t === 0)
-            items.push(h('h4', com.icon('erase'), ' Untrusted/Unflagged ', subjects()))
+            items.push(h('h4', com.icon('erase'), ' Untrusted/Unflagged ', subjects))
         }
 
         if (c.alias) {
           if (c.alias === 'primary')
-            items.push(h('h4', com.icon('link'), ' Claimed to be a secondary feed owned by ', subjects()))
+            items.push(h('h4', com.icon('link'), ' Claimed to be a secondary feed owned by ', subjects))
           else if (c.alias === 'secondary')
-            items.push(h('h4', com.icon('link'), ' Claimed ownership of ', subjects()))
+            items.push(h('h4', com.icon('link'), ' Claimed ownership of ', subjects))
         }
         if ('alias' in c && !c.alias)
-          items.push(h('h4', com.icon('erase'), ' Claimed no alias for ', subjects()))
+          items.push(h('h4', com.icon('erase'), ' Claimed no alias for ', subjects))
 
         if ('name' in c)
-          items.push(h('h4', com.icon('tag'), ' Named ', subjects(), ' ', c.name))
+          items.push(h('h4', com.icon('tag'), ' Named ', subjects, ' ', c.name))
 
         if ('profilePic' in c)
-          items.push(h('h4', com.icon('picture'), ' Set a profile pic for ', subjects()))
+          items.push(h('h4', com.icon('picture'), ' Set a profile pic for ', subjects))
 
         if (items.length===0)
-          items.push(h('h4', com.icon('option-horizontal'), ' Published a contact for ', subjects()))
+          items.push(h('h4', com.icon('option-horizontal'), ' Published a contact for ', subjects))
         return items
       },
       vote: function () {
