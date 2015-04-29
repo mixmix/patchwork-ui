@@ -214,16 +214,19 @@ exports.getOtherNames = function (app, profile) {
   return names
 }
 
-exports.getParentThread = function (app, mid, cb) {
+var getParentThreadmsg =
+exports.getParentThreadmsg = function (app, mid, cb) {
+  var msg
   up()
   function up () {
-    app.ssb.get(mid, function (err, msg) {
+    app.ssb.get(mid, function (err, _msg) {
       if (err)
         return cb(err)
 
       // not found? finish here
-      if (!msg)
+      if (!_msg)
         return finish()
+      msg = _msg      
 
       // thread link? go straight to that
       if (mlib.link(msg.content.thread, 'msg')) {
@@ -242,6 +245,14 @@ exports.getParentThread = function (app, mid, cb) {
     })
   }
   function finish () {
-    app.ssb.relatedMessages({ id: mid, count: true, parent: true }, cb)
+    cb(null, { key: mid, value: msg })
   }
+}
+
+exports.getParentThread = function (app, mid, cb) {
+  getParentThreadmsg(app, mid, function (err, msg) {
+    if (err)
+      return cb(err)
+    app.ssb.relatedMessages({ id: msg.key, count: true, parent: false }, cb)
+  })
 }

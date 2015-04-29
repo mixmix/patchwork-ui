@@ -6,7 +6,7 @@ var mlib = require('ssb-msgs')
 var createHash = require('multiblob/util').createHash
 var pull = require('pull-stream')
 var pushable = require('pull-pushable')
-var util = require('../lib/util')
+var u = require('../lib/util')
 var markdown = require('../lib/markdown')
 var mentions = require('../lib/mentions')
 
@@ -14,10 +14,19 @@ var mentionRegex = /(\s|>|^)@([^\s^<]+)/g
 
 module.exports = function (app, parent, opts) {
 
+  var thread
   var attachments = []
   var namesList = {} // a name->name map for the previews
   for (var id in app.users.names)
     namesList[app.users.names[id]] = app.users.names[id]
+  if (parent) {
+    u.getParentThreadmsg(app, parent.key, function (err, _thread) {
+      if (err)
+        console.error(err)
+      if (_thread)
+        thread = _thread
+    })
+  }
 
   // markup
 
@@ -94,6 +103,7 @@ module.exports = function (app, parent, opts) {
         // post
         var post = schemas.schemas.post(text)
         if (parent)          post.repliesTo = { msg: parent.key }
+        if (thread)          post.thread = { msg: thread.key }
         if (mentions.length) post.mentions = mentions
         if (extLinks.length) post.attachments = extLinks
         app.ssb.publish(post, function (err, msg) {
@@ -232,6 +242,7 @@ module.exports = function (app, parent, opts) {
     // post
     var post = schemas.schemas.post(text)
     if (parent) post.repliesTo = { msg: parent.key }
+    if (thread) post.thread = { msg: thread.key }
     if (mentions.length) post.mentions = mentions
     if (extLinks.length) post.attachments = extLinks
 
