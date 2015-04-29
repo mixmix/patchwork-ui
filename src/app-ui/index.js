@@ -20,6 +20,7 @@ module.exports = function (phoenix) {
     modal.close = function () {
       document.body.removeChild(modal)
       window.removeEventListener('hashchange', modal.close)
+      window.removeEventListener('keyup', onkeyup)
       h2.cleanup()
       modal = null
     }
@@ -30,7 +31,13 @@ module.exports = function (phoenix) {
       if (e.target == modal)
         modal.close()
     }
+    function onkeyup (e) {
+      // close on escape
+      if (e.target == document.body && e.which == 27)
+        modal.close()
+    }
     window.addEventListener('hashchange', modal.close)
+    window.addEventListener('keyup', onkeyup)
 
     return modal
   }

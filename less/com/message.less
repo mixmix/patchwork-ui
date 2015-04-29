@@ -13,7 +13,7 @@
   box-shadow: none;
   border-radius: 3px;
   border: 0;
-  margin: 0 0 5px;
+  margin: 0 0 2px;
 
   .in-response-to:empty {
     display: none;
@@ -35,7 +35,7 @@
     }
   }
   .panel-body {
-    padding: 0 0 10px 44px;
+    padding: 0 10px 10px 44px;
     color: #555;
     font-family: @font-family-sans-serif;
 
@@ -51,6 +51,18 @@
       }
     }
 
+    .attachments {
+      margin: 1em;
+      a {
+        margin-right: 1em;
+        img {
+          max-width: 200px;
+          max-height: 200px;
+          border: 1px solid #999;
+          border-radius: 2px;
+        }
+      }
+    }
     .message-stats {
       margin: 8px 2em 0 0;
     }

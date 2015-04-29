@@ -27,5 +27,5 @@ module.exports = function (app, msg) {
       label = [com.icon('file'), ' ', link.name, ' ', h('small', (('size' in link) ? u.bytesHuman(link.size) : ''), ' ', link.type||'')]
     els.push(h('a', { href: '/ext/'+link.ext, target: '_blank' }, label))
   })
-  return els
+  return els.length ? h('.attachments', els) : undefined
 }

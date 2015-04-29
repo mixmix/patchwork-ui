@@ -108,7 +108,7 @@ function setup() {
     // inform user and attempt a reconnect
     console.log('Connection Error', err)
     phoenix.ui.setStatus('danger', 'Lost connection to the host program. Please restart the host program. Trying again in 10 seconds.')
-    localhost.reconnect()
+    localhost.reconnect({ wait: 10e3 })
   })
   localhost.on('reconnecting', function(err) {
     console.log('Attempting Reconnect')
@@ -177,8 +177,12 @@ function pollPeers () {
 // should be called each time the rpc connection is (re)established
 function setupRpcConnection () {
   pull(phoenix.ssb.phoenix.createEventStream(), pull.drain(function (event) {
-    if (event.type == 'message')
+    if (event.type == 'home-add')
       setNewMessageCount(getNewMessageCount() + 1)
+    if (event.type == 'inbox-add')
+      setInboxUnreadCount((phoenix.ui.indexCounts.inboxUnread||0) + 1)
+    if (event.type == 'inbox-remove')
+      setInboxUnreadCount((phoenix.ui.indexCounts.inboxUnread||0) - 1)
   }))
 }
 
@@ -211,7 +215,7 @@ function refreshPage (e) {
     phoenix.users.profiles = data[3]
     phoenix.ui.actionItems = data[4]
     phoenix.ui.indexCounts = data[5]
-   phoenix.user.profile = phoenix.users.profiles[phoenix.user.id]
+    phoenix.user.profile = phoenix.users.profiles[phoenix.user.id]
 
     // refresh suggest options for usernames
     phoenix.ui.suggestOptions['@'] = []
@@ -300,11 +304,23 @@ function getNewMessageCount () {
   return newMessageCount
 }
 function setNewMessageCount (n) {
+  n = (n<0)?0:n
   newMessageCount = n
-  if (n)
+  if (n) {
     document.title = '('+n+') secure scuttlebutt'
-  else
+    try { 
+      var loadmore = document.querySelector('.load-more')
+      loadmore.style.display = 'block'
+      loadmore.innerText = loadmore.textContent = 'Load More ('+n+')'
+    } catch (e) {}
+  } else
     document.title = 'secure scuttlebutt'
+}
+function setInboxUnreadCount (n) {
+  n = (n<0)?0:n
+  phoenix.ui.indexCounts.inboxUnread = n
+  try { document.querySelector('.pagenav-inbox .count').innerHTML = n }
+  catch (e) {}
 }
 
 // provide a shell for pages from the registry

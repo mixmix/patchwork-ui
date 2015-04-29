@@ -13,13 +13,15 @@
   .message-thread-top {
     background: #fff;
     border: 1px solid #ccc;
-    margin: 0.5em 0 5px;
+    margin: 0.5em 0 2px;
     border-radius: 3px;
 
-    ul.list-inline {
+    ul.list-inline.threadmeta {
       margin: 0;
+      padding-right: 5px;
+      background: #ddd;
       a {
-        color: #777;
+        color: #666;
       }
       li {
         padding: 7px;
@@ -27,32 +29,7 @@
         .user-link {
           margin-left: 5px;
         }
-        &.button {
-          padding: 0;
-          a {
-            color: @brand-primary;
-            display: inline-block;
-            padding: 5px 10px 4px;
-            border: 1px solid transparent;
-            &:hover {
-              background: #ddd;
-              text-decoration: none;
-            }
-          }
-          &.strong {
-            a {
-              border: 1px solid @brand-primary;
-              border-radius: 2px;
-              padding: 5px 19px 4px;
-              margin-left: 2px;         
-            }
-          }
-        }
       }
-
-    }
-
-    ul.list-inline {
       li.hex {
         width: 35px;
         position: relative;
@@ -60,13 +37,8 @@
           position: absolute;
           top: -7px;
           left: 8px;
-          opacity: 0.75;
         }
       }
-    }
-    ul.list-inline.threadmeta {
-      margin-top: 5px;
-      margin-right: 5px;
     }
     .subscribe-toggle {
       &:hover {
@@ -102,43 +74,6 @@
       border: 1px solid #ccc;
     }
   }
-
-  // message type styles
-
-  .initmsg .type {
-    background: @black-primary;
-    border-color: @black-secondary;
-  }
-  .postmsg {
-    .type {
-      border-color: @blue-secondary;
-      background: @blue-primary;
-    }
-    .message {
-      color: #555;
-    }
-  }
-  .contactmsg .type, .pubmsg .type {
-    background: @green-primary;
-    border-color: @green-secondary;
-  }
-  .advertmsg .type {
-    background: @purple-primary;
-    border-color: @purple-secondary;
-  }
-  .rawmsg {
-    .type {
-      background: #808080;
-    }
-    .message {
-      color: #555;
-
-      table {
-        width: 100%;
-      }
-    }
-  }
-
   .pretty-raw {
     font-size: 15px;
     td {  

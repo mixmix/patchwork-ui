@@ -23,7 +23,7 @@ module.exports = function (app) {
   app.setPage('new-program', h('.row',
     h('.col-xs-1', com.sidenav(app)),
     h('.col-xs-8', edContainer),
-    h('.col-xs-3.right-column.full-height',
+    h('.col-xs-3.right-column',
       h('.right-column-inner', com.notifications(app)),
       editorNav,
       com.sidehelp(app))
