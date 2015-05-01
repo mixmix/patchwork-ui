@@ -57,7 +57,7 @@ var messageShell = function (app, msg, content, opts) {
       h('ul.list-inline',
         h('li', com.userlink(msg.value.author, app.users.names[msg.value.author]), com.nameConfidence(msg.value.author, app)),
         h('li', com.a('#/msg/'+msg.key, u.prettydate(new Date(msg.value.timestamp), true), { title: 'View message msg' })),
-        h('li', h('a', { title: 'Reply', href: '#', onclick: reply }, 'reply')),
+        h('li', h('a', { title: 'Reply', href: '#', onclick: onreply }, 'reply')),
         h('li.pull-right', h('a', { href: '/msg/'+msg.key, target: '_blank' }, 'as JSON')))),
     msgbody
   )
@@ -66,10 +66,10 @@ var messageShell = function (app, msg, content, opts) {
 
   // handlers
 
-  function reply (e) {
+  function onreply (e) {
     e.preventDefault()
 
-    if (!msgbody.nextSibling || !msgbody.nextSibling.classList || !msgbody.nextSibling.classList.contains('reply-form')) {
+    if (!msgbody.nextSibling || !msgbody.nextSibling.classList || !msgbody.nextSibling.classList.contains('reply')) {
       var form = com.composer(app, msg, { onpost: opts && opts.onpost })
       if (msgbody.nextSibling)
         msgbody.parentNode.insertBefore(form, msgbody.nextSibling)
