@@ -64,9 +64,10 @@ module.exports = function (app, parent, opts) {
       return
 
     disable()
+    app.ui.pleaseWait(true)
     uploadFiles(function (err, extLinks) {
       if (err)
-        return enable(), swal('Error Uploading Attachments', err.message, 'error')
+        return app.ui.pleaseWait(false), enable(), swal('Error Uploading Attachments', err.message, 'error')
       app.ui.setStatus('info', 'Publishing...')
 
       // prep text
@@ -99,6 +100,7 @@ module.exports = function (app, parent, opts) {
         app.ssb.publish(post, function (err, msg) {
           app.ui.setStatus(null)
           enable()
+          app.ui.pleaseWait(false)
           if (err) swal('Error While Publishing', err.message, 'error')
           else {
             // auto-subscribe

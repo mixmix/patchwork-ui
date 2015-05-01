@@ -136,4 +136,24 @@ module.exports = function (phoenix) {
       }
     })
   }
+
+  var pleaseWaitTimer
+  phoenix.ui.pleaseWait = function (enabled, after) {
+    function doit() {
+      if (enabled === false)
+        document.querySelector('#please-wait').style.display = 'none'
+      else
+        document.querySelector('#please-wait').style.display = 'block'
+    }
+
+    if (!enabled && pleaseWaitTimer) {
+      clearTimeout(pleaseWaitTimer)
+      pleaseWaitTimer = null
+    }
+
+    if (!after || !enabled)
+      doit()
+    else if (!pleaseWaitTimer)
+      pleaseWaitTimer = setTimeout(doit, after)
+  }
 }
