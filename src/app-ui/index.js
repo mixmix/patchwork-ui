@@ -18,6 +18,17 @@ module.exports = function (phoenix) {
     document.body.appendChild(modal)
 
     modal.close = function () {
+      // check if there are any forms in progress
+      var els = Array.prototype.slice.call(inner.querySelectorAll('textarea'))
+      for (var i=0; i < els.length; i++) {
+        if (els[i].value) {
+          if (!confirm('Close modal and lose changes to your reply?'))
+            return
+          break
+        }
+      }
+
+      // remove
       document.body.removeChild(modal)
       window.removeEventListener('hashchange', modal.close)
       window.removeEventListener('keyup', onkeyup)
@@ -33,7 +44,7 @@ module.exports = function (phoenix) {
     }
     function onkeyup (e) {
       // close on escape
-      if (e.target == document.body && e.which == 27)
+      if (e.which == 27)
         modal.close()
     }
     window.addEventListener('hashchange', modal.close)
@@ -124,5 +135,25 @@ module.exports = function (phoenix) {
         else phoenix.refreshPage()
       }
     })
+  }
+
+  var pleaseWaitTimer
+  phoenix.ui.pleaseWait = function (enabled, after) {
+    function doit() {
+      if (enabled === false)
+        document.querySelector('#please-wait').style.display = 'none'
+      else
+        document.querySelector('#please-wait').style.display = 'block'
+    }
+
+    if (!enabled && pleaseWaitTimer) {
+      clearTimeout(pleaseWaitTimer)
+      pleaseWaitTimer = null
+    }
+
+    if (!after || !enabled)
+      doit()
+    else if (!pleaseWaitTimer)
+      pleaseWaitTimer = setTimeout(doit, after)
   }
 }

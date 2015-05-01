@@ -46,7 +46,9 @@ module.exports = function (app, profile, follows) {
   function follow (e, pid) {
     e.preventDefault()
     if (!follows[app.user.id][pid]) {
+      app.ui.pleaseWait(true, 500)
       schemas.addContact(app.ssb, pid, { following: true }, function(err) {
+        app.ui.pleaseWait(false)
         if (err) swal('Error While Publishing', err.message, 'error')
         else app.refreshPage()
       })
@@ -56,7 +58,9 @@ module.exports = function (app, profile, follows) {
   function unfollow (e, pid) {
     e.preventDefault()
     if (follows[app.user.id][pid]) {
+      app.ui.pleaseWait(true, 500)
       schemas.addContact(app.ssb, pid, { following: false }, function(err) {
+        app.ui.pleaseWait(false)
         if (err) swal('Error While Publishing', err.message, 'error')
         else app.refreshPage()
       })

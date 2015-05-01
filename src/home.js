@@ -189,6 +189,8 @@ function setupRpcConnection () {
 // re-renders the page
 function refreshPage (e) {
   e && e.preventDefault()
+  var starttime = Date.now()
+  phoenix.ui.pleaseWait(true, 1000)
 
   // clear pending messages
   setNewMessageCount(0)
@@ -251,6 +253,10 @@ function refreshPage (e) {
     if (!page)
       page = pages.notfound
     page(phoenix)
+
+    // metrics!
+    phoenix.ui.pleaseWait(false)
+    console.debug('page loaded in', (Date.now() - starttime), 'ms')
   })
 }
 

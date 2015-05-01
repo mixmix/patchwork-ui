@@ -214,7 +214,10 @@ module.exports = function (app) {
 
     function confirmName (e) {
       e.preventDefault()
+
+      app.ui.pleaseWait(true, 500)
       schemas.addContact(app.ssb, pid, { name: app.users.names[pid] }, function (err) {
+        app.ui.pleaseWait(false)
         if (err) swal('Error While Publishing', err.message, 'error')
         else app.refreshPage()
       })
@@ -224,7 +227,9 @@ module.exports = function (app) {
       e.preventDefault()
       if (isSelf)
         return
+      app.ui.pleaseWait(true, 500)
       schemas.addContact(app.ssb, pid, { following: !isFollowing }, function(err) {
+        app.ui.pleaseWait(false)
         if (err) swal('Error While Publishing', err.message, 'error')
         else app.refreshPage()
       })
@@ -234,7 +239,9 @@ module.exports = function (app) {
       e.preventDefault()
       if (isSelf)
         return
+      app.ui.pleaseWait(true, 500)
       schemas.addContact(app.ssb, pid, { trust: (isFlagging) ? 0 : -1 }, function(err) {
+        app.ui.pleaseWait(false)
         if (err) swal('Error While Publishing', err.message, 'error')
         else app.refreshPage()
       })
@@ -245,7 +252,9 @@ module.exports = function (app) {
         e.preventDefault()
         if (profile && profile.assignedBy[app.user.id] && profile.assignedBy[app.user.id].profilePic && profile.assignedBy[app.user.id].profilePic.ext == link.ext)
           return
+        app.ui.pleaseWait(true, 500)
         schemas.addContact(app.ssb, pid, { profilePic: link }, function (err) {
+          app.ui.pleaseWait(false)
           if (err) swal('Error While Publishing', err.message, 'error')
           else app.refreshPage()        
         })
@@ -260,7 +269,9 @@ module.exports = function (app) {
         width: 275,
         height: 275
       }
+      app.ui.pleaseWait(true, 500)
       schemas.addContact(app.ssb, pid, { profilePic: link }, function (err) {
+        app.ui.pleaseWait(false)
         if (err) swal('Error While Publishing', err.message, 'error')
         else app.refreshPage()        
       })
