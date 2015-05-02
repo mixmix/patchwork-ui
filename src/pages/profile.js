@@ -9,7 +9,7 @@ var u = require('../lib/util')
 
 module.exports = function (app) {
   var pid      = app.page.param
-  var view     = app.page.qs.view || 'about'
+  var view     = app.page.qs.view || 'latest'
   var profile  = app.users.profiles[pid]
   var name     = com.userName(app, pid)
 
@@ -114,7 +114,7 @@ module.exports = function (app) {
     else {
       content = [
         h('.header-ctrls', com.composer.header(app, { suggested: '@'+name+' ' })),
-        com.messageFeed(app, { feed: app.ssb.createFeedStream, filter: aboutFeedFilter, infinite: true })
+        com.messageFeed(app, { feed: app.ssb.createFeedStream, filter: latestFeedFilter, infinite: true })
       ]
     }
 
@@ -127,7 +127,7 @@ module.exports = function (app) {
           com.nav({
             current: view,
             items: [
-              ['about',    makeUri({ view: 'about' }),    'About'],
+              ['latest',   makeUri({ view: 'latest' }),   'Latest'],
               ['feed',     makeUri({ view: 'feed' }),     'All Posts'],
               ['contacts', makeUri({ view: 'contacts' }), 'Contacts'],
               ['avatar',   makeUri({ view: 'avatar' }),   'Avatar']
@@ -201,7 +201,7 @@ module.exports = function (app) {
       return true
     }
 
-    function aboutFeedFilter (msg) {
+    function latestFeedFilter (msg) {
       var c = msg.value.content
 
       if (msg.value.author == pid && c.type == 'post' && !c.repliesTo)
