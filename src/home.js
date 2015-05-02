@@ -313,14 +313,14 @@ function setNewMessageCount (n) {
   n = (n<0)?0:n
   newMessageCount = n
   if (n) {
-    document.title = '('+n+') secure scuttlebutt'
+    document.title = '('+n+') Scuttlebutt'
     try { 
       var loadmore = document.querySelector('.load-more')
       loadmore.style.display = 'block'
       loadmore.innerText = loadmore.textContent = 'Load More ('+n+')'
     } catch (e) {}
   } else
-    document.title = 'secure scuttlebutt'
+    document.title = 'Scuttlebutt'
 }
 function setInboxUnreadCount (n) {
   n = (n<0)?0:n
