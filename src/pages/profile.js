@@ -113,7 +113,7 @@ module.exports = function (app) {
     }
     else if (view == 'about') {
       content = [
-        // h('.header-ctrls', com.composer.header(app, { suggested: '@'+name+' ' })),
+        h('.header-ctrls', h('.composer-header', h('.composer-header-inner', com.factForm(app, pid, { onpost: app.refreshPage })))),
         com.messageFeed(app, { feed: app.ssb.createFeedStream, filter: aboutFeedFilter, infinite: true })
       ]
     }
