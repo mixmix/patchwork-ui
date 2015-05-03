@@ -46,8 +46,6 @@ function getSummary (app, msg) {
       fact: function () { 
         if (!c.text) return
         var subjects = mlib.asLinks(c.factAbout).map(function (l) {
-          if (l.feed === msg.value.author)
-            return 'self'
           return com.user(app, l.feed)
         })
         if (!subjects.length) return
