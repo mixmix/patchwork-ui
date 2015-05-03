@@ -9,7 +9,7 @@ var u = require('../lib/util')
 
 module.exports = function (app) {
   var pid      = app.page.param
-  var view     = app.page.qs.view || 'feed'
+  var view     = app.page.qs.view || 'latest'
   var profile  = app.users.profiles[pid]
   var name     = com.userName(app, pid)
 
@@ -105,9 +105,17 @@ module.exports = function (app) {
       content = com.contactFeed(app, { filter: contactFeedFilter, follows: graphs.follow })
       content.style.marginLeft = '62px'
     }
+    else if (view == 'feed') {
+      content = [
+        h('.header-ctrls', com.composer.header(app, { suggested: '@'+name+' ' })),
+        com.messageFeed(app, { feed: app.ssb.createFeedStream, filter: msgFeedFilter, infinite: true })
+      ]
+    }
     else {
-      // messages
-      content = com.messageFeed(app, { feed: app.ssb.createFeedStream, filter: msgFeedFilter, infinite: true, suggested: '@'+name+' ' })
+      content = [
+        h('.header-ctrls', com.composer.header(app, { suggested: '@'+name+' ' })),
+        com.messageFeed(app, { feed: app.ssb.createFeedStream, filter: latestFeedFilter, infinite: true })
+      ]
     }
 
     // render page
@@ -119,7 +127,8 @@ module.exports = function (app) {
           com.nav({
             current: view,
             items: [
-              ['feed',     makeUri({ view: 'feed' }),     'Feed'],
+              ['latest',   makeUri({ view: 'latest' }),   'Latest'],
+              ['feed',     makeUri({ view: 'feed' }),     'All Posts'],
               ['contacts', makeUri({ view: 'contacts' }), 'Contacts'],
               ['avatar',   makeUri({ view: 'avatar' }),   'Avatar']
             ]
@@ -190,6 +199,15 @@ module.exports = function (app) {
         return false
 
       return true
+    }
+
+    function latestFeedFilter (msg) {
+      var c = msg.value.content
+
+      if (msg.value.author == pid && c.type == 'post' && !c.repliesTo)
+        return true
+
+      return false
     }
 
     function contactFeedFilter (prof) {
