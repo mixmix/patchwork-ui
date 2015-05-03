@@ -49,7 +49,8 @@ function getSummary (app, msg) {
           return com.user(app, l.feed)
         })
         if (!subjects.length) return
-        return [/*author(app, msg),*/ h('p', com.icon('info-sign'), ' ', subjects, ' ', c.text)]
+        var text = mentions.post(u.escapePlain(c.text), app, msg)
+        return [/*author(app, msg),*/ h('p', com.icon('info-sign'), ' ', subjects, ' ', h('span', { innerHTML: text }))]
       },
       advert: function () { 
         if (!c.text) return
