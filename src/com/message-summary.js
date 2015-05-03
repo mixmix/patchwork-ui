@@ -49,7 +49,7 @@ function getSummary (app, msg) {
           return com.user(app, l.feed)
         })
         if (!subjects.length) return
-        return [author(app, msg), h('p', com.icon('info-sign'), ' ', subjects, ' ', c.text)]
+        return [/*author(app, msg),*/ h('p', com.icon('info-sign'), ' ', subjects, ' ', c.text)]
       },
       advert: function () { 
         if (!c.text) return
