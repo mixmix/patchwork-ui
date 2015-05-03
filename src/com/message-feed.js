@@ -6,7 +6,6 @@ var multicb = require('multicb')
 var com = require('../com')
 var u = require('../lib/util')
 
-var mustRenderOpts = { mustRender: true }
 module.exports = function (app, opts) {
   opts = opts || {}
 
@@ -70,7 +69,7 @@ module.exports = function (app, opts) {
           // render
           var lastEl = feedState.el.firstChild
           for (var i=_msgs.length-1; i >= 0; i--) {            
-            var el = com.messageSummary(app, _msgs[i], mustRenderOpts)
+            var el = com.messageSummary(app, _msgs[i])
             el && feedState.el.insertBefore(el, lastEl)
           }
 
@@ -111,7 +110,7 @@ module.exports = function (app, opts) {
 
           // render
           _msgs.forEach(function (msg) {
-            var el = com.messageSummary(app, msg, mustRenderOpts)
+            var el = com.messageSummary(app, msg)
             el && feedState.el.appendChild(el)
           })
 

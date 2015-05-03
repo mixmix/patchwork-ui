@@ -111,6 +111,12 @@ module.exports = function (app) {
         com.messageFeed(app, { feed: app.ssb.createFeedStream, filter: msgFeedFilter, infinite: true })
       ]
     }
+    else if (view == 'about') {
+      content = [
+        // h('.header-ctrls', com.composer.header(app, { suggested: '@'+name+' ' })),
+        com.messageFeed(app, { feed: app.ssb.createFeedStream, filter: aboutFeedFilter, infinite: true })
+      ]
+    }
     else {
       content = [
         h('.header-ctrls', com.composer.header(app, { suggested: '@'+name+' ' })),
@@ -130,7 +136,8 @@ module.exports = function (app) {
               ['latest',   makeUri({ view: 'latest' }),   'Latest'],
               ['feed',     makeUri({ view: 'feed' }),     'All Posts'],
               ['contacts', makeUri({ view: 'contacts' }), 'Contacts'],
-              ['avatar',   makeUri({ view: 'avatar' }),   'Avatar']
+              ['avatar',   makeUri({ view: 'avatar' }),   'Avatar'],
+              ['about',    makeUri({ view: 'about' }),    'About']
             ]
           })),
         content),
@@ -204,10 +211,29 @@ module.exports = function (app) {
     function latestFeedFilter (msg) {
       var c = msg.value.content
 
+      // post by this user
       if (msg.value.author == pid && c.type == 'post' && !c.repliesTo)
         return true
 
+      // fact about this user
+      if (c.type == 'fact' && c.factAbout && mlib.asLinks(c.factAbout, 'feed').filter(isLinkToProfile).length)
+        return true
+
       return false
+    }
+
+    function aboutFeedFilter (msg) {
+      var c = msg.value.content
+
+      // fact about this user
+      if (c.type == 'fact' && c.factAbout && mlib.asLinks(c.factAbout, 'feed').filter(isLinkToProfile).length)
+        return true
+
+      return false
+    }
+
+    function isLinkToProfile (link) {
+      return link.feed == pid
     }
 
     function contactFeedFilter (prof) {
