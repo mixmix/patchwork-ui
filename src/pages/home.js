@@ -12,8 +12,8 @@ module.exports = function (app) {
     var a = msg.value.author
     var c = msg.value.content
 
-    // posts only
-    if (c.type !== 'post')
+    // posts and facts only
+    if (c.type !== 'post' && c.type !== 'fact')
       return false
 
     // filter out people not followed directly
