@@ -186,7 +186,7 @@ exports.sidehelp = function (app, opts) {
   return h('ul.list-unstyled.sidehelp',
     h('li', h('button.btn.btn-link', { onclick: app.ui.showUserId }, 'Get your id')),
     h('li', h('button.btn.btn-link', { onclick: app.ui.followPrompt }, 'Add a contact')),
-    h('li', h('button.btn.btn-link', { onclick: app.ui.followPrompt }, 'Use an invite')),
+    h('li', h('button.btn.btn-link', { onclick: app.ui.inviteFlow }, 'Use an invite')),
     (!opts || !opts.noMore) ? h('li', h('span', {style:'display: inline-block; padding: 6px 14px'}, a('#/help', 'More help'))) : ''
   )
 }
@@ -255,3 +255,4 @@ exports.postForm = require('./post-form')
 exports.factForm = require('./fact-form')
 exports.composer = require('./composer')
 exports.imageUploader = require('./image-uploader')
+exports.inviteForm = require('./invite-form')

@@ -3,6 +3,8 @@ var schemas = require('ssb-msg-schemas')
 
 module.exports = function (phoenix) {
 
+  require('./invite-flow')(phoenix)
+
   phoenix.ui.showUserId = function () { 
     swal('Here is your contact id', phoenix.user.id)
   }
