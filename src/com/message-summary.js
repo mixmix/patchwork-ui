@@ -43,6 +43,15 @@ function getSummary (app, msg) {
         if (!c.text) return
         return [author(app, msg, fetchReplyLink(app, msg)), md(c.text), com.messageAttachments(app, msg)]
       },
+      fact: function () { 
+        if (!c.text) return
+        var subjects = mlib.asLinks(c.factAbout).map(function (l) {
+          return com.user(app, l.feed)
+        })
+        if (!subjects.length) return
+        var text = mentions.post(u.escapePlain(c.text), app, msg)
+        return [/*author(app, msg),*/ h('p', com.icon('info-sign'), ' ', subjects, ' ', h('span', { innerHTML: text }))]
+      },
       advert: function () { 
         if (!c.text) return
         return [author(app, msg, h('small.text-muted', ' - advert')), md(c.text)]
