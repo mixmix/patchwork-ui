@@ -134,7 +134,7 @@ module.exports = function (app) {
             current: view,
             items: [
               ['latest',   makeUri({ view: 'latest' }),   'Latest'],
-              ['feed',     makeUri({ view: 'feed' }),     'All Posts'],
+              ['feed',     makeUri({ view: 'feed' }),     'All Activity'],
               ['contacts', makeUri({ view: 'contacts' }), 'Contacts'],
               ['avatar',   makeUri({ view: 'avatar' }),   'Avatar'],
               ['about',    makeUri({ view: 'about' }),    'About']
