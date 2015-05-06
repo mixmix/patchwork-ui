@@ -3,7 +3,6 @@ var h = require('hyperscript')
 var mlib = require('ssb-msgs')
 var pull = require('pull-stream')
 var multicb = require('multicb')
-var infiniscroll = require('infiniscroll')
 var com = require('../com')
 
 var mustRenderOpts = { mustRender: true }
