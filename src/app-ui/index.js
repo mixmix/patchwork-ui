@@ -7,6 +7,17 @@ module.exports = function (phoenix) {
     swal('Here is your contact id', phoenix.user.id)
   }
 
+  var oldScrollTop
+  phoenix.ui.disableScrolling = function () {
+    oldScrollTop = document.body.scrollTop
+    document.querySelector('html').style.overflow = 'hidden'
+    window.scrollTo(0, oldScrollTop)
+  }
+  phoenix.ui.enableScrolling = function () {
+    document.querySelector('html').style.overflow = 'auto'
+    window.scrollTo(0, oldScrollTop)
+  }
+
   phoenix.ui.modal = function (el) {
     // create a context so we can release this modal on close
     var h2 = h.context()
@@ -33,6 +44,7 @@ module.exports = function (phoenix) {
       window.removeEventListener('hashchange', modal.close)
       window.removeEventListener('keyup', onkeyup)
       h2.cleanup()
+      phoenix.ui.enableScrolling()
       modal = null
     }
 
@@ -49,6 +61,7 @@ module.exports = function (phoenix) {
     }
     window.addEventListener('hashchange', modal.close)
     window.addEventListener('keyup', onkeyup)
+    phoenix.ui.disableScrolling()
 
     return modal
   }
