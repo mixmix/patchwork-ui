@@ -1,6 +1,4 @@
 'use strict'
-var muxrpc     = require('muxrpc')
-var Serializer = require('pull-serializer')
 var auth       = require('ssb-domain-auth')
 var h          = require('hyperscript')
 var multicb    = require('multicb')
@@ -8,7 +6,7 @@ var router     = require('phoenix-router')
 var pull       = require('pull-stream')
 var emojis     = require('emoji-named-characters')
 var schemas    = require('ssb-msg-schemas')
-var channel    = require('ssb-channel')
+var SSBClient  = require('ssb-client')
 var com        = require('./com')
 var pages      = require('./pages')
 var u          = require('./lib/util')
@@ -19,9 +17,8 @@ setup()
 
 // create the application object and register handlers
 function setup() {
-  // the SSB_MANIFEST variable is created by /manifest.js, which is loaded before the javascript bundle.
-  var ssb = muxrpc(SSB_MANIFEST, false, function (stream) { return Serializer(stream, JSON, {split: '\n\n'}) })()
-  var localhost = channel.connect(ssb, window.location.host)
+  var ssb = SSBClient()
+  ssb.connect()
 
   // master state object
   window.phoenix = {
@@ -86,10 +83,10 @@ function setup() {
   }
 
   // rpc connection
-  localhost.on('connect', function() {
+  ssb.on('connect', function() {
     // authenticate the connection
     auth.getToken(window.location.host, function(err, token) {
-      if (err) return localhost.close(), console.error('Token fetch failed', err)
+      if (err) return ssb.close(), console.error('Token fetch failed', err)
       ssb.auth(token, function(err) {
         phoenix.ui.setStatus(false)
         setupRpcConnection()
@@ -97,13 +94,13 @@ function setup() {
       })
     })
   })
-  localhost.on('error', function(err) {
+  ssb.on('close', function() {
     // inform user and attempt a reconnect
-    console.log('Connection Error', err)
+    console.log('Connection Lost')
     phoenix.ui.setStatus('danger', 'Lost connection to the host program. Please restart the host program. Trying again in 10 seconds.')
-    localhost.reconnect({ wait: 10e3 })
+    ssb.reconnect({ wait: 10e3 })
   })
-  localhost.on('reconnecting', function(err) {
+  ssb.on('reconnecting', function() {
     console.log('Attempting Reconnect')
     phoenix.ui.setStatus('danger', 'Lost connection to the host program. Reconnecting...')
   })

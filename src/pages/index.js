@@ -22,6 +22,5 @@ module.exports = {
   msg:              require('./message'),
   notfound:         notfound,
   profile:          require('./profile'),
-  programs:         require('./programs'),
   setup:            require('./setup')
 }
