@@ -161,22 +161,14 @@ exports.pagenav = function (app) {
 
 var sidenav =
 exports.sidenav = function (app) {
-  var registryPages = app.getAll('page')
-    .map(function(item) {
-      if (item.config.label)
-        return [item.config.id, item.config.id, item.config.label]
-    })
-    .filter(Boolean)
-
   var pages = [
   //[id, path, label],
     ['home',         '',             [icon('home'), 'home']],
     ['inbox',        'inbox',        [icon('inbox'), 'inbox ('+(app.ui.indexCounts.inboxUnread||0)+')']],
     ['address-book', 'address-book', [icon('user'), 'network']],
     ['feed',         'feed',         [icon('list'), 'all data']],
-  ].concat(registryPages).concat([
     ['help',         'help',         [icon('question-sign'), 'help']]
-  ])
+  ]
 
   return h('.side-nav.full-height',
     pages.map(function (page) {

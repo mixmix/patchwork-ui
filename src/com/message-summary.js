@@ -18,19 +18,6 @@ function shorten (str, n) {
 function getSummary (app, msg) {
   var c = msg.value.content
 
-  // check the component registry
-  var renderer = app.get('msg-summary', { type: c.type })
-  if (renderer) {
-    try {
-      var el = renderer.fn(msg)
-      if (el)
-        return el
-    } catch (e) {
-      console.error('Error rendering type: '+c.type, renderer, msg, e)
-    }
-  }
-
-  // fallback to default renderers
   function md (str) {
     return h('.markdown', { innerHTML: mentions.post(markdown.block(str), app, msg) })
   }
