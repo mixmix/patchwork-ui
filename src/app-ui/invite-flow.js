@@ -8,19 +8,11 @@ module.exports = function (phoenix) {
 
     var form = com.inviteForm(phoenix, { onsubmit: onsubmit })
     var modal = phoenix.ui.modal(form)
+    form.querySelector('input').focus()
 
     // handlers
 
-    function onsubmit (e) {
-      e.preventDefault()
-
-      // :TODO: remove this for actual behavior
-      form.setProcessingText('Contacting server with invite code, this may take a few moments...')
-      setTimeout(form.setErrorText, 2000, 'It failed for some reason!')
-      return
-
-
-      var code = codeinput.value
+    function onsubmit (code) {
       form.disable()
 
       // surrounded by quotes?
@@ -30,7 +22,7 @@ module.exports = function (phoenix) {
 
       if (code.split(',').length === 3) {
         form.setProcessingText('Contacting server with invite code, this may take a few moments...')
-        app.ssb.invite.addMe(id, addMeNext)
+        phoenix.ssb.invite.addMe(code, addMeNext)
       }
       else
         form.enable(), form.setErrorText('Invalid invite code')
@@ -58,6 +50,8 @@ module.exports = function (phoenix) {
         return 'The pub server did not identify itself correctly for the invite code. Ask the pub-server owner for a new code and try again.'
       if (~msg.indexOf('unexpected end of parent stream'))
         return 'Failed to connect to the pub server. Check your connection, make sure the pub server is online, and try again.'
+      if (~msg.indexOf('ENOTFOUND'))
+        return 'The pub server could not be found. Check your connection, make sure the pub server is online, and try again.'
       if (~msg.indexOf('already following'))
         return 'You are already followed by this pub server.'
       return 'Sorry, an unexpected error occurred. Please try again.'

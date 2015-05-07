@@ -13,7 +13,7 @@ module.exports = function (app, opts) {
   var codeinput = h('input.form-control', { placeholder: 'Enter the invite code here' })
   var form = h('.invite-form',
     h('h3', 'Use Invite'),
-    h('form.form-inline', { onsubmit: opts.onsubmit },
+    h('form.form-inline', { onsubmit: function (e) { e.preventDefault(); opts.onsubmit(codeinput.value) } },
       h('p', codeinput, useBtn)),
     processingInfo,
     error,
