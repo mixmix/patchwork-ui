@@ -1,7 +1,57 @@
+var h = require('hyperscript')
 var com = require('../com')
 
 module.exports = function (phoenix) {
-  phoenix.ui.inviteFlow = function (e) {
+
+  phoenix.ui.modal = function (el) {
+    // create a context so we can release this modal on close
+    var h2 = h.context()
+
+    // markup
+
+    var inner = h2('.modal-inner', el)
+    var modal = h2('.modal', { onclick: onmodalclick }, inner)
+    document.body.appendChild(modal)
+
+    modal.close = function () {
+      // check if there are any forms in progress
+      var els = Array.prototype.slice.call(inner.querySelectorAll('textarea'))
+      for (var i=0; i < els.length; i++) {
+        if (els[i].value) {
+          if (!confirm('Close modal and lose changes to your reply?'))
+            return
+          break
+        }
+      }
+
+      // remove
+      document.body.removeChild(modal)
+      window.removeEventListener('hashchange', modal.close)
+      window.removeEventListener('keyup', onkeyup)
+      h2.cleanup()
+      phoenix.ui.enableScrolling()
+      modal = null
+    }
+
+    // handlers
+
+    function onmodalclick (e) {
+      if (e.target == modal)
+        modal.close()
+    }
+    function onkeyup (e) {
+      // close on escape
+      if (e.which == 27)
+        modal.close()
+    }
+    window.addEventListener('hashchange', modal.close)
+    window.addEventListener('keyup', onkeyup)
+    phoenix.ui.disableScrolling()
+
+    return modal
+  }
+
+  phoenix.ui.inviteModal = function (e) {
     e.preventDefault()
 
     // render
