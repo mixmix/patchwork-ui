@@ -6,6 +6,7 @@ module.exports = function (phoenix) {
   phoenix.ui.modal = function (el) {
     // create a context so we can release this modal on close
     var h2 = h.context()
+    var canclose = true
 
     // markup
 
@@ -13,7 +14,13 @@ module.exports = function (phoenix) {
     var modal = h2('.modal', { onclick: onmodalclick }, inner)
     document.body.appendChild(modal)
 
+    modal.enableClose = function () { canclose = true }
+    modal.disableClose = function () { canclose = false }
+
     modal.close = function () {
+      if (!canclose)
+        return
+
       // check if there are any forms in progress
       var els = Array.prototype.slice.call(inner.querySelectorAll('textarea'))
       for (var i=0; i < els.length; i++) {
@@ -64,6 +71,7 @@ module.exports = function (phoenix) {
 
     function onsubmit (code) {
       form.disable()
+      modal.disableClose()
 
       // surrounded by quotes?
       // (the scuttlebot cli ouputs invite codes with quotes, so this could happen)
@@ -75,17 +83,17 @@ module.exports = function (phoenix) {
         phoenix.ssb.invite.addMe(code, addMeNext)
       }
       else
-        form.enable(), form.setErrorText('Invalid invite code')
+        modal.enableClose(), form.enable(), form.setErrorText('Invalid invite code')
         
       function addMeNext (err) {
         if (err) {
           console.error(err)
           form.setErrorText(userFriendlyInviteError(err.stack || err.message))
           form.enable()
+          modal.enableClose()
           return
         }
-        form.setProcessingText('Invite Accepted, syncing...')
-        // :TODO:
+        modal.close()
       }
     }
 
