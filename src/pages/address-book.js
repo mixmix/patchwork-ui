@@ -58,7 +58,7 @@ module.exports = function (app) {
       // this view needs to show sync progress
       // would prefer something much cleaner than this!!!
       var redrawInterval = setInterval(drawSyncList, 5e3)
-      teardown = function () { clearInterval(redrawInterval); console.log('TEARDOWN!')}
+      teardown = function () { clearInterval(redrawInterval) }
       function drawSyncList () {
         var done = multicb({ pluck: 1 })
         app.ssb.friends.all('follow', done())

@@ -86,14 +86,20 @@ module.exports = function (phoenix) {
         modal.enableClose(), form.enable(), form.setErrorText('Invalid invite code')
         
       function addMeNext (err) {
+        modal.enableClose()
         if (err) {
           console.error(err)
           form.setErrorText(userFriendlyInviteError(err.stack || err.message))
           form.enable()
-          modal.enableClose()
           return
         }
+
+        // trigger sync with the pub
+        phoenix.ssb.gossip.connect(code.split(',')[0])
+
+        // nav to sync view
         modal.close()
+        window.location.hash = '#/address-book'
       }
     }
 

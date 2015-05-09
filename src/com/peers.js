@@ -65,7 +65,7 @@ module.exports = function (app, peers) {
       e.preventDefault()
       app.ssb.gossip.connect(p, function (err) {
         if (err)
-          console.error(err)
+          return console.error(err)
 
         var node = e.target
         var parent = node.parentNode
