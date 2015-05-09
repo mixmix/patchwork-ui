@@ -48,7 +48,7 @@ module.exports = function (app, peers, follows) {
     }
     return h('.peer',
       h('.peer-title', { 'data-history': history }, com.userHexagon(app, peer.id, 60), ' ', com.user(app, peer.id), ' ', h('small.text-muted', status)),
-      com.contactFeed(app, { filter: filterFn, follows: follows })
+      com.contactFeed(app, { filter: filterFn, follows: follows, syncspinner: true })
     )
   }))
 }

@@ -3,7 +3,7 @@ var schemas = require('ssb-msg-schemas')
 var com = require('./index')
 var u = require('../lib/util')
 
-module.exports = function (app, profile, follows) {
+module.exports = function (app, profile, follows, opts) {
 
   // markup 
 
@@ -27,6 +27,7 @@ module.exports = function (app, profile, follows) {
 
   return h('tr.contact-listing',
     h('td.profpic', com.userHexagon(app, id, 60)),
+    ((opts && opts.syncspinner) ? h('td', (!profile.self.name) ? h('.spinner.inline.small', h('.cube1'), h('.cube2')) : '') : ''),
     h('td.details',
       h('p.name', 
         h('strong', com.a('#/profile/'+id, app.users.names[id]||u.shortString(id, 20)), com.nameConfidence(id, app), ' ', renamebtn)),
