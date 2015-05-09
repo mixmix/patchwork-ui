@@ -6,7 +6,7 @@ var u = require('../lib/util')
 
 module.exports = function (app) {
   var queryStr = app.page.qs.q || ''
-  var currentList = app.page.qs.list || 'following'
+  var currentList = app.page.qs.list || 'sync'
   
   // fetch
 
@@ -49,6 +49,38 @@ module.exports = function (app) {
       return false
     }
 
+    var content, teardown
+    if (currentList == 'sync') {
+      content = h('div')
+      drawSyncList()
+
+      // :HACK:
+      // this view needs to show sync progress
+      // would prefer something much cleaner than this!!!
+      var redrawInterval = setInterval(drawSyncList, 5e3)
+      teardown = function () { clearInterval(redrawInterval); console.log('TEARDOWN!')}
+      function drawSyncList () {
+        var done = multicb({ pluck: 1 })
+        app.ssb.friends.all('follow', done())
+        app.ssb.gossip.peers(done())
+        app.ssb.phoenix.getNamesById(done())
+        app.ssb.phoenix.getNameTrustRanks(done())
+        app.ssb.phoenix.getAllProfiles(done())
+        done(function (err, data) {
+          var follows  = data[0]
+          var peers    = data[1]
+          app.users.names = data[2]
+          app.users.nameTrustRanks = data[3]
+          app.users.profiles = data[4]
+          follows[app.user.id] = follows[app.user.id] || {}
+          content.innerHTML = ''
+          content.appendChild(com.contactSyncListing(app, peers, follows))
+        })
+      }
+    } else {
+      content = com.contactFeed(app, { filter: filterFn, follows: follows })
+    }
+
     app.setPage('address-book', h('.row',
       h('.col-xs-2'),
       h('.col-xs-5',
@@ -56,16 +88,17 @@ module.exports = function (app) {
           com.nav({
             current: currentList,
             items: [
+              ['sync',      makeUri({ list: 'sync' }),      'Sync'],
               ['following', makeUri({ list: 'following' }), 'Following'],
               ['others',    makeUri({ list: 'others' }),    'Others'],
               ['flagged',   makeUri({ list: 'flagged' }),   'Flagged']
             ]
           }),
-          com.search({
+          ((currentList !== 'sync') ? com.search({
             value: queryStr,
             onsearch: onsearch
-          })),
-        com.contactFeed(app, { filter: filterFn, follows: follows })),
+          }) : '')),
+        content),
       h('.col-xs-4.right-column',
         h('.right-column-inner',
           h('table.table.peers',
@@ -73,7 +106,7 @@ module.exports = function (app) {
             h('tbody', com.peers(app, peers))
           )
         ))
-    ))
+    ), { onPageTeardown: teardown })
 
     function makeUri (opts) {
       opts.q    = ('q' in opts) ? opts.q : queryStr
