@@ -105,7 +105,8 @@ module.exports = function (app) {
             h('thead', h('tr', h('th', 'Gossip Network'))),
             h('tbody', com.peers(app, peers))
           )
-        ))
+        ),
+        com.sidehelp(app))
     ), { onPageTeardown: teardown })
 
     function makeUri (opts) {

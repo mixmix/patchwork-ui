@@ -16,8 +16,10 @@ var u = require('../lib/util')
 module.exports = function (app, peers, follows) {
   var connectedPeers = peers.filter(function (p) { return !!p.id })
 
-  if (connectedPeers.length === 0) // :TODO: this needs styling
-    return h('.contact-sync-listing', h('p.text-muted', h('em', 'You have not yet connected to any peers.')))
+  if (connectedPeers.length === 0) {
+    var str = (peers.length > 0) ? 'Connecting to the network...' : 'You have not yet connected to any peers.'
+    return h('.contact-sync-listing.empty.text-muted', str)
+  }
 
   return h('.contact-sync-listing', connectedPeers.map(function (peer) {
     function filterFn (prof) {
