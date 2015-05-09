@@ -48,6 +48,9 @@ module.exports = function (app, peers) {
     )
   })
 
+  if (rows.length === 0)
+    rows.push(h('tr', h('td.text-muted', 'No known peers')))
+
   // put connected peers at top
   function sorter(a, b) {
     var an = 0, bn = 0
@@ -65,7 +68,7 @@ module.exports = function (app, peers) {
       e.preventDefault()
       app.ssb.gossip.connect(p, function (err) {
         if (err)
-          console.error(err)
+          return console.error(err)
 
         var node = e.target
         var parent = node.parentNode

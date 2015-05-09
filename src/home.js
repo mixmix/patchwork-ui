@@ -16,6 +16,7 @@ var addUI      = require('./app-ui')
 setup()
 
 // create the application object and register handlers
+var _onPageTeardown
 function setup() {
   var ssb = SSBClient()
   ssb.connect()
@@ -217,6 +218,8 @@ function refreshPage (e) {
     // cleanup the old page
     h.cleanup()
     window.onscroll = null // commonly used for infinite scroll
+    _onPageTeardown && _onPageTeardown()
+    _onPageTeardown = null
 
     // render the page
     if (!page)
@@ -310,6 +313,9 @@ function pageShell (pagecom) {
 
 // render a new page
 function setPage (name, page, opts) {
+  if (opts && opts.onPageTeardown)
+    _onPageTeardown = opts.onPageTeardown
+
   // render nav
   var navEl = document.getElementById('page-nav')
   navEl.innerHTML = ''
