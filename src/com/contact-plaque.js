@@ -44,7 +44,7 @@ module.exports = function (app, profile, graphs) {
   var joinDate = (profile && profile.createdAt) &&
     u.prettydate(new Date(profile.createdAt), true)
   var title = h('.title',
-    h('h2', name, com.nameConfidence(contactId, app)),
+    h('h2', name),
     (primary) ?
       h('h3', com.user(app, primary), '\'s feed') :
       '',

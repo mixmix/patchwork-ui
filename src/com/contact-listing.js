@@ -29,8 +29,7 @@ module.exports = function (app, profile, follows, opts) {
     h('td.profpic', com.userHexagon(app, id, 60)),
     ((opts && opts.syncspinner) ? h('td', (!profile.self.name) ? h('.spinner.inline.small', h('.cube1'), h('.cube2')) : '') : ''),
     h('td.details',
-      h('p.name', 
-        h('strong', com.a('#/profile/'+id, app.users.names[id]||u.shortString(id, 20)), com.nameConfidence(id, app), ' ', renamebtn)),
+      h('p.name', h('strong', com.a('#/profile/'+id, app.users.names[id]||u.shortString(id, 20))), ' ', renamebtn),
       h('p',
         (otherNames.length)
           ? h('small.text-muted', 'aka ', otherNames.join(', '))

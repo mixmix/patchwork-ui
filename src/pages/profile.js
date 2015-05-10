@@ -49,9 +49,13 @@ module.exports = function (app) {
     var followers = Object.keys(graphs.follow).filter(function (id) { return graphs.follow[id][pid] })
     var flaggers = Object.keys(graphs.trust).filter(function (id) { return graphs.trust[id][pid] === -1 })
 
-    // name confidence controls
-    var nameTrustDlg
-    if (app.users.nameTrustRanks[pid] !== 1) {
+    // name conflict controls
+    var nameConflictDlg
+    var nameConflicts = []
+    for (var id in app.users.names)
+      if (id != pid && app.users.names[id] == app.users.names[pid])
+        nameConflicts.push(id)
+    if (nameConflicts.length && !isFollowing && app.users.nameTrustRanks[pid] !== 1) {
       var mutualFollowers = inEdges(graphs.follow, true, followedByMe)
       mutualFollowers = (mutualFollowers.length) ?
         h('p', h('strong', 'Mutual Followers:'), h('ul.list-inline', mutualFollowers)) :
@@ -60,21 +64,15 @@ module.exports = function (app) {
             'There is no information about this user.' :
             'Warning: This user is not followed by anyone you follow.')
 
-      nameTrustDlg = h('.well', { style: 'margin: 0 0 5px 62px; background: #fff' },
-        h('h3', { style: 'margin-top: 0' }, (!!app.users.names[pid]) ? 'Is this "'+app.users.names[pid]+'?"' : 'Who is this user?'),
-        h('p',
-          'Users whose names you haven\'t confirmed will have a ',
-          h('span.text-muted', com.icon('user'), '?'),
-          ' next to them.'
-        ),
+      nameConflictDlg = h('.well', { style: 'margin: 0 0 5px 62px; background: #fff' },
+        h('h3', { style: 'margin-top: 0' }, 'Name Conflict!'),
+        h('p', 'This is not the only user named "'+app.users.names[pid]+'," which may be a coincidence, or it may be the sign of an imposter! Make sure this is who you think it is before you follow them.'),
+        h('h4', 'How can I tell?'),
+        h('p', 'Check for mutual friends or warning flags. If you need to be sure, ask your friend for their contact ID. This user\'s contact ID is ', h('strong', pid)),
+        h('h4', 'Conflicting users:'),
+        h('ul', nameConflicts.map(function (id) { return h('li', com.user(app, id)) })),
         mutualFollowers,
-        h('p', (!!app.users.names[pid]) ?
-          [
-            h('button.btn.btn-primary.btn-strong', { onclick: confirmName }, 'Use "'+app.users.names[pid]+'"'),
-            ' or ',
-            h('button.btn.btn-primary.btn-strong', { onclick: rename }, 'Choose Another Name')
-          ] :
-          h('button.btn.btn-primary', { onclick: rename }, 'Choose a Name')),
+        h('p', h('button.btn.btn-primary.btn-strong', { onclick: rename }, 'Choose Another Name')),
         h('small.text-muted', 'Beware of trolls pretending to be people you know!')
       )
     }
@@ -128,7 +126,7 @@ module.exports = function (app) {
     app.setPage('profile', h('.row',
       h('.col-xs-1'),
       h('.col-xs-7',
-        nameTrustDlg,
+        nameConflictDlg,
         h('.header-ctrls', { style: 'margin: 3px 62px' },
           com.nav({
             current: view,
@@ -254,17 +252,6 @@ module.exports = function (app) {
     function rename (e) {
       e.preventDefault()
       app.ui.setNamePrompt(pid)
-    }
-
-    function confirmName (e) {
-      e.preventDefault()
-
-      app.ui.pleaseWait(true, 500)
-      schemas.addContact(app.ssb, pid, { name: app.users.names[pid] }, function (err) {
-        app.ui.pleaseWait(false)
-        if (err) swal('Error While Publishing', err.message, 'error')
-        else app.refreshPage()
-      })
     }
 
     function toggleFollow (e) {
