@@ -15,17 +15,6 @@ exports.icon = function (i) {
   return h('span.glyphicon.glyphicon-'+i)
 }
 
-var nameConfidence =
-exports.nameConfidence = function (id, app) {
-  if (app.users.nameTrustRanks[id] !== 1) {
-    return [' ', h('a', 
-      { title: 'This name was self-assigned and needs to be confirmed.', href: '#/profile/'+id },
-      h('span.text-muted', icon('user'), '?')
-    )]
-  }
-  return ''
-}
-
 var userlink =
 exports.userlink = function (id, text, opts) {
   opts = opts || {}
@@ -36,7 +25,15 @@ exports.userlink = function (id, text, opts) {
 
 var user =
 exports.user = function (app, id) {
-  return [userlink(id, userName(app, id)), nameConfidence(id, app)]
+  var followIcon
+  if (id != app.user.id && (!app.user.profile.assignedTo[id] || !app.user.profile.assignedTo[id].following)) {
+    followIcon = [' ', h('a', 
+      { title: 'This is not somebody you follow.', href: '#/profile/'+id },
+      h('span.text-muted', icon('user'), '?')
+    )]
+  }
+
+  return [userlink(id, userName(app, id)), followIcon]
 }
 
 var userName =
