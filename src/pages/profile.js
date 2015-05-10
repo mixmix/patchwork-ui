@@ -72,13 +72,7 @@ module.exports = function (app) {
         h('h4', 'Conflicting users:'),
         h('ul', nameConflicts.map(function (id) { return h('li', com.user(app, id)) })),
         mutualFollowers,
-        h('p', (!!app.users.names[pid]) ?
-          [
-            h('button.btn.btn-primary.btn-strong', { onclick: confirmName }, 'Use "'+app.users.names[pid]+'"'),
-            ' or ',
-            h('button.btn.btn-primary.btn-strong', { onclick: rename }, 'Choose Another Name')
-          ] :
-          h('button.btn.btn-primary', { onclick: rename }, 'Choose a Name')),
+        h('p', h('button.btn.btn-primary.btn-strong', { onclick: rename }, 'Choose Another Name')),
         h('small.text-muted', 'Beware of trolls pretending to be people you know!')
       )
     }
@@ -258,17 +252,6 @@ module.exports = function (app) {
     function rename (e) {
       e.preventDefault()
       app.ui.setNamePrompt(pid)
-    }
-
-    function confirmName (e) {
-      e.preventDefault()
-
-      app.ui.pleaseWait(true, 500)
-      schemas.addContact(app.ssb, pid, { name: app.users.names[pid] }, function (err) {
-        app.ui.pleaseWait(false)
-        if (err) swal('Error While Publishing', err.message, 'error')
-        else app.refreshPage()
-      })
     }
 
     function toggleFollow (e) {
