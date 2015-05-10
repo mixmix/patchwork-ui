@@ -57,9 +57,7 @@ module.exports = function (app) {
       // :HACK:
       // this view needs to show sync progress
       // would prefer something much cleaner than this!!!
-      var redrawInterval = setInterval(drawSyncList, 5e3)
-      teardown = function () { clearInterval(redrawInterval) }
-      function drawSyncList () {
+      var drawSyncList = function () {
         var done = multicb({ pluck: 1 })
         app.ssb.friends.all('follow', done())
         app.ssb.gossip.peers(done())
@@ -77,6 +75,8 @@ module.exports = function (app) {
           content.appendChild(com.contactSyncListing(app, peers, follows))
         })
       }
+      var redrawInterval = setInterval(drawSyncList, 5e3)
+      teardown = function () { clearInterval(redrawInterval) }
     } else {
       content = com.contactFeed(app, { filter: filterFn, follows: follows })
     }
