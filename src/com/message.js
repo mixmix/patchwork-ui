@@ -42,7 +42,7 @@ var messageShell = function (app, msg, content, opts) {
     com.userHexagon(app, msg.value.author),
     h('.panel-heading',
       h('ul.list-inline',
-        h('li', com.user(msg.value.author, app.users.names[msg.value.author])),
+        h('li', com.user(app, msg.value.author)),
         h('li', com.a('#/msg/'+msg.key, u.prettydate(new Date(msg.value.timestamp), true), { title: 'View message msg' })),
         h('li', h('a', { title: 'Reply', href: '#', onclick: onreply }, 'reply')),
         h('li.pull-right', h('a', { href: '/msg/'+msg.key, target: '_blank' }, 'as JSON')))),
