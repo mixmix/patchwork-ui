@@ -28,9 +28,9 @@ module.exports = function (app, opts) {
     h('p',
       h('button.btn.btn-action.btn-strong.pull-right', { onclick: onsave }, 'Save'),
       h('button.btn.btn-action', { onclick: oncancel }, 'Cancel')))
-  var el = h('.image-uploader.well',
+  var el = h('.image-uploader',
     h('form', 
-      h('label', 'Upload Picture'), h('br'),
+      h('label', 'Upload Avatar'), h('br'),
       fileInput),
     editor)
 

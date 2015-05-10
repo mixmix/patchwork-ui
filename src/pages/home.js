@@ -28,6 +28,7 @@ module.exports = function (app) {
   app.setPage('home', h('.row',
     h('.col-xs-1'),
     h('.col-xs-7', 
+      com.welcomehelp(app),
       h('.header-ctrls', com.composer.header(app)), 
       com.messageFeed(app, { filter: filterFn, loadmore: true, infinite: true })),
     h('.col-xs-3.right-column',

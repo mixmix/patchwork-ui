@@ -2,6 +2,7 @@
 var h = require('hyperscript')
 var baseEmoji = require('base-emoji')
 var u = require('../lib/util')
+var schemas = require('ssb-msg-schemas')
 
 var a =
 exports.a = function (href, text, opts) {
@@ -176,6 +177,40 @@ exports.sidenav = function (app) {
       return h('p.side-nav-'+page[0], a('#/'+page[1], page[2]))
     })
   )
+}
+
+var welcomehelp =
+exports.welcomehelp = function (app) {
+  if (!app.user.profile)
+    return
+  if (!app.user.profile.self.profilePic) {
+    return h('.welcome-help',
+      h('.well',
+        h('h2', 'Hi, ', app.user.profile.self.name, '! ', h('small', 'You need an avatar.')),
+        exports.imageUploader(app, { onupload: function (hasher) {
+          var link = {
+            ext: hasher.digest,
+            size: hasher.size,
+            type: 'image/png',
+            width: 275,
+            height: 275
+          }
+          app.ui.pleaseWait(true, 500)
+          schemas.addContact(app.ssb, app.user.id, { profilePic: link }, function (err) {
+            app.ui.pleaseWait(false)
+            if (err) swal('Error While Publishing', err.message, 'error')
+            else app.refreshPage()        
+          })
+        }})
+      )
+    )
+  }
+  if (Object.keys(app.user.profile.assignedTo).length == 0) {
+    return h('.welcome-help',
+      h('.well',
+        h('h2', 'Nice photo! ', h('small', 'You can change it in your profile\'s ', h('a', { href: '#/profile/'+app.user.id+'?view=avatar' }, 'avatar page'), '.')),
+        h('p', 'Now we need to get you connected. ', h('a', { href: '#', onclick: app.ui.inviteModal }, 'Use an invite'), ' to join the global network.')))
+  }
 }
 
 var sidehelp =

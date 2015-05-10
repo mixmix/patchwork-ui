@@ -18,7 +18,7 @@ module.exports = function (app) {
         h('.panel.panel-default',
           h('.panel-body',
             h('.form-group',
-              h('label.control-label', 'Welcome to Secure Scuttlebutt! What should your nickname be?'),
+              h('label.control-label', 'Welcome to Scuttlebutt! What should your nickname be?'),
               input
             )
           )

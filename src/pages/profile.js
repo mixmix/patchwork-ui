@@ -93,8 +93,10 @@ module.exports = function (app) {
             pics.push(profilePic(given.profilePic, userid))
         })
       }
+      var uploader = com.imageUploader(app, { onupload: onImageUpload })
+      uploader.classList.add('well')
       content = h('.profile-pics',
-        com.imageUploader(app, { onupload: onImageUpload }),
+        uploader,
         h('br'),
         pics)
       content.style.marginLeft = '62px'
