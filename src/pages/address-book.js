@@ -52,7 +52,6 @@ module.exports = function (app) {
     var content, teardown
     if (currentList == 'sync') {
       content = h('div')
-      drawSyncList()
 
       // :HACK:
       // this view needs to show sync progress
@@ -75,6 +74,7 @@ module.exports = function (app) {
           content.appendChild(com.contactSyncListing(app, peers, follows))
         })
       }
+      drawSyncList()
       var redrawInterval = setInterval(drawSyncList, 5e3)
       teardown = function () { clearInterval(redrawInterval) }
     } else {
