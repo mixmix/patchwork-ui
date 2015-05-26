@@ -13,9 +13,7 @@ module.exports = function (app) {
 
   app.setPage('inbox', h('.row',
     h('.col-xs-1'),
-    h('.col-xs-7', 
-      h('.header-ctrls', com.composer.header(app)),
-      com.messageFeed(app, { feed: feedFn, infinite: true })),
+    h('.col-xs-7', com.messageFeed(app, { feed: feedFn, infinite: true })),
     h('.col-xs-3.right-column',
       h('.right-column-inner', com.friendsHexagrid(app, { size: 80 })),
       com.sidehelp(app)
