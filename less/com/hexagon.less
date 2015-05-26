@@ -207,6 +207,76 @@
   }
 }
 
+.hexagon-80 {
+  position: relative;
+  width: 80px; 
+  height: 46.19px;
+  margin: 23.09px 0;
+  background-image: url(http://csshexagon.com/img/meow.jpg);
+  background-size: auto 92.3760px;
+  background-position: center;
+
+  .hexTop,
+  .hexBottom {
+    position: absolute;
+    z-index: 1;
+    width: 56.57px;
+    height: 56.57px;
+    overflow: hidden;
+    -webkit-transform: scaleY(0.5774) rotate(-45deg);
+    -ms-transform: scaleY(0.5774) rotate(-45deg);
+    transform: scaleY(0.5774) rotate(-45deg);
+    background: inherit;
+    left: 11.72px;
+  }
+
+  /*counter transform the bg image on the caps*/
+  .hexTop:after,
+  .hexBottom:after {
+    content: "";
+    position: absolute;
+    width: 80.0000px;
+    height: 46.188021535170066px;
+    -webkit-transform:  rotate(45deg) scaleY(1.7321) translateY(-23.0940px);
+    -ms-transform:      rotate(45deg) scaleY(1.7321) translateY(-23.0940px);
+    transform:          rotate(45deg) scaleY(1.7321) translateY(-23.0940px);
+    -webkit-transform-origin: 0 0;
+    -ms-transform-origin: 0 0;
+    transform-origin: 0 0;
+    background: inherit;
+
+    /* Keeps borders smooth in webkit */
+    backface-visibility: hidden;
+  }
+
+  .hexTop {
+    top: -28.2843px;
+  }
+
+  .hexTop:after {
+    background-position: center top;
+  }
+
+  .hexBottom {
+    bottom: -28.2843px;
+  }
+
+  .hexBottom:after {
+    background-position: center bottom;
+  }
+
+  &:after {
+    content: "";
+    position: absolute;
+    top: 0.0000px;
+    left: 0;
+    width: 80.0000px;
+    height: 46.1880px;
+    z-index: 2;
+    background: inherit;
+  }
+}
+
 .hexagon-275 {
   position: relative;
   width: 275px; 
@@ -279,8 +349,7 @@
 
 .user-hexagrid {
   display: inline-block;
-  margin-bottom: 2em;
-  border-radius: 5px;
+  margin: 10px 0;
 
   > div {
     .user-hexagon {
@@ -316,6 +385,19 @@
     }
     .user-hexagon {
       margin: -11px 1px -11px 0;
+    }
+  }
+}
+
+.user-hexagrid-80 {
+  .user-hexagrid;
+
+  > div {
+    &:nth-child(even) {
+      margin-left: 40px;
+    }
+    .user-hexagon {
+      margin: -13px 1px -13px 0;
     }
   }
 }
