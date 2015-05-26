@@ -146,39 +146,19 @@ module.exports = function (app, opts) {
 
     // act on el
     if (el.classList.contains('message-summary'))
-      onthreadmodal(e, el)
+      onopen(e, el)
     if (el.classList.contains('upvote'))
       onvote(e, el, 1)
     if (el.classList.contains('downvote'))
       onvote(e, el, -1)
   }
 
-  function onthreadmodal (e, el) {
+  function onopen (e, el) {
     e.preventDefault()
     e.stopPropagation()
     var key = el.dataset.msg
     if (key)
-      threadmodal(key)
-  }
-  function threadmodal (key) {
-    u.getParentThread(app, key, function (err, thread) {
-      if (err)
-        return swal('Error While Fetching', err.message, 'error')
-      var modal = app.ui.modal(com.messageThread(app, thread, {
-        onrender: function (msg) {
-          // update read state
-          app.ssb.phoenix.markRead(msg.key)
-          try {
-            // remove unread highlighting from the feed
-            document.body.querySelector('.message-summary[data-msg="'+msg.key+'"]').classList.remove('unread')
-          } catch (e) {}
-        },
-        onpost: function () {
-          modal.close()
-          threadmodal(key)
-        }
-      }))
-    })
+      window.location.hash = '#/msg/'+key
   }
   function onvote (e, el, vote) {
     e.preventDefault()

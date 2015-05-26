@@ -15,7 +15,7 @@ module.exports = function (app) {
       h('.header-ctrls', com.composer.header(app)),
       com.messageFeed(app, { infinite: true })),
     h('.col-xs-3.right-column',
-      h('.right-column-inner', com.friendsHexagrid(app)),
+      h('.right-column-inner', com.friendsHexagrid(app, { size: 80 })),
       com.sidehelp(app)
     )
   ))
