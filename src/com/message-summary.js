@@ -28,7 +28,7 @@ function getSummary (app, msg) {
       },
       post: function () { 
         if (!c.text) return
-        return [author(app, msg, fetchReplyLink(app, msg)), md(c.text), com.messageAttachments(app, msg)]
+        return md(c.text)
       },
       fact: function () { 
         if (!c.text) return
@@ -131,8 +131,8 @@ module.exports = function (app, msg, opts) {
   }
 
   var msgSummary = h('.message-summary', { 'data-msg': msg.key },
-    com.userHexagon(app, msg.value.author, 45),
-    h('.message-summary-inner', content, com.messageStats(app)))
+    com.userHexagon(app, msg.value.author, 30),
+    h('.message-summary-inner', com.messageStats(app), content))
 
   fetchRowState(app, msgSummary, msg.key)
 
@@ -147,6 +147,8 @@ module.exports.fetchRowState = function (app, el, mid) {
   app.ssb.phoenix.isRead(mid, function (err, isread) {
     if (!err && !isread)
       el.classList.add('unread')
+    else
+      el.classList.add('read')
   })
   app.ssb.relatedMessages({ id: mid, count: true }, function (err, thread) {
     if (thread)
@@ -158,14 +160,6 @@ var setRowState =
 module.exports.setRowState = function (el, state) {
   if ('comments' in state)
     el.querySelector('.message-stats .comments').dataset.amt = state.comments
-  if ('voteTally' in state)
-    el.querySelector('.message-stats .vote-tally').dataset.amt = state.voteTally
-  if ('uservote' in state) {
-    var up   = (state.uservote === 1)  ? 'add' : 'remove'
-    var down = (state.uservote === -1) ? 'add' : 'remove'
-    el.querySelector('.message-stats .upvote').classList[up]('selected')
-    el.querySelector('.message-stats .downvote').classList[down]('selected')
-  }
 }
 
 function ago (msg) {
@@ -176,7 +170,7 @@ function ago (msg) {
 }
 
 function author (app, msg, addition) {
-  return h('p', com.user(app, msg.value.author), ' ', ago(msg), addition)
+  return h('p.message-summary-author', com.user(app, msg.value.author), ' ', ago(msg), addition)
 }
 
 function fetchReplyLink (app, msg) {

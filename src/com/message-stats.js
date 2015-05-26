@@ -37,7 +37,7 @@ module.exports = function (app, msg, opts) {
 
   return h('.message-stats',
     h('div',
-      h('span.stat', upvote, voteTally, downvote),
+      h('span.stat.votes', upvote, voteTally, downvote),
       h('span.stat.comments', { 'data-amt': stats.comments||0 }, com.icon('comment'))),
     upvotersGrid,
     downvotersGrid

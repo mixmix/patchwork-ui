@@ -16,6 +16,10 @@ module.exports = function (app) {
     if (c.type !== 'post' && c.type !== 'fact')
       return false
 
+    // no replies
+    if (c.repliesTo)
+      return false
+
     // filter out people not followed directly
     if (a !== app.user.id && (!myprofile.assignedTo[a] || !myprofile.assignedTo[a].following))
       return false

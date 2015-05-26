@@ -4,20 +4,20 @@
   overflow: hidden;
   cursor: pointer;
   color: #555;
-  margin: 5px 0;
 
   .user-hexagon {
     float: left;
-    padding: 8px;
+    padding-top: 4px;
   }
 
   .message-summary-inner {
-    margin-left: 62px;
+    margin-left: 36px;
     word-break: break-word;
-    background: #fff;
-    border: 1px solid #ddd;
-    border-radius: 3px;
+    border-bottom: 1px solid #ddd;
     padding: 10px 10px 0;
+  }
+  &.unread .message-summary-inner {
+    background: #fff;
   }
 
   .markdown {
@@ -28,16 +28,14 @@
       padding-left: 2em;
     }
   }
-  .attachments {
-    padding: 0 0 1em;
-    a {
-      margin-right: 1em;
-      img {
-        max-width: 200px;
-        max-height: 200px;
-        border: 1px solid #999;
-        border-radius: 2px;
-      }
+
+  .message-stats {
+    float: right;
+    .votes {
+      display: none;
+    }
+    .glyphicon {
+      color: #B9C1C7;
     }
   }
   :not(.markdown) h4 {
