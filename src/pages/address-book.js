@@ -82,8 +82,8 @@ module.exports = function (app) {
     }
 
     app.setPage('address-book', h('.row',
-      h('.col-xs-2'),
-      h('.col-xs-6',
+      h('.col-xs-1'),
+      h('.col-xs-7', { style: 'padding-left: 35px' },
         h('.header-ctrls',
           com.nav({
             current: currentList,

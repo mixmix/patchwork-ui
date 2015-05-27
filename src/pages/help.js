@@ -142,7 +142,7 @@ module.exports = function (app) {
   ]
 
   app.setPage('help', h('.row',
-    h('.col-xs-2'),
-    h('.col-xs-5', content)
+    h('.col-xs-1'),
+    h('.col-xs-5', { style: 'padding-left: 35px' }, content)
   ))
 }
