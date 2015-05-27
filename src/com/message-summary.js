@@ -144,15 +144,30 @@ var fetchRowState =
 module.exports.fetchRowState = function (app, el, mid) {
   mid = mid || el.dataset.msg
   if (!mid) return
-  app.ssb.phoenix.isRead(mid, function (err, isread) {
-    if (!err && !isread)
-      el.classList.add('unread')
-    else
-      el.classList.add('read')
-  })
   app.ssb.relatedMessages({ id: mid, count: true }, function (err, thread) {
-    if (thread)
+    if (thread) {
       setRowState(el, u.calcMessageStats(app, thread, statsOpts))
+
+      // check if any of the messages are unread
+      var keys = []
+      var first = true
+      acc(thread)
+      function acc (msg) {
+        if (first || msg.value.content.type == 'post')
+          keys.push(msg.key)
+        first = false
+        if (msg.related)
+          msg.related.forEach(acc)
+      }
+      app.ssb.phoenix.isRead(keys, function (err, isreads) {
+        for (var i=0; i < isreads.length; i++) {
+          if (!isreads[i]) {
+            el.classList.add('unread')
+            return
+          }
+        }
+      })
+    }
   })
 }
 
