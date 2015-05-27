@@ -205,11 +205,6 @@ function refreshPage (e) {
 
     // lookup the page
     var page = pages[phoenix.page.id]
-    if (!page) {
-      var pageCom = phoenix.get('page', { id: phoenix.page.id })
-      if (pageCom)
-        page = pageShell(pageCom)
-    }
 
     // cleanup the old page
     h.cleanup()
@@ -226,50 +221,6 @@ function refreshPage (e) {
     phoenix.ui.pleaseWait(false)
     console.debug('page loaded in', (Date.now() - starttime), 'ms')
   })
-}
-
-// add a component to the registry
-function add (type, config, fn) {
-  var r = phoenix.registry[type]
-  if (!r) r = phoenix.registry[type] = []
-  if (typeof config == 'function') {
-    fn = config
-    config = {}
-  }
-  config.id = r.length
-  r.push({ config: config, fn: fn })
-}
-
-// get a component from the registry
-function get (type, params) {
-  params = params || {}
-  var r = phoenix.registry[type] || []
-  for (var i=0; i < r.length; i++) {
-    if (registryTest(r[i], params))
-      return r[i]
-  }
-  return null
-}
-
-// get components from the registry
-function getAll (type, params) {
-  var c = []
-  params = params || {}
-  var r = phoenix.registry[type] || []
-  for (var i=0; i < r.length; i++) {
-    if (registryTest(r[i], params))
-      c.push(r[i])
-  }
-  return c
-}
-
-// helper for registry queries
-function registryTest (item, params) {
-  for (var k in params) {
-    if (item.config[k] != params[k])
-      return false
-  }
-  return true
 }
 
 // update ui to show new messages are available
@@ -289,16 +240,6 @@ function setNewMessageCount (n) {
     } catch (e) {}
   } else
     document.title = 'Scuttlebutt'
-}
-
-// provide a shell for pages from the registry
-function pageShell (pagecom) {
-  return function () {
-    phoenix.setPage('plugin-page',
-      h('.row',
-        h('.col-xs-1', com.sidenav(phoenix)),
-        h('.col-xs-11', pagecom.fn())))
-  }
 }
 
 // render a new page
