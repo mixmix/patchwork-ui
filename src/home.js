@@ -149,10 +149,6 @@ function setupRpcConnection () {
   pull(phoenix.ssb.phoenix.createEventStream(), pull.drain(function (event) {
     if (event.type == 'home-add')
       setNewMessageCount(getNewMessageCount() + 1)
-    if (event.type == 'inbox-add')
-      setInboxUnreadCount((phoenix.ui.indexCounts.inboxUnread||0) + 1)
-    if (event.type == 'inbox-remove')
-      setInboxUnreadCount((phoenix.ui.indexCounts.inboxUnread||0) - 1)
   }))
 }
 
@@ -293,12 +289,6 @@ function setNewMessageCount (n) {
     } catch (e) {}
   } else
     document.title = 'Scuttlebutt'
-}
-function setInboxUnreadCount (n) {
-  n = (n<0)?0:n
-  phoenix.ui.indexCounts.inboxUnread = n
-  try { document.querySelector('.pagenav-inbox .count').innerHTML = n }
-  catch (e) {}
 }
 
 // provide a shell for pages from the registry

@@ -144,7 +144,6 @@ exports.pagenav = function (app) {
   var pages = [
   //[id, path, label],
     ['home',         '',             [icon('home'), ' home']],
-    ['inbox',        'inbox',        [icon('inbox'), ' inbox (', h('span.count', app.ui.indexCounts.inboxUnread||0), ')']],
     ['feed',         'feed',         [icon('list'), ' all data']],
     ['address-book', 'address-book', [icon('user'), ' network']],
     ['help',         'help',         [icon('question-sign'), ' help']]
