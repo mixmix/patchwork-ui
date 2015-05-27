@@ -83,7 +83,7 @@ module.exports = function (app) {
 
     app.setPage('address-book', h('.row',
       h('.col-xs-2'),
-      h('.col-xs-5',
+      h('.col-xs-6',
         h('.header-ctrls',
           com.nav({
             current: currentList,
@@ -99,12 +99,14 @@ module.exports = function (app) {
             onsearch: onsearch
           }) : '')),
         content),
-      h('.col-xs-4.right-column',
+      h('.col-xs-3.right-column',
         h('.right-column-inner',
+          h('h4.text-muted.monospace', 'gossip_network: {'),
           h('table.table.peers',
-            h('thead', h('tr', h('th', 'Gossip Network'))),
+            // h('thead', h('tr', h('th', 'Gossip Network'))),
             h('tbody', com.peers(app, peers))
-          )
+          ),
+          h('h4.text-muted.monospace', '}')
         ),
         com.sidehelp(app))
     ), { onPageTeardown: teardown })

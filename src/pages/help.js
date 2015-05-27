@@ -3,7 +3,7 @@ var h = require('hyperscript')
 var com = require('../com')
 
 function section (title, content) {
-  return h('div', h('h2.text-muted', title), content)
+  return h('div', h('h2.text-muted.monospace', title+': ['), content, h('h2.text-muted.monospace', ']'))
 }
 
 function panel (title, content) {
@@ -12,7 +12,7 @@ function panel (title, content) {
 
 module.exports = function (app) {
   var content = [
-    section('About', [
+    section('about', [
       panel('About', [
         'Secure Scuttlebutt is a distributed, free, and open-source network.',
         h('br'), h('br'),
@@ -29,7 +29,7 @@ module.exports = function (app) {
         h('li', com.a('https://GitHub.com/ssbc/scuttlebot/issues', 'Bug Tracker'), ' - file issues here.')
       )])
     ]),
-    section('Posts', [
+    section('posts', [
       panel('Posts', [
         'Posts in Secure Scuttlebutt are public and readable by anybody.',
         h('br'),
@@ -46,7 +46,7 @@ module.exports = function (app) {
          h('.text-muted', { style: 'padding: 20px; padding-bottom: 10px' }, 'eg ":smile:" = ', h('img.emoji', { src: '/img/emoji/smile.png', height: 20, width: 20})) 
       ])
     ]),
-    section('Friends', [
+    section('friends', [
       panel('Contacts / Following', [
         'Scuttlebutt searches the network for messages from your contacts. ',
         h('button.btn.btn-primary', { onclick: app.ui.followPrompt }, 'Add a contact')
@@ -60,7 +60,7 @@ module.exports = function (app) {
       ]),
       panel('', ['Your ID: ', app.user.id])
     ]),
-    section('Pubs', [
+    section('pubs', [
       panel('Pub Servers', [
         'Pub servers are bots that host your messages for other people to download. ',
         'Since they\'re on the public web and always online, they help the network stay available.', h('br'), 
@@ -79,7 +79,7 @@ module.exports = function (app) {
         '.'
       ])
     ]),
-    section('Names', [
+    section('names', [
       panel('Conflicting Names', [
         'Names are not unique in Secure Scuttlebutt. ',
         '(Somebody else could use "', app.users.names[app.user.id], '.")'
@@ -88,7 +88,7 @@ module.exports = function (app) {
         'Open your ', com.a('#/address-book', 'address book'), ' and click the pencil next to somebody\'s name to change it.'
       ])
     ]),
-    section('Privacy', [
+    section('privacy', [
       panel('Privacy in Secure Scuttlebutt', [
         'Secure Scuttlebutt is anti-spyware: it runs on your computer and keeps your personal data private.', h('br'),
         h('br'),
