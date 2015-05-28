@@ -351,13 +351,17 @@
   position: relative;
 
   .hovercard {
+    .monospace;
     display: none;
     position: absolute;
     z-index: 10000;
-    padding: 0 10px;
+    padding: 0 10px 0 0;
     white-space: pre;
     color: #2C6117;
     background-color: #D1FF81;
+    border: 1px solid #B4DD78;
+    border-left: 0;
+    border-right: 0;
     opacity: 1;
 
     a.user-link {
@@ -418,6 +422,7 @@
 
 .user-hexagrid-80 {
   .user-hexagrid;
+  width: 285px;
 
   > div {
     &:nth-child(even) {
