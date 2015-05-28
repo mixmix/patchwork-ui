@@ -73,7 +73,9 @@ exports.hexagon = function (img, size) {
 
 var userHexagon =
 exports.userHexagon = function (app, id, size) {
-  return h('a.user-hexagon', { href: '#/profile/'+id, title: userName(app, id) }, hexagon(profilePicUrl(app, id), size))
+  return h('a.user-hexagon', { href: '#/profile/'+id },
+    h('.hovercard', '// ', user(app, id), ' ¬'),
+    hexagon(profilePicUrl(app, id), size))
 }
 
 var userHexagrid =
