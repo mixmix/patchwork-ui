@@ -103,8 +103,8 @@ module.exports = function (app, parent, opts) {
           app.ui.pleaseWait(false)
           if (err) swal('Error While Publishing', err.message, 'error')
           else {
-            // auto-subscribe
             app.ssb.phoenix.subscribe(msg.key)
+            app.ssb.phoenix.markRead(msg.key)
             opts && opts.onpost && opts.onpost()
           }
         })
