@@ -15,10 +15,10 @@ module.exports = function (app) {
       h('br'), h('br'),
       h('h2', 'New account'),
       h('form.setup-form', { onsubmit: post },
-        h('.panel.panel-default',
+        h('.panel.panel-default', { style: 'border: 0' },
           h('.panel-body',
             h('.form-group',
-              h('label.control-label', 'Welcome to Scuttlebutt! What should your nickname be?'),
+              h('label.control-label', { style: 'font-weight: normal' }, 'Welcome to ', h('strong', 'Secure Scuttlebutt!'), ' What should your nickname be?'),
               input
             )
           )
