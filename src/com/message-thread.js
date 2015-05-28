@@ -81,18 +81,17 @@ function replies (app, thread, opts) {
   // collect replies
   var r = []
   ;(thread.related || []).forEach(function(reply) {
+    if (reply.value.content.type !== 'vote') { // dont render vote messages, it'd be a mess     
+      var el = com.message(app, reply, opts)
+      if (el) {
+        r.push(el)
+        opts && opts.onrender && opts.onrender(reply)
+      }
+    }
+
     var subreplies = replies(app, reply, opts)
     if (subreplies)
-      r.unshift(subreplies)
-
-    if (reply.value.content.type === 'vote')
-      return // dont render vote messages, it'd be a mess
-
-    var el = com.message(app, reply, opts)
-    if (el) {
-      r.unshift(el)
-      opts && opts.onrender && opts.onrender(reply)
-    }
+      r.push(subreplies)
   })
 
   if (r.length)

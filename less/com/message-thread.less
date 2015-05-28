@@ -10,16 +10,15 @@
     }
   }
 
+  word-break: break-word;
+
   .message-thread-top {
     background: #fff;
     border: 1px solid #ccc;
-    margin: 0.5em 0 2px;
-    border-radius: 3px;
 
     ul.list-inline.threadmeta {
       margin: 0;
       padding-right: 5px;
-      background: #ddd;
       a {
         color: #666;
       }
@@ -65,12 +64,21 @@
     }
     .message-stats {
       margin: 0 2em 1em;
+
+      .comments {
+        display: none;
+      }
     }
   }
   .message-replies {
     .message {
       background: #fff;
       border: 1px solid #ccc;
+      border-top: 0;
+
+      .message-stats .comments {
+        display: none;
+      }
     }
   }
   .pretty-raw {
