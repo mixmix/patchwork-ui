@@ -48,9 +48,9 @@ module.exports = function (app, parent, opts) {
   // handlers
 
   function onPostTextChange (e) {
-    updateSize()
+    var len = updateSize()
     preview.innerHTML = (!!textarea.value) ? mentions.preview(markdown.block(textarea.value), namesList) : ''
-    if (textarea.value.trim())
+    if (textarea.value.trim() && len <= 7800)
       enable()
     else
       disable()
@@ -243,9 +243,10 @@ module.exports = function (app, parent, opts) {
   // 700b is roughly how big we can let it be before the header hits the 1kb limit
   function updateSize () {
     var len = estimateSize() - headerSizeEstimate
-    postBtn.dataset.label = len + ' / 700'
-    if (len > 700) postBtn.classList.add('error')
+    postBtn.dataset.label = len + ' / 7800'
+    if (len > 7800) postBtn.classList.add('error')
     else postBtn.classList.remove('error')
+    return len
   }
 
   return form
