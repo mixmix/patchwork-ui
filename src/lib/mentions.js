@@ -1,6 +1,8 @@
 var mlib = require('ssb-msgs')
 
-var mentionRegex = /(\s|>|^)@([^\s^<]+)/g;
+var mentionRegex = 
+exports.regex = /([^A-z0-9_-]|^)@([A-z0-9\._-]+)/g
+
 var replace =
 exports.replace = function (str, each, spansOnly) {
   return str.replace(mentionRegex, function(full, $1, name) {

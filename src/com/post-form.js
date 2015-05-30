@@ -8,9 +8,7 @@ var pull = require('pull-stream')
 var pushable = require('pull-pushable')
 var util = require('../lib/util')
 var markdown = require('../lib/markdown')
-var mentions = require('../lib/mentions')
-
-var mentionRegex = /(\s|>|^)@([^\s^<]+)/g
+var mentionslib = require('../lib/mentions')
 
 module.exports = function (app, parent, opts) {
 
@@ -49,7 +47,7 @@ module.exports = function (app, parent, opts) {
 
   function onPostTextChange (e) {
     var len = updateSize()
-    preview.innerHTML = (!!textarea.value) ? mentions.preview(markdown.block(textarea.value), namesList) : ''
+    preview.innerHTML = (!!textarea.value) ? mentionslib.preview(markdown.block(textarea.value), namesList) : ''
     if (textarea.value.trim() && len <= 7800)
       enable()
     else
@@ -76,7 +74,7 @@ module.exports = function (app, parent, opts) {
         // collect any mentions
         var match
         var mentions = [], mentionedIds = {}
-        while ((match = mentionRegex.exec(text))) {
+        while ((match = mentionslib.regex.exec(text))) {
           var name = match[2]
           var id = idsByName[name]
           if (mlib.isHash(id)) {
@@ -218,7 +216,7 @@ module.exports = function (app, parent, opts) {
     // collect mentions
     var match
     var mentions = [], mentionedIds = {}
-    while ((match = mentionRegex.exec(text))) {
+    while ((match = mentionslib.regex.exec(text))) {
       var name = match[2]
       
       if (mentionedIds[name])
