@@ -30,18 +30,19 @@ module.exports = function (app) {
 
   // handlers
 
+  var badNameCharsRegex = /[^A-z0-9\._-]/
   function checkInput (e) {
-    var valid = true
+    var valid = true, badchar
     if (!input.value)
       valid = false
-    else if(/ /.test(input.value)) {
+    else if((badchar = badNameCharsRegex.exec(input.value))) {
       valid = false
-      issue.textContent = 'Spaces are not allowed'
+      issue.innerHTML = 'Invalid character <code>'+badchar+'</code>. Name must only include the following characters: <code>A-z 0-9 . _ -</code>'
     }
 
     if (valid) {
       postBtn.removeAttribute('disabled')
-      issue.textContent = ''
+      issue.innerHTML = ''
     } else
       postBtn.setAttribute('disabled', true)
   }
