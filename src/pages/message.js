@@ -45,6 +45,7 @@ module.exports = function (app) {
       h('.col-xs-1'),
       h('.col-xs-7', content),
       h('.col-xs-3.right-column.extra-space',
+        com.networkGraph(app, { drawLabels: false, touchEnabled: false, mouseEnabled: false, mouseWheelEnabled: false }),
         h('.right-column-inner', com.friendsHexagrid(app, { size: 80 })),
         com.sidehelp(app)
       )
