@@ -1,6 +1,25 @@
 var h = require('hyperscript')
 var com = require('./index')
 
+sigma.canvas.nodes.square = function (node, context, settings) {
+  var prefix = settings('prefix') || '',
+      size = node[prefix + 'size']
+
+  context.strokeStyle = node.color || settings('defaultNodeColor')
+  context.fillStyle = 'rgba(238,238,238,0.7)'
+  context.beginPath()
+  context.rect(
+    node[prefix + 'x'] - size,
+    node[prefix + 'y'] - size,
+    size * 2,
+    size * 2
+  )
+
+  context.closePath()
+  context.fill()
+  context.stroke()
+}
+
 module.exports = function (app, opts) {
   var container = h('.network-graph')
   app.ssb.friends.all(function (err, friends) {
@@ -18,10 +37,11 @@ module.exports = function (app, opts) {
       if (yr < 0.55 && yr >= 0.5) yr += 0.1
       graph.nodes.push({
         id: id,
+        type: 'square',
         label: com.userName(app, id),
         x: (id == app.user.id) ? 1.5 : xr * (opts.w||3),
         y: (id == app.user.id) ? 0.5 : yr * (opts.h||1),
-        size: Math.min((inbounds+1) / 30, 1),
+        size: inbounds+1,
         color: (id == app.user.id) ? '#970' : (friends[app.user.id][id] ? '#790' : (friends[id][app.user.id] ? '#00c' : '#666'))
       })
 
@@ -52,9 +72,9 @@ module.exports = function (app, opts) {
     }
 
     // render
-    var s = new sigma({
-      container: container,
+    window.s = new sigma({
       graph: graph,
+      renderer: { container: container, type: 'canvas' },
       settings: opts
     })
   })
