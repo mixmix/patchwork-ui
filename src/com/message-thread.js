@@ -12,9 +12,7 @@ function getContent (app, msg) {
     return ({
       post: function () { 
         if (!c.text) return
-        var div = h('.markdown', { innerHTML: mentions.post(markdown.block(c.text), app, msg) })
-        div.style.fontSize = '150%'
-        return div
+        return h('.markdown', { innerHTML: mentions.post(markdown.block(c.text), app, msg) })
       }
     })[c.type]()
   } catch (e) { }
