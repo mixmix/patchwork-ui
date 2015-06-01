@@ -126,7 +126,7 @@ exports.friendsHexagrid = function (app, opts) {
       friends.push(p.id)
   }
   if (friends.length)
-    return [h('h4.text-muted.monospace', 'friends: {'), userHexagrid(app, friends, opts), h('h4.text-muted.monospace', '}')]
+    return userHexagrid(app, friends, opts)
 }
 
 var toEmoji =
