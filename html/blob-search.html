@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Searching... - Scuttlebutt</title>
+    <meta charset="utf-8">
+    <link rel="shortcut icon" type="image/png" href="/img/icon.png"/>
+    <link rel="stylesheet" type="text/css" href="/css/home.css">
+  </head>
+  <body>
+    <div id="page-nav">
+      <ul>
+        <li class="pagenav-home"><a href="/#/"><span class="glyphicon glyphicon-envelope"></span> msgs</a></li>
+        <li class="pagenav-feed"><a href="/#/feed"><span class="glyphicon glyphicon-list"></span> all data</a></li>
+        <li class="pagenav-address-book"><a href="/#/address-book"><span class="glyphicon glyphicon-user"></span> network</a></li>
+        <li class="pagenav-help"><a href="/#/help"><span class="glyphicon glyphicon-question-sign"></span> help</a></li>
+      </ul>
+    </div>
+    <div id="page-container">
+      <div class="row">
+        <div class="col-xs-8 col-xs-push-2">
+          <h2 class="monospace">Scanning the network for this file...</h2>
+          <p class="monospace">File <code id="fileid">...</code> has not been downloaded yet.</p>
+          <p class="monospace">Your computer is querying other computers for the file. This may take some time.</p>
+          <div class="spinner">
+            <div class="cube1"></div>
+            <div class="cube2"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="/manifest.js"></script>
+    <script src="/js/blob-search.js"></script>
+  </body>
+</html>

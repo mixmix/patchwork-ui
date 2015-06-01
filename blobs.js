@@ -23,8 +23,7 @@ module.exports = function(server) {
         if (err || !has) {
           if ('sp' in params) {
             // Blob search page
-            res.write('search page :TODO:')
-            res.end()
+            fs.createReadStream(path.join(__dirname, 'html/blob-search.html')).pipe(res)
           }
           else if ('bimg' in params) {
             // Backup asset
