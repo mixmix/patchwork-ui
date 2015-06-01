@@ -27,7 +27,7 @@ module.exports = function (app) {
       com.welcomehelp(app),
       h('.header-ctrls', com.composer.header(app)), 
       com.messageFeed(app, { feed: app.ssb.phoenix.createHomeStream, filter: filterFn, loadmore: true, infinite: true })),
-    h('.col-xs-3.right-column',
+    h('.col-xs-3.right-column.extra-space',
       h('.right-column-inner', com.friendsHexagrid(app, { size: 80 })),
       com.sidehelp(app)
     )

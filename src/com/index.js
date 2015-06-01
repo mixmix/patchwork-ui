@@ -165,17 +165,17 @@ var pagenav =
 exports.pagenav = function (app) {
   var pages = [
   //[id, path, label],
-    ['home',         '',             [icon('envelope'), ' msgs']],
-    ['feed',         'feed',         [icon('list'), ' all data']],
-    ['address-book', 'address-book', [icon('user'), ' network']],
-    ['help',         'help',         [icon('question-sign'), ' help']]
+    ['home',         '',             [icon('envelope'), h('div', '_msgs')]],
+    ['feed',         'feed',         [icon('list'), h('div', '_all')]],
+    ['address-book', 'address-book', [icon('user'), h('div', '_network')]],
+    ['help',         'help',         [icon('question-sign'), h('div', '_help')]]
   ]
 
-  return h('ul', pages.map(function (page) {
-      if (page[0] == app.page.id)
-        return h('li.selected.pagenav-'+page[0], a('#/'+page[1], page[2]))
-      return h('li.pagenav-'+page[0], a('#/'+page[1], page[2]))
-    }))
+  return h('ul.monospace', pages.map(function (page) {
+    if (page[0] == app.page.id)
+      return h('li.selected.pagenav-'+page[0], a('#/'+page[1], page[2]))
+    return h('li.pagenav-'+page[0], a('#/'+page[1], page[2]))
+  }))
 }
 
 var sidenav =

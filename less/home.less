@@ -50,14 +50,6 @@
 @import "bootstrap/utilities.less";
 @import "bootstrap/responsive-utilities.less";
 
-// CodeMirror
-@import "codemirror/codemirror.less";
-@import "codemirror/theme-monokai.less";
-.CodeMirror pre {
-  font-size: 12px;
-  font-family: Consolas, Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace, serif;
-}
-
 // Phoenix styles
 @import "com/page-nav.less";
 @import "com/spinner.less";
@@ -96,12 +88,11 @@ html {
 body {
   background: #eee;
 }
-#page-container {
-  padding: 42px 0 0;
-}
 .right-column {
   padding: 3px 10px;
-  background: #eee;
+  &.extra-space {
+    padding-left: 30px;
+  }
   .right-column-inner {
     display: inline-block;
     padding-left: 1em;

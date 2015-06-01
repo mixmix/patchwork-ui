@@ -12,7 +12,7 @@ module.exports = function (app) {
   app.setPage('feed', h('.row',
     h('.col-xs-1'),
     h('.col-xs-7', com.messageFeed(app, { infinite: true })),
-    h('.col-xs-3.right-column',
+    h('.col-xs-3.right-column.extra-space',
       h('.right-column-inner', com.friendsHexagrid(app, { size: 80 })),
       com.sidehelp(app)
     )

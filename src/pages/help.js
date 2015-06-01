@@ -7,7 +7,7 @@ function section (title, content) {
 }
 
 function panel (title, content) {
-  return h('div', { style: 'background: #fff; padding: 1em; margin-bottom: 5px; border: 1px solid #ccc' }, content)
+  return h('div', { style: 'background: #fff; padding: 1em; margin-bottom: 5px' }, content)
 }
 
 module.exports = function (app) {
