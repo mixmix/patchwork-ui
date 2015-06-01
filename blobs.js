@@ -3,67 +3,47 @@ var path = require('path')
 var pull = require('pull-stream')
 var toPull = require('stream-to-pull-stream')
 var mlib = require('ssb-msgs')
+var mimetype = require('mimetype')
 
 function toBuffer() {
   return pull.map(function (s) { return Buffer.isBuffer(s) ? s : new Buffer(s, 'base64') })
 }
 
 module.exports = function(server) {
-  var msgExtRe = /^\/msg\/([^\.]+\.blake2s)\/ext\/(.+)/i
+  var blobPathRegex = /[/]ext[/]([A-z0-9/+=]+\.blake2s)([/][^?]*)?(\?.*)?/i
   return function(req, res, next) {
-    function pathStarts(v) { return req.url.indexOf(v) === 0; }
 
-    var msgExtMatch = msgExtRe.exec(req.url)
-    if (pathStarts('/ext/') || msgExtMatch) {
-      // restrict the CSP
-      res.setHeader('Content-Security-Policy', 'default-src \'self\' \'unsafe-inline\' \'unsafe-eval\' data:; connect-src \'none\'; object-src \'none\'; frame-src \'none\'; sandbox allow-same-origin allow-scripts allow-popups')
-    }
+    var match = blobPathRegex.exec(req.url)
+    if (match) {
+      var hash     = match[1]
+      var filename = match[2] ? match[2].slice(1) : false
+      var params   = match[3] ? require('querystring').parse(match[3].slice(1)) : {}
 
-    if (pathStarts('/ext/')) {
-      var hash = req.url.slice(5)
-      return server.blobs.has(hash, function(err, has) {
-        if (!has) {
-          res.writeHead(404)
-          res.end('File not found')
-          return
-        }
-        pull(
-          server.blobs.get(hash),
-          toBuffer(),
-          toPull(res)
-        )
-      })
-    }
-
-    if (msgExtMatch) {
-      var msgid = msgExtMatch[1]
-      var name  = decodeURI(msgExtMatch[2])
-      return server.ssb.get(msgid, function (err, msg) {
-        if (err || !msg) {
-          res.writeHead(404)
-          res.end('File not found')
-          return
-        }
-
-        // try to find an ext link with the given name
-        var links = mlib.getLinks(msg.content, { toext: true })
-        console.log(links)
-        for (var i=0; i < links.length; i++) {
-          console.log(links[i].name === name, links[i].name, name)
-          if (links[i].name === name) {
-            return pull(
-              server.blobs.get(links[i].ext),
-              toBuffer(),
-              toPull(res)
-            )
+      server.blobs.has(hash, function (err, has) {
+        if (err || !has) {
+          if ('sp' in params) {
+            // Blob search page
+            res.write('search page :TODO:')
+            res.end()
           }
+          else if ('bimg' in params) {
+            // Backup asset
+            fs.createReadStream(path.join(__dirname, 'img/default-prof-pic.png')).pipe(res)
+          } else
+            next(err)
         }
-
-        res.writeHead(404)
-        res.end('File not found')
+        else {
+          // Serve blob
+          var t = filename ? mimetype.lookup(filename) : false
+          if (t) res.setHeader('Content-Type', t)
+          res.setHeader('Content-Security-Policy', 'default-src \'none\'')
+          pull(
+            server.blobs.get(hash),
+            toBuffer(),
+            toPull.sink(res)
+          )
+        }
       })
-    }
-
-    next()
+    } else next()
   }
 }

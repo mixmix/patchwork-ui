@@ -47,10 +47,30 @@ exports.profilePicUrl = function (app, id) {
   var url = '/img/default-prof-pic.png'
   var profile = app.users.profiles[id]
   if (profile) {
+    var link
+
+    // lookup the image link
     if (profile.assignedBy[app.user.id] && profile.assignedBy[app.user.id].profilePic)
-      url = '/ext/' + profile.assignedBy[app.user.id].profilePic.ext
+      link = profile.assignedBy[app.user.id].profilePic
     else if (profile.self.profilePic)
-      url = '/ext/' + profile.self.profilePic.ext
+      link = profile.self.profilePic
+
+    if (link) {
+      // construct base url
+      url = '/ext/' + link.ext
+
+      // if we know the filetype, try to construct a good filename
+      if (link.type) {
+        var ext = link.type.split('/')[1]
+        if (ext) {
+          var name = app.users.names[id] || 'profile'
+          url += '/'+name+'.'+ext
+        }
+      }
+
+      // append the 'backup img' flag, so we always have an image
+      url += '?bimg'
+    }
   }
   return url
 }
