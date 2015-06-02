@@ -21,15 +21,14 @@ module.exports = function (app) {
         isEmpty: true
       }
     } else {
-      app.setPage('profile', h('.row',
-        h('.col-xs-1'),
-        h('.col-xs-7',
+      app.setPage('profile', h('.layout-twocol',
+        h('.layout-main',
           h('.well', { style: 'margin-top: 5px; background: #fff' },
             h('h3', { style: 'margin-top: 0' }, 'Invalid user ID'),
             h('p',
-              h('em', pid), ' is not a valid user ID. ',
-                h('img.emoji', { src: '/img/emoji/disappointed.png', title: 'disappointed', width: 20, height: 20, style: 'vertical-align: top' })))),
-        h('.col-xs-3')))
+              h('em', pid),
+              ' is not a valid user ID. ',
+              h('img.emoji', { src: '/img/emoji/disappointed.png', title: 'disappointed', width: 20, height: 20, style: 'vertical-align: top' }))))))
       return
     }
   }
@@ -123,9 +122,8 @@ module.exports = function (app) {
     }
 
     // render page
-    app.setPage('profile', h('.row',
-      h('.col-xs-1'),
-      h('.col-xs-7',
+    app.setPage('profile', h('.layout-twocol',
+      h('.layout-main',
         nameConflictDlg,
         h('.header-ctrls',
           com.nav({
@@ -139,7 +137,7 @@ module.exports = function (app) {
             ]
           })),
         content),
-      h('.col-xs-3',
+      h('.layout-sidenav',
         h('.profile-controls',
           com.contactPlaque(app, profile, graphs),
           (!isSelf) ?

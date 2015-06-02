@@ -81,9 +81,8 @@ module.exports = function (app) {
       content = com.contactFeed(app, { filter: filterFn, follows: follows })
     }
 
-    app.setPage('address-book', h('.row',
-      h('.col-xs-1'),
-      h('.col-xs-7', { style: 'padding-left: 35px' },
+    app.setPage('address-book', h('.layout-twocol',
+      h('.layout-main',
         h('.header-ctrls',
           com.nav({
             current: currentList,
@@ -99,15 +98,13 @@ module.exports = function (app) {
             onsearch: onsearch
           }) : '')),
         content),
-      h('.col-xs-3.right-column',
-        h('.right-column-inner',
-          h('h4.text-muted.monospace', 'gossip_network: {'),
-          h('table.table.peers',
-            // h('thead', h('tr', h('th', 'Gossip Network'))),
-            h('tbody', com.peers(app, peers))
-          ),
-          h('h4.text-muted.monospace', '}')
+      h('.layout-sidenav',
+        h('h4.text-muted.monospace', 'gossip_network: {'),
+        h('table.table.peers',
+          // h('thead', h('tr', h('th', 'Gossip Network'))),
+          h('tbody', com.peers(app, peers))
         ),
+        h('h4.text-muted.monospace', '}'),
         com.sidehelp(app))
     ), { onPageTeardown: teardown })
 

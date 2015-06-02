@@ -2,6 +2,8 @@
   white-space: nowrap;
   position: fixed;
   top: 0;
+  height: 100%;
+  background: #fff;
   z-index: 100;
 
   ul {
@@ -12,33 +14,13 @@
       a {
         display: inline-block;
         color: #555;
-        background: #fff;
-        border: 1px solid #bbb;
-        padding: 10px 11px 6px;
+        padding: 10px 14px 6px;
         font-size: 21px;
-        font-weight: 100;
-        margin-left: 16px;
-        margin-top: 10px;
-        div {
-          display: none;
-          color: #666;
-          font-size: 19px;
-        }
+        margin-top: 8px;
         &:hover {
           text-decoration: none;
           background: #ddd;
         }
-      }
-
-      &.selected {
-        a {
-          background: #DFFFA7;
-        }
-      }
-    }
-    &:hover {
-      li a div {
-        display: inline-block;
       }
     }
   }

@@ -258,7 +258,7 @@ function setPage (name, page, opts) {
   if (!opts || !opts.noHeader)
     pageEl.appendChild(com.page(phoenix, name, page))
   else
-    pageEl.appendChild(h('#page.container-fluid.'+name+'-page', page))
+    pageEl.appendChild(h('#page.'+name+'-page', page))
 
   // resize any .full-height controls
   // :TODO: remove?
