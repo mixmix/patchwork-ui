@@ -4,13 +4,20 @@
   overflow: hidden;
   cursor: pointer;
   color: #333;
+  border-bottom: 1px solid #ddd;
+  &.unread {
+    background: #fff;
+  }
 
   .user-img img {
     float: left;
+    opacity: 0.75;
     width: 36px;
     height: 36px;
     border-radius: 2px;
+    border: 1px solid #555;
     margin-top: 2px;
+    margin-left: 2px;
   }
   .user-link {
     color: #333;
@@ -19,11 +26,7 @@
   .message-summary-inner {
     margin-left: 40px;
     word-break: break-word;
-    border-bottom: 1px solid #ddd;
     padding: 10px 10px 0;
-  }
-  &.unread .message-summary-inner {
-    background: #fff;
   }
 
   .markdown {
