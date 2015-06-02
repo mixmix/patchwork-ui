@@ -6,30 +6,43 @@ var multicb = require('multicb')
 var com = require('../com')
 
 module.exports = function (app) {
-
-  var myprofile = app.users.profiles[app.user.id]
-  function filterFn (msg) {
-    var a = msg.value.author
-    var c = msg.value.content
-
-    // filter out people not followed directly
-    if (a !== app.user.id && (!myprofile.assignedTo[a] || !myprofile.assignedTo[a].following))
-      return false
-
-    return true
-  }
+  var currentList = app.page.qs.list || 'inbox'
 
   // markup
+
+  var content
+  if (currentList == 'compose') {
+    content = com.composer(app)
+  } else {
+    var feedfn = app.ssb.phoenix.createHomeStream
+    if (currentList == 'all')
+      feedfn = app.ssb.createFeedStream
+    content = com.messageFeed(app, { feed: feedfn, loadmore: true, infinite: true })
+  }
 
   app.setPage('home', h('.layout-twocol',
     h('.layout-main', 
       com.welcomehelp(app),
-      h('.header-ctrls', com.composer.header(app)), 
-      com.messageFeed(app, { feed: app.ssb.phoenix.createHomeStream, filter: filterFn, loadmore: true, infinite: true })),
+      h('.header-ctrls', 
+        com.nav({
+          current: currentList,
+          items: [
+            ['inbox',   makeUri({ list: 'inbox' }),   'Inbox'],
+            ['all',     makeUri({ list: 'all' }),     'All Activity'],
+            ['compose', makeUri({ list: 'compose' }), 'Compose']
+          ]
+        })),
+      content),
     h('.layout-sidenav',
       com.networkGraph(app, { drawLabels: false, touchEnabled: false, mouseEnabled: false, mouseWheelEnabled: false }),
       com.friendsHexagrid(app, { size: 80 }),
       com.sidehelp(app)
     )
   ))
+
+
+  function makeUri (opts) {
+    opts.list = ('list' in opts) ? opts.list : currentList
+    return '#/home?list=' + encodeURIComponent(opts.list)
+  }
 }

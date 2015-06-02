@@ -172,8 +172,7 @@ var pagenav =
 exports.pagenav = function (app) {
   var pages = [
   //[id, path, label],
-    ['home',         '',             icon('envelope')],
-    ['feed',         'feed',         icon('list')],
+    ['home',         '',             icon('list')],
     ['address-book', 'address-book', icon('user')],
     ['help',         'help',         icon('question-sign')]
   ]
