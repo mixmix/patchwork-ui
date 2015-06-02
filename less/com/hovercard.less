@@ -1,0 +1,29 @@
+.hovercard {
+  .monospace;
+  display: none;
+  position: absolute;
+  z-index: 10000;
+  padding: 0 10px 0 0;
+  white-space: pre;
+  color: #2C6117;
+  background-color: #D1FF81;
+  border: 1px solid #B4DD78;
+  border-left: 0;
+  border-right: 0;
+  opacity: 1;
+
+  a.user-link {
+    color: #2C6117;
+    font-weight: 100;
+  }
+  .text-muted {
+    color: #2C6117;
+  }
+}
+
+.user-hexagon, .user-img {
+  position: relative;
+  &:hover .hovercard {
+    display: block;
+  }
+}

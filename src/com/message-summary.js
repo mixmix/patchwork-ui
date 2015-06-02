@@ -131,7 +131,7 @@ module.exports = function (app, msg, opts) {
   }
 
   var msgSummary = h('.message-summary', { 'data-msg': msg.key },
-    com.userHexagon(app, msg.value.author, 30),
+    com.userImg(app, msg.value.author),
     h('.message-summary-inner', com.messageStats(app), content))
 
   fetchRowState(app, msgSummary, msg.key)
