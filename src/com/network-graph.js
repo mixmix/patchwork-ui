@@ -22,6 +22,9 @@ sigma.canvas.nodes.square = function (node, context, settings) {
 
 module.exports = function (app, opts) {
   var container = h('.network-graph')
+  opts = opts || {}
+  opts.w = opts.w || 3
+  opts.h = opts.h || 1
   app.ssb.friends.all(function (err, friends) {
 
     // generate graph
@@ -39,8 +42,8 @@ module.exports = function (app, opts) {
         id: id,
         type: 'square',
         label: com.userName(app, id),
-        x: (id == app.user.id) ? 1.5 : xr * (opts.w||3),
-        y: (id == app.user.id) ? 0.5 : yr * (opts.h||1),
+        x: (id == app.user.id) ? 1.5 : xr * opts.w,
+        y: (id == app.user.id) ? 0.5 : yr * opts.h,
         size: inbounds+1,
         color: (id == app.user.id) ? '#970' : (friends[app.user.id][id] ? '#790' : (friends[id][app.user.id] ? '#00c' : '#666'))
       })
@@ -72,7 +75,7 @@ module.exports = function (app, opts) {
     }
 
     // render
-    window.s = new sigma({
+    var s = new sigma({
       graph: graph,
       renderer: { container: container, type: 'canvas' },
       settings: opts
