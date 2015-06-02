@@ -64,7 +64,7 @@ module.exports = function (app) {
             'There is no information about this user.' :
             'Warning: This user is not followed by anyone you follow.')
 
-      nameConflictDlg = h('.well', { style: 'margin: 0 0 0 35px; background: #fff' },
+      nameConflictDlg = h('.well', { style: 'background: #fff' },
         h('h3', { style: 'margin-top: 0' }, 'Name Conflict!'),
         h('p', 'This is not the only user named "'+app.users.names[pid]+'," which may be a coincidence, or it may be the sign of an imposter! Make sure this is who you think it is before you follow them.'),
         h('h4', 'How can I tell?'),
@@ -99,11 +99,9 @@ module.exports = function (app) {
         uploader,
         h('br'),
         pics)
-      content.style.marginLeft = '35px'
     }
     else if (view == 'contacts') {
       content = com.contactFeed(app, { filter: contactFeedFilter, follows: graphs.follow })
-      content.style.marginLeft = '35px'
     }
     else if (view == 'feed') {
       content = [
@@ -129,7 +127,7 @@ module.exports = function (app) {
       h('.col-xs-1'),
       h('.col-xs-7',
         nameConflictDlg,
-        h('.header-ctrls', { style: 'margin: 0 35px' },
+        h('.header-ctrls',
           com.nav({
             current: view,
             items: [
