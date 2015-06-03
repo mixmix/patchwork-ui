@@ -6,50 +6,37 @@ var u = require('../lib/util')
 var markdown = require('../lib/markdown')
 var mentions = require('../lib/mentions')
 
-var message =
-module.exports = function (app, msg, opts) {
-  var content
-  if (opts && opts.raw) {
-    content = h('table', com.prettyRaw.table(app, msg.value.content))
-  } else {
-    content = getContent(app, msg, opts)
-    if (!content)
-      content = h('table', com.prettyRaw.table(app, msg.value.content))
-  }    
-  return messageShell(app, msg, content, opts)
-}
-
-function getContent (app, msg, opts) {
+function getContent (app, msg) {
   var c = msg.value.content
-  
+
   try {
     return ({
       post: function () { 
         if (!c.text) return
-        return h('div', h('div.markdown', { innerHTML: mentions.post(markdown.block(c.text), app, msg) }))
+        return h('.markdown', { innerHTML: mentions.post(markdown.block(c.text), app, msg) })
       }
     })[c.type]()
   } catch (e) { }
 }
 
-var statsOpts = { handlers: true }
-var messageShell = function (app, msg, content, opts) {
+var message =
+module.exports = function (app, msg, opts) {
 
-  // markup 
 
-  var msgbody = h('.panel-body', content, com.messageAttachments(app, msg), com.messageStats(app, msg, statsOpts))
-  var msgpanel = h('.panel.panel-default.message',
-    com.userHexagon(app, msg.value.author),
-    h('.panel-heading',
-      h('ul.list-inline',
-        h('li', com.user(app, msg.value.author)),
-        h('li', com.a('#/msg/'+msg.key, u.prettydate(new Date(msg.value.timestamp), true), { title: 'View message msg' })),
-        h('li', h('a', { title: 'Reply', href: '#', onclick: onreply }, 'reply')),
-        h('li.pull-right', h('a', { href: '/msg/'+msg.key, target: '_blank' }, 'as JSON')))),
-    msgbody
+  var content = getContent(app, msg) || h('table', com.prettyRaw.table(app, msg.value.content))
+  
+  var msgbody = h('.message-body', content)
+  return h('.message',
+    com.userImg(app, msg.value.author),
+    h('ul.message-header.list-inline',
+      h('li', com.user(app, msg.value.author)),
+      h('li', com.a('#/msg/'+msg.key, u.prettydate(new Date(msg.value.timestamp), true), { title: 'View message' })),
+      h('li', h('a', { href: '#', onclick: onreply }, 'reply')),
+      h('li.pull-right', h('a', { href: '/msg/'+msg.key, target: '_blank' }, 'as JSON'))),
+    msgbody,
+    com.messageAttachments(app, msg)
+    // com.messageStats(app, thread, statsOpts)
   )
-
-  return msgpanel
 
   // handlers
 

@@ -42,7 +42,7 @@ module.exports = function (app) {
     }
 
     app.setPage('message', h('.layout-twocol',
-      h('.layout-main', h('div', { style: 'padding: 0 15px' }, content)),
+      h('.layout-main', content),
       h('.layout-sidenav',
         com.networkGraph(app, { drawLabels: false, touchEnabled: false, mouseEnabled: false, mouseWheelEnabled: false }),
         com.friendsHexagrid(app, { size: 80 }),
