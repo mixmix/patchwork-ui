@@ -172,18 +172,30 @@ exports.search = function (opts) {
 
 var pagenav =
 exports.pagenav = function (app) {
-  var pages = [
+  var mainpages = [
   //[id, path, label],
-    ['home',         '',             'News'],
-    ['address-book', 'address-book', 'Users'],
-    ['help',         'help',         'Help']
+    ['home',         '',             'Messages'],
+    ['photos',       'photos',       'Photos'],
+    ['files',        'files',        'Files'],    
+    ['software',     'software',     'Software'],
+    ['compose',      'compose',      'secure share', '.pull-right.highlight'],
+  ]
+  var sidepages = [
+  //[id, path, label],
+    ['address-book', 'address-book', 'Network'],
+    ['help',         'help',         'Help',     '.pull-right']
   ]
 
-  return h('ul', pages.map(function (page) {
+  function render (page) {
     if (page[0] == app.page.id)
-      return h('li.selected.pagenav-'+page[0], a('#/'+page[1], page[2]))
-    return h('li.pagenav-'+page[0], a('#/'+page[1], page[2]))
-  }))
+      return h('a.selected.pagenav-'+page[0]+(page[3]||''), { href: '#/'+page[1] }, page[2])
+    return h('a.pagenav-'+page[0]+(page[3]||''), { href: '#/'+page[1] }, page[2])
+  }
+
+  return h('.page-nav-inner',
+    h('.page-nav-main', mainpages.map(render)),
+    h('.page-nav-side', sidepages.map(render))
+  )
 }
 
 var sidenav =

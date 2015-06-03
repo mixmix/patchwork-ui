@@ -247,6 +247,11 @@ function setPage (name, page, opts) {
   if (opts && opts.onPageTeardown)
     _onPageTeardown = opts.onPageTeardown
 
+  // render nav   
+  var navEl = document.getElementById('page-nav')    
+  navEl.innerHTML = ''   
+  navEl.appendChild(com.pagenav(phoenix, name, page))
+
   // render page
   var pageEl = document.getElementById('page-container')
   pageEl.innerHTML = ''

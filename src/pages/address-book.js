@@ -82,26 +82,8 @@ module.exports = function (app) {
     }
 
     app.setPage('address-book', h('.layout-twocol',
-      h('.layout-main',
-        h('.header-ctrls', 
-          com.nav({
-            current: 'inbox',
-            items: [
-              ['compose', '/#/compose', 'compose',      '.pull-right.highlight'],
-              ['inbox',   '/#/',        'Inbox'],
-              ['feed',    '/#/feed',    'All Activity']
-            ]
-          })),
-        content),
+      h('.layout-main', content),
       h('.layout-sidenav',
-        h('.header-ctrls', 
-          com.nav({
-            current: '',
-            items: [
-              ['help',         '/#/help',         'Help',         '.pull-right'],
-              ['address-book', '/#/address-book', 'Address Book']
-            ]
-          })),
         h('table.table.peers',
           h('thead', h('tr', h('th', 'Gossip Network'))),
           h('tbody', com.peers(app, peers))
