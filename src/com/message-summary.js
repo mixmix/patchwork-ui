@@ -39,10 +39,6 @@ function getSummary (app, msg) {
         var text = mentions.post(u.escapePlain(c.text), app, msg)
         return [/*author(app, msg),*/ h('p', com.icon('info-sign'), ' ', subjects, ' ', h('span', { innerHTML: text }))]
       },
-      advert: function () { 
-        if (!c.text) return
-        return [author(app, msg, h('small.text-muted', ' - advert')), md(c.text)]
-      },
       pub: function () {
         return h('h4', com.icon('cloud'), ' Announced a public peer at ', c.address)
       },
@@ -127,7 +123,7 @@ module.exports = function (app, msg, opts) {
 
   var content = getSummary(app, msg, opts)
   if (!content) {
-    content = [author(app, msg), h('table.raw', com.prettyRaw.table(app, msg.value.content))]
+    content = h('table.raw', com.prettyRaw.table(app, msg.value.content))
   }
 
   var msgSummary = h('.message-summary', { 'data-msg': msg.key },

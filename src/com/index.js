@@ -155,6 +155,8 @@ exports.nav = function (opts) {
     var cls = '.navlink-'+item[0]
     if (item[0] == opts.current)
       cls += '.selected'
+    if (item[3])
+      cls += item[3]
     if (typeof item[1] == 'function')
       return h('a'+cls, { href: '#', 'data-item': item[0], onclick: item[1] }, item[2])
     return h('a'+cls, { href: item[1] }, item[2])
@@ -172,9 +174,9 @@ var pagenav =
 exports.pagenav = function (app) {
   var pages = [
   //[id, path, label],
-    ['home',         '',             icon('list')],
-    ['address-book', 'address-book', icon('user')],
-    ['help',         'help',         icon('question-sign')]
+    ['home',         '',             'News'],
+    ['address-book', 'address-book', 'Users'],
+    ['help',         'help',         'Help']
   ]
 
   return h('ul', pages.map(function (page) {

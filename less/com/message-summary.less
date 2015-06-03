@@ -4,20 +4,17 @@
   overflow: hidden;
   cursor: pointer;
   color: #333;
+  background: #eee;
   border-top: 1px solid #ccc;
+  margin: 0 12px;
   &.unread {
     background: #fff;
   }
 
   .user-img img {
     float: left;
-    opacity: 0.75;
-    width: 36px;
-    height: 36px;
-    border-radius: 2px;
-    border: 1px solid #555;
-    margin-top: 2px;
-    margin-left: 2px;
+    width: 40px;
+    height: 40px;
   }
   .user-link {
     color: #333;
@@ -26,7 +23,7 @@
   .message-summary-inner {
     margin-left: 40px;
     word-break: break-word;
-    padding: 10px 10px 0;
+    padding: 10px 10px 0px;
   }
 
   .markdown {
@@ -50,6 +47,7 @@
       color: #B9C1C7;
     }
   }
+
   :not(.markdown) h4 {
     font-size: 15px;
     margin-top: 3px;

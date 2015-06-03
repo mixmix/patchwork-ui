@@ -6,7 +6,7 @@ var u = require('../lib/util')
 
 module.exports = function (app) {
   var queryStr = app.page.qs.q || ''
-  var currentList = app.page.qs.list || 'sync'
+  var currentList = app.page.qs.list || 'following'
   
   // fetch
 
@@ -83,28 +83,29 @@ module.exports = function (app) {
 
     app.setPage('address-book', h('.layout-twocol',
       h('.layout-main',
-        h('.header-ctrls',
+        h('.header-ctrls', 
           com.nav({
-            current: currentList,
+            current: 'inbox',
             items: [
-              ['sync',      makeUri({ list: 'sync' }),      'Sync'],
-              ['following', makeUri({ list: 'following' }), 'Following'],
-              ['others',    makeUri({ list: 'others' }),    'Others'],
-              ['flagged',   makeUri({ list: 'flagged' }),   'Flagged']
+              ['compose', '/#/compose', 'compose',      '.pull-right.highlight'],
+              ['inbox',   '/#/',        'Inbox'],
+              ['feed',    '/#/feed',    'All Activity']
             ]
-          }),
-          ((currentList !== 'sync') ? com.search({
-            value: queryStr,
-            onsearch: onsearch
-          }) : '')),
+          })),
         content),
       h('.layout-sidenav',
-        h('h4.text-muted.monospace', 'gossip_network: {'),
+        h('.header-ctrls', 
+          com.nav({
+            current: '',
+            items: [
+              ['help',         '/#/help',         'Help',         '.pull-right'],
+              ['address-book', '/#/address-book', 'Address Book']
+            ]
+          })),
         h('table.table.peers',
-          // h('thead', h('tr', h('th', 'Gossip Network'))),
+          h('thead', h('tr', h('th', 'Gossip Network'))),
           h('tbody', com.peers(app, peers))
         ),
-        h('h4.text-muted.monospace', '}'),
         com.sidehelp(app))
     ), { onPageTeardown: teardown })
 

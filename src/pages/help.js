@@ -11,7 +11,7 @@ function panel (title, content) {
 }
 
 module.exports = function (app) {
-  var content = [
+  var content = h('div', { style: 'padding: 0 35px' },
     section('about', [
       panel('About', [
         'Secure Scuttlebutt is a distributed, free, and open-source network.',
@@ -139,10 +139,33 @@ module.exports = function (app) {
         '(That\'s everything there is!)'
       ])
     ])
-  ]
+  )
 
-  app.setPage('help', h('.row',
-    h('.col-xs-1'),
-    h('.col-xs-5', { style: 'padding-left: 35px' }, content)
+  app.setPage('help', h('.layout-twocol',
+    h('.layout-main', 
+      com.welcomehelp(app),
+      h('.header-ctrls', 
+        com.nav({
+          current: 'inbox',
+          items: [
+            ['compose', '/#/compose', 'compose',      '.pull-right.highlight'],
+            ['inbox',   '/#/',        'Inbox'],
+            ['feed',    '/#/feed',    'All Activity']
+          ]
+        })),
+      content),
+    h('.layout-sidenav',
+      h('.header-ctrls', 
+        com.nav({
+          current: '',
+          items: [
+            ['help',         '/#/help',         'Help',         '.pull-right'],
+            ['address-book', '/#/address-book', 'Address Book']
+          ]
+        })),
+      com.networkGraph(app, { drawLabels: false, touchEnabled: false, mouseEnabled: false, mouseWheelEnabled: false }),
+      com.friendsHexagrid(app, { size: 80 }),
+      com.sidehelp(app)
+    )
   ))
 }

@@ -1,15 +1,11 @@
-#page-container {
-  padding-left: 54px;
-}
 .layout-twocol {
+  display: flex;
+  flex-direction: row;
+
   .layout-main {
-    display: table-cell;
-    vertical-align: top;
-    width: 100%;
+    flex: 1;
   }
   .layout-sidenav {
-    display: table-cell;
-    vertical-align: top;
-    width: 310px;
+    flex: 0 0 315px;
   }
 }
