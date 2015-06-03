@@ -6,6 +6,6 @@ module.exports = function (app) {
     h('h2.text-muted.text-center', 'Not Yet Implemented'),
     h('div.text-center', { style: 'margin-top: 20px' },
       h('span', { style: 'background: #fff; border: 1px solid #ccc; padding: 1em' },
-        'We\'re sorry! This page hasn\'t been implemented yet. We\'re working hard to finish it!'))
+        h('strong', 'We\'re sorry!'), ' This page hasn\'t been implemented yet. We\'re working hard to finish it!'))
   )))
 }

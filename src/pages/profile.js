@@ -102,12 +102,6 @@ module.exports = function (app) {
     else if (view == 'contacts') {
       content = com.contactFeed(app, { filter: contactFeedFilter, follows: graphs.follow })
     }
-    else if (view == 'feed') {
-      content = [
-        h('.header-ctrls', com.composer.header(app, { suggested: '@'+name+' ' })),
-        com.messageFeed(app, { feed: app.ssb.createFeedStream, filter: msgFeedFilter, infinite: true })
-      ]
-    }
     else if (view == 'about') {
       content = [
         h('.header-ctrls', h('.composer-header', h('.composer-header-inner', com.factForm(app, pid, { onpost: app.refreshPage })))),
@@ -116,7 +110,6 @@ module.exports = function (app) {
     }
     else {
       content = [
-        h('.header-ctrls', com.composer.header(app, { suggested: '@'+name+' ' })),
         com.messageFeed(app, { feed: app.ssb.createFeedStream, filter: latestFeedFilter, infinite: true })
       ]
     }
@@ -130,7 +123,6 @@ module.exports = function (app) {
             current: view,
             items: [
               ['latest',   makeUri({ view: 'latest' }),   'Latest'],
-              ['feed',     makeUri({ view: 'feed' }),     'All Activity'],
               ['contacts', makeUri({ view: 'contacts' }), 'Contacts'],
               ['avatar',   makeUri({ view: 'avatar' }),   'Avatar'],
               ['about',    makeUri({ view: 'about' }),    'About']
@@ -199,16 +191,7 @@ module.exports = function (app) {
       }
       return arr      
     }
-
-    function msgFeedFilter (msg) {
-      var c = msg.value.content
-
-      if (msg.value.author !== pid)
-        return false
-
-      return true
-    }
-
+    
     function latestFeedFilter (msg) {
       var c = msg.value.content
 
