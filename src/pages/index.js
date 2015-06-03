@@ -16,11 +16,14 @@ module.exports = {
   'address-book':   require('./address-book'),
   ext:              require('./ext'),
   feed:             require('./feed'),
+  files:            require('./files'),
   help:             require('./help'),
   home:             require('./home'),  
   inbox:            require('./inbox'),
   msg:              require('./message'),
   notfound:         notfound,
+  photos:           require('./photos'),
   profile:          require('./profile'),
-  setup:            require('./setup')
+  setup:            require('./setup'),
+  software:         require('./software')
 }
