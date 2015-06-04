@@ -2,12 +2,12 @@
   position: relative;
   background: #fff;
   border: 1px solid #ccc;
-  margin: 36px 24px 36px 36px;
+  margin: 36px 12px 36px 36px;
   word-break: break-word;  
 
   .user-img {
-    width: 57px;
-    height: 57px;
+    width: 55px;
+    height: 55px;
     position: absolute;
     left: -20px;
     top: -20px;
@@ -18,6 +18,9 @@
     img {
       width: 50px;
       height: 50px;
+      border-radius: 25px;
+      border-bottom-right-radius: 0;
+      border: 1px solid gray;
     }
 
     &:before {
@@ -43,8 +46,8 @@
 
   .message-header {
     padding-right: 5px;
-    margin-left: 37px;
-    height: 37px;
+    margin-left: 35px;
+    height: 35px;
     background: #f5f5f5;
 
     a {
@@ -52,13 +55,10 @@
     }
     li {
       padding: 7px 10px;
-      &:first-child {
-        margin-left: 5px;
-      }
     }
   }
   .message-body {
-    margin: 24px 24px 12px;
+    margin: 24px;
   }
   .attachments {
     &:empty {

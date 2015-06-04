@@ -78,7 +78,7 @@ exports.profilePicUrl = function (app, id) {
 var userImg =
 exports.userImg = function (app, id) {
   return h('a.user-img', { href: '#/profile/'+id },
-    h('.hovercard', '// ', user(app, id), ' ¬'),
+    // h('.hovercard', '// ', user(app, id), ' ¬'),
     h('img', { src: profilePicUrl(app, id) }))
 }
 

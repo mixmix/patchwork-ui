@@ -132,8 +132,8 @@ module.exports = function (app, msg, opts) {
       h('li', com.a('#/msg/'+msg.key, u.prettydate(new Date(msg.value.timestamp), true), { title: 'View message' }))),
       // h('li.reply-count', h('a', { href: '#/msg/'+msg.key }, com.icon('comment')))),
     h('.message-body', content),
-    com.messageAttachments(app, msg),
-    com.messageStats(app, msg, statsOpts)
+    com.messageAttachments(app, msg)
+    // com.messageStats(app, msg, statsOpts)
   )
 
   fetchRowState(app, msgSummary, msg.key)
@@ -177,7 +177,8 @@ module.exports.fetchRowState = function (app, el, mid) {
 
 var setRowState =
 module.exports.setRowState = function (el, state) {
-  if ('comments' in state)
+  // :TODO:
+  /*if ('comments' in state)
     el.querySelector('.message-stats .comments').dataset.amt = state.comments
   if ('voteTally' in state)
     el.querySelector('.message-stats .vote-tally').dataset.amt = state.voteTally
@@ -186,7 +187,7 @@ module.exports.setRowState = function (el, state) {
     var down = (state.uservote === -1) ? 'add' : 'remove'
     el.querySelector('.message-stats .upvote').classList[up]('selected')
     el.querySelector('.message-stats .downvote').classList[down]('selected')
-  }
+  }*/
 }
 
 function ago (msg) {
