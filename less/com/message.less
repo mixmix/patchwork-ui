@@ -5,7 +5,7 @@
   margin: 36px 12px 36px 36px;
   word-break: break-word;  
 
-  .user-img {
+  & > .user-img {
     width: 55px;
     height: 55px;
     position: absolute;
@@ -45,7 +45,6 @@
   }
 
   .message-header {
-    padding-right: 5px;
     margin-left: 35px;
     height: 35px;
     background: #f5f5f5;
@@ -55,6 +54,34 @@
     }
     li {
       padding: 7px 10px;
+    }
+    .favorite {
+      .glyphicon-star {
+        font-size: 21px;
+        color: #bbb;
+      }
+      a.selected .glyphicon-star {
+        color: rgb(255, 194, 0);
+      }
+      a:hover .glyphicon-star {
+        color: #aaa;
+      }
+      a.selected:hover .glyphicon-star {
+        color: darken(rgb(255, 194, 0), 10%);
+      }
+
+      .users {
+        margin-right: 5px;
+        .user-img {
+          margin-right: 5px;
+        }
+        img {
+          width: 24px;
+          height: 24px;
+          border-radius: 12px;
+          vertical-align: top;
+        }
+      }
     }
   }
   .message-body {

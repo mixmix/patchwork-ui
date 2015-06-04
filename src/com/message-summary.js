@@ -125,20 +125,55 @@ module.exports = function (app, msg, opts) {
   if (!content)
     content = h('table.raw', com.prettyRaw.table(app, msg.value.content))
 
+  var favoriteBtn = h('a', { href: '#', onclick: onfavorite, title: 'Favorite' }, com.icon('star'))
   var msgSummary = h('.message.message-summary',
     com.userImg(app, msg.value.author),
     h('ul.message-header.list-inline',
       h('li', com.user(app, msg.value.author)),
-      h('li', com.a('#/msg/'+msg.key, u.prettydate(new Date(msg.value.timestamp), true), { title: 'View message' }))),
-      // h('li.reply-count', h('a', { href: '#/msg/'+msg.key }, com.icon('comment')))),
+      h('li', com.a('#/msg/'+msg.key, u.prettydate(new Date(msg.value.timestamp), true), { title: 'View message' })),
+      h('li.favorite.pull-right', h('span.users'), favoriteBtn)),
     h('.message-body', content),
     com.messageAttachments(app, msg)
     // com.messageStats(app, msg, statsOpts)
   )
 
   fetchRowState(app, msgSummary, msg.key)
-
   return msgSummary
+
+  // handlers
+
+  var voting = false
+  function onfavorite (e) {
+    e.preventDefault()
+    e.stopPropagation()
+    if (voting)
+      return // wait please
+    voting = true
+
+    // get current state by checking if the control is selected
+    // this won't always be the most recent info, but it will be close and harmless to get wrong,
+    // plus it will reflect what the user expects to happen happening
+    var wasSelected = favoriteBtn.classList.contains('selected')
+    var newvote = (wasSelected) ? 0 : 1
+    favoriteBtn.classList.toggle('selected') // optimistice ui update
+    app.ssb.publish({ type: 'vote', voteTopic: { msg: msg.key }, vote: newvote }, function (err) {
+      voting = false
+      if (err) {
+        favoriteBtn.classList.toggle('selected') // undo
+        swal('Error While Publishing', err.message, 'error')
+      } else {
+        // update ui
+        var users = msgSummary.querySelector('.message-header .favorite .users')
+        if (newvote === 0) {
+          users.removeChild(users.querySelector('.this-user'))
+        } else {
+          var userimg = com.userImg(app, app.user.id)
+          userimg.classList.add('this-user')
+          users.appendChild(userimg)
+        }
+      }
+    })
+  }
 }
 
 var statsOpts = { recursive: true }
@@ -158,7 +193,7 @@ module.exports.fetchRowState = function (app, el, mid) {
     }
     
     if (thread) {
-      setRowState(el, u.calcMessageStats(app, thread, statsOpts))
+      setRowState(app, el, thread)
 
       // check if any of the messages are unread
       // :TODO: needed?
@@ -176,18 +211,29 @@ module.exports.fetchRowState = function (app, el, mid) {
 }
 
 var setRowState =
-module.exports.setRowState = function (el, state) {
-  // :TODO:
-  /*if ('comments' in state)
-    el.querySelector('.message-stats .comments').dataset.amt = state.comments
-  if ('voteTally' in state)
-    el.querySelector('.message-stats .vote-tally').dataset.amt = state.voteTally
-  if ('uservote' in state) {
-    var up   = (state.uservote === 1)  ? 'add' : 'remove'
-    var down = (state.uservote === -1) ? 'add' : 'remove'
-    el.querySelector('.message-stats .upvote').classList[up]('selected')
-    el.querySelector('.message-stats .downvote').classList[down]('selected')
-  }*/
+module.exports.setRowState = function (app, el, thread) {
+  if (!thread.related)
+    return
+  var upvoters = {}
+  thread.related.forEach(function (r) {
+    var c = r.value.content
+    if (c.type === 'vote') {
+      if (c.vote === 1)
+        upvoters[r.value.author] = 1
+      else
+        delete upvoters[r.value.author]
+    }
+  })
+
+  if (upvoters[app.user.id])
+    el.querySelector('.message-header .favorite a').classList.add('selected')
+
+  for (var id in upvoters) {
+    var userimg = com.userImg(app, id)
+    if (id == app.user.id)
+      userimg.classList.add('this-user')
+    el.querySelector('.message-header .favorite .users').appendChild(userimg)
+  }
 }
 
 function ago (msg) {
