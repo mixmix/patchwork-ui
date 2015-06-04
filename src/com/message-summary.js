@@ -122,13 +122,19 @@ module.exports = function (app, msg, opts) {
   // markup
 
   var content = getSummary(app, msg, opts)
-  if (!content) {
+  if (!content)
     content = h('table.raw', com.prettyRaw.table(app, msg.value.content))
-  }
 
-  var msgSummary = h('.message-summary', { 'data-msg': msg.key },
+  var msgSummary = h('.message.message-summary',
     com.userImg(app, msg.value.author),
-    h('.message-summary-inner', com.messageStats(app), content))
+    h('ul.message-header.list-inline',
+      h('li', com.user(app, msg.value.author)),
+      h('li', com.a('#/msg/'+msg.key, u.prettydate(new Date(msg.value.timestamp), true), { title: 'View message' })),
+      h('li.reply-count', h('a', { href: '#/msg/'+msg.key }, com.icon('comment')))),
+    h('.message-body', content),
+    com.messageAttachments(app, msg)
+    // com.messageStats(app, thread, statsOpts)
+  )
 
   fetchRowState(app, msgSummary, msg.key)
 
@@ -155,7 +161,8 @@ module.exports.fetchRowState = function (app, el, mid) {
       setRowState(el, u.calcMessageStats(app, thread, statsOpts))
 
       // check if any of the messages are unread
-      acc(thread)
+      // :TODO: needed?
+      /*acc(thread)
       app.ssb.phoenix.isRead(keys, function (err, isreads) {
         for (var i=0; i < isreads.length; i++) {
           if (!isreads[i]) {
@@ -163,7 +170,7 @@ module.exports.fetchRowState = function (app, el, mid) {
             return
           }
         }
-      })
+      })*/
     }
   })
 }
@@ -171,7 +178,7 @@ module.exports.fetchRowState = function (app, el, mid) {
 var setRowState =
 module.exports.setRowState = function (el, state) {
   if ('comments' in state)
-    el.querySelector('.message-stats .comments').dataset.amt = state.comments
+    el.querySelector('.message-header .reply-count a').dataset.amt = state.comments
 }
 
 function ago (msg) {

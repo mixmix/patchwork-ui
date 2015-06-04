@@ -51,15 +51,16 @@
       color: #666;
     }
     li {
-      padding: 7px;
+      padding: 7px 10px;
       &:first-child {
         margin-left: 5px;
       }
+      &.reply-count a:after {
+        content: " " attr(data-amt);
+      }
     }
-    .user-img img {
-      width: 30px;
-      height: 30px;
-      border-radius: 2px;
+    .glyphicon {
+      color: gray;
     }
   }
   .message-body {

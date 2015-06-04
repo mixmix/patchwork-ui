@@ -22,17 +22,16 @@ function getContent (app, msg) {
 var message =
 module.exports = function (app, msg, opts) {
 
+  // markup
 
   var content = getContent(app, msg) || h('table', com.prettyRaw.table(app, msg.value.content))
-  
   var msgbody = h('.message-body', content)
   return h('.message',
     com.userImg(app, msg.value.author),
     h('ul.message-header.list-inline',
       h('li', com.user(app, msg.value.author)),
       h('li', com.a('#/msg/'+msg.key, u.prettydate(new Date(msg.value.timestamp), true), { title: 'View message' })),
-      h('li', h('a', { href: '#', onclick: onreply }, 'reply')),
-      h('li.pull-right', h('a', { href: '/msg/'+msg.key, target: '_blank' }, 'as JSON'))),
+      h('li', h('a', { href: '#', onclick: onreply }, 'reply'))),
     msgbody,
     com.messageAttachments(app, msg)
     // com.messageStats(app, thread, statsOpts)
