@@ -6,48 +6,21 @@
   word-break: break-word;  
 
   & > .user-img {
-    width: 55px;
-    height: 55px;
     position: absolute;
-    left: -20px;
+    left: -25px;
     top: -20px;
-    background: rgb(238, 238, 238);
-    border-right: 1px solid #ccc;
-    border-bottom: 1px solid #ccc;
 
     img {
       width: 50px;
       height: 50px;
       border-radius: 25px;
-      border-bottom-right-radius: 0;
-      border: 1px solid gray;
-    }
-
-    &:before {
-      content: '';
-      position: absolute;
-      background: #eee;
-      width: 19px;
-      height: 3px;
-      top: 54px;
-      left: 0;
-    }
-
-    &:after {
-      content: '';
-      position: absolute;
-      background: #eee;
-      width: 3px;
-      height: 19px;
-      top: 0;
-      right: -2px;
+      border: 5px solid #eee;
     }
   }
 
   .message-header {
-    margin-left: 35px;
+    margin-left: 30px;
     height: 35px;
-    background: #f5f5f5;
 
     a {
       color: #666;
@@ -85,7 +58,7 @@
     }
   }
   .message-body {
-    margin: 24px;
+    margin: 12px 24px 24px;
   }
   .attachments {
     &:empty {
