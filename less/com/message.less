@@ -1,9 +1,9 @@
 .message {
   position: relative;
+  margin: 36px 36px 48px;
+  word-break: break-word;  
   background: #fff;
   border: 1px solid #ccc;
-  margin: 36px 12px 36px 36px;
-  word-break: break-word;  
 
   & > .user-img {
     position: absolute;
@@ -19,7 +19,8 @@
   }
 
   .message-header {
-    margin-left: 30px;
+    padding-left: 30px;
+    margin: 0;
     height: 35px;
 
     a {
@@ -58,29 +59,50 @@
     }
   }
   .message-body {
-    margin: 12px 24px 24px;
+    padding: 12px 24px;
   }
   .attachments {
     &:empty {
       display: none;
     }
-    margin: 0 2em 1em;
+    padding: 24px;
+    background: #fafafa;
     a {
-      margin-right: 1em;
+      margin-right: 12px;
       img {
         max-width: 200px;
         max-height: 200px;
-        border: 1px solid #999;
-        border-radius: 2px;
+        border: 1px solid #777;
       }
     }
   }
-  .message-stats {
-    margin: 0 2em 1em;
+  .message-comments {
+    border-left: 10px solid #ccc;
+    border-bottom: 1px solid transparent; // make sure rendering takes full height
+    padding: 0 15px;
+    & > a {
+      float: right;
+      padding-right: 2px;
+    }
+    .comment {
+      color: #333;
+      border-top: 1px solid #ddd;
+      padding: 0 7px;
 
-    /*.comments {
-      display: none;
-    }*/
+      .user-img {
+        float: left;
+        padding-top: 7px;
+        img {
+          width: 25px;
+          height: 25px;
+          border-radius: 12px;
+        }
+      }
+      .comment-inner {
+        margin-left: 30px;
+        padding: 10px 5px 0;
+      }
+    }
   }
   .pretty-raw {
     font-size: 15px;

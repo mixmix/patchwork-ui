@@ -130,11 +130,12 @@ module.exports = function (app, msg, opts) {
     com.userImg(app, msg.value.author),
     h('ul.message-header.list-inline',
       h('li', com.user(app, msg.value.author)),
-      h('li', com.a('#/msg/'+msg.key, u.prettydate(new Date(msg.value.timestamp), true), { title: 'View message' })),
+      h('li', u.prettydate(new Date(msg.value.timestamp), true)),
+      h('li', h('a', { href: '#', onclick: onfavorite }, 'reply')),
       h('li.favorite.pull-right', h('span.users'), favoriteBtn)),
     h('.message-body', content),
-    com.messageAttachments(app, msg)
-    // com.messageStats(app, msg, statsOpts)
+    com.messageAttachments(app, msg),
+    h('.message-comments')
   )
 
   fetchRowState(app, msgSummary, msg.key)
@@ -214,6 +215,9 @@ var setRowState =
 module.exports.setRowState = function (app, el, thread) {
   if (!thread.related)
     return
+
+  // collect comments and votes
+  var comments = []
   var upvoters = {}
   thread.related.forEach(function (r) {
     var c = r.value.content
@@ -223,17 +227,28 @@ module.exports.setRowState = function (app, el, thread) {
       else
         delete upvoters[r.value.author]
     }
+    else if (c.type == 'post') {
+      comments.push(r)
+    }
   })
 
+  // update vote ui
   if (upvoters[app.user.id])
     el.querySelector('.message-header .favorite a').classList.add('selected')
-
   for (var id in upvoters) {
     var userimg = com.userImg(app, id)
     if (id == app.user.id)
       userimg.classList.add('this-user')
     el.querySelector('.message-header .favorite .users').appendChild(userimg)
   }
+
+  // render comments
+  comments.forEach(function (comment) {
+    var cdiv = h('.comment',
+      com.userImg(app, comment.value.author),
+      h('.comment-inner', getSummary(app, comment)))
+    el.querySelector('.message-comments').appendChild(cdiv)
+  })
 }
 
 function ago (msg) {
