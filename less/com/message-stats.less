@@ -1,14 +1,13 @@
 .message-stats {
   margin-bottom: 8px;
-  color: #8899a6;
+  span, a {
+    color: #8899a6;
+  }
   overflow: hidden;
 
   .glyphicon {
     color: #ccd6dd;
     position: relative;
-    &:hover {
-      color: darken(#8899a6, 5%);
-    }
   }
   .selected .glyphicon {
     color: darken(#8899a6, 5%);
@@ -31,9 +30,16 @@
       font-size: 18px;
       top: 4px;
     }
+    &:hover .glyphicon {
+      color: darken(#8899a6, 5%);
+    }
   }
-  .comments:after, .vote-tally:after {
+  .vote-tally:after {
     content: attr(data-amt);
+    padding: 0 5px;
+  }
+  .comments:after {
+    content: attr(data-amt) " comments";
     padding: 0 5px;
   }
   .user-hexagrid-30 {

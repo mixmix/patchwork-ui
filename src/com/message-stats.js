@@ -5,7 +5,7 @@ var u = require('../lib/util')
 var hexagridOpts = { size: 30, nrow: 10 }
 module.exports = function (app, msg, opts) {
 
-  var stats = (msg) ? u.calcMessageStats(app, msg) : {}
+  var stats = (msg) ? u.calcMessageStats(app, msg, opts) : {}
 
   // markup
 
@@ -38,7 +38,7 @@ module.exports = function (app, msg, opts) {
   return h('.message-stats',
     h('div',
       h('span.stat.votes', upvote, voteTally, downvote),
-      h('span.stat.comments', { 'data-amt': stats.comments||0 }, com.icon('comment'))),
+      h('a.stat.comments', { href: (msg) ? '#/msg/'+msg.key : 'javascript:void(0)', 'data-amt': stats.comments||0 }, com.icon('comment'))),
     upvotersGrid,
     downvotersGrid
   )

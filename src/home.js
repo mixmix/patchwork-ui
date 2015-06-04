@@ -260,6 +260,10 @@ function setPage (name, page, opts) {
   else
     pageEl.appendChild(h('#page.'+name+'-page', page))
 
+  // scroll to top
+  if (window.scrollY > 100)
+    window.scrollTo(0, 0)
+
   // resize any .full-height controls
   // :TODO: remove?
   resizeControls()

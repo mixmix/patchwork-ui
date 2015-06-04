@@ -19,6 +19,7 @@ function getContent (app, msg) {
   } catch (e) { }
 }
 
+var statsOpts = { handlers: true, recursive: true }
 var message =
 module.exports = function (app, msg, opts) {
 
@@ -33,8 +34,8 @@ module.exports = function (app, msg, opts) {
       h('li', com.a('#/msg/'+msg.key, u.prettydate(new Date(msg.value.timestamp), true), { title: 'View message' })),
       h('li', h('a', { href: '#', onclick: onreply }, 'reply'))),
     msgbody,
-    com.messageAttachments(app, msg)
-    // com.messageStats(app, thread, statsOpts)
+    com.messageAttachments(app, msg),
+    com.messageStats(app, msg, statsOpts)
   )
 
   // handlers
