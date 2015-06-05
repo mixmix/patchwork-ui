@@ -14,13 +14,11 @@ module.exports = function (app, profile, follows, opts) {
   function r (e) { rename(e, id) }
 
   var followbtn, renamebtn
-  if (id === app.user.id) {
-    followbtn = h('span.text-muted.pull-right', { style: 'padding-right: 1em' }, 'you!')
-  } else {
+  if (id != app.user.id) {
     if (!follows[app.user.id][id])
       followbtn = h('button.btn.btn-primary', { title: 'Follow', onclick: f }, com.icon('plus'), ' Follow')
     else
-      followbtn = h('button.btn.btn-primary', { title: 'Unfollow', onclick: unf }, com.icon('minus'), ' Unfollow')
+      followbtn = h('button.btn.btn-primary.unfollow', { title: 'Unfollow', onclick: unf }, com.icon('minus'), ' Unfollow')
   }
   renamebtn = h('button.btn.btn-primary.btn-xs', { title: 'Rename', onclick: r }, com.icon('pencil'))
 
@@ -30,18 +28,18 @@ module.exports = function (app, profile, follows, opts) {
       followers.push(com.userImg(app, otherid))
   }
   var flen = followers.length
-  if (flen > 15)
-    followers = followers.slice(0, 15).concat(h('a', { href: '#/profile/'+id }, ' + ' + (flen-15) + ' others'))
+  if (flen > 16)
+    followers = followers.slice(0, 16).concat(h('a', { href: '#/profile/'+id }, ' + ' + (flen-16) + ' others'))
   if (flen == 0)
     followers = h('.text-danger', 'No mutual followers')
 
-  var listing = h('tr.contact-listing',
-    h('td.profpic', com.userHexagon(app, id, 80)),
-    ((opts && opts.syncspinner) ? h('td', (!profile.self.name) ? h('.spinner.inline.small', h('.cube1'), h('.cube2')) : '') : ''),
-    h('td.details',
-      h('p.name', com.a('#/profile/'+id, app.users.names[id]||u.shortString(id, 20))),
-      h('p.followers', followers)),
-    h('td.actions', followbtn))
+  var listing = h('.contact-listing',
+    h('.profpic',
+      com.userHexagon(app, id, 80),
+      h('.action', followbtn)),
+    h('.details',
+      h('p.name', com.a('#/profile/'+id, app.users.names[id])),
+      h('p.followers', followers)))
   listing.dataset.followers = flen
   return listing
 

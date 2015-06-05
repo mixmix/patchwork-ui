@@ -21,5 +21,5 @@ module.exports = function (app, opts) {
     return b.dataset.followers - a.dataset.followers
   })
 
-  return h('.contact-feed-container', h('table.contact-feed', items))
+  return h('.contact-feed-container', h('.contact-feed', items))
 }
