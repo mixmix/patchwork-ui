@@ -11,12 +11,15 @@ module.exports = function (app, opts) {
 
   // markup
  
-  var feed = h('table.contact-feed')
-  var feedContainer = h('.contact-feed-container', feed)
+  var items = []
   for (var uid in app.users.profiles) {
     if (!opts.filter || opts.filter(app.users.profiles[uid]))
-      feed.appendChild(com.contactListing(app, app.users.profiles[uid], opts.follows, opts))
+      items.push(com.contactListing(app, app.users.profiles[uid], opts.follows, opts))
   }
 
-  return feedContainer
+  items.sort(function (a, b) {
+    return b.dataset.followers - a.dataset.followers
+  })
+
+  return h('.contact-feed-container', h('table.contact-feed', items))
 }

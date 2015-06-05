@@ -77,7 +77,7 @@ exports.profilePicUrl = function (app, id) {
 
 var userImg =
 exports.userImg = function (app, id) {
-  return h('a.user-img', { href: '#/profile/'+id },
+  return h('a.user-img', { href: '#/profile/'+id, title: userName(app, id) },
     // h('.hovercard', '// ', user(app, id), ' ¬'),
     h('img', { src: profilePicUrl(app, id) }))
 }
@@ -174,16 +174,16 @@ var pagenav =
 exports.pagenav = function (app) {
   var mainpages = [
   //[id, path, label],
+    ['compose',      'compose',      'secure share', '.pull-right.highlight'],
     ['home',         '',             'Messages'],
     ['photos',       'photos',       'Photos'],
-    ['files',        'files',        'Files'],    
-    ['software',     'software',     'Software'],
-    ['compose',      'compose',      'secure share', '.pull-right.highlight'],
+    ['files',        'files',        'Files'],
+    ['software',     'software',     'Software']
   ]
   var sidepages = [
   //[id, path, label],
-    ['address-book', 'address-book', 'Network'],
-    ['help',         'help',         'Help',     '.pull-right']
+    ['help',         'help',         'Help',     '.pull-right'],
+    ['address-book', 'address-book', ['+', icon('user'), ' Add friends']]
   ]
 
   function render (page) {
