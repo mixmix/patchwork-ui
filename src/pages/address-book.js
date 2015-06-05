@@ -6,7 +6,6 @@ var u = require('../lib/util')
 
 module.exports = function (app) {
   var queryStr = app.page.qs.q || ''
-  var currentList = app.page.qs.list || 'following'
   
   // fetch
 
@@ -42,9 +41,17 @@ module.exports = function (app) {
       return false
     }
 
+    var searchForm = h('form', { onsubmit: onsearch }, h('input.form-control', { name: 'search' }))
+    var feedContainer = h('div', com.contactFeed(app, { filter: filterFn, follows: follows }))
     app.setPage('address-book', h('.layout-twocol',
-      h('.layout-main', com.contactFeed(app, { filter: filterFn, follows: follows })),
-      h('.layout-sidenav',
+      h('.layout-main',
+        h('.address-book-controls',
+          h('.search', h('h4', com.icon('search'), ' Search your Network'), searchForm),
+          h('.create-invite', { onclick: swal.bind(null, 'Not Yet Implemented', 'We\'re sorry! This feature hasn\'t been implemented yet. We\'re working hard to finish it!', 'error') },  h('h4', 'Create an Invite'), h('p', 'Bring a new user into your network')),
+          h('.use-invite', { onclick: app.ui.inviteModal },  h('h4', 'Use an Invite'), h('p', 'Join a friend in their network'))),
+        feedContainer),
+      h('.layout-rightnav',
+        com.networkGraph(app, { drawLabels: false, touchEnabled: false, mouseEnabled: false, mouseWheelEnabled: false }),
         h('table.table.peers',
           h('thead', h('tr', h('th', 'Gossip Network'))),
           h('tbody', com.peers(app, peers))
@@ -52,17 +59,24 @@ module.exports = function (app) {
         com.sidehelp(app))
     ))
 
-    function makeUri (opts) {
-      opts.q    = ('q' in opts) ? opts.q : queryStr
-      opts.list = ('list' in opts) ? opts.list : currentList
-      return '#/address-book?q=' + encodeURIComponent(opts.q) + '&list=' + encodeURIComponent(opts.list)
-    }
-
     // handlers
 
     function onsearch (e) {
       e.preventDefault()
-      window.location.hash = makeUri({ q: e.target.search.value })
+      queryStr = searchForm.search.value
+      feedContainer.innerHTML = ''
+      if (queryStr) {
+        feedContainer.appendChild(h('.contact-feed-container',
+          h('p', { style: 'margin-left: 5px' },
+            'Searching for "'+queryStr+'". ',
+            h('a', { href: '#', onclick: unsearch }, com.icon('remove'), ' Clear Search'))))
+      }
+      feedContainer.appendChild(com.contactFeed(app, { filter: filterFn, follows: follows }))
+
+      function unsearch (e) {
+        searchForm.search.value = ''
+        onsearch(e)
+      }
     }
 
   })

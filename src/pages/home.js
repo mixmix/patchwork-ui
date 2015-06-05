@@ -13,7 +13,7 @@ module.exports = function (app) {
     h('.layout-main', 
       com.welcomehelp(app),
       com.messageFeed(app, { feed: app.ssb.phoenix.createHomeStream, loadmore: true, infinite: true })),
-    h('.layout-leftnav',
+    h('.layout-rightnav',
       com.networkGraph(app, { drawLabels: false, touchEnabled: false, mouseEnabled: false, mouseWheelEnabled: false }),
       com.friendsHexagrid(app, { size: 80 }),
       com.sidehelp(app)
