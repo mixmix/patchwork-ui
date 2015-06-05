@@ -11,7 +11,7 @@ module.exports = function (app, parent, opts) {
       h('small.text-muted', 
         'All posts are public. Markdown, @-mentions, and emojis are supported. ',
         h('a', { href: '#/action/cancel', onclick: cancel }, 'Cancel'))),
-    com.postForm(app, parent, { onpost: onpost }))
+    com.postForm(app, parent, { onpost: onpost, rows: opts && opts.rows }))
 
   // handlers
 

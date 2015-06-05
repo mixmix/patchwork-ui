@@ -125,23 +125,49 @@ module.exports = function (app, msg, opts) {
   if (!content)
     content = h('table.raw', com.prettyRaw.table(app, msg.value.content))
 
+  var msgComments = h('.message-comments')
   var favoriteBtn = h('a', { href: '#', onclick: onfavorite, title: 'Favorite' }, com.icon('star'))
   var msgSummary = h('.message.message-summary',
     com.userImg(app, msg.value.author),
     h('ul.message-header.list-inline',
       h('li', com.user(app, msg.value.author)),
       h('li', u.prettydate(new Date(msg.value.timestamp), true)),
-      h('li', h('a', { href: '#', onclick: onfavorite }, 'reply')),
+      h('li', h('a', { href: '#', onclick: onreply }, 'reply')),
       h('li.favorite.pull-right', h('span.users'), favoriteBtn)),
     h('.message-body', content),
     com.messageAttachments(app, msg),
-    h('.message-comments')
+    msgComments
   )
 
   fetchRowState(app, msgSummary, msg.key)
   return msgSummary
 
   // handlers
+
+  function onreply (e) {
+    e.preventDefault()
+    var replyForm
+    function oncancelreply (e) {
+      e.preventDefault()
+      replyForm.parentNode.removeChild(replyForm)
+    }
+    function onpostreply (comment) {
+      replyForm.parentNode.removeChild(replyForm)
+      var cdiv = h('.comment',
+        com.userImg(app, comment.value.author),
+        h('.comment-inner', getSummary(app, comment)))
+      msgSummary.querySelector('.message-comments').appendChild(cdiv)
+    }
+
+    if (!msgComments.previousSibling.classList.contains('reply')) {
+      replyForm = h('.composer.reply',
+        h('p',
+          h('small.text-muted', 'Markdown, @-mentions, and emojis are supported. ',
+          h('a', { href: '#', onclick: oncancelreply }, 'Cancel'))),
+        com.postForm(app, msg, { onpost: onpostreply, rows: 5 }))   
+      msgSummary.insertBefore(replyForm, msgComments)     
+    }
+  }
 
   var voting = false
   function onfavorite (e) {
@@ -235,6 +261,7 @@ module.exports.setRowState = function (app, el, thread) {
   // update vote ui
   if (upvoters[app.user.id])
     el.querySelector('.message-header .favorite a').classList.add('selected')
+  el.querySelector('.message-header .favorite .users').innerHTML = ''
   for (var id in upvoters) {
     var userimg = com.userImg(app, id)
     if (id == app.user.id)
@@ -243,6 +270,7 @@ module.exports.setRowState = function (app, el, thread) {
   }
 
   // render comments
+  el.querySelector('.message-comments').innerHTML = ''
   comments.forEach(function (comment) {
     var cdiv = h('.comment',
       com.userImg(app, comment.value.author),

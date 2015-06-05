@@ -10,14 +10,15 @@ module.exports = function (app) {
   var form
   if (type == 'message') {
     form = [
-    h('.text-muted', h('small', 'Markdown, @-mentions, and emojis are supported.')),
-    com.postForm(app, null, { onpost: onpost })
-  ]
+      h('.text-muted', h('small', 'Markdown, @-mentions, and emojis are supported.')),
+      com.postForm(app, null, { onpost: onpost })
+    ]
   } else {
     form = h('.text-muted', h('strong', 'We\'re sorry!'), ' This feature hasn\'t been implemented yet. We\'re working hard to finish it!')
   }
 
-  app.setPage('compose', h('.layout-twocol',
+  app.setPage('compose', h('.layout-threecol',
+    h('.layout-leftnav'),
     h('.layout-main',
       h('.composer',
         h('.composer-header',
@@ -32,7 +33,7 @@ module.exports = function (app) {
           })),
         h('.composer-body',
           form))),
-    h('.layout-sidenav',
+    h('.layout-rightnav',
       com.networkGraph(app, { drawLabels: false, touchEnabled: false, mouseEnabled: false, mouseWheelEnabled: false }),
       com.friendsHexagrid(app, { size: 80 }),
       com.sidehelp(app)
