@@ -17,8 +17,7 @@ module.exports = function (app) {
     form = h('.text-muted', h('strong', 'We\'re sorry!'), ' This feature hasn\'t been implemented yet. We\'re working hard to finish it!')
   }
 
-  app.setPage('compose', h('.layout-threecol',
-    h('.layout-leftnav'),
+  app.setPage('compose', h('.layout-twocol',
     h('.layout-main',
       h('.composer',
         h('.composer-header',

@@ -143,7 +143,7 @@ module.exports = function (app) {
 
   app.setPage('help', h('.layout-twocol',
     h('.layout-main', content),
-    h('.layout-sidenav',
+    h('.layout-rightnav',
       com.networkGraph(app, { drawLabels: false, touchEnabled: false, mouseEnabled: false, mouseWheelEnabled: false }),
       com.friendsHexagrid(app, { size: 80 }),
       com.sidehelp(app)
