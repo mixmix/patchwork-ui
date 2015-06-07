@@ -109,9 +109,7 @@ module.exports = function (app) {
       ]
     }
     else {
-      content = [
-        com.messageFeed(app, { feed: app.ssb.createFeedStream, filter: latestFeedFilter, infinite: true })
-      ]
+      content = com.messageFeed(app, { feed: app.ssb.createFeedStream, filter: latestFeedFilter, infinite: true })
     }
 
     // render page
@@ -196,7 +194,7 @@ module.exports = function (app) {
       var c = msg.value.content
 
       // post by this user
-      if (msg.value.author == pid && c.type == 'post' && !c.repliesTo)
+      if (msg.value.author == pid && ((c.type == 'post' && !c.repliesTo) || c.type == 'init'))
         return true
 
       // fact about this user

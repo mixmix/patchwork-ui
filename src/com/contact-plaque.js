@@ -28,7 +28,7 @@ module.exports = function (app, profile, graphs) {
   var totem = h('.totem',
     h('span.corner.topleft'),    
     h('span.corner.topright'),
-    h('span.corner.botleft', { 'data-overlay': 'Follows' }, h('.corner-inner', followers.length, com.icon('user'))),
+    h('span.corner.botleft', { 'data-overlay': 'Followers' }, h('.corner-inner', followers.length, com.icon('user'))),
     h('span.corner.botright', { 'data-overlay': 'Flags' }, h('.corner-inner', flaggers.length, com.icon('flag'))),
     /*h('a.corner.botright' + (myvote===-1 ? '.selected' : ''),
       {
