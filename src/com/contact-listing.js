@@ -32,10 +32,10 @@ module.exports = function (app, profile, follows, trusts, opts) {
   if (flen == 0)
     followers = h('.text-danger', 'No mutual followers')
 
-  // gather flags
+  // gather flaggers
   var flaggers = []
   for (var otherid in trusts) {
-    if (trusts[otherid] && trusts[otherid][profile.id] == -1 && trusts[app.user.id] && trusts[app.user.id][otherid] != -1)
+    if (trusts[otherid] && trusts[otherid][profile.id] == -1 && (follows[app.user.id][otherid] || otherid == app.user.id))
       flaggers.push(com.userImg(app, otherid))
   }
 

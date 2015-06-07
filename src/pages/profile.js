@@ -46,7 +46,7 @@ module.exports = function (app) {
     var isFollowing = graphs.follow[app.user.id][pid]
     var isFlagging = (graphs.trust[app.user.id][pid] == -1)
     var followers = Object.keys(graphs.follow).filter(function (id) { return graphs.follow[id][pid] })
-    var flaggers = Object.keys(graphs.trust).filter(function (id) { return graphs.trust[id][pid] === -1 })
+    var flaggers = Object.keys(graphs.trust).filter(function (id) { return (graphs.follow[app.user.id][id] || id == app.user.id) && graphs.trust[id][pid] === -1 })
 
     // name conflict controls
     var nameConflictDlg
@@ -63,7 +63,7 @@ module.exports = function (app) {
             'There is no information about this user.' :
             'Warning: This user is not followed by anyone you follow.')
 
-      nameConflictDlg = h('.well', { style: 'background: #fff' },
+      nameConflictDlg = h('.well', { style: 'margin-top: 5px; background: #fff' },
         h('h3', { style: 'margin-top: 0' }, 'Name Conflict!'),
         h('p', 'This is not the only user named "'+app.users.names[pid]+'," which may be a coincidence, or it may be the sign of an imposter! Make sure this is who you think it is before you follow them.'),
         h('h4', 'How can I tell?'),
@@ -77,6 +77,14 @@ module.exports = function (app) {
     }
     function followedByMe (id) {
       return graphs.follow[app.user.id][id]
+    }
+
+    // flag controls
+    var flaggersDlg
+    if (flaggers.length) {
+      flaggersDlg = h('.profile-flaggers',
+        h('strong', 'Warning!'), ' This user has been flagged by ', flaggers.map(function (id) { return com.userImg(app, id)})
+      )
     }
 
     var content
@@ -125,6 +133,7 @@ module.exports = function (app) {
             ]
           }))),
       h('.layout-main',
+        flaggersDlg,
         nameConflictDlg,
         content),
       h('.layout-rightnav',
