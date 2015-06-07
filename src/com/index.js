@@ -182,8 +182,8 @@ exports.pagenav = function (app) {
   ]
   var sidepages = [
   //[id, path, label, extra_cls],
-    ['feed',         'feed',         icon('cog'), '.pull-right'],
-    ['help',         'help',         'Help',      '.pull-right'],
+    ['feed',         'feed',         icon('list'), '.pull-right'],
+    ['help',         'help',         'Help',       '.pull-right'],
     ['address-book', 'address-book', ['+', icon('user'), ' Add friends']]
   ]
 

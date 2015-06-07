@@ -115,21 +115,21 @@ module.exports = function (app) {
     }
 
     // render page
-    app.setPage('profile', h('.layout-twocol',
-      h('.layout-main',
-        nameConflictDlg,
-        h('.header-ctrls',
+    app.setPage('profile', h('.layout-threecol',
+      h('.layout-leftnav',
+        h('.profile-nav',
           com.nav({
             current: view,
             items: [
               ['latest',   makeUri({ view: 'latest' }),   'Latest'],
               ['contacts', makeUri({ view: 'contacts' }), 'Contacts'],
-              ['avatar',   makeUri({ view: 'avatar' }),   'Avatar'],
               ['about',    makeUri({ view: 'about' }),    'About']
             ]
-          })),
+          }))),
+      h('.layout-main',
+        nameConflictDlg,
         content),
-      h('.layout-sidenav',
+      h('.layout-rightnav',
         h('.profile-controls',
           com.contactPlaque(app, profile, graphs),
           (!isSelf) ?
