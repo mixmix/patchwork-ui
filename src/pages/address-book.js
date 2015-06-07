@@ -42,12 +42,12 @@ module.exports = function (app) {
     }
 
     var searchForm = h('form', { onsubmit: onsearch }, h('input.form-control', { name: 'search' }))
-    var feedContainer = h('div', com.contactFeed(app, { filter: filterFn, follows: follows }))
+    var feedContainer = h('div', com.contactFeed(app, { filter: filterFn, follows: follows, trusts: trusts }))
     app.setPage('address-book', [
       h('.address-book-controls',
         h('.search', h('h4', com.icon('search'), ' Search your Network'), searchForm),
-        h('.create-invite', { onclick: swal.bind(null, 'Not Yet Implemented', 'We\'re sorry! This feature hasn\'t been implemented yet. We\'re working hard to finish it!', 'error') },  h('h4', 'Invite a Friend'), h('p', 'Bring a new user into your network')),
-        h('.use-invite', { onclick: app.ui.inviteModal },  h('h4', 'Accept Invitation'), h('p', 'Join a friend in their network'))),
+        h('.create-invite', { onclick: swal.bind(null, 'Not Yet Implemented', 'We\'re sorry! This feature hasn\'t been implemented yet. We\'re working hard to finish it!', 'error') },  h('h4', com.icon('send'), ' Invite a Friend'), h('p', 'Bring a new user into your network')),
+        h('.use-invite', { onclick: app.ui.inviteModal },  h('h4', com.icon('ok'), ' Accept Invitation'), h('p', 'Join a friend in their network'))),
       feedContainer
     ])
 
@@ -63,7 +63,7 @@ module.exports = function (app) {
             'Searching for "'+queryStr+'". ',
             h('a', { href: '#', onclick: unsearch }, com.icon('remove'), ' Clear Search'))))
       }
-      feedContainer.appendChild(com.contactFeed(app, { filter: filterFn, follows: follows }))
+      feedContainer.appendChild(com.contactFeed(app, { filter: filterFn, follows: follows, trusts: trusts }))
 
       function unsearch (e) {
         searchForm.search.value = ''

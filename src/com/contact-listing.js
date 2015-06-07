@@ -3,7 +3,7 @@ var schemas = require('ssb-msg-schemas')
 var com = require('./index')
 var u = require('../lib/util')
 
-module.exports = function (app, profile, follows, opts) {
+module.exports = function (app, profile, follows, trusts, opts) {
 
   // markup 
 
@@ -11,17 +11,16 @@ module.exports = function (app, profile, follows, opts) {
 
   function f (e) { follow(e, id) }
   function unf (e) { unfollow(e, id) }
-  function r (e) { rename(e, id) }
 
-  var followbtn, renamebtn
+  var followbtn
   if (id != app.user.id) {
     if (!follows[app.user.id][id])
       followbtn = h('button.btn.btn-primary', { title: 'Follow', onclick: f }, com.icon('plus'), ' Follow')
     else
       followbtn = h('button.btn.btn-primary.unfollow', { title: 'Unfollow', onclick: unf }, com.icon('minus'), ' Unfollow')
   }
-  renamebtn = h('button.btn.btn-primary.btn-xs', { title: 'Rename', onclick: r }, com.icon('pencil'))
 
+  // gather followers
   var followers = []
   for (var otherid in follows) {
     if (follows[otherid][profile.id] && (follows[app.user.id][otherid] || otherid == app.user.id))
@@ -33,13 +32,24 @@ module.exports = function (app, profile, follows, opts) {
   if (flen == 0)
     followers = h('.text-danger', 'No mutual followers')
 
+  // gather flags
+  var flaggers = []
+  for (var otherid in trusts) {
+    if (trusts[otherid] && trusts[otherid][profile.id] == -1 && trusts[app.user.id] && trusts[app.user.id][otherid] != -1)
+      flaggers.push(com.userImg(app, otherid))
+  }
+
+  // render
   var listing = h('.contact-listing',
     h('.profpic',
       com.userHexagon(app, id, 80),
       h('.action', followbtn)),
     h('.details',
       h('p.name', com.a('#/profile/'+id, app.users.names[id])),
-      h('p.followers', followers)))
+      h('p.followers', followers)),
+    (flaggers.length) ?
+      h('.flaggers', flaggers, ' Flagged this user!') :
+      '')
   listing.dataset.followers = flen
   return listing
 
