@@ -88,24 +88,10 @@ module.exports = function (app) {
     }
 
     var content
-    if (view == 'avatar') {
-      // profile pics
-      var pics = []
-      if (profile) {
-        if (profile.self.profilePic)
-          pics.push(profilePic(profile.self.profilePic))
-        Object.keys(profile.assignedBy).forEach(function(userid) {
-          var given = profile.assignedBy[userid]
-          if (given.profilePic)
-            pics.push(profilePic(given.profilePic, userid))
-        })
-      }
-      var uploader = com.imageUploader(app, { onupload: onImageUpload })
-      uploader.classList.add('well')
-      content = h('.profile-pics',
-        uploader,
-        h('br'),
-        pics)
+    if (view == 'files' || view == 'photos' || view == 'software') {
+      content = h('.well.text-center', { style: 'background: #fff; margin-top: 10px' },
+        h('h2.text-muted', 'Not Yet Implemented'),
+        h('p', h('strong', 'We\'re sorry!'), ' This page hasn\'t been implemented yet. We\'re working hard to finish it!'))
     }
     else if (view == 'contacts') {
       content = com.contactFeed(app, { filter: contactFeedFilter, follows: graphs.follow })
@@ -128,6 +114,9 @@ module.exports = function (app) {
             current: view,
             items: [
               ['latest',   makeUri({ view: 'latest' }),   'Latest'],
+              ['photos',   makeUri({ view: 'photos' }),   'Photos'],
+              ['files',    makeUri({ view: 'files' }),    'Files'],
+              ['software', makeUri({ view: 'software' }), 'Software'],
               ['contacts', makeUri({ view: 'contacts' }), 'Contacts'],
               ['about',    makeUri({ view: 'about' }),    'About']
             ]
