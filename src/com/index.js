@@ -173,7 +173,7 @@ exports.search = function (opts) {
 var pagenav =
 exports.pagenav = function (app) {
   var mainpages = [
-  //[id, path, label],
+  //[id, path, label, extra_cls],
     ['compose',      'compose',      'secure share', '.pull-right.highlight'],
     ['home',         '',             'Messages'],
     ['photos',       'photos',       'Photos'],
@@ -181,8 +181,9 @@ exports.pagenav = function (app) {
     ['software',     'software',     'Software']
   ]
   var sidepages = [
-  //[id, path, label],
-    ['help',         'help',         'Help',     '.pull-right'],
+  //[id, path, label, extra_cls],
+    ['feed',         'feed',         icon('cog'), '.pull-right'],
+    ['help',         'help',         'Help',      '.pull-right'],
     ['address-book', 'address-book', ['+', icon('user'), ' Add friends']]
   ]
 

@@ -1,57 +1,17 @@
-/*.message-summary {
-  font-family: @font-family-sans-serif;
-  position: relative;
-  overflow: hidden;
-  cursor: pointer;
-  color: #555;
-  background: #fff;
-  border-top: 1px solid #ccc;
-  margin: 12px;
-  padding: 12px;
+.message-summary {
+  margin: 0;
+  border-bottom: 0;
 
-  .user-img img {
-    float: left;
-    width: 40px;
-    height: 40px;
-    border-radius: 2px;
-  }
-  .user-link {
-    color: #333;
+  .message-header {
+    padding-left: 20px;
   }
 
-  .message-summary-inner {
-    margin-left: 40px;
-    word-break: break-word;
-    padding: 10px 12px 0px;
-  }
-
-  .markdown {
-    max-height: 300px;
-    overflow: hidden;
-    & > :first-child {
-      margin-top: 0;
+  & > .user-img {
+    img {
+      width: 40px;
+      height: 40px;
+      border-radius: 20px;
     }
-    ul {
-      padding-left: 2em;
-    }
-  }
-
-  .message-stats {
-    float: right;
-    span, a {
-      color: #65717B;
-    }
-    .votes {
-      display: none;
-    }
-    .glyphicon {
-      color: #B9C1C7;
-    }
-  }
-
-  :not(.markdown) h4 {
-    font-size: 15px;
-    margin-top: 3px;
   }
 
   .raw {
@@ -69,7 +29,3 @@
     }
   }
 }
-
-.inbox-page .unread .message-summary-inner {
-  border-color: #93A0B6;
-}*/

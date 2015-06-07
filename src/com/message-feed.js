@@ -16,6 +16,8 @@ module.exports = function (app, opts) {
 
   if (!opts.feed)
     opts.feed = app.ssb.createFeedStream
+  if (!opts.render)
+    opts.render = com.message
 
   var cursor = function (msg) {
     if (msg)
@@ -28,10 +30,11 @@ module.exports = function (app, opts) {
     feedState.el = makeUnselectable(h('.message-feed'))
   else {
     // update message states
-    var stateObj = { read: false }
-    Array.prototype.forEach.call(feedState.el.querySelectorAll('tr'), function (el) {   
-      com.messageSummary.fetchRowState(app, el)
-    })
+    if (opts.render.fetchRowState) {
+      Array.prototype.forEach.call(feedState.el.querySelectorAll('tr'), function (el) {   
+        opts.render.fetchRowState(app, el)
+     })
+    }
   }
 
   feedContainer = h('.message-feed-container',
@@ -68,7 +71,7 @@ module.exports = function (app, opts) {
           // render
           var lastEl = feedState.el.firstChild
           for (var i=_msgs.length-1; i >= 0; i--) {            
-            var el = com.messageSummary(app, _msgs[i])
+            var el = opts.render(app, _msgs[i])
             el && feedState.el.insertBefore(el, lastEl)
           }
 
@@ -109,7 +112,7 @@ module.exports = function (app, opts) {
 
           // render
           _msgs.forEach(function (msg) {
-            var el = com.messageSummary(app, msg)
+            var el = opts.render(app, msg)
             el && feedState.el.appendChild(el)
           })
 
@@ -176,7 +179,7 @@ module.exports = function (app, opts) {
       app.ssb.publish({ type: 'vote', voteTopic: { msg: key }, vote: vote }, function (err) {
         if (err) swal('Error While Publishing', err.message, 'error')
         else {
-          com.messageSummary.fetchRowState(app, row, key)
+          opts.render.fetchRowState && opts.render.fetchRowState(app, row, key)
         }
       })
     }
