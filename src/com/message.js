@@ -37,7 +37,7 @@ function getSummary (app, msg) {
         })
         if (!subjects.length) return
         var text = mentions.post(u.escapePlain(c.text), app, msg)
-        return [/*author(app, msg),*/ h('p', com.icon('info-sign'), ' ', subjects, ' ', h('span', { innerHTML: text }))]
+        return h('p', com.icon('info-sign'), ' ', subjects, ' ', h('span', { innerHTML: text }))
       },
       pub: function () {
         return h('h4', com.icon('cloud'), ' Announced a public peer at ', c.address)
@@ -87,12 +87,10 @@ function getSummary (app, msg) {
       },
       vote: function () {
         var items
-        if (c.vote === 1)
-          items = [com.icon('triangle-top'), ' Upvoted ']
-        else if (c.vote === 0)
-          items = [com.icon('erase'), ' Removed vote for ']
-        else if (c.vote === -1)
-          items = [com.icon('triangle-bottom'), ' Downvoted ']
+        if (c.vote == 1)
+          items = [com.icon('star'), ' Starred ']
+        else if (c.vote <= 0)
+          items = [com.icon('erase'), ' Unstarred ']
         else
           return false
 
@@ -107,7 +105,7 @@ function getSummary (app, msg) {
         else
           return false
 
-        return h('h4', items)
+        return items
       }
     })[c.type]()
     if (!s || s.length == 0)
@@ -131,7 +129,7 @@ module.exports = function (app, msg, opts) {
     com.userImg(app, msg.value.author),
     h('ul.message-header.list-inline',
       h('li', com.user(app, msg.value.author)),
-      h('li', u.prettydate(new Date(msg.value.timestamp), true)),
+      h('li', com.a('#/msg/'+msg.key, u.prettydate(new Date(msg.value.timestamp), true))),
       h('li', h('a', { href: '#', onclick: onreply }, 'reply')),
       h('li.favorite.pull-right', h('span.users'), favoriteBtn)),
     h('.message-body', content),
@@ -286,32 +284,17 @@ function ago (msg) {
   return h('small.text-muted', str, ' ago')
 }
 
-function author (app, msg, addition) {
-  return h('p.message-summary-author', com.user(app, msg.value.author), ' ', ago(msg), addition)
-}
-
-function fetchReplyLink (app, msg) {
-  var link = mlib.asLinks(msg.value.content.repliesTo)[0]
-  if (!link || !link.msg)
-    return
-  var span = h('span', ' ', com.icon('share-alt'), ' ')
-  app.ssb.get(link.msg, function (err, msg2) {
-    var str
-    if (msg2) {
-      str = [shorten((msg2.content.type == 'post') ? msg2.content.text : msg2.content.type, 40) + ' by ' + com.userName(app, msg2.author)]
-    } else {
-      str = link.msg
-    }
-    span.appendChild(h('a.text-muted', { href: '#/msg/'+link.msg }, str))
-  })
-  return span
-}
-
 function fetchMsgLink (app, mid) {
-  var link = com.a('#/msg/'+mid, 'this message')
+  var link = com.a('#/msg/'+mid, 'this post')
+  var linkspan = h('span', link)
   app.ssb.get(mid, function (err, msg) {
-    if (msg)
-      link.textContent = link.innerText = shorten((msg.content.type == 'post') ? msg.content.text : msg.content.type, 40) + ' by ' + com.userName(app, msg.author)
+    if (msg) {
+      linkspan.insertBefore(h('span', (msg.author == app.user.id) ? 'your ' : com.userName(app, msg.author) + '\'s', ' post'), link)
+      link.style.display = 'block'
+      link.style.padding = '8px 0'
+      link.style.color = 'gray'
+      link.textContent = link.innerText = shorten((msg.content.type == 'post') ? msg.content.text : msg.content.type, 255)
+    }
   })
-  return link
+  return linkspan
 }

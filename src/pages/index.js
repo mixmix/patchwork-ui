@@ -15,9 +15,10 @@ function notfound (app) {
 module.exports = {
   'address-book':   require('./address-book'),
   compose:          require('./compose'),
-  ext:              require('./ext'),
+  // ext:              require('./ext'),
   feed:             require('./feed'),
   files:            require('./files'),
+  followers:        require('./followers'),
   help:             require('./help'),
   home:             require('./home'),  
   inbox:            require('./inbox'),
@@ -26,5 +27,6 @@ module.exports = {
   photos:           require('./photos'),
   profile:          require('./profile'),
   setup:            require('./setup'),
-  software:         require('./software')
+  software:         require('./software'),
+  stars:            require('./stars')
 }

@@ -1,6 +1,14 @@
 var pull = require('pull-stream')
 var mlib = require('ssb-msgs')
 
+exports.debounce = function (fn, wait) {
+  var timeout
+  return function() {
+    clearTimeout(timeout)
+    timeout = setTimeout(fn, wait)
+  }
+}
+
 exports.getJson = function(path, cb) {
   var xhr = new XMLHttpRequest()
   xhr.open('GET', path, true)

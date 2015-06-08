@@ -172,9 +172,16 @@ exports.search = function (opts) {
 
 var pagenav =
 exports.pagenav = function (app) {
+  var upvotesUnread = (app.ui.indexCounts.upvotesUnread) ? h('span.unread.monospace', '+', app.ui.indexCounts.upvotesUnread, icon('star')) : ''
+  var followsUnread = (app.ui.indexCounts.followsUnread) ? h('span.unread.monospace', '+', app.ui.indexCounts.followsUnread, h('small', icon('user'))) : ''
+  // var inboxUnread   = (app.ui.indexCounts.inboxUnread)   ? h('span.unread.monospace', '+', app.ui.indexCounts.inboxUnread, icon('envelope')) : ''
+
   var mainpages = [
   //[id, path, label, extra_cls],
     ['compose',      'compose',      'secure share', '.pull-right.highlight'],
+    ['stars',        'stars',        [app.ui.indexCounts.upvotes, ' ', icon('star'), upvotesUnread],   '.pull-right.thin.notification'],
+    ['followers',    'followers',    [app.ui.indexCounts.follows, ' ', icon('user'), followsUnread],   '.pull-right.thin.notification'],
+    // ['inbox',        'inbox',        [app.ui.indexCounts.inbox,   ' ', icon('envelope'), inboxUnread], '.pull-right.thin.notification'],
     ['home',         '',             'Messages'],
     ['photos',       'photos',       'Photos'],
     ['files',        'files',        'Files'],
@@ -182,9 +189,9 @@ exports.pagenav = function (app) {
   ]
   var sidepages = [
   //[id, path, label, extra_cls],
-    ['feed',         'feed',         icon('list'), '.pull-right'],
-    ['help',         'help',         'Help',       '.pull-right'],
-    ['address-book', 'address-book', ['+', icon('user'), ' Add friends']]
+    ['help',         'help',         'Help', '.pull-right'],
+    ['feed',         'feed',         icon('list'), '.pull-right.thin'],
+    ['address-book', 'address-book', ['+ Add friends']]
   ]
 
   function render (page) {

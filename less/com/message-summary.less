@@ -1,31 +1,25 @@
 .message-summary {
-  margin: 0;
-  border-bottom: 0;
-
-  .message-header {
-    padding-left: 20px;
-  }
-
+  background: #fff;
+  margin: 5px 36px;
+  border: 1px solid #ccc;
+  
   & > .user-img {
     img {
-      width: 40px;
-      height: 40px;
-      border-radius: 20px;
+      width: 30px;
+      height: 30px;
+      border-radius: 15px;
+      float: left;
+      margin: 4px;
     }
   }
 
-  .raw {
-    margin: -0.5em 0 1em;
-    .pretty-raw {
-      td {  
-        padding: 2px 7px;
-        vertical-align: top;
-      }
-      td:first-child {
-        text-align: right;
-        min-width: 150px;
-        color: #999;
-      }
-    }
+  .message-summary-content {
+    padding: 10px 40px
+  }
+
+  .msg-link {
+    color: gray;
+    display: block;
+    padding: 12px 0;
   }
 }

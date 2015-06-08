@@ -10,8 +10,8 @@ module.exports = function (app, profile, graphs) {
   var contactId   = profile.id
   var name        = com.userName(app, contactId)
 //  var otherNames  = app.getOtherNames(profile) :TODO: use these?
-  var followers   = inEdges(graphs.follow, true)
-  var flaggers    = Object.keys(graphs.trust).filter(function (id) { return graphs.trust[id][profile.id] === -1 })
+  var followers   = countInbound(graphs.follow, true)
+  var flaggers    = Object.keys(graphs.trust).filter(function (id) { return graphs.trust[id][profile.id] === -1 }).length
   var isSelf      = (contactId == app.user.id)
   var isFollowing = graphs.follow[app.user.id][contactId]
   var myvote      = (profile.assignedBy[app.user.id]) ? profile.assignedBy[app.user.id].vote : 0
@@ -28,8 +28,8 @@ module.exports = function (app, profile, graphs) {
   var totem = h('.totem',
     h('span.corner.topleft'),    
     h('span.corner.topright'),
-    h('span.corner.botleft', { 'data-overlay': 'Followers' }, h('.corner-inner', followers.length, com.icon('user'))),
-    h('span.corner.botright', { 'data-overlay': 'Flags' }, h('.corner-inner', flaggers.length, com.icon('flag'))),
+    h('span.corner.botleft', { 'data-overlay': 'Followers' }, h('.corner-inner', followers, com.icon('user'))),
+    h('span.corner.botright', { 'data-overlay': 'Flags' }, h('.corner-inner', flaggers, com.icon('flag'))),
     /*h('a.corner.botright' + (myvote===-1 ? '.selected' : ''),
       {
         href: '#',
@@ -95,12 +95,12 @@ module.exports = function (app, profile, graphs) {
 
   return h('.contact-summary', totem, title)
 
-  function inEdges (g, v, filter) {
-      var arr = []
+  function countInbound (g, v) {
+      var n = 0
       for (var userid in g) {
-        if (g[userid][contactId] == v && (!filter || filter(userid, g)))
-          arr.push(h('li', com.userlinkThin(userid, app.users.names[userid])))
+        if (g[userid][contactId] == v)
+          n++
       }
-      return arr      
+      return n
     }
 }

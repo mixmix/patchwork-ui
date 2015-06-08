@@ -149,6 +149,8 @@ function setupRpcConnection () {
   pull(phoenix.ssb.phoenix.createEventStream(), pull.drain(function (event) {
     if (event.type == 'home-add')
       setNewMessageCount(getNewMessageCount() + 1)
+    if (event.type == 'votes-add' || event.type == 'votes-remove' || event.type == 'follows-add' || event.type == 'follows-remove')
+      renderNavDebounced()
   }))
 }
 
@@ -242,15 +244,26 @@ function setNewMessageCount (n) {
     document.title = 'Scuttlebutt'
 }
 
+function renderNav () {
+  var navEl = document.getElementById('page-nav')    
+  navEl.innerHTML = ''   
+  navEl.appendChild(com.pagenav(phoenix))
+}
+var renderNavDebounced = u.debounce(function () {
+  phoenix.ssb.phoenix.getIndexCounts(function (err, counts) {
+    if (counts)
+      phoenix.ui.indexCounts = counts
+    renderNav()
+  })
+}, 150)
+
 // render a new page
 function setPage (name, page, opts) {
   if (opts && opts.onPageTeardown)
     _onPageTeardown = opts.onPageTeardown
 
-  // render nav   
-  var navEl = document.getElementById('page-nav')    
-  navEl.innerHTML = ''   
-  navEl.appendChild(com.pagenav(phoenix, name, page))
+  // render nav
+  renderNav()
 
   // render page
   var pageEl = document.getElementById('page-container')
