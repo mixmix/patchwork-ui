@@ -28,6 +28,10 @@ function getSummary (app, msg) {
       },
       post: function () { 
         if (!c.text) return
+        if (mlib.link(c.repliesTo, 'msg'))
+          return [com.icon('share-alt'), ' replied to your post ', ago(msg), h('a.msg-link', { style: 'color: #555', href: '#/msg/'+c.repliesTo.msg }, shorten(c.text, 255))]
+        if (mlib.links(c.mentions).filter(function(link) { return link.feed == app.user.id }).length)
+          return [' mentioned you ', ago(msg), h('a.msg-link', { style: 'color: #555', href: '#/msg/'+msg.key }, shorten(c.text, 255))]
         return md(c.text)
       },
       fact: function () { 
@@ -121,7 +125,7 @@ module.exports = function (app, msg, opts) {
 
   var content = getSummary(app, msg, opts)
   if (!content)
-    content = 'Msg '+msg.key
+    return
 
   var msgSummary = h('.message-summary',
     com.userImg(app, msg.value.author),

@@ -27,7 +27,7 @@ module.exports = function (app, opts) {
   // markup
  
   if (!feedState.el)
-    feedState.el = makeUnselectable(h('.message-feed'))
+    feedState.el = h('.message-feed')
   else {
     // update message states
     if (opts.render.fetchRowState) {
@@ -72,7 +72,7 @@ module.exports = function (app, opts) {
           var lastEl = feedState.el.firstChild
           for (var i=_msgs.length-1; i >= 0; i--) {            
             var el = opts.render(app, _msgs[i])
-            feedState.el.insertBefore(el, lastEl)
+            el && feedState.el.insertBefore(el, lastEl)
           }
 
           // maintain scroll position (fetchTop-only behavior)
@@ -113,7 +113,7 @@ module.exports = function (app, opts) {
           // render
           _msgs.forEach(function (msg) {
             var el = opts.render(app, msg)
-            feedState.el.appendChild(el)
+            el && feedState.el.appendChild(el)
           })
 
           // fetch more if needed
@@ -175,12 +175,4 @@ module.exports.makeStateObj = function () {
     el: null,
     lastScrollTop: 0
   } 
-}
-
-function makeUnselectable (elem) {
-  elem.onselectstart = function() { return false; };
-  elem.style.MozUserSelect = "none";
-  elem.style.KhtmlUserSelect = "none";
-  elem.unselectable = "on";
-  return elem
 }
