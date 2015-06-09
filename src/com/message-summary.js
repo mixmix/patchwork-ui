@@ -29,9 +29,9 @@ function getSummary (app, msg) {
       post: function () { 
         if (!c.text) return
         if (mlib.link(c.repliesTo, 'msg'))
-          return [com.icon('share-alt'), ' replied to your post ', ago(msg), h('a.msg-link', { style: 'color: #555', href: '#/msg/'+c.repliesTo.msg }, shorten(c.text, 255))]
+          return [com.icon('share-alt'), ' replied ', ago(msg), h('a.msg-link', { style: 'color: #555', href: '#/msg/'+c.repliesTo.msg }, shorten(c.text, 255))]
         if (mlib.links(c.mentions).filter(function(link) { return link.feed == app.user.id }).length)
-          return [' mentioned you ', ago(msg), h('a.msg-link', { style: 'color: #555', href: '#/msg/'+msg.key }, shorten(c.text, 255))]
+          return [com.icon('hand-right'), ' mentioned you ', ago(msg), h('a.msg-link', { style: 'color: #555', href: '#/msg/'+msg.key }, shorten(c.text, 255))]
         return md(c.text)
       },
       fact: function () { 
@@ -93,9 +93,9 @@ function getSummary (app, msg) {
       vote: function () {
         var items
         if (c.vote == 1)
-          items = [ago(msg), ' ', com.icon('star'), ' starred your post']
+          items = [ago(msg), ' ', com.icon('star'), ' starred']
         else if (c.vote <= 0)
-          items = [ago(msg), ' ', com.icon('erase'), ' unstarred your post']
+          items = [ago(msg), ' ', com.icon('erase'), ' unstarred']
         else
           return false
 
@@ -147,7 +147,7 @@ function fetchMsgLink (app, mid) {
   var link = h('a.msg-link', { href: '#/msg/'+mid }, 'this message')
   app.ssb.get(mid, function (err, msg) {
     if (msg)
-      link.textContent = link.innerText = shorten((msg.content.type == 'post') ? msg.content.text : msg.content.type, 255)
+      link.textContent = link.innerText = shorten((msg.content.type == 'post') ? msg.content.text : 'this '+msg.content.type, 255)
   })
   return link
 }
