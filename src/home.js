@@ -200,9 +200,6 @@ function refreshPage (e) {
         window.location.hash = '#/setup'
         return
       }
-    } else if (window.location.hash == '#/setup') {
-      window.location.hash = '#/'
-      return
     }
 
     // lookup the page

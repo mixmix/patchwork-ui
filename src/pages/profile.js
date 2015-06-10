@@ -122,6 +122,7 @@ module.exports = function (app) {
             ]
           }))),
       h('.layout-main',
+        (isSelf) ? com.welcomehelp(app) : '',
         flaggersDlg,
         nameConflictDlg,
         content),
@@ -136,8 +137,8 @@ module.exports = function (app) {
               ' ',
               h('a.btn.btn-default.btn-strong', { href: '#', onclick: toggleFlag }, com.icon('flag'), ((isFlagging) ? ' Unflag' : ' Flag')))
           :
-            h('.btns',
-              h('a.btn.btn-default.btn-strong', { href: '#', onclick: rename }, com.icon('pencil'), ' Rename')),
+            h('.btns.text-center', { style: 'margin-right: 40px' },
+              h('a.btn.btn-default.btn-strong', { href: '#/setup' }, com.icon('pencil'), ' Edit Your Profile')),
           (!isSelf) ?
             com.connectionGraph(app, app.user.id, pid, { w: 5.5, drawLabels: false, touchEnabled: false, mouseEnabled: false, mouseWheelEnabled: false }) :
             com.networkGraph(app, { w: 5.5, drawLabels: false, touchEnabled: false, mouseEnabled: false, mouseWheelEnabled: false }),
@@ -152,31 +153,6 @@ module.exports = function (app) {
         qs = '?view=' + encodeURIComponent(opts.view)
       }
       return '#/profile/'+pid+qs
-    }
-
-    function profilePic (pic, author) {
-      var authorName
-      if (!author) {
-        author = pid
-        authorName = name
-      } else {
-        authorName = app.users.names[author]
-      }
-      return h('.pic', { 'data-overlay': 'Use for '+name },
-        h('a', { href: '#', onclick: setProfilePic(pic) }, h('img', { src: '/ext/'+pic.ext })),
-        h('p', 'by ', com.userlinkThin(author, authorName))
-      )
-    }
-
-    function outEdges (g, v, filter) {
-      var arr = []
-      if (g[pid]) {
-        for (var userid in g[pid]) {
-          if (g[pid][userid] == v && (!filter || filter(userid, g)))
-            arr.push(h('li', com.userlinkThin(userid, app.users.names[userid])))
-        }
-      }
-      return arr
     }
 
     function inEdges (g, v, filter) {
@@ -257,36 +233,6 @@ module.exports = function (app) {
         app.ui.pleaseWait(false)
         if (err) swal('Error While Publishing', err.message, 'error')
         else app.refreshPage()
-      })
-    }
-
-    function setProfilePic (link) {
-      return function (e) {
-        e.preventDefault()
-        if (profile && profile.assignedBy[app.user.id] && profile.assignedBy[app.user.id].profilePic && profile.assignedBy[app.user.id].profilePic.ext == link.ext)
-          return
-        app.ui.pleaseWait(true, 500)
-        schemas.addContact(app.ssb, pid, { profilePic: link }, function (err) {
-          app.ui.pleaseWait(false)
-          if (err) swal('Error While Publishing', err.message, 'error')
-          else app.refreshPage()        
-        })
-      }
-    }
-
-    function onImageUpload (hasher) {
-      var link = {
-        ext: hasher.digest,
-        size: hasher.size,
-        type: 'image/png',
-        width: 275,
-        height: 275
-      }
-      app.ui.pleaseWait(true, 500)
-      schemas.addContact(app.ssb, pid, { profilePic: link }, function (err) {
-        app.ui.pleaseWait(false)
-        if (err) swal('Error While Publishing', err.message, 'error')
-        else app.refreshPage()        
       })
     }
 

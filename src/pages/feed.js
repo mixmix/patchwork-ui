@@ -11,7 +11,7 @@ module.exports = function (app) {
 
   app.setPage('feed', h('.layout-twocol',
     h('.layout-main',
-      h('h3.text-muted', { style: 'max-width: 800px; margin: 10px auto; text-align: right' }, 'Under the Hood'),
+      h('h3.text-muted', { style: 'max-width: 730px; margin: 10px auto; text-align: right' }, 'Under the Hood'),
       com.messageFeed(app, { render: com.messageSummary, infinite: true })),
     h('.layout-rightnav',
       h('table.table.peers', { style: 'margin-top: 40px' },

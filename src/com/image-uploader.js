@@ -3,6 +3,9 @@ var createHash = require('multiblob/util').createHash
 var pull = require('pull-stream')
 var pushable = require('pull-pushable')
 
+if (!('URL' in window) && ('webkitURL' in window))
+  window.URL = window.webkitURL
+
 module.exports = function (app, opts) {
   opts = opts || {}
   
@@ -19,6 +22,8 @@ module.exports = function (app, opts) {
   })
   var zoomSlider = h('input', { type: 'range', value: 50, oninput: onresize })
   var bgColorSelect = h('input', { type: 'color', value: '#fff', onchange: draw })
+  var existing = h('.image-uploader-existing', opts.existing ? h('img', { src: opts.existing }) : '')
+  var viewer = h('div', existing, fileInput)
   var editor = h('.image-uploader-editor',
     { style: 'display: none' },
     h('small', 'drag to crop'), h('br'),
@@ -26,13 +31,10 @@ module.exports = function (app, opts) {
     h('p', zoomSlider),
     h('p', 'Background: ', bgColorSelect),
     h('p',
-      h('button.btn.btn-action.btn-strong.pull-right', { onclick: onsave }, 'Save'),
+      h('button.btn.btn-action.btn-strong.pull-right.savebtn', { onclick: onsave }, 'OK'),
       h('button.btn.btn-action', { onclick: oncancel }, 'Cancel')))
-  var el = h('.image-uploader',
-    h('form', 
-      h('label', 'Upload Avatar'), h('br'),
-      fileInput),
-    editor)
+  var el = h('.image-uploader', viewer, editor)
+  el.forceDone = forceDone.bind(el, opts)
 
   // handlers
 
@@ -86,6 +88,7 @@ module.exports = function (app, opts) {
 
       draw()
       editor.style.display = 'block'
+      viewer.style.display = 'none'
     }
     reader.readAsDataURL(file)
   }
@@ -133,25 +136,53 @@ module.exports = function (app, opts) {
       pull.map(function (buf) { return new Buffer(new Uint8Array(buf)).toString('base64') }),
       app.ssb.blobs.add(function (err) {
         if(err) return console.error(err) //:TODO:
+
+        fileInput.value = ''
+        editor.style.display = 'none'
+        viewer.style.display = 'block'
         opts.onupload(hasher)
       })
     )
 
     canvas.toBlob(function (blob) {
+      // Send to sbot
       var reader = new FileReader()
       reader.onloadend = function () {
         ps.push(new Buffer(new Uint8Array(reader.result)))
         ps.end()
       }
       reader.readAsArrayBuffer(blob)
+
+      // Update "existing" img
+      var blobUrl = URL.createObjectURL(blob)
+      existing.querySelector('img').setAttribute('src', blobUrl)
+      setTimeout(function() { URL.revokeObjectURL(blobUrl) }, 50) // give 50ms to render first
     }, 'image/png')
   }
 
   function oncancel (e) {
     e.preventDefault()
-    editor.style.display = 'none'
     fileInput.value = ''
+    editor.style.display = 'none'
+    viewer.style.display = 'block'
   }
 
   return el
+}
+
+// helper to finish the edit in case the user forgets to press "OK"
+function forceDone (opts, cb) {
+  this.forceDone = null // detach for memory cleanup
+
+  // not editing?
+  if (this.querySelector('.image-uploader-editor').style.display != 'block')
+    return cb() // we're good
+
+  // update cb to run after onupload
+  var onupload = opts.onupload
+  opts.onupload = function (hasher) {
+    onupload(hasher)
+    cb()
+  }
+  this.querySelector('.savebtn').click() // trigger upload
 }

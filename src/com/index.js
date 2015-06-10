@@ -189,9 +189,10 @@ exports.pagenav = function (app) {
   ]
   var sidepages = [
   //[id, path, label, extra_cls],
-    ['help',         'help',         'Help', '.pull-right'],
-    ['feed',         'feed',         icon('list'), '.pull-right.thin'],
-    ['address-book', 'address-book', ['+ Add friends']]
+    ['help',         'help',                 'Help', '.pull-right'],
+    ['me',           'profile/'+app.user.id, icon('user'), '.pull-right.thin'],
+    ['feed',         'feed',                 icon('list'), '.pull-right.thin'],
+    ['address-book', 'address-book',         '+ Add friends']
   ]
 
   function render (page) {
@@ -232,33 +233,16 @@ var welcomehelp =
 exports.welcomehelp = function (app) {
   if (!app.user.profile)
     return
-  if (!app.user.profile.self.profilePic) {
-    return h('.welcome-help',
-      h('.well',
-        h('h2', 'Hi, ', app.user.profile.self.name, '! ', h('small', 'You need an avatar.')),
-        exports.imageUploader(app, { onupload: function (hasher) {
-          var link = {
-            ext: hasher.digest,
-            size: hasher.size,
-            type: 'image/png',
-            width: 275,
-            height: 275
-          }
-          app.ui.pleaseWait(true, 500)
-          schemas.addContact(app.ssb, app.user.id, { profilePic: link }, function (err) {
-            app.ui.pleaseWait(false)
-            if (err) swal('Error While Publishing', err.message, 'error')
-            else app.refreshPage()        
-          })
-        }})
-      )
-    )
-  }
   if (Object.keys(app.user.profile.assignedTo).length == 0) {
     return h('.welcome-help',
       h('.well',
-        h('h2', 'Nice photo! ', h('small', 'You can change it in your profile\'s ', h('a', { href: '#/profile/'+app.user.id+'?view=avatar' }, 'avatar page'), '.')),
-        h('p', 'Now we need to get you connected. ', h('a', { href: '#', onclick: app.ui.inviteModal }, 'Use an invite'), ' to join the global network.')))
+        h('h2', 'Let\'s get you connected!'),
+        h('.big-btn', { onclick: app.ui.inviteModal },
+          h('h3', 'Use an Invite'),
+          h('p', 'Got a friend on the network? Ask them to send you an invite code, then click here to use it.')),
+        h('.big-btn', { onclick: alert.bind(window, 'Todo!') },
+          h('h3', 'Get an Invite'),
+          h('p', 'Are you the first of your friends on SSB? You trend-setter! Click here to get an invite from the SSB team.'))))
   }
 }
 
