@@ -74,6 +74,13 @@ module.exports = function (app, opts) {
       }
     }
 
+    // empty graph?
+    if (graph.edges.length === 0) {
+      // how embarrassing, plz hide it
+      container.style.height = '1px'
+      return
+    }
+
     // render
     var s = new sigma({
       graph: graph,

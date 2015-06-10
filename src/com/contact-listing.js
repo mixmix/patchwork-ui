@@ -29,8 +29,12 @@ module.exports = function (app, profile, follows, trusts, opts) {
   var flen = followers.length
   if (flen > 16)
     followers = followers.slice(0, 16).concat(h('a', { href: '#/profile/'+id }, ' + ' + (flen-16) + ' others'))
-  if (flen == 0 && id !== app.user.id)
-    followers = h('.text-danger', 'No mutual followers')
+  if (flen == 0) {
+    if (id === app.user.id)
+      followers = 'No followers... yet!'
+    else
+      followers = h('.text-danger', 'No mutual followers')
+  }
 
   // gather flaggers
   var flaggers = []

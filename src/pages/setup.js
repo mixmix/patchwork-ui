@@ -16,7 +16,7 @@ module.exports = function (app) {
   var postBtn = h('button.btn.btn-primary', { onclick: post, disabled: is_new }, 'Save')
   app.setPage('setup', h('.layout-setup',
     h('.layout-setup-left',
-      h('h2.text-muted', (is_new) ? 'New account' : 'Edit Your Profile'),
+      h('h2', (is_new) ? 'New account' : 'Edit Your Profile'),
       h('.panel.panel-default', { style: 'border: 0' },
         h('.panel-body',
           h('.form-group',
