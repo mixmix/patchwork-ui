@@ -178,10 +178,10 @@ exports.pagenav = function (app) {
 
   var mainpages = [
   //[id, path, label, extra_cls],
-    ['compose',      'compose',      'secure share', '.pull-right.highlight'],
     ['stars',        'stars',        [app.ui.indexCounts.upvotes, ' ', icon('star'), upvotesUnread],   '.pull-right.thin.notification'],
     ['followers',    'followers',    [app.ui.indexCounts.follows, ' ', icon('user'), followsUnread],   '.pull-right.thin.notification'],
     ['inbox',        'inbox',        [app.ui.indexCounts.inbox,   ' ', icon('envelope'), inboxUnread], '.pull-right.thin.notification'],
+    // ['compose',      'compose',      [icon('lock'), ' share'], '.pull-right.highlight'],
     ['home',         '',             'Messages'],
     ['photos',       'photos',       'Photos'],
     ['files',        'files',        'Files'],

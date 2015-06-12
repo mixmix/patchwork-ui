@@ -8,6 +8,7 @@ module.exports = function (app) {
 
   app.setPage('stars', h('.layout-twocol',
     h('.layout-main', 
+      h('h3.text-muted.text-center', 'Stars on Your Posts'),
       com.welcomehelp(app),
       com.messageFeed(app, { render: com.messageSummary, feed: app.ssb.phoenix.createVoteStream, markread: true, infinite: true })),
     h('.layout-rightnav',

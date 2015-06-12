@@ -7,7 +7,8 @@ module.exports = function (app) {
   // markup
 
   app.setPage('followers', h('.layout-twocol',
-    h('.layout-main', 
+    h('.layout-main',
+      h('h3.text-muted.text-center', 'New Followers'),
       com.welcomehelp(app),
       com.messageFeed(app, { render: com.messageSummary, feed: app.ssb.phoenix.createFollowStream, markread: true, infinite: true })),
     h('.layout-rightnav',

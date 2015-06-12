@@ -12,6 +12,7 @@ module.exports = function (app) {
   app.setPage('home', h('.layout-twocol',
     h('.layout-main', 
       com.welcomehelp(app),
+      h('.text-center', { style: 'padding-top: 30px' }, h('a.btn.btn-strong.btn-success', { href: '#/compose', title: 'New Post' }, com.icon('plus'))),
       com.messageFeed(app, { feed: app.ssb.phoenix.createHomeStream, loadmore: true, infinite: true })),
     h('.layout-rightnav',
       com.networkGraph(app, { drawLabels: false, touchEnabled: false, mouseEnabled: false, mouseWheelEnabled: false }),

@@ -11,6 +11,7 @@ module.exports = function (app) {
 
   app.setPage('inbox', h('.layout-twocol',
     h('.layout-main', 
+      h('h3.text-muted.text-center', 'Your Inbox'),
       com.welcomehelp(app),
       com.messageFeed(app, { render: com.messageSummary, feed: app.ssb.phoenix.createInboxStream, markread: true, infinite: true })),
     h('.layout-rightnav',

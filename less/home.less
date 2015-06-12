@@ -87,7 +87,7 @@ html {
   overflow-y: scroll; // always show scrollbar
 }
 body {
-  background: #eee;
+  background: url(/img/bg.jpg) top left no-repeat #ddd;
 }
 
 // General layout styles
@@ -138,7 +138,17 @@ body {
   border: 1px solid @brand-primary;
 }
 .btn-success.btn-strong {
-  border: 1px solid @brand-success;
+  background: #80AD33;
+  color: #fff;
+  border-radius: 20px;
+  height: 38px;
+  width: 38px;
+  padding-top: 8px;
+
+  &:hover {
+    text-decoration: none;
+    background: linear-gradient(to bottom, #71a800, #649304);
+  }
 }
 .btn-info.btn-strong {
   border: 1px solid @brand-info;
