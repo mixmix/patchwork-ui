@@ -184,15 +184,9 @@ exports.pagenav = function (app) {
     ['inbox',        'inbox',        [app.ui.indexCounts.inbox,   ' ', icon('envelope'), inboxUnread], '.pull-right.thin.notification'],
     ['address-book', 'address-book', '+ Add friends', '.pull-right.thin'],
     // ['compose',      'compose',      [icon('lock'), ' share'], '.pull-right.highlight'],
-    ['home',         '',             'Messages'],
+    ['home',         '',             [icon('th-list'), ' Secure Scuttlebutt'], '.title'],
     ['photos',       'photos',       'Photos'],
-    ['files',        'files',        'Files'],
-    ['software',     'software',     'Software']
-  ]
-  var sidepages = [
-  //[id, path, label, extra_cls],
-    ['help',         'help',                 'Help', '.pull-right'],
-    ['feed',         'feed',                 icon('list'), '.pull-right.thin'],
+    ['files',        'files',        'Files']
   ]
 
   function render (page) {
@@ -207,23 +201,22 @@ exports.pagenav = function (app) {
 var sidenav =
 exports.sidenav = function (app) {
   var pages = [
-  //[id, path, label],
-    ['home',         '',             [icon('home'), 'home']],
-    ['inbox',        'inbox',        [icon('inbox'), 'inbox ('+(app.ui.indexCounts.inboxUnread||0)+')']],
-    ['address-book', 'address-book', [icon('user'), 'network']],
-    ['feed',         'feed',         [icon('list'), 'all data']],
-    ['help',         'help',         [icon('question-sign'), 'help']]
+    ['post',   [icon('comment'), ' New Post']],
+    ['photos', [icon('picture'), ' New Photo Album']],
+    ['files',  [icon('file'),    ' New Files']]
   ]
 
-  return h('.side-nav.full-height',
-    pages.map(function (page) {
-      if (page == '-')
-        return h('hr')
-      if (page[0] == app.page.id)
-        return h('p.selected.side-nav-'+page[0], a('#/'+page[1], page[2]))
-      return h('p.side-nav-'+page[0], a('#/'+page[1], page[2]))
-    })
-  )
+  var subpage = app.page.qs.type || 'post'
+  pages = pages.map(function (page) {
+    if (app.page.id == 'compose' && page[0] == subpage)
+      return h('a.selected.sidenav-'+page[0], { href: '#/compose?type='+page[0] }, page[1])
+    return h('a.sidenav-'+page[0], { href: '#/compose?type='+page[0] }, page[1])
+  })
+  if (app.page.id == 'compose') {
+    pages.push(h('a.sidenav-cancel', { href: '#/' }, 'Cancel'))
+  }
+
+  return h('.sidenav', pages)
 }
 
 var welcomehelp =
@@ -246,9 +239,9 @@ exports.welcomehelp = function (app) {
 var sidehelp =
 exports.sidehelp = function (app, opts) {
   return h('ul.list-unstyled.sidehelp',
-    h('li', h('button.btn.btn-link', { onclick: app.ui.showUserId }, 'Get your id')),
-    h('li', h('button.btn.btn-link', { onclick: app.ui.followPrompt }, 'Add a contact')),
-    h('li', h('button.btn.btn-link', { onclick: app.ui.inviteModal }, 'Use an invite')),
+    // h('li', h('button.btn.btn-link', { onclick: app.ui.showUserId }, 'Get your id')),
+    h('li', h('button.btn.btn-link', { onclick: app.ui.followPrompt }, 'Invite a Friend')),
+    h('li', h('button.btn.btn-link', { onclick: app.ui.inviteModal }, 'Accept Invitation')),
     (!opts || !opts.noMore) ? h('li', h('span', {style:'display: inline-block; padding: 6px 14px'}, a('#/help', 'More help'))) : ''
   )
 }

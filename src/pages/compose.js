@@ -3,12 +3,12 @@ var h = require('hyperscript')
 var com = require('../com')
 
 module.exports = function (app) {
-  var type = app.page.qs.type || 'message'
+  var type = app.page.qs.type || 'post'
 
   // markup
 
   var form
-  if (type == 'message') {
+  if (type == 'post') {
     form = [
       h('.text-muted', h('small', 'Markdown, @-mentions, and emojis are supported.')),
       com.postForm(app, null, { onpost: onpost })
@@ -20,19 +20,19 @@ module.exports = function (app) {
   app.setPage('compose', h('.layout-twocol',
     h('.layout-main',
       h('.composer',
-        h('.composer-header',
-          com.nav({
-            current: type,
-            items: [
-              ['message',  makeUri({ type: 'message' }),  'Message'],
-              ['photos',   makeUri({ type: 'photos' }),   'Photos'],
-              ['files',    makeUri({ type: 'files' }),    'Files'],
-              ['software', makeUri({ type: 'software' }), 'Software']
-            ]
-          })),
+        // h('.composer-header',
+        //   com.nav({
+        //     current: type,
+        //     items: [
+        //       ['post',     makeUri({ type: 'post' }),     'Post'],
+        //       ['photos',   makeUri({ type: 'photos' }),   'Photo Album'],
+        //       ['files',    makeUri({ type: 'files' }),    'Files']
+        //     ]
+        //   })),
         h('.composer-body',
           form))),
     h('.layout-rightnav',
+      com.sidenav(app),
       com.sidehelp(app)
     )
   ))

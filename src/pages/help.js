@@ -141,11 +141,7 @@ module.exports = function (app) {
     ])
   )
 
-  app.setPage('help', h('.layout-twocol',
-    h('.layout-main', content),
-    h('.layout-rightnav',
-      com.friendsHexagrid(app, { size: 80 }),
-      com.sidehelp(app)
-    )
+  app.setPage('help', h('.layout-onecol',
+    h('.layout-main', content)
   ))
 }
