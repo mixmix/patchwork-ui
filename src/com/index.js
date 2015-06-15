@@ -176,11 +176,13 @@ exports.pagenav = function (app) {
   var followsUnread = (app.ui.indexCounts.followsUnread) ? h('span.unread.monospace', '+', app.ui.indexCounts.followsUnread, h('small', icon('user'))) : ''
   var inboxUnread   = (app.ui.indexCounts.inboxUnread)   ? h('span.unread.monospace', '+', app.ui.indexCounts.inboxUnread, icon('envelope')) : ''
 
-  var mainpages = [
+  var pages = [
   //[id, path, label, extra_cls],
+    ['me',           'profile/'+app.user.id, h('img', { src: profilePicUrl(app, app.user.id) }), '.pull-right.nopad'],
+    ['friends',      'friends',      [app.ui.indexCounts.follows, ' ', icon('user'), followsUnread],   '.pull-right.thin.notification'],
     ['stars',        'stars',        [app.ui.indexCounts.upvotes, ' ', icon('star'), upvotesUnread],   '.pull-right.thin.notification'],
-    ['followers',    'followers',    [app.ui.indexCounts.follows, ' ', icon('user'), followsUnread],   '.pull-right.thin.notification'],
     ['inbox',        'inbox',        [app.ui.indexCounts.inbox,   ' ', icon('envelope'), inboxUnread], '.pull-right.thin.notification'],
+    ['address-book', 'address-book', '+ Add friends', '.pull-right.thin'],
     // ['compose',      'compose',      [icon('lock'), ' share'], '.pull-right.highlight'],
     ['home',         '',             'Messages'],
     ['photos',       'photos',       'Photos'],
@@ -190,9 +192,7 @@ exports.pagenav = function (app) {
   var sidepages = [
   //[id, path, label, extra_cls],
     ['help',         'help',                 'Help', '.pull-right'],
-    ['me',           'profile/'+app.user.id, icon('user'), '.pull-right.thin'],
     ['feed',         'feed',                 icon('list'), '.pull-right.thin'],
-    ['address-book', 'address-book',         '+ Add friends']
   ]
 
   function render (page) {
@@ -201,10 +201,7 @@ exports.pagenav = function (app) {
     return h('a.pagenav-'+page[0]+(page[3]||''), { href: '#/'+page[1] }, page[2])
   }
 
-  return h('.page-nav-inner',
-    h('.page-nav-main', mainpages.map(render)),
-    h('.page-nav-side', sidepages.map(render))
-  )
+  return h('.page-nav-inner', pages.map(render))
 }
 
 var sidenav =

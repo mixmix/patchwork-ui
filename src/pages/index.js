@@ -18,7 +18,7 @@ module.exports = {
   // ext:              require('./ext'),
   feed:             require('./feed'),
   files:            require('./files'),
-  followers:        require('./followers'),
+  friends:          require('./friends'),
   help:             require('./help'),
   home:             require('./home'),  
   inbox:            require('./inbox'),
