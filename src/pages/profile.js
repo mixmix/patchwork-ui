@@ -116,7 +116,6 @@ module.exports = function (app) {
               ['latest',   makeUri({ view: 'latest' }),   'Latest'],
               ['photos',   makeUri({ view: 'photos' }),   'Photos'],
               ['files',    makeUri({ view: 'files' }),    'Files'],
-              ['software', makeUri({ view: 'software' }), 'Software'],
               ['contacts', makeUri({ view: 'contacts' }), 'Contacts'],
               ['about',    makeUri({ view: 'about' }),    'About']
             ]
