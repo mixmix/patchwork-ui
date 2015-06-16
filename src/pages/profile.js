@@ -9,7 +9,6 @@ var u = require('../lib/util')
 
 module.exports = function (app) {
   var pid      = app.page.param
-  var view     = app.page.qs.view || 'latest'
   var profile  = app.users.profiles[pid]
   var name     = com.userName(app, pid)
 
@@ -87,39 +86,10 @@ module.exports = function (app) {
       )
     }
 
-    var content
-    if (view == 'files' || view == 'photos' || view == 'software') {
-      content = h('.well.text-center', { style: 'background: #fff; margin-top: 10px' },
-        h('h2.text-muted', 'Not Yet Implemented'),
-        h('p', h('strong', 'We\'re sorry!'), ' This page hasn\'t been implemented yet. We\'re working hard to finish it!'))
-    }
-    else if (view == 'contacts') {
-      content = com.contactFeed(app, { filter: contactFeedFilter, follows: graphs.follow })
-    }
-    else if (view == 'about') {
-      content = [
-        h('.header-ctrls', h('.composer-header', h('.composer-header-inner', com.factForm(app, pid, { onpost: app.refreshPage })))),
-        com.messageFeed(app, { feed: app.ssb.createFeedStream, filter: aboutFeedFilter, infinite: true })
-      ]
-    }
-    else {
-      content = com.messageFeed(app, { feed: app.ssb.createFeedStream, filter: latestFeedFilter, infinite: true })
-    }
+    var content = com.messageFeed(app, { feed: app.ssb.createFeedStream, filter: latestFeedFilter, infinite: true })
 
     // render page
-    app.setPage('profile', h('.layout-threecol',
-      h('.layout-leftnav',
-        h('.profile-nav',
-          com.nav({
-            current: view,
-            items: [
-              ['latest',   makeUri({ view: 'latest' }),   'Latest'],
-              ['photos',   makeUri({ view: 'photos' }),   'Photos'],
-              ['files',    makeUri({ view: 'files' }),    'Files'],
-              ['contacts', makeUri({ view: 'contacts' }), 'Contacts'],
-              ['about',    makeUri({ view: 'about' }),    'About']
-            ]
-          }))),
+    app.setPage('profile', h('.layout-twocol',
       h('.layout-main',
         (isSelf) ? com.welcomehelp(app) : '',
         flaggersDlg,
@@ -143,16 +113,6 @@ module.exports = function (app) {
             com.networkGraph(app, { w: 5.5, drawLabels: false, touchEnabled: false, mouseEnabled: false, mouseWheelEnabled: false }),
           (flaggers.length) ? h('.relations', h('h4', 'flagged by'), com.userHexagrid(app, flaggers, { nrow: 4 })) : '',
           (followers.length) ? h('.relations', h('h4', 'followed by'), com.userHexagrid(app, followers, { nrow: 4 })) : ''))))
-
-    function makeUri (opts) {
-      var qs=''
-      if (opts !== false) {
-        opts = opts || {}
-        opts.view = ('view' in opts) ? opts.view : view
-        qs = '?view=' + encodeURIComponent(opts.view)
-      }
-      return '#/profile/'+pid+qs
-    }
 
     function inEdges (g, v, filter) {
       var arr = []
@@ -189,19 +149,6 @@ module.exports = function (app) {
 
     function isLinkToProfile (link) {
       return link.feed == pid
-    }
-
-    function contactFeedFilter (prof) {
-      var id = prof.id
-
-      /*else if (view == 'followers') {
-        if (graphs.follow[id] && graphs.follow[id][pid] && !primary)
-          return true
-      }*/
-
-      if (graphs.follow[pid] && graphs.follow[pid][id])
-        return true
-      return false
     }
 
     // handlers

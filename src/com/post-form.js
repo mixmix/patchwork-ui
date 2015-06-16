@@ -22,7 +22,7 @@ module.exports = function (app, parent, opts) {
   var preview = h('.post-form-preview')
   var filesInput = h('input.hidden', { type: 'file', multiple: true, onchange: filesAdded })  
   var filesList = h('ul')
-  var textarea = h('textarea', { name: 'text', placeholder: 'Compose your message', rows: ((opts && opts.rows) ? opts.rows : 10), onkeyup: onPostTextChange })
+  var textarea = h('textarea', { name: 'text', placeholder: 'Compose your message', rows: ((opts && opts.rows) ? opts.rows : 6), onkeyup: onPostTextChange })
   suggestBox(textarea, app.ui.suggestOptions) // decorate with suggestbox 
   var postBtn = h('button.postbtn.btn.btn-primary.btn-strong', { disabled: true }, 'Post')
 

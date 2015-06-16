@@ -52,7 +52,7 @@ function getSummary (app, msg) {
 
         var items = []
         if (c.following === true)
-          items.push(h('h4', com.icon('plus'), ' Followed ', subjects))
+          items.push(h('h4', com.icon('user'), ' Followed ', subjects))
         if (c.following === false)
           items.push(h('h4', com.icon('minus'), ' Unfollowed ', subjects))
 

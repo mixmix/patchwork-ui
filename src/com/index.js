@@ -30,7 +30,7 @@ exports.user = function (app, id) {
   if (id != app.user.id && (!app.user.profile.assignedTo[id] || !app.user.profile.assignedTo[id].following)) {
     followIcon = [' ', h('a', 
       { title: 'This is not somebody you follow.', href: '#/profile/'+id },
-      h('span.text-muted', icon('user'), '?')
+      h('span.text-muted', icon('question-sign'))
     )]
   }
 
