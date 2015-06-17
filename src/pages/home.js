@@ -9,10 +9,19 @@ module.exports = function (app) {
 
   // markup
 
-  function followMsgs (opts) {
+  function contactMsgs (opts) {
     opts = opts || {}
     opts.type = 'contact'
     return app.ssb.messagesByType(opts)
+  }
+
+  var p = app.user.profile
+  function contactFilter (m) {
+    var a = m.value.author
+    // only show contact-msgs by people I follow
+    if (p.assignedTo[a] && p.assignedTo[a].following)
+      return true
+    return false
   }
 
   app.setPage('home', h('.layout-twocol',
@@ -22,7 +31,7 @@ module.exports = function (app) {
     h('.layout-rightnav',
       com.sidenav(app),
       com.sidehelp(app),
-      com.messageFeed(app, { render: com.messageSummary, feed: followMsgs })
+      com.messageFeed(app, { render: com.messageSummary, feed: contactMsgs, filter: contactFilter })
     )
   ))
 }
