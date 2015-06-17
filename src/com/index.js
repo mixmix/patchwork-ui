@@ -186,7 +186,8 @@ exports.pagenav = function (app) {
     // ['compose',      'compose',      [icon('lock'), ' share'], '.pull-right.highlight'],
     ['home',         '',             [icon('th-list'), ' Secure Scuttlebutt'], '.title'],
     ['photos',       'photos',       'Photos'],
-    ['files',        'files',        'Files']
+    ['files',        'files',        'Files'],
+    ['events',       'events',       'Events']    
   ]
 
   function render (page) {
@@ -201,9 +202,10 @@ exports.pagenav = function (app) {
 var sidenav =
 exports.sidenav = function (app) {
   var pages = [
-    ['post',   [icon('comment'), ' New Post']],
-    ['photos', [icon('picture'), ' New Photo Album']],
-    ['files',  [icon('file'),    ' New Files']]
+    ['post',   [icon('comment'), ' New Status']],
+    ['photos', [icon('picture'), ' New Album']],
+    ['event',  [icon('calendar'), ' New Event']],
+    ['files',  [icon('folder-open'), ' New Repo']]
   ]
 
   var subpage = app.page.qs.type || 'post'

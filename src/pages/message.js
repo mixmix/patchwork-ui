@@ -16,7 +16,6 @@ module.exports = function (app) {
     app.setPage('message', h('.layout-twocol',
       h('.layout-main', content),
       h('.layout-rightnav',
-        com.friendsHexagrid(app, { size: 80 }),
         com.sidehelp(app)
       )
     ))
