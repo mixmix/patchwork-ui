@@ -65,28 +65,28 @@ function getSummary (app, msg) {
         if ('trust' in c) {
           var t = +c.trust|0
           if (t == -1)
-            items.push([com.icon('flag'), ' flagged ', subjects])
+            items.push(['flagged ', subjects])
           else if (t === 0)
-            items.push([com.icon('erase'), ' unflagged ', subjects])
+            items.push(['unflagged ', subjects])
         }
 
         if (c.alias) {
           if (c.alias === 'primary')
-            items.push([com.icon('link'), ' claimed to be a secondary feed owned by ', subjects])
+            items.push(['claimed to be a secondary feed owned by ', subjects])
           else if (c.alias === 'secondary')
-            items.push([com.icon('link'), ' claimed ownership of ', subjects])
+            items.push(['claimed ownership of ', subjects])
         }
         if ('alias' in c && !c.alias)
-          items.push([com.icon('erase'), ' claimed no alias for ', subjects])
+          items.push(['claimed no alias for ', subjects])
 
         if ('name' in c)
-          items.push([com.icon('tag'), ' named ', subjects, ' ', c.name])
+          items.push(['named ', subjects, ' ', c.name])
 
         if ('profilePic' in c)
-          items.push([com.icon('picture'), ' set a profile pic for ', subjects])
+          items.push(['set a profile pic'])
 
         if (items.length===0)
-          items.push([com.icon('option-horizontal'), ' published a contact for ', subjects])
+          items.push(['published a contact for ', subjects])
         items.push([' ', ago(msg)])
         return items
       },
