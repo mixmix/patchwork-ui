@@ -21,8 +21,7 @@ module.exports = function (app) {
         h('.composer-body',
           form))),
     h('.layout-rightnav',
-      com.sidenav(app),
-      com.sidehelp(app)
+      com.sidenav(app)
     )
   ))
 
