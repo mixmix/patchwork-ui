@@ -43,10 +43,15 @@ module.exports = function (app, opts) {
 
   // message fetch
 
-  if (!feedState.el.hasChildNodes())
-    fetchBottom()
+  if (!feedState.el.hasChildNodes()) {
+    fetchBottom(function (n) {
+      if (opts.onempty && n === 0)
+        opts.onempty(feedState.el)
+    })
+  }
 
   function fetchTop (cb) {
+    var numRendered = 0
     fetchTopBy(30)
     function fetchTopBy (amt) {
       var fetchopts = { reverse: false, limit: amt }
@@ -57,7 +62,7 @@ module.exports = function (app, opts) {
         if (_msgs && _msgs.length) {
           // nothing new? stop
           if (feedState.topCursor && feedState.topCursor.key == _msgs[_msgs.length - 1].key)
-            return (cb && cb())
+            return (cb && cb(numRendered))
 
           // advance cursors
           feedState.topCursor = _msgs[_msgs.length - 1]
@@ -70,9 +75,12 @@ module.exports = function (app, opts) {
 
           // render
           var lastEl = feedState.el.firstChild
-          for (var i=_msgs.length-1; i >= 0; i--) {            
+          for (var i=_msgs.length-1; i >= 0; i--) {
             var el = opts.render(app, _msgs[i])
-            el && feedState.el.insertBefore(el, lastEl)
+            if (el) {
+              feedState.el.insertBefore(el, lastEl)
+              numRendered++
+            }
           }
 
           // maintain scroll position (fetchTop-only behavior)
@@ -85,11 +93,12 @@ module.exports = function (app, opts) {
             return fetchTopBy(remaining)
         }
 
-        cb && cb()
+        cb && cb(numRendered)
       })
     }
   }
   function fetchBottom (cb) {
+    var numRendered = 0
     fetchBottomBy(30)
     function fetchBottomBy (amt) {
       var fetchopts = { reverse: true, limit: amt }
@@ -99,7 +108,7 @@ module.exports = function (app, opts) {
         if (_msgs && _msgs.length) {
           // nothing new? stop
           if (feedState.bottomCursor && feedState.bottomCursor.key == _msgs[_msgs.length - 1].key)
-            return (cb && cb())
+            return (cb && cb(numRendered))
 
           // advance cursors
           feedState.bottomCursor = _msgs[_msgs.length - 1]
@@ -113,7 +122,10 @@ module.exports = function (app, opts) {
           // render
           _msgs.forEach(function (msg) {
             var el = opts.render(app, msg)
-            el && feedState.el.appendChild(el)
+            if (el) {
+              feedState.el.appendChild(el)
+              numRendered++
+            }
           })
 
           // fetch more if needed
@@ -122,7 +134,7 @@ module.exports = function (app, opts) {
             return fetchBottomBy(remaining)
         }
 
-        cb && cb()
+        cb && cb(numRendered)
       })
     }
   }

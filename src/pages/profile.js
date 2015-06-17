@@ -86,7 +86,14 @@ module.exports = function (app) {
       )
     }
 
-    var content = com.messageFeed(app, { feed: app.ssb.createFeedStream, filter: latestFeedFilter, infinite: true })
+    var content = com.messageFeed(app, { feed: app.ssb.createFeedStream, filter: latestFeedFilter, infinite: true, onempty: onNoMsgs })
+    function onNoMsgs (feedEl) {
+      feedEl.appendChild(h('div', { style: 'margin-top: 5px; background: #fff; padding: 15px 15px 10px' },
+        h('h3', { style: 'margin-top: 0' }, 'Umm... who is this?'),
+        h('p', 'This person\'s feed hasn\'t been fetched yet, so we don\'t know who this is!'),
+        h('p', h('strong', 'Hang Tight!'), h('br'), 'If you\'re following somebody that follows this person, you\'ll receive their data soon. Or, if you want, you can follow this mystery-person yourself.')
+      ))
+    }
 
     // render page
     app.setPage('profile', h('.layout-twocol',
