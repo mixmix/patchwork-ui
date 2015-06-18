@@ -172,40 +172,101 @@ exports.search = function (opts) {
 
 var pagenav =
 exports.pagenav = function (app) {
+
+  // markup
+
   var upvotesUnread = (app.ui.indexCounts.upvotesUnread) ? h('span.unread.monospace', '+', app.ui.indexCounts.upvotesUnread, icon('star')) : ''
   var followsUnread = (app.ui.indexCounts.followsUnread) ? h('span.unread.monospace', '+', app.ui.indexCounts.followsUnread, h('small', icon('user'))) : ''
   var inboxUnread   = (app.ui.indexCounts.inboxUnread)   ? h('span.unread.monospace', '+', app.ui.indexCounts.inboxUnread, icon('envelope')) : ''
 
-  var pages = [
-  //[id, path, label, extra_cls],
-    ['me',           'profile/'+app.user.id, h('img', { src: profilePicUrl(app, app.user.id) }), '.pull-right.nopad'],
-    ['friends',      'friends',      [app.ui.indexCounts.follows, ' ', icon('user'), followsUnread],   '.pull-right.thin.notification'],
-    ['stars',        'stars',        [app.ui.indexCounts.upvotes, ' ', icon('star'), upvotesUnread],   '.pull-right.thin.notification'],
-    ['inbox',        'inbox',        [app.ui.indexCounts.inbox,   ' ', icon('envelope'), inboxUnread], '.pull-right.thin.notification'],
-    ['address-book', 'address-book', '+ Add friends', '.pull-right.thin'],
-    // ['compose',      'compose',      [icon('lock'), ' share'], '.pull-right.highlight'],
-    ['home',         '',             [icon('th-list'), ' Secure Scuttlebutt'], '.title'],
-    ['photos',       'photos',       'Photos'],
-    ['files',        'files',        'Files'],
-    ['events',       'events',       'Events']    
-  ]
+  var groupsDropdownBtn = h('a.pagenav-groups.dropdown-btn', { href: '#', onclick: openGroupsDropdown }, icon('chevron-down'), ' Groups')
+  var friendsDropdownBtn = h('a.pagenav-groups.dropdown-btn', { href: '#', onclick: openFriendsDropdown }, icon('chevron-down'), ' Friends')  
 
-  function render (page) {
-    if (page[0] == app.page.id)
-      return h('a.selected.pagenav-'+page[0]+(page[3]||''), { href: '#/'+page[1] }, page[2])
-    return h('a.pagenav-'+page[0]+(page[3]||''), { href: '#/'+page[1] }, page[2])
+  // render nav
+  return h('.page-nav-inner',
+    item('home', '', [icon('globe'), ' Public'], '.title'),
+    groupsDropdownBtn,
+    friendsDropdownBtn,
+    h('span.spacer'),
+    item('address-book', 'address-book', '+ Add friends', '.thin'),
+    item('inbox',        'inbox',        [icon('envelope'), ' ', app.ui.indexCounts.inbox,   inboxUnread],   '.thin.notification'),
+    item('stars',        'stars',        [icon('star'),     ' ', app.ui.indexCounts.upvotes, upvotesUnread], '.thin.notification'),
+    item('friends',      'friends',      [icon('user'),     ' ', app.ui.indexCounts.follows, followsUnread], '.thin.notification'),
+    item('me',           'profile/'+app.user.id, h('img', { src: profilePicUrl(app, app.user.id) }), '.nopad')
+  )
+
+  function item (id, path, label, extra_cls) {
+    var selected = (id == app.page.id) ? '.selected' : ''
+    return h('a.pagenav-'+id+(extra_cls||'')+selected, { href: '#/'+path }, label)
   }
 
-  return h('.page-nav-inner', pages.map(render))
+  // handlers
+
+  function openGroupsDropdown (e) {
+    e.preventDefault()
+    e.stopPropagation()
+
+    // render dropdown items
+    // :TODO:
+    var dropdownItems = [
+      // h('a', { href: '#/' }, icon('globe'), ' Public'),
+      // h('hr'),
+      h('a', { href: '#' }, icon('lock'), ' The Guys'),
+      h('a', { href: '#' }, icon('lock'), ' Frazees'),
+      h('a', { href: '#' }, icon('lock'), ' Office'),      
+      h('a', { href: '#' }, '+ New Group')
+    ]
+    openDropdown(groupsDropdownBtn, h('#groups-dropdown.dropdown', dropdownItems))
+  }
+
+  function openFriendsDropdown (e) {
+    e.preventDefault()
+    e.stopPropagation()
+
+    // render dropdown items
+    var dropdownItems = []
+    var aT = app.user.profile.assignedTo
+    for (var id in aT) {
+      if (aT[id].following)
+        dropdownItems.push(h('a', { href: '#/home?user='+id }, h('img', { src: profilePicUrl(app, id) }), userName(app, id)))
+    }
+    dropdownItems.push(h('a', { href: '#/address-book' }, '+ Add Friend'))
+    openDropdown(friendsDropdownBtn, h('#friends-dropdown.dropdown', dropdownItems))
+  }
+
+  function openDropdown (btn, dropdown) {
+    // close any existing dropdowns
+    closeDropdowns()
+
+    // add dropdown / styles
+    btn.classList.add('open')
+    document.body.appendChild(dropdown)
+
+    // register click handler to remove dropdown when clicking
+    document.body.addEventListener('click', remove)
+    function remove (e) {
+      closeDropdowns()
+      document.body.removeEventListener('click', remove)
+    }
+  }
+
+  function closeDropdowns() {
+    Array.prototype.forEach.call(document.querySelectorAll('.dropdown-btn'), function (btn) {
+      btn.classList.remove('open')
+    })
+    Array.prototype.forEach.call(document.querySelectorAll('.dropdown'), function (dropdown) {
+      document.body.removeChild(dropdown)
+    })
+  }
 }
 
 var sidenav =
 exports.sidenav = function (app) {
   var pages = [
-    ['post',   [icon('comment'), ' New Status']],
-    ['photos', [icon('picture'), ' New Album']],
-    ['event',  [icon('calendar'), ' New Event']],
-    ['files',  [icon('folder-open'), ' New Repo']]
+    ['post',   [icon('comment'), ' New Status']]
+    // ['photos', [icon('picture'), ' New Album']],
+    // ['event',  [icon('calendar'), ' New Event']],
+    // ['files',  [icon('folder-open'), ' New Repo']]
   ]
 
   var subpage = app.page.qs.type || 'post'

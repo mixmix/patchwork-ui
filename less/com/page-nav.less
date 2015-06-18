@@ -2,32 +2,50 @@
   position: fixed;
   top: 0;
   left: 0;
-  height: 42px;
+  height: 40px;
   width: 100%;
   z-index: 100;
   
   white-space: nowrap;
-  font-size: 16px;
+  font-size: 15px;
   background: #fff;
   border-bottom: 1px solid #ccc;
 
   .page-nav-inner {
     padding: 5px 0;
+    display: flex;
+  }
+
+  .spacer {
+    flex: 1;
   }
 
   a {
     display: inline-block;
+    height: 34px;
     padding: 4px 15px;
     margin-right: 5px;
     font-weight: 100;
     color: #777;
 
+    .glyphicon {
+      margin-right: 5px;
+    }
+    .glyphicon-chevron-down {
+      position: relative;
+      top: 3px;
+      font-size: 14px;
+    }
+
+    &:hover, &:focus {
+      text-decoration: none;
+    }
     &.selected {
-      color: #333;
+      color: darken(@brand-primary, 5%);
+      border-bottom: 4px solid @brand-primary;
     }
     &.title {
-      font-weight: bold;
-      margin-left: 5px;
+      font-size: 16px;
     }
     &.highlight {
       background: #71A800;
@@ -44,11 +62,29 @@
     &.nopad {
       padding: 0;
     }
+    &.dropdown-btn {
+      padding: 3px 14px;
+      border: 1px solid transparent;
+      border-bottom: 0;
+      &.open {
+        height: 35px; // spill over just enough to hide bottom border of navbar, and top border of the dropdown body
+        background: #fff;
+        border-color: #ccc;
+      }
+    }
     &.notification {
       position: relative;
+      height: 30px;
       background: #eee;
       border-radius: 2px;
       margin-right: 3px;
+
+      .glyphicon {
+        margin-right: 2px;
+      }
+      .glyphicon-envelope, .glyphicon-user {
+        font-size: 14px;
+      }
 
       .unread {
         position: absolute;
@@ -79,4 +115,44 @@
       box-shadow: 2px 2px 3px rgba(0,0,0,0.25);
     }
   }
+}
+.dropdown {
+  position: absolute;
+  z-index: 99;
+  top: 39px;
+  min-width: 180px;
+  background: #fff;
+  border: 1px solid #ccc;
+  padding: 10px;
+
+  a {
+    display: block;
+    padding: 8px 10px;
+    color: #666;
+
+    &:hover {
+      text-decoration: none;
+      background: #eee;
+    }
+
+    .glyphicon-lock {
+      font-size: 12px;
+    }
+
+    img {
+      width: 26px;
+      height: 26px;
+      border-radius: 13px;
+      margin-right: 12px;
+    }
+  }
+  hr {
+    margin: 10px 0;
+  }
+}
+#groups-dropdown {
+  left: 105px;
+}
+#friends-dropdown {
+  left: 213px;
 }
