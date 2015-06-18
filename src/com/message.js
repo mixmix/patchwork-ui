@@ -123,12 +123,15 @@ module.exports = function (app, msg, opts) {
   if (!content)
     content = h('table.raw', com.prettyRaw.table(app, msg.value.content))
 
+  var isPrivate = (Math.random() > 0.7)
+
   var msgComments = h('.message-comments')
   var favoriteBtn = h('a', { href: '#', onclick: onfavorite, title: 'Favorite' }, com.icon('star'))
-  var msgSummary = h('.message',
+  var msgSummary = h('.message' + (isPrivate?'.private':''),
     com.userImg(app, msg.value.author),
     h('ul.message-header.list-inline',
       h('li', com.user(app, msg.value.author)),
+      h('li', com.a('#/msg/'+msg.key, (isPrivate ? [com.icon('lock'), '→you'] : com.icon('globe')))),
       h('li', com.a('#/msg/'+msg.key, u.prettydate(new Date(msg.value.timestamp), true))),
       h('li', h('a', { href: '#', onclick: onreply }, 'reply')),
       h('li.favorite.pull-right', h('span.users'), favoriteBtn)),

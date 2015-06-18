@@ -107,11 +107,13 @@ module.exports = function (app) {
           com.contactPlaque(app, profile, graphs),
           (!isSelf) ?
             h('.btns',
-              h('a.btn.btn-default.btn-strong', { href: '#', onclick: toggleFollow }, com.icon('user'), ((isFollowing) ? ' Unfollow' : ' Follow')),
-              ' ',
-              h('a.btn.btn-default.btn-strong', { href: '#', onclick: rename }, com.icon('pencil'), ' Rename'),
-              ' ',
-              h('a.btn.btn-default.btn-strong', { href: '#', onclick: toggleFlag }, com.icon('flag'), ((isFlagging) ? ' Unflag' : ' Flag')))
+              h('a.btn.btn-default.btn-strong.btn-block', { href: '#' }, com.icon('comment'), ' New Private Message'),
+              h('.btns-group',
+                h('a.btn.btn-default.btn-strong', { href: '#', onclick: toggleFollow }, com.icon('user'), ((isFollowing) ? ' Unfollow' : ' Follow')),
+                ' ',
+                h('a.btn.btn-default.btn-strong', { href: '#', onclick: rename }, com.icon('pencil'), ' Rename'),
+                ' ',
+                h('a.btn.btn-default.btn-strong', { href: '#', onclick: toggleFlag }, com.icon('flag'), ((isFlagging) ? ' Unflag' : ' Flag'))))
           :
             h('.btns.text-center', { style: 'margin-right: 40px' },
               h('a.btn.btn-default.btn-strong', { href: '#/setup' }, com.icon('pencil'), ' Edit Your Profile')),

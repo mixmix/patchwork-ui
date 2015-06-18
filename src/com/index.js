@@ -187,7 +187,7 @@ exports.pagenav = function (app) {
     item('home', '', [icon('globe'), ' Public'], '.title'),
     groupsDropdownBtn,
     friendsDropdownBtn,
-    h('span.spacer'),
+    h('.spacer'),
     item('address-book', 'address-book', '+ Add friends', '.thin'),
     item('inbox',        'inbox',        [icon('envelope'), ' ', app.ui.indexCounts.inbox,   inboxUnread],   '.thin.notification'),
     item('stars',        'stars',        [icon('star'),     ' ', app.ui.indexCounts.upvotes, upvotesUnread], '.thin.notification'),
@@ -211,9 +211,9 @@ exports.pagenav = function (app) {
     var dropdownItems = [
       // h('a', { href: '#/' }, icon('globe'), ' Public'),
       // h('hr'),
-      h('a', { href: '#' }, icon('lock'), ' The Guys'),
-      h('a', { href: '#' }, icon('lock'), ' Frazees'),
-      h('a', { href: '#' }, icon('lock'), ' Office'),      
+      h('a', { href: '#' }, h('img', { src: '/img/default-prof-pic.png' }), 'The Guys'),
+      h('a', { href: '#' }, h('img', { src: '/img/default-prof-pic.png' }), 'Frazees'),
+      h('a', { href: '#' }, h('img', { src: '/img/default-prof-pic.png' }), 'Office'),      
       h('a', { href: '#' }, '+ New Group')
     ]
     openDropdown(groupsDropdownBtn, h('#groups-dropdown.dropdown', dropdownItems))
@@ -228,7 +228,7 @@ exports.pagenav = function (app) {
     var aT = app.user.profile.assignedTo
     for (var id in aT) {
       if (aT[id].following)
-        dropdownItems.push(h('a', { href: '#/home?user='+id }, h('img', { src: profilePicUrl(app, id) }), userName(app, id)))
+        dropdownItems.push(h('a', { href: '#/profile/'+id }, h('img', { src: profilePicUrl(app, id) }), userName(app, id)))
     }
     dropdownItems.push(h('a', { href: '#/address-book' }, '+ Add Friend'))
     openDropdown(friendsDropdownBtn, h('#friends-dropdown.dropdown', dropdownItems))
