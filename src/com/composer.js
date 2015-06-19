@@ -25,7 +25,7 @@ module.exports = function (app, parent, opts) {
 }
 
 module.exports.header = function (app, opts) {
-  var placeholder = (opts && opts.suggested) ? opts.suggested : 'What\'s new?'
+  var placeholder = (opts && opts.placeholder) ? opts.placeholder : 'What\'s new?'
 
   var input = h('input.form-control', { placeholder: placeholder, onfocus: onfocus })
   var inner = h('.composer-header-inner', input)
@@ -35,7 +35,7 @@ module.exports.header = function (app, opts) {
     e.preventDefault()
 
     // replace textarea with full form
-    var form = com.postForm(app, null, { onpost: onpost })
+    var form = com.postForm(app, null, { onpost: onpost, placeholder: placeholder })
     input.style.display = 'none'
     inner.appendChild(form)
 
@@ -43,10 +43,6 @@ module.exports.header = function (app, opts) {
     var textarea = form.querySelector('textarea')
     textarea.focus()
     textarea.onblur = onblur
-
-    // set suggested text
-    if (opts && opts.suggested && !textarea.value)
-      textarea.value = opts.suggested
   }
 
   function onblur (e) {

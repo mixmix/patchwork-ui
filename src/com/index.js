@@ -179,13 +179,11 @@ exports.pagenav = function (app) {
   var followsUnread = (app.ui.indexCounts.followsUnread) ? h('span.unread.monospace', '+', app.ui.indexCounts.followsUnread, h('small', icon('user'))) : ''
   var inboxUnread   = (app.ui.indexCounts.inboxUnread)   ? h('span.unread.monospace', '+', app.ui.indexCounts.inboxUnread, icon('envelope')) : ''
 
-  var groupsDropdownBtn = h('a.pagenav-groups.dropdown-btn', { href: '#', onclick: openGroupsDropdown }, icon('chevron-down'), ' Groups')
-  var friendsDropdownBtn = h('a.pagenav-groups.dropdown-btn', { href: '#', onclick: openFriendsDropdown }, icon('chevron-down'), ' Friends')  
+  var friendsDropdownBtn = h('a.pagenav-friends.dropdown-btn', { href: '#', onclick: openFriendsDropdown }, icon('chevron-down'), ' Friends')  
 
   // render nav
   return h('.page-nav-inner',
-    item('home', '', [icon('globe'), ' Public'], '.title'),
-    groupsDropdownBtn,
+    item('home', '', ['Scuttlebutt'], '.title'),
     friendsDropdownBtn,
     h('.spacer'),
     item('address-book', 'address-book', '+ Add friends', '.thin'),
@@ -201,23 +199,6 @@ exports.pagenav = function (app) {
   }
 
   // handlers
-
-  function openGroupsDropdown (e) {
-    e.preventDefault()
-    e.stopPropagation()
-
-    // render dropdown items
-    // :TODO:
-    var dropdownItems = [
-      // h('a', { href: '#/' }, icon('globe'), ' Public'),
-      // h('hr'),
-      h('a', { href: '#' }, h('img', { src: '/img/default-prof-pic.png' }), 'The Guys'),
-      h('a', { href: '#' }, h('img', { src: '/img/default-prof-pic.png' }), 'Frazees'),
-      h('a', { href: '#' }, h('img', { src: '/img/default-prof-pic.png' }), 'Office'),      
-      h('a', { href: '#' }, '+ New Group')
-    ]
-    openDropdown(groupsDropdownBtn, h('#groups-dropdown.dropdown', dropdownItems))
-  }
 
   function openFriendsDropdown (e) {
     e.preventDefault()
