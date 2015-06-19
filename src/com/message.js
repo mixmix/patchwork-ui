@@ -131,7 +131,7 @@ module.exports = function (app, msg, opts) {
     com.userImg(app, msg.value.author),
     h('ul.message-header.list-inline',
       h('li', com.user(app, msg.value.author)),
-      h('li', com.a('#/msg/'+msg.key, (isPrivate ? [com.icon('lock'), '→you'] : com.icon('globe')))),
+      h('li', com.a('#/msg/'+msg.key, (isPrivate ? [com.icon('lock'), ' → you'] : com.icon('globe')))),
       h('li', com.a('#/msg/'+msg.key, u.prettydate(new Date(msg.value.timestamp), true))),
       h('li', h('a', { href: '#', onclick: onreply }, 'reply')),
       h('li.favorite.pull-right', h('span.users'), favoriteBtn)),
