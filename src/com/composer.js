@@ -35,17 +35,17 @@ module.exports.header = function (app, opts) {
     e.preventDefault()
 
     // replace textarea with full form
-    var form = com.postForm(app, null, { onpost: onpost, placeholder: placeholder })
+    var form = com.postForm(app, null, { onpost: onpost, placeholder: placeholder, recipients: (opts) ? opts.recipients : undefined })
     input.style.display = 'none'
     inner.appendChild(form)
 
     // focus textarea, set blur handler
     var textarea = form.querySelector('textarea')
     textarea.focus()
-    textarea.onblur = onblur
+    // textarea.onblur = onblur
   }
 
-  function onblur (e) {
+  /*function onblur (e) {
     // remove postform if it's empty
     var textarea = e.target
     if (!textarea.value) {
@@ -53,7 +53,7 @@ module.exports.header = function (app, opts) {
       inner.removeChild(form)
       input.style.display = 'block'
     }
-  }
+  }*/
 
   function onpost () {
     app.refreshPage()

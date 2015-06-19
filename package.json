@@ -43,7 +43,7 @@
     "stack-assets-builder": "~1.0.0",
     "stack-assets-static": "~1.0.0",
     "stream-to-pull-stream": "~1.6.0",
-    "suggest-box": "~1.1.1"
+    "suggest-box": "~1.1.6"
   },
   "devDependencies": {
     "browserify": "~6.2.0",

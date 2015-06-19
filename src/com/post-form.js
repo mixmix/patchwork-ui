@@ -6,12 +6,14 @@ var mlib = require('ssb-msgs')
 var createHash = require('multiblob/util').createHash
 var pull = require('pull-stream')
 var pushable = require('pull-pushable')
+var com = require('./index')
 var util = require('../lib/util')
 var markdown = require('../lib/markdown')
 var mentionslib = require('../lib/mentions')
 
 module.exports = function (app, parent, opts) {
 
+  var recipients = (opts && opts.recipients) ? opts.recipients : []
   var attachments = []
   var namesList = {} // a name->name map for the previews
   for (var id in app.users.names)
@@ -20,18 +22,23 @@ module.exports = function (app, parent, opts) {
 
   // markup
 
-  var preview = h('.post-form-preview')
+  var previewEl = h('.post-form-preview')
   var filesInput = h('input.hidden', { type: 'file', multiple: true, onchange: filesAdded })  
-  var filesList = h('ul')
+  var filesListEl = h('ul')
   var textarea = h('textarea', { name: 'text', placeholder: placeholder, rows: ((opts && opts.rows) ? opts.rows : 6), onkeyup: onPostTextChange })
-  suggestBox(textarea, app.ui.suggestOptions) // decorate with suggestbox 
+  var recpInput = h('input', { onsuggestselect: onSelectRecipient, onkeydown: onRecpInputKeydown })
+  var recipientsEl = h('.post-form-recipients', 'Recipients: ', recpInput)
   var postBtn = h('button.postbtn.btn', { disabled: true }, 'Share')
+  suggestBox(textarea, app.ui.suggestOptions)
+  suggestBox(recpInput, { any: app.ui.suggestOptions['@'] }, { cls: 'msg-recipients' })
+  renderRecpList()
 
   var form = h('form.post-form' + ((!!parent) ? '.reply-form' : ''), { onsubmit: post },
     h('.post-form-textarea', textarea),
-    preview,
+    previewEl,
+    recipientsEl,
     h('.post-form-attachments',
-      filesList,
+      filesListEl,
       h('a', { href: '#', onclick: addFile }, 'Click here to add an attachment'),
       postBtn,
       filesInput))
@@ -44,15 +51,67 @@ module.exports = function (app, parent, opts) {
     postBtn.removeAttribute('disabled')
   }
 
+  function renderRecpList () {
+    // remove all .recp
+    Array.prototype.forEach.call(recipientsEl.querySelectorAll('.recp'), function (el) {
+      recipientsEl.removeChild(el)
+    })
+
+    // render
+    if (recipients.length === 0) {
+      recipientsEl.insertBefore(h('.recp', com.icon('globe'), ' Public'), recpInput)
+    } else {
+      recipients.forEach(function (id) {
+        recipientsEl.insertBefore(h('.recp',
+          com.icon('lock'),
+          ' ',
+          com.userName(app, id),
+          ' ',
+          h('a', { href: '#', onclick: onRemoveRecipient, 'data-id': id, innerHTML: '&times;' })
+        ), recpInput)
+      })
+    }
+  }
+
   // handlers
 
   function onPostTextChange (e) {
     var len = updateSize()
-    preview.innerHTML = (!!textarea.value) ? mentionslib.preview(markdown.block(textarea.value), namesList) : ''
+    previewEl.innerHTML = (!!textarea.value) ? mentionslib.preview(markdown.block(textarea.value), namesList) : ''
     if (textarea.value.trim() && len <= 7800)
       enable()
     else
       disable()
+  }
+
+  function onSelectRecipient (e) {
+    // remove if already exists (we'll push to end of list so user sees its there)
+    var i = recipients.indexOf(e.detail.id)
+    if (i !== -1)
+      recipients.splice(i, 1)
+
+    // add, render
+    recipients.push(e.detail.id)
+    recpInput.value = ''
+    renderRecpList()
+  }
+
+  function onRemoveRecipient (e) {
+    e.preventDefault()
+    var i = recipients.indexOf(e.target.dataset.id)
+    if (i !== -1) {
+      recipients.splice(i, 1)
+      renderRecpList()
+      recpInput.focus()
+    }
+  }
+
+  function onRecpInputKeydown (e) {
+    // backspace on an empty field?
+    if (e.keyCode == 8 && recpInput.value == '' && recipients.length) {
+      recipients.pop()
+      renderRecpList()
+    }
   }
 
   function post (e) {
@@ -192,9 +251,9 @@ module.exports = function (app, parent, opts) {
   }
 
   function renderAttachments () {
-    filesList.innerHTML = ''
+    filesListEl.innerHTML = ''
     attachments.forEach(function (file, i) {
-      filesList.appendChild(h('li', file.name, ' ', h('a', { href: '#', onclick: removeFile(i) }, 'remove')))
+      filesListEl.appendChild(h('li', file.name, ' ', h('a', { href: '#', onclick: removeFile(i) }, 'remove')))
     })
     updateSize()
   }

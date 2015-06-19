@@ -101,7 +101,7 @@ module.exports = function (app) {
         (isSelf) ? com.welcomehelp(app) : '',
         flaggersDlg,
         nameConflictDlg,
-        com.composer.header(app, { placeholder: 'Write a private message to ' + ((isSelf) ? 'yourself' : ('@'+name)) }),
+        com.composer.header(app, { placeholder: 'Write a private message to ' + ((isSelf) ? 'yourself' : ('@'+name)), recipients: [pid] }),
         content),
       h('.layout-rightnav',
         h('.profile-controls',

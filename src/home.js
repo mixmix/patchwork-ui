@@ -191,7 +191,14 @@ function refreshPage (e) {
     phoenix.ui.suggestOptions['@'] = []
     for (var k in phoenix.users.profiles) {
       var name = phoenix.users.names[k] || k
-      phoenix.ui.suggestOptions['@'].push({ title: name, subtitle: u.getOtherNames(phoenix, phoenix.users.profiles[k]) + ' ' + u.shortString(k), value: name })
+      phoenix.ui.suggestOptions['@'].push({
+        id: k,
+        cls: 'user',        
+        title: name,
+        image: com.profilePicUrl(phoenix, k),
+        subtitle: name,
+        value: name
+      })
     }
 
     // re-route to setup if needed

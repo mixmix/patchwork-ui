@@ -27,7 +27,7 @@ module.exports = function (app) {
   app.setPage('home', h('.layout-twocol',
     h('.layout-main', 
       com.welcomehelp(app),
-      com.composer.header(app, { placeholder: 'Write a public post' }),
+      com.composer.header(app, { placeholder: 'Write a message' }),
       com.messageFeed(app, { feed: app.ssb.phoenix.createHomeStream, loadmore: true, infinite: true })),
     h('.layout-rightnav',
       com.sidehelp(app),
