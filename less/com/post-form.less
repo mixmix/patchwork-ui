@@ -21,10 +21,6 @@
 
       // Placeholder
       .placeholder(@input-color-placeholder);
-
-      &:focus {
-
-      }
     }
   }
   .post-form-preview {
@@ -100,6 +96,10 @@
       color: #fff;
       background: @brand-primary;
       font-weight: 100;
+
+      &.secure {
+        background: @green-primary;
+      }
 
       &::before {
         content: attr(data-label);

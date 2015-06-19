@@ -61,6 +61,8 @@ module.exports = function (app, parent, opts) {
     // render
     if (recipients.length === 0) {
       recipientsEl.insertBefore(h('.recp', com.icon('globe'), ' Public'), recpInput)
+      postBtn.classList.remove('secure')
+      postBtn.innerText = 'Share'
     } else {
       recipients.forEach(function (id) {
         recipientsEl.insertBefore(h('.recp',
@@ -68,9 +70,11 @@ module.exports = function (app, parent, opts) {
           ' ',
           com.userName(app, id),
           ' ',
-          h('a', { href: '#', onclick: onRemoveRecipient, 'data-id': id, innerHTML: '&times;' })
+          h('a', { href: '#', onclick: onRemoveRecipient, 'data-id': id, innerHTML: '&times;', tabIndex: '-1' })
         ), recpInput)
       })
+      postBtn.classList.add('secure')
+      postBtn.innerText = 'Secure Share'
     }
   }
 
