@@ -185,20 +185,22 @@ function refreshPage (e) {
     phoenix.users.profiles = data[3]
     phoenix.ui.actionItems = data[4]
     phoenix.ui.indexCounts = data[5]
-    phoenix.user.profile = phoenix.users.profiles[phoenix.user.id]
+    var userProf = phoenix.user.profile = phoenix.users.profiles[phoenix.user.id]
 
     // refresh suggest options for usernames
     phoenix.ui.suggestOptions['@'] = []
     for (var k in phoenix.users.profiles) {
-      var name = phoenix.users.names[k] || k
-      phoenix.ui.suggestOptions['@'].push({
-        id: k,
-        cls: 'user',        
-        title: name,
-        image: com.profilePicUrl(phoenix, k),
-        subtitle: name,
-        value: name
-      })
+      if (k == userProf.id || (userProf.assignedTo[k] && userProf.assignedTo[k].following)) {
+        var name = phoenix.users.names[k] || k
+        phoenix.ui.suggestOptions['@'].push({
+          id: k,
+          cls: 'user',        
+          title: name,
+          image: com.profilePicUrl(phoenix, k),
+          subtitle: name,
+          value: name
+        })
+      }
     }
 
     // re-route to setup if needed
