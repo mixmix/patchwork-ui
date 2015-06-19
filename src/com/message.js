@@ -148,10 +148,7 @@ module.exports = function (app, msg, opts) {
   function onreply (e) {
     e.preventDefault()
     var replyForm
-    function oncancelreply (e) {
-      e.preventDefault()
-      replyForm.parentNode.removeChild(replyForm)
-    }
+
     function onpostreply (comment) {
       replyForm.parentNode.removeChild(replyForm)
       var cdiv = h('.comment',
@@ -161,11 +158,7 @@ module.exports = function (app, msg, opts) {
     }
 
     if (!msgComments.previousSibling.classList.contains('reply')) {
-      replyForm = h('.composer.reply',
-        h('p',
-          h('small.text-muted', 'Markdown, @-mentions, and emojis are supported. ',
-          h('a', { href: '#', onclick: oncancelreply }, 'Cancel'))),
-        com.postForm(app, msg, { onpost: onpostreply, rows: 5 }))   
+      replyForm = h('.composer.reply', com.postForm(app, msg, { onpost: onpostreply, rows: 5 }))   
       msgSummary.insertBefore(replyForm, msgComments)     
     }
   }

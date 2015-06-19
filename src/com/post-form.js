@@ -18,7 +18,7 @@ module.exports = function (app, parent, opts) {
   var namesList = {} // a name->name map for the previews
   for (var id in app.users.names)
     namesList[app.users.names[id]] = app.users.names[id]
-  var placeholder = (opts && opts.placeholder) ? opts.placeholder : ('Compose your ' + (!parent ? 'status' : 'comment'))
+  var placeholder = (opts && opts.placeholder) ? opts.placeholder : ('Write your ' + (!parent ? 'status' : 'comment'))
 
   // markup
 
@@ -34,6 +34,7 @@ module.exports = function (app, parent, opts) {
   renderRecpList()
 
   var form = h('form.post-form' + ((!!parent) ? '.reply-form' : ''), { onsubmit: post },
+    h('small.text-muted', 'Markdown, @-mentions, and emojis are supported. ', h('a', { href: '#', onclick: cancel }, 'Cancel')),
     h('.post-form-textarea', textarea),
     previewEl,
     recipientsEl,
@@ -172,7 +173,12 @@ module.exports = function (app, parent, opts) {
 
   function cancel (e) {
     e.preventDefault()
+
+    if (textarea.value && !confirm('Are you sure you want to cancel? Your message will be lost.'))
+      return
+
     form.parentNode.removeChild(form)
+    opts && opts.oncancel && opts.oncancel()
   }
 
   function addFile (e) {

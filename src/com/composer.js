@@ -35,7 +35,7 @@ module.exports.header = function (app, opts) {
     e.preventDefault()
 
     // replace textarea with full form
-    var form = com.postForm(app, null, { onpost: onpost, placeholder: placeholder, recipients: (opts) ? opts.recipients : undefined })
+    var form = com.postForm(app, null, { onpost: onpost, oncancel: oncancel, placeholder: placeholder, recipients: (opts) ? opts.recipients : undefined })
     input.style.display = 'none'
     inner.appendChild(form)
 
@@ -45,15 +45,10 @@ module.exports.header = function (app, opts) {
     // textarea.onblur = onblur
   }
 
-  /*function onblur (e) {
+  function oncancel (e) {
     // remove postform if it's empty
-    var textarea = e.target
-    if (!textarea.value) {
-      var form = inner.querySelector('.post-form')
-      inner.removeChild(form)
-      input.style.display = 'block'
-    }
-  }*/
+    input.style.display = 'block'
+  }
 
   function onpost () {
     app.refreshPage()
