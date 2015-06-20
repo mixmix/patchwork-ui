@@ -62,7 +62,6 @@ module.exports = function (app, parent, opts) {
     if (recipients.length === 0) {
       recipientsEl.insertBefore(h('.recp', com.icon('globe'), ' Public'), recpInput)
       postBtn.classList.remove('secure')
-      postBtn.innerText = 'Share'
     } else {
       recipients.forEach(function (id) {
         recipientsEl.insertBefore(h('.recp',
@@ -74,7 +73,6 @@ module.exports = function (app, parent, opts) {
         ), recpInput)
       })
       postBtn.classList.add('secure')
-      postBtn.innerText = 'Secure Share'
     }
   }
 
