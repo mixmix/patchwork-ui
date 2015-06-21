@@ -10,7 +10,8 @@ module.exports = function (app) {
   // markup
 
   app.setPage('inbox', h('.layout-onecol',
-    h('.layout-main', 
+    h('.layout-main',
+      h('h3.text-center', 'Your Inbox'),
       com.welcomehelp(app),
       com.messageFeed(app, { render: com.messageOneline, feed: app.ssb.phoenix.createInboxStream, infinite: true }))
   ))

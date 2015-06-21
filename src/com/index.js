@@ -182,15 +182,17 @@ exports.pagenav = function (app) {
 
   var upvotesUnread = (app.ui.indexCounts.upvotesUnread) ? h('span.unread.monospace', '+', app.ui.indexCounts.upvotesUnread) : ''
   var followsUnread = (app.ui.indexCounts.followsUnread) ? h('span.unread.monospace', '+', app.ui.indexCounts.followsUnread) : ''
+  var inboxUnread   = (app.ui.indexCounts.inboxUnread)   ? h('span.unread.monospace', '+', app.ui.indexCounts.inboxUnread) : ''
 
   // render nav
   return h('.page-nav-inner',
     item('home', '', ['Scuttlebutt'], '.title'),
-    item('inbox', 'inbox', ['Inbox (', app.ui.indexCounts.inboxUnread, ')']),
-    h('.spacer'),
     item('address-book', 'address-book', '+ Add friends', '.thin'),
-    item('friends',      'friends',      [icon('user'),     ' ', app.ui.indexCounts.follows, followsUnread], '.thin.notification'),
+    h('.spacer'),
+    item('compose', 'compose', 'Private Message', '.action'),
+    item('inbox',        'inbox',        [icon('envelope'), ' ', app.ui.indexCounts.inbox,   inboxUnread],   '.thin.notification'),
     item('stars',        'stars',        [icon('star'),     ' ', app.ui.indexCounts.upvotes, upvotesUnread], '.thin.notification'),
+    item('friends',      'friends',      [icon('user'),     ' ', app.ui.indexCounts.follows, followsUnread], '.thin.notification'),
     item('me',           'profile/'+app.user.id, h('img', { src: profilePicUrl(app, app.user.id) }), '.nopad')
   )
 

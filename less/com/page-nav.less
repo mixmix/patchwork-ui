@@ -47,13 +47,15 @@
     &.title {
       font-size: 16px;
     }
-    &.highlight {
-      background: #71A800;
+    &.action {
+      background: @brand-primary;
       color: #FFF;
       border-radius: 2px;
+      height: 30px;
+      padding-bottom: 8px;
       &:hover {
         text-decoration: none;
-        background: linear-gradient(to bottom, #71a800, #649304);
+        background: linear-gradient(to bottom, @brand-primary, darken(@brand-primary, 10%));
       }
     }
     &.thin {
@@ -61,16 +63,6 @@
     }
     &.nopad {
       padding: 0;
-    }
-    &.dropdown-btn {
-      padding: 3px 14px;
-      border: 1px solid transparent;
-      border-bottom: 0;
-      &.open {
-        height: 35px; // spill over just enough to hide bottom border of navbar, and top border of the dropdown body
-        background: #fff;
-        border-color: #ccc;
-      }
     }
     &.notification {
       position: relative;

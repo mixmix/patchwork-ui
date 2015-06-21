@@ -94,29 +94,7 @@ body {
 // General layout styles
 .layout-rightnav {
   .sidenav {
-    padding-top: 36px;
-    a {
-      display: block;
-      background: #ddd;
-      color: #52544F;
-      padding: 10px 20px;
-      margin: 0 30px 1px 0;
-      font-size: 16px;
-
-      .glyphicon {
-        margin-right: 10px;
-      }
-
-      &:hover, &.selected {
-        text-decoration: none;
-        font-weight: 100;
-        color: #fff;
-        background: linear-gradient(to bottom, #71a800, #649304);
-      }
-      &.sidenav-cancel:hover {
-        background: #A55A7C;
-      }
-    }
+    margin-top: 8px;
   }
   .sidehelp {
     margin-top: 6px;
@@ -188,14 +166,16 @@ body {
 .btn-danger.btn-strong {
   border: 1px solid @brand-danger;
 }
-.btn-action {
-  color: @brand-action;
-  background: #fff;
-  &.btn-strong {
-    border: 1px solid #666;
-  }
+.btn-action {  
+  color: @brand-primary;
+  font-size: 16px;
+  
   &:hover {
-    background: #eee;
+    color: darken(@brand-primary, 10%);
+  }
+
+  .glyphicon {
+    margin-right: 5px;
   }
 }
 .alert-info {

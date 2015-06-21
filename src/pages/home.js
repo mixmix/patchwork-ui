@@ -27,9 +27,10 @@ module.exports = function (app) {
   app.setPage('home', h('.layout-twocol',
     h('.layout-main', 
       com.welcomehelp(app),
-      com.composer.header(app, { placeholder: 'Share with the world' }),
+      com.composer.header(app, { placeholder: 'Share with the world...' }),
       com.messageFeed(app, { feed: app.ssb.phoenix.createHomeStream, infinite: true })),
     h('.layout-rightnav',
+      // h('.sidenav', h('a.btn.btn-action', { href: '#/compose' }, com.icon('comment'), ' New Private Message')),
       com.sidehelp(app),
       com.messageFeed(app, { render: com.messageSummary, feed: contactMsgs, filter: contactFilter })
     )
