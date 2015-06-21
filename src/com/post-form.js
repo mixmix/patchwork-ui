@@ -25,7 +25,7 @@ module.exports = function (app, parent, opts) {
   var filesInput = h('input.hidden', { type: 'file', multiple: true, onchange: filesAdded })  
   var filesListEl = h('ul')
   var textarea = h('textarea', { name: 'text', placeholder: placeholder, rows: ((opts && opts.rows) ? opts.rows : 6), onkeyup: onPostTextChange })
-  var postBtn = h('button.postbtn.btn', { disabled: true }, 'Share')
+  var postBtn = h('button.postbtn.btn', { disabled: true }, 'Send')
   suggestBox(textarea, app.ui.suggestOptions)
 
   var form = h('form.post-form' + ((!!parent) ? '.reply-form' : ''), { onsubmit: post },

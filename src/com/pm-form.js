@@ -24,9 +24,10 @@ module.exports = function (app, opts) {
 
   var filesInput = h('input.hidden', { type: 'file', multiple: true, onchange: filesAdded })  
   var filesListEl = h('ul')
-  var textarea = h('textarea', { name: 'text', placeholder: placeholder, onkeyup: onTextChange })
   var recpInput = h('input', { onsuggestselect: onSelectRecipient, onkeydown: onRecpInputKeydown })
   var recipientsEl = h('.pm-form-recipients', h('span.recp-label', 'To'), recpInput)
+  var subjectInput = h('input', { placeholder: 'Subject' })
+  var textarea = h('textarea', { name: 'text', placeholder: placeholder, onkeyup: onTextChange })
   var postBtn = h('button.postbtn.btn', { disabled: true }, 'Send')
   suggestBox(textarea, app.ui.suggestOptions)
   suggestBox(recpInput, { any: app.ui.suggestOptions['@'] }, { cls: 'msg-recipients' })
@@ -34,6 +35,7 @@ module.exports = function (app, opts) {
 
   var form = h('form.pm-form', { onsubmit: post },
     recipientsEl,
+    h('.pm-form-subject', subjectInput),
     h('.pm-form-textarea', textarea),
     h('.pm-form-attachments',
       filesListEl,
@@ -115,6 +117,7 @@ module.exports = function (app, opts) {
     try {
       var height = 400 - 4
       height -= recipientsEl.getClientRects()[0].height
+      height -= form.querySelector('.pm-form-subject').getClientRects()[0].height
       height -= form.querySelector('.pm-form-attachments').getClientRects()[0].height
       textarea.style.height = height + 'px'
     } catch (e) {
