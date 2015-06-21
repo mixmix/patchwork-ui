@@ -43,6 +43,7 @@ module.exports = function (app) {
 
     var isSelf = (pid == app.user.id)
     var isFollowing = graphs.follow[app.user.id][pid]
+    var followsYou = graphs.follow[pid] && graphs.follow[pid][app.user.id]
     var isFlagging = (graphs.trust[app.user.id][pid] == -1)
     var followers = Object.keys(graphs.follow).filter(function (id) { return graphs.follow[id][pid] })
     var flaggers = Object.keys(graphs.trust).filter(function (id) { return (graphs.follow[app.user.id][id] || id == app.user.id) && graphs.trust[id][pid] === -1 })
@@ -106,6 +107,8 @@ module.exports = function (app) {
         h('.profile-controls',
           com.contactPlaque(app, profile, graphs),
           (!isSelf) ?
+          [
+            (followsYou) ? h('.follows-you', 'Follows You') : '',
             h('.btns',
               h('.btns-group',
                 h('a.btn.btn-default.btn-strong', { href: '#', onclick: toggleFollow }, com.icon('user'), ((isFollowing) ? ' Unfollow' : ' Follow')),
@@ -113,8 +116,8 @@ module.exports = function (app) {
                 h('a.btn.btn-default.btn-strong', { href: '#', onclick: rename }, com.icon('pencil'), ' Rename'),
                 ' ',
                 h('a.btn.btn-default.btn-strong', { href: '#', onclick: toggleFlag }, com.icon('flag'), ((isFlagging) ? ' Unflag' : ' Flag'))))
-          :
-            h('.btns.text-center', { style: 'margin-right: 40px' },
+          ] :
+            h('.btns.text-center', { style: 'padding-right: 10px' },
               h('a.btn.btn-default.btn-strong', { href: '#/setup' }, com.icon('pencil'), ' Edit Your Profile')),
           (!isSelf) ?
             com.connectionGraph(app, app.user.id, pid, { w: 5.5, drawLabels: false, touchEnabled: false, mouseEnabled: false, mouseWheelEnabled: false }) :
