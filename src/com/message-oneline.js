@@ -38,7 +38,6 @@ module.exports = function (app, msg, opts) {
   )
 
   app.ssb.phoenix.isRead(msg.key, function (err, isread) {
-    console.log(msg.key, err, isread)
     if (!err && !isread)
       msgOneline.classList.add('unread')
   })

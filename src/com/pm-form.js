@@ -11,28 +11,31 @@ var util = require('../lib/util')
 var markdown = require('../lib/markdown')
 var mentionslib = require('../lib/mentions')
 
-module.exports = function (app, parent, opts) {
+module.exports = function (app, opts) {
 
+  var recipients = []
   var attachments = []
   var namesList = {} // a name->name map for the previews
   for (var id in app.users.names)
     namesList[app.users.names[id]] = app.users.names[id]
-  var placeholder = (opts && opts.placeholder) ? opts.placeholder : ('Write your ' + (!parent ? 'status' : 'comment'))
+  var placeholder = (opts && opts.placeholder) ? opts.placeholder : 'Compose your private message'
 
   // markup
 
-  var previewEl = h('.post-form-preview')
   var filesInput = h('input.hidden', { type: 'file', multiple: true, onchange: filesAdded })  
   var filesListEl = h('ul')
-  var textarea = h('textarea', { name: 'text', placeholder: placeholder, rows: ((opts && opts.rows) ? opts.rows : 6), onkeyup: onPostTextChange })
-  var postBtn = h('button.postbtn.btn', { disabled: true }, 'Share')
+  var textarea = h('textarea', { name: 'text', placeholder: placeholder, onkeyup: onTextChange })
+  var recpInput = h('input', { onsuggestselect: onSelectRecipient, onkeydown: onRecpInputKeydown })
+  var recipientsEl = h('.pm-form-recipients', h('span.recp-label', 'To'), recpInput)
+  var postBtn = h('button.postbtn.btn', { disabled: true }, 'Send')
   suggestBox(textarea, app.ui.suggestOptions)
+  suggestBox(recpInput, { any: app.ui.suggestOptions['@'] }, { cls: 'msg-recipients' })
+  renderRecpList()
 
-  var form = h('form.post-form' + ((!!parent) ? '.reply-form' : ''), { onsubmit: post },
-    h('small.text-muted', 'Public post. Markdown, @-mentions, and emojis are supported. ', h('a', { href: '#', onclick: cancel }, 'Cancel')),
-    h('.post-form-textarea', textarea),
-    previewEl,
-    h('.post-form-attachments',
+  var form = h('form.pm-form', { onsubmit: post },
+    recipientsEl,
+    h('.pm-form-textarea', textarea),
+    h('.pm-form-attachments',
       filesListEl,
       h('a', { href: '#', onclick: addFile }, 'Click here to add an attachment'),
       postBtn,
@@ -46,15 +49,77 @@ module.exports = function (app, parent, opts) {
     postBtn.removeAttribute('disabled')
   }
 
+  function renderRecpList () {
+    // remove all .recp
+    Array.prototype.forEach.call(recipientsEl.querySelectorAll('.recp'), function (el) {
+      recipientsEl.removeChild(el)
+    })
+
+    // render
+    recipients.forEach(function (id) {
+      recipientsEl.insertBefore(h('.recp',
+        com.icon('lock'),
+        ' ',
+        com.userName(app, id),
+        ' ',
+        h('a', { href: '#', onclick: onRemoveRecipient, 'data-id': id, innerHTML: '&times;', tabIndex: '-1' })
+      ), recpInput)
+    })
+
+    resizeTextarea()
+  }
+
   // handlers
 
-  function onPostTextChange (e) {
+  function onTextChange (e) {
     var len = updateSize()
-    previewEl.innerHTML = (!!textarea.value) ? mentionslib.preview(markdown.block(textarea.value), namesList) : ''
-    if (textarea.value.trim() && len <= 7800)
+    if (recipients.length && textarea.value.trim() && len <= 7800)
       enable()
     else
       disable()
+  }
+
+  function onSelectRecipient (e) {
+    // remove if already exists (we'll push to end of list so user sees its there)
+    var i = recipients.indexOf(e.detail.id)
+    if (i !== -1)
+      recipients.splice(i, 1)
+
+    // add, render
+    recipients.push(e.detail.id)
+    recpInput.value = ''
+    renderRecpList()
+  }
+
+  function onRemoveRecipient (e) {
+    e.preventDefault()
+    var i = recipients.indexOf(e.target.dataset.id)
+    if (i !== -1) {
+      recipients.splice(i, 1)
+      renderRecpList()
+      recpInput.focus()
+    }
+  }
+
+  function onRecpInputKeydown (e) {
+    // backspace on an empty field?
+    if (e.keyCode == 8 && recpInput.value == '' && recipients.length) {
+      recipients.pop()
+      renderRecpList()
+    }
+  }
+
+  // dynamically sizes the textarea based on available space
+  // (no css method, including flexbox, would really nail this one)
+  function resizeTextarea () {
+    try {
+      var height = 400 - 4
+      height -= recipientsEl.getClientRects()[0].height
+      height -= form.querySelector('.pm-form-attachments').getClientRects()[0].height
+      textarea.style.height = height + 'px'
+    } catch (e) {
+      // ignore, probably havent rendered yet
+    }
   }
 
   function post (e) {
@@ -93,7 +158,8 @@ module.exports = function (app, parent, opts) {
           }
         }
 
-        // post
+        // publish
+        // :TODO: private-message format
         var post = schemas.schemas.post(text)
         if (parent)          post.repliesTo = { msg: parent.key }
         if (mentions.length) post.mentions = mentions
@@ -111,16 +177,6 @@ module.exports = function (app, parent, opts) {
         })
       })
     })
-  }
-
-  function cancel (e) {
-    e.preventDefault()
-
-    if (textarea.value && !confirm('Are you sure you want to cancel? Your message will be lost.'))
-      return
-
-    form.parentNode.removeChild(form)
-    opts && opts.oncancel && opts.oncancel()
   }
 
   function addFile (e) {
@@ -204,6 +260,7 @@ module.exports = function (app, parent, opts) {
       filesListEl.appendChild(h('li', file.name, ' ', h('a', { href: '#', onclick: removeFile(i) }, 'remove')))
     })
     updateSize()
+    resizeTextarea()
   }
 
   // :TODO: write tests for this alg

@@ -1,46 +1,57 @@
-.post-form {
-  .post-form-textarea {
+.pm-form {
+  .pm-form-recipients {
+    display: flex;
+    flex-wrap: wrap;
+    height: auto;
+    min-height: 34px;
+    border-bottom: 1px solid #ccc;
+    padding: 8px 10px 2px;
+
+    .recp-label {
+      color: gray;
+      margin-right: 10px;
+    }
+
+    .recp {
+      display: inline-block;
+      border: 1px solid #eee;
+      border-radius: 2px;
+      padding: 0 3px;
+      margin-left: 5px;
+      margin-bottom: 5px;
+    }
+
+    input {
+      border: 0;
+      flex: 1;
+      padding-left: 5px;
+      margin-bottom: 5px;
+      min-width: 50px;
+      &:focus {
+        outline: 0;
+      }
+    }
+  }
+  .pm-form-textarea {
     textarea {
       display: block;
       width: 100%;
-      padding: 8px 12px; 
+      height: 324px;
+      padding: 8px 12px;
       font-size: @font-size-base;
       line-height: @line-height-base;
       color: @input-color;
       background-image: none;
 
-      border: 1px solid @input-border;
-      border-radius: @input-border-radius;
-      border-bottom-left-radius: 0;
-      border-bottom-right-radius: 0;
-      border-bottom: 0;
+      border: 0;
       outline: none;
-
-      position: relative;
-      z-index: 1; // put higher than attachments bar below so that box shadow covers it
+      resize: none;
 
       // Placeholder
       .placeholder(@input-color-placeholder);
     }
   }
-  .post-form-preview {
-    background: #fff;
-    padding: 10px 12px;
-    margin-bottom: 5px;
-    border: 1px solid @input-border;
-    border-top-style: dashed;
-    &:empty {
-      padding: 0;
-      border-width: 0 0 1px;
-    }
-    & > :first-child {
-      margin-top: 0;
-    }
-    & > :last-child {
-      margin-bottom: 0;
-    }
-  }
-  .post-form-attachments {
+  .pm-form-attachments {
     position: relative; // for the position absolute postbtn
     border-bottom-left-radius: @input-border-radius;
     border-bottom-right-radius: @input-border-radius;
@@ -61,7 +72,7 @@
 
     .postbtn {
       position: absolute;
-      top: 1px;
+      bottom: 1px;
       right: 1px;
       height: 34px;
       color: #fff;

@@ -189,7 +189,7 @@ exports.pagenav = function (app) {
     item('home', '', ['Scuttlebutt'], '.title'),
     item('address-book', 'address-book', '+ Add friends', '.thin'),
     h('.spacer'),
-    item('compose', 'compose', 'Private Message', '.action'),
+    h('a.pagenav-compose.action', { href: '#', onclick: app.ui.pmSubwindow }, 'Compose'),
     item('inbox',        'inbox',        [icon('envelope'), ' ', app.ui.indexCounts.inbox,   inboxUnread],   '.thin.notification'),
     item('stars',        'stars',        [icon('star'),     ' ', app.ui.indexCounts.upvotes, upvotesUnread], '.thin.notification'),
     item('friends',      'friends',      [icon('user'),     ' ', app.ui.indexCounts.follows, followsUnread], '.thin.notification'),
@@ -314,6 +314,7 @@ exports.contactSyncListing = require('./contact-sync-listing')
 exports.notifications = require('./notifications')
 exports.peers = require('./peers')
 exports.postForm = require('./post-form')
+exports.pmForm = require('./pm-form')
 exports.factForm = require('./fact-form')
 exports.composer = require('./composer')
 exports.imageUploader = require('./image-uploader')

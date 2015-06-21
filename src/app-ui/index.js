@@ -5,6 +5,7 @@ var mlib = require('ssb-msgs')
 module.exports = function (phoenix) {
 
   require('./modals')(phoenix)
+  require('./subwindows')(phoenix)  
 
   phoenix.ui.showUserId = function () { 
     swal('Here is your contact id', phoenix.user.id)
