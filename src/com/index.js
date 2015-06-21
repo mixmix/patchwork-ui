@@ -129,8 +129,13 @@ exports.friendsHexagrid = function (app, opts) {
   friends.push(app.user.id)
   for (var k in app.users.profiles) {
     var p = app.users.profiles[k]
-    if (p.assignedBy[app.user.id] && p.assignedBy[app.user.id].following)
-      friends.push(p.id)
+    if (opts && opts.reverse) {
+      if (p.assignedTo[app.user.id] && p.assignedTo[app.user.id].following)
+        friends.push(p.id)
+    } else {
+      if (p.assignedBy[app.user.id] && p.assignedBy[app.user.id].following)
+        friends.push(p.id)
+    }
   }
   if (friends.length)
     return userHexagrid(app, friends, opts)
@@ -177,7 +182,6 @@ exports.pagenav = function (app) {
 
   var upvotesUnread = (app.ui.indexCounts.upvotesUnread) ? h('span.unread.monospace', '+', app.ui.indexCounts.upvotesUnread) : ''
   var followsUnread = (app.ui.indexCounts.followsUnread) ? h('span.unread.monospace', '+', app.ui.indexCounts.followsUnread) : ''
-  var friendsDropdownBtn = h('a.pagenav-friends.dropdown-btn', { href: '#', onclick: openFriendsDropdown }, icon('chevron-down'), ' Friends')  
 
   // render nav
   return h('.page-nav-inner',
@@ -185,57 +189,14 @@ exports.pagenav = function (app) {
     item('inbox', 'inbox', ['Inbox (', app.ui.indexCounts.inboxUnread, ')']),
     h('.spacer'),
     item('address-book', 'address-book', '+ Add friends', '.thin'),
-    friendsDropdownBtn,
-    item('stars',        'stars',        [icon('star'),     ' ', app.ui.indexCounts.upvotes, upvotesUnread], '.thin.notification'),
     item('friends',      'friends',      [icon('user'),     ' ', app.ui.indexCounts.follows, followsUnread], '.thin.notification'),
+    item('stars',        'stars',        [icon('star'),     ' ', app.ui.indexCounts.upvotes, upvotesUnread], '.thin.notification'),
     item('me',           'profile/'+app.user.id, h('img', { src: profilePicUrl(app, app.user.id) }), '.nopad')
   )
 
   function item (id, path, label, extra_cls) {
     var selected = (id == app.page.id) ? '.selected' : ''
     return h('a.pagenav-'+id+(extra_cls||'')+selected, { href: '#/'+path }, label)
-  }
-
-  // handlers
-
-  function openFriendsDropdown (e) {
-    e.preventDefault()
-    e.stopPropagation()
-
-    // render dropdown items
-    var dropdownItems = []
-    var aT = app.user.profile.assignedTo
-    for (var id in aT) {
-      if (aT[id].following)
-        dropdownItems.push(h('a', { href: '#/profile/'+id }, h('img', { src: profilePicUrl(app, id) }), userName(app, id)))
-    }
-    dropdownItems.push(h('a', { href: '#/address-book' }, '+ Add Friend'))
-    openDropdown(friendsDropdownBtn, h('#friends-dropdown.dropdown', dropdownItems))
-  }
-
-  function openDropdown (btn, dropdown) {
-    // close any existing dropdowns
-    closeDropdowns()
-
-    // add dropdown / styles
-    btn.classList.add('open')
-    document.body.appendChild(dropdown)
-
-    // register click handler to remove dropdown when clicking
-    document.body.addEventListener('click', remove)
-    function remove (e) {
-      closeDropdowns()
-      document.body.removeEventListener('click', remove)
-    }
-  }
-
-  function closeDropdowns() {
-    Array.prototype.forEach.call(document.querySelectorAll('.dropdown-btn'), function (btn) {
-      btn.classList.remove('open')
-    })
-    Array.prototype.forEach.call(document.querySelectorAll('.dropdown'), function (dropdown) {
-      document.body.removeChild(dropdown)
-    })
   }
 }
 
