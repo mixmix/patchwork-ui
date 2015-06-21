@@ -76,14 +76,18 @@
     &:empty {
       display: none;
     }
-    padding: 24px;
+    padding: 10px;
     background: #fafafa;
     a {
-      margin-right: 12px;
-      img {
-        max-width: 200px;
-        max-height: 200px;
-        border: 1px solid #777;
+      display: block;
+      .image {
+        height: 200px;
+        background: no-repeat center center;
+        background-size: cover;
+        border: 1px solid #ccc;
+      }
+      .file {
+        padding: 14px;
       }
     }
   }

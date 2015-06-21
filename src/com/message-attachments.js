@@ -34,9 +34,9 @@ module.exports = function (app, msg) {
       url += '/'+link.name
 
     if (isImage(link))
-      label = h('img', { src: url, title: link.name || link.ext })
+      label = h('.image', { style: 'background-image: url('+encodeURI(url)+')' })
     else
-      label = [com.icon('file'), ' ', link.name, ' ', h('small', (('size' in link) ? u.bytesHuman(link.size) : ''), ' ', link.type||'')]
+      label = h('.file', com.icon('file'), ' ', link.name, ' ', h('small', (('size' in link) ? u.bytesHuman(link.size) : ''), ' ', link.type||''))
     els.push(h('a', { href: url+'?sp', target: '_blank' }, label))
   })
   return els.length ? h('.attachments', els) : undefined

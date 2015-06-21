@@ -164,8 +164,6 @@ module.exports = function (app, opts) {
         fetching = true
         fetchBottom(function (err) {
           fetching = false
-          if (err)
-            console.error(err)
         })
       }
     }
