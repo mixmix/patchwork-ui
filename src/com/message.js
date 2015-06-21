@@ -154,9 +154,9 @@ module.exports = function (app, msg, opts) {
       msgSummary.querySelector('.message-comments').appendChild(cdiv)
     }
 
-    if (!msgComments.previousSibling.classList.contains('reply')) {
-      replyForm = h('.composer.reply', com.postForm(app, msg, { onpost: onpostreply, rows: 5 }))   
-      msgSummary.insertBefore(replyForm, msgComments)     
+    if (!msgSummary.querySelector('.reply-form')) {
+      replyForm = com.postForm(app, msg, { onpost: onpostreply, rows: 5 })
+      msgSummary.appendChild(replyForm)
     }
   }
 
