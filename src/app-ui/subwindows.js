@@ -12,14 +12,14 @@ module.exports = function (phoenix) {
 
     // markup
 
-    var collapseToggleIcon = com.icon('minus')
+    var collapseToggleIcon = com.icon('chevron-down')
     var subwindow = h2('.subwindow',
-      h2('.subwindow-body', el),
       h2('.subwindow-toolbar',
-        h2('a', { href: '#', onclick: onclose }, com.icon('remove')),
+        h2('.title', title),
         h2('a', { href: '#', onclick: oncollapsetoggle }, collapseToggleIcon),
-        h2('.title', title)
-      )
+        h2('a', { href: '#', onclick: onclose }, com.icon('remove'))
+      ),
+      h2('.subwindow-body', el)
     )
     document.body.appendChild(subwindow)
 
@@ -28,14 +28,14 @@ module.exports = function (phoenix) {
 
     subwindow.collapse = function () {
       subwindow.classList.add('collapsed')
-      collapseToggleIcon.classList.remove('glyphicon-minus')
+      collapseToggleIcon.classList.remove('glyphicon-chevron-down')
       collapseToggleIcon.classList.add('glyphicon-chevron-up')
       reflow()
     }
     subwindow.expand = function () {
       subwindow.classList.remove('collapsed')
       collapseToggleIcon.classList.remove('glyphicon-chevron-up')
-      collapseToggleIcon.classList.add('glyphicon-minus')
+      collapseToggleIcon.classList.add('glyphicon-chevron-down')
       reflow()
     }
 
@@ -101,7 +101,7 @@ module.exports = function (phoenix) {
     subwindows.forEach(function (sw) {
       sw.style.right = right + 'px'
       if (sw.classList.contains('collapsed'))
-        right += 50 + SPACING
+        right += 90 + SPACING
       else
         right += 500 + SPACING
     })

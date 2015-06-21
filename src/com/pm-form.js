@@ -18,7 +18,7 @@ module.exports = function (app, opts) {
   var namesList = {} // a name->name map for the previews
   for (var id in app.users.names)
     namesList[app.users.names[id]] = app.users.names[id]
-  var placeholder = (opts && opts.placeholder) ? opts.placeholder : 'Compose your private message'
+  var placeholder = (opts && opts.placeholder) ? opts.placeholder : ''
 
   // markup
 
