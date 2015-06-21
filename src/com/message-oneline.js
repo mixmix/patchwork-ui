@@ -30,12 +30,20 @@ module.exports = function (app, msg, opts) {
   if (!summary)
     return
 
-  return h('.message-oneline',
+  var msgOneline = h('.message-oneline',
     h('.message-oneline-column', com.userImg(app, msg.value.author)),
     h('.message-oneline-column', com.user(app, msg.value.author)),
     h('.message-oneline-column', summary),
     h('.message-oneline-column', ago(msg))
   )
+
+  app.ssb.phoenix.isRead(msg.key, function (err, isread) {
+    console.log(msg.key, err, isread)
+    if (!err && !isread)
+      msgOneline.classList.add('unread')
+  })
+
+  return msgOneline
 }
 
 function ago (msg) {

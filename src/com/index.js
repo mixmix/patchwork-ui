@@ -175,9 +175,9 @@ exports.pagenav = function (app) {
 
   // markup
 
-  var upvotesUnread = (app.ui.indexCounts.upvotesUnread) ? h('span.unread.monospace', '+', app.ui.indexCounts.upvotesUnread, icon('star')) : ''
-  var followsUnread = (app.ui.indexCounts.followsUnread) ? h('span.unread.monospace', '+', app.ui.indexCounts.followsUnread, h('small', icon('user'))) : ''
-  var inboxUnread   = (app.ui.indexCounts.inboxUnread)   ? h('span.unread.monospace', '+', app.ui.indexCounts.inboxUnread, icon('envelope')) : ''
+  var upvotesUnread = (app.ui.indexCounts.upvotesUnread) ? h('span.unread.monospace', '+', app.ui.indexCounts.upvotesUnread) : ''
+  var followsUnread = (app.ui.indexCounts.followsUnread) ? h('span.unread.monospace', '+', app.ui.indexCounts.followsUnread) : ''
+  var inboxUnread   = (app.ui.indexCounts.inboxUnread)   ? h('span.unread.monospace', '+', app.ui.indexCounts.inboxUnread) : ''
 
   var friendsDropdownBtn = h('a.pagenav-friends.dropdown-btn', { href: '#', onclick: openFriendsDropdown }, icon('chevron-down'), ' Friends')  
 
