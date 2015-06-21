@@ -130,17 +130,22 @@ module.exports = function (app, msg, opts) {
     h('ul.message-header.list-inline',
       h('li', com.user(app, msg.value.author)),
       h('li', com.a('#/msg/'+msg.key, u.prettydate(new Date(msg.value.timestamp), true))),
-      h('li', h('a', { href: '#', onclick: onreply }, 'reply')),
+      (!opts || !opts.fullview) ? h('li', h('a', { href: '#', onclick: onreply }, 'reply')) : '',
       h('li.favorite.pull-right', h('span.users'), favoriteBtn)),
     h('.message-body', content),
     com.messageAttachments(app, msg),
-    msgComments
+    msgComments,
+    (opts && opts.fullview) ? com.postForm(app, msg, { rows: 5, placeholder: 'Write your reply', noheader: true, onpost: onfullviewpost }) : ''
   )
 
   fetchRowState(app, msgSummary, msg.key)
   return msgSummary
 
   // handlers
+
+  function onfullviewpost () {
+    app.refreshPage()
+  }
 
   function onreply (e) {
     e.preventDefault()

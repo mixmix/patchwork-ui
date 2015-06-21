@@ -93,8 +93,10 @@
   }
   .message-comments {
     border-left: 10px solid #ccc;
-    border-bottom: 1px solid transparent; // make sure rendering takes full height
-    padding: 0 15px;
+    padding: 1px 15px;
+    &:empty {
+      display: none;
+    }
     & > a {
       float: right;
       padding-right: 2px;
@@ -125,7 +127,9 @@
     }
   }
   .reply-form {
-    margin: 15px 24px;
+    padding: 15px 24px;
+    background: #fafafa;
+    border-top: 1px solid #ddd;
   }
   .pretty-raw {
     font-size: 15px;

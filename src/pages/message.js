@@ -8,7 +8,8 @@ module.exports = function (app) {
   app.ssb.get(app.page.param, function (err, msg) {
     var content
     if (msg) {
-      content = com.message(app, { key: app.page.param, value: msg })
+      msg = { key: app.page.param, value: msg }
+      content = com.message(app, msg, { fullview: true })
     } else {
       content = 'Message not found.'
     }

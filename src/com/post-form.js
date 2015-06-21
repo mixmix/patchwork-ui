@@ -29,7 +29,7 @@ module.exports = function (app, parent, opts) {
   suggestBox(textarea, app.ui.suggestOptions)
 
   var form = h('form.post-form' + ((!!parent) ? '.reply-form' : ''), { onsubmit: post },
-    h('small.text-muted', 'Public post. Markdown, @-mentions, and emojis are supported. ', h('a', { href: '#', onclick: cancel }, 'Cancel')),
+    (!opts || !opts.noheader) ? h('small.text-muted', 'Public post. Markdown, @-mentions, and emojis are supported. ', h('a', { href: '#', onclick: cancel }, 'Cancel')) : '',
     h('.post-form-textarea', textarea),
     previewEl,
     h('.post-form-attachments',
