@@ -13,6 +13,6 @@ module.exports = function (app) {
     h('.layout-main', 
       h('h3.text-center', 'Your Inbox'),
       com.welcomehelp(app),
-      com.messageFeed(app, { render: com.messageSummary, feed: app.ssb.phoenix.createInboxStream, markread: true, infinite: true }))
+      com.messageFeed(app, { render: com.messageOneline, feed: app.ssb.phoenix.createInboxStream, markread: true, infinite: true }))
   ))
 }

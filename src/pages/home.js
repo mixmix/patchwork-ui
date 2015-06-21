@@ -28,7 +28,7 @@ module.exports = function (app) {
     h('.layout-main', 
       com.welcomehelp(app),
       com.composer.header(app, { placeholder: 'Write a message' }),
-      com.messageFeed(app, { feed: app.ssb.phoenix.createHomeStream, loadmore: true, infinite: true })),
+      com.messageFeed(app, { feed: app.ssb.phoenix.createHomeStream, infinite: true })),
     h('.layout-rightnav',
       com.sidehelp(app),
       com.messageFeed(app, { render: com.messageSummary, feed: contactMsgs, filter: contactFilter })

@@ -27,7 +27,7 @@ module.exports = function (app, opts) {
   // markup
  
   if (!feedState.el)
-    feedState.el = h('.message-feed')
+    feedState.el = h(opts.container||'.message-feed')
   else {
     // update message states
     if (opts.render.fetchRowState) {

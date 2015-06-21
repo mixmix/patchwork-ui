@@ -1,0 +1,41 @@
+.message-oneline {
+  display: flex;
+  flex-direction: row;
+  max-width: 852px;
+  border-top: 1px solid #ccc;
+  
+  .message-oneline-column {
+    padding: 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    &:nth-child(1) {
+      flex: 0 0 40px;
+      padding-left: 15px;
+    }
+    &:nth-child(2) {
+      flex: 0 0 115px;
+    }
+    &:nth-child(3) {
+      flex: 1;
+      a {
+        color: #444;
+      }
+    }
+    &:nth-child(4) {
+      flex: 0 0 80px;
+      text-align: right;
+      padding-right: 15px;
+    }
+  }
+
+  .user-img {
+    img {
+      width: 20px;
+      height: 20px;
+      border-radius: 10px;
+    }
+  }
+
+}
