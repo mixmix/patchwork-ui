@@ -155,7 +155,7 @@ module.exports = function (app, msg, opts) {
     }
 
     if (!msgSummary.querySelector('.reply-form')) {
-      replyForm = com.postForm(app, msg, { onpost: onpostreply, rows: 5 })
+      replyForm = com.postForm(app, msg, { onpost: onpostreply, rows: 5, placeholder: 'Write your reply' })
       msgSummary.appendChild(replyForm)
     }
   }

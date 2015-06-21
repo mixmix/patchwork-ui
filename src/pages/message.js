@@ -13,11 +13,8 @@ module.exports = function (app) {
       content = 'Message not found.'
     }
 
-    app.setPage('message', h('.layout-twocol',
-      h('.layout-main', content),
-      h('.layout-rightnav',
-        com.sidehelp(app)
-      )
+    app.setPage('message', h('.layout-onecol',
+      h('.layout-main', content)
     ))
   })
 }
