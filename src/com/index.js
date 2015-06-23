@@ -2,7 +2,7 @@
 var h = require('hyperscript')
 var baseEmoji = require('base-emoji')
 var u = require('../lib/util')
-var schemas = require('ssb-msg-schemas')
+var suggestBox = require('suggest-box')
 
 var a =
 exports.a = function (href, text, opts) {
@@ -184,13 +184,34 @@ exports.pagenav = function (app) {
   var followsUnread = (app.ui.indexCounts.followsUnread) ? h('span.unread.monospace', app.ui.indexCounts.followsUnread) : ''
   var inboxUnread   = (app.ui.indexCounts.inboxUnread)   ? h('span.unread.monospace', app.ui.indexCounts.inboxUnread) : ''
 
+  // hardcoded address (for now)
+  var location = app.page.id
+  if (location == 'profile') {
+    var name = app.users.names[app.page.param]
+    if (name)
+      location = name + '\'s profile'
+    else
+      location = app.page.param
+  }
+  var addressInput = h('input', { value: location, onfocus: onfocus, onsuggestselect: onselect })
+  suggestBox(addressInput, { any: app.ui.suggestOptions['@'] }, { cls: 'msg-recipients' })
+
+  function onfocus (e) {
+    setTimeout(function () { // shameless setTimeout to wait for default behavior (preventDefault doesnt seem to stop it)
+      addressInput.select() // select all on focus
+    }, 50)
+  }
+  function onselect (e) {
+    window.location.hash = '#/profile/' + e.detail.id
+  }
+
   // render nav
   return h('.page-nav-inner',
     h('a.button', { href: '#/' }, icon('home')),
     h('a.button', { href: '#', onclick: app.ui.navBack }, icon('arrow-left')),
     h('a.button', { href: '#', onclick: app.ui.navForward }, icon('arrow-right')),
     h('a.button', { href: '#', onclick: app.ui.navRefresh }, icon('refresh')),
-    h('input', { value: app.page.id }),
+    addressInput,
     h('a.action', { href: '#', onclick: app.ui.pmSubwindow }, 'Compose'),
     h('a.stat.left', { href: '#/inbox' }, icon('envelope'), ' ', app.ui.indexCounts.inbox, inboxUnread),
     h('a.stat', { href: '#/stars' }, icon('star'), ' ', app.ui.indexCounts.upvotes, upvotesUnread),
