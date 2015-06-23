@@ -7,6 +7,19 @@ module.exports = function (phoenix) {
   require('./modals')(phoenix)
   require('./subwindows')(phoenix)  
 
+  phoenix.ui.navBack = function (e) {
+    e.preventDefault()
+    console.log('todo')
+  }
+  phoenix.ui.navForward = function (e) {
+    e.preventDefault()
+    console.log('todo')
+  }
+  phoenix.ui.navRefresh = function (e) {
+    e.preventDefault()
+    phoenix.refreshPage()
+  }  
+
   phoenix.ui.showUserId = function () { 
     swal('Here is your contact id', phoenix.user.id)
   }

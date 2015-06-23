@@ -180,20 +180,22 @@ exports.pagenav = function (app) {
 
   // markup
 
-  var upvotesUnread = (app.ui.indexCounts.upvotesUnread) ? h('span.unread.monospace', '+', app.ui.indexCounts.upvotesUnread) : ''
-  var followsUnread = (app.ui.indexCounts.followsUnread) ? h('span.unread.monospace', '+', app.ui.indexCounts.followsUnread) : ''
-  var inboxUnread   = (app.ui.indexCounts.inboxUnread)   ? h('span.unread.monospace', '+', app.ui.indexCounts.inboxUnread) : ''
+  var upvotesUnread = (app.ui.indexCounts.upvotesUnread) ? h('span.unread.monospace', app.ui.indexCounts.upvotesUnread) : ''
+  var followsUnread = (app.ui.indexCounts.followsUnread) ? h('span.unread.monospace', app.ui.indexCounts.followsUnread) : ''
+  var inboxUnread   = (app.ui.indexCounts.inboxUnread)   ? h('span.unread.monospace', app.ui.indexCounts.inboxUnread) : ''
 
   // render nav
   return h('.page-nav-inner',
-    item('home', '', ['Scuttlebutt'], '.title'),
-    item('address-book', 'address-book', '+ Add friends', '.thin'),
-    h('.spacer'),
-    h('a.pagenav-compose.action', { href: '#', onclick: app.ui.pmSubwindow }, 'Compose'),
-    item('inbox',        'inbox',        [icon('envelope'), ' ', app.ui.indexCounts.inbox,   inboxUnread],   '.thin.notification'),
-    item('stars',        'stars',        [icon('star'),     ' ', app.ui.indexCounts.upvotes, upvotesUnread], '.thin.notification'),
-    item('friends',      'friends',      [icon('user'),     ' ', app.ui.indexCounts.follows, followsUnread], '.thin.notification'),
-    item('me',           'profile/'+app.user.id, h('img', { src: profilePicUrl(app, app.user.id) }), '.nopad')
+    h('a.button', { href: '#/' }, icon('home')),
+    h('a.button', { href: '#', onclick: app.ui.navBack }, icon('arrow-left')),
+    h('a.button', { href: '#', onclick: app.ui.navRight }, icon('arrow-right')),
+    h('a.button', { href: '#', onclick: app.ui.navRefresh }, icon('refresh')),
+    h('input', { value: app.page.id }),
+    h('a.action', { href: '#', onclick: app.ui.pmSubwindow }, 'Compose'),
+    h('a.stat.left', { href: '#/inbox' }, icon('envelope'), ' ', app.ui.indexCounts.inbox, inboxUnread),
+    h('a.stat', { href: '#/stars' }, icon('star'), ' ', app.ui.indexCounts.upvotes, upvotesUnread),
+    h('a.stat.right', { href: '#/friends' }, icon('user'), ' ', app.ui.indexCounts.follows, followsUnread),
+    h('a.action', { href: '#/profile/'+app.user.id }, 'Profile')
   )
 
   function item (id, path, label, extra_cls) {
