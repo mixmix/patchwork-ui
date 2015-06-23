@@ -30,25 +30,22 @@
     border-radius: 5px;
     padding-top: 3px;
     margin-right: 5px;
+    color: gray;
+
+    &:hover {
+      text-decoration: none;
+      background: #ddd;
+    }
   }
 
   a.button {
     flex: 0 0 30px;
-    color: gray;
-
-    &:hover {
-      background: #ddd;
-    }
   }
 
   a.action {
     color: gray;
     height: 26px;
     padding: 2px 8px;
-    &:hover {
-      text-decoration: none;
-      background: #ddd;
-    }
   }
 
   a.stat {
@@ -88,8 +85,6 @@
     }
 
     &:hover {
-      text-decoration: none;
-      background: #f5f5f5;
       .unread {
         background: darken(rgb(249, 87, 87), 10%);
       }

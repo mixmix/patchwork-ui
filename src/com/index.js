@@ -188,7 +188,7 @@ exports.pagenav = function (app) {
   return h('.page-nav-inner',
     h('a.button', { href: '#/' }, icon('home')),
     h('a.button', { href: '#', onclick: app.ui.navBack }, icon('arrow-left')),
-    h('a.button', { href: '#', onclick: app.ui.navRight }, icon('arrow-right')),
+    h('a.button', { href: '#', onclick: app.ui.navForward }, icon('arrow-right')),
     h('a.button', { href: '#', onclick: app.ui.navRefresh }, icon('refresh')),
     h('input', { value: app.page.id }),
     h('a.action', { href: '#', onclick: app.ui.pmSubwindow }, 'Compose'),

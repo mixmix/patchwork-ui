@@ -9,14 +9,17 @@ module.exports = function (phoenix) {
 
   phoenix.ui.navBack = function (e) {
     e.preventDefault()
-    console.log('todo')
+    e.stopPropagation()
+    window.history.back()
   }
   phoenix.ui.navForward = function (e) {
     e.preventDefault()
-    console.log('todo')
+    e.stopPropagation()
+    window.history.forward()
   }
   phoenix.ui.navRefresh = function (e) {
     e.preventDefault()
+    e.stopPropagation()
     phoenix.refreshPage()
   }  
 
