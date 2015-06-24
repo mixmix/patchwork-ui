@@ -25,7 +25,7 @@ exports.init = function (server) {
     require('./msgs')(server),
     require('./blobs')(server),
     require('stack-assets-builder')({ enabled: server.config.dev, root: __dirname }),
-    require('stack-assets-static')({ root: __dirname })
+    require('stack-assets-static')({ root: __dirname, pages: ['tray-menu.html'] })
   ))
 
   return api.init(server)
