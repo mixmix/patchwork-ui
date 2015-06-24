@@ -7,13 +7,11 @@
   z-index: 100;
   
   white-space: nowrap;
-  background: #eee;
-  background: linear-gradient(to top, #e5e5e5, #eee 90%);
+  background: #fff;
   border-bottom: 1px solid #aaa;
-  height: 36px;
   font-size: 15px;
   font-weight: 100;
-  padding: 5px;
+  padding: 6px;
 
   .page-nav-inner {
     display: flex;
@@ -27,23 +25,26 @@
   a {
     text-align: center;  
     text-decoration: none;
-    border-radius: 5px;
     padding-top: 3px;
     margin-right: 5px;
     color: gray;
 
     &:hover {
       text-decoration: none;
-      background: #ddd;
+      color: @brand-primary;
     }
   }
 
   a.button {
     flex: 0 0 30px;
+
+    &:first-child {
+      font-size: 21px;
+      padding-top: 0;
+    }
   }
 
   a.action {
-    color: gray;
     height: 26px;
     padding: 2px 8px;
   }
@@ -52,18 +53,10 @@
     position: relative;
     height: 26px;
     padding: 2px 5px 0;
-    color: gray;
-    border-right: 1px solid #ccc;
-    border-radius: 0;
-    margin: 0;
-    border-left: 1px solid #fff;
-
-    &.left {
-      border-left: 0;
-    }
-    &.right {
-      border-right: 0;
-    }
+    border: 1px solid #ccc;
+    background: #eee;
+    border-radius: 5px;
+//    margin: 0;
 
     .glyphicon {
       margin-right: 2px;
@@ -110,12 +103,15 @@
   input {
     flex: 1;
     height: 26px;
-    padding: 0 4px;
-    margin-right: 5px;
+    padding: 0 12px;
+    margin: 0 5px;
     font-size: 14px;
     color: #808080;
+    border: 1px solid #ccc;
+    border-top: 0;
+    border-bottom: 0;
 
-    &:active {
+    &:focus {
       outline: 0;
     }
   }
