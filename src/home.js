@@ -149,7 +149,7 @@ function setupRpcConnection () {
   pull(phoenix.ssb.phoenix.createEventStream(), pull.drain(function (event) {
     if (event.type == 'home-add')
       setNewMessageCount(getNewMessageCount() + 1)
-    if (event.type == 'votes-add' || event.type == 'votes-remove' || event.type == 'follows-add' || event.type == 'follows-remove')
+    if (-1 !== ['inbox-add', 'inbox-remove', 'votes-add', 'votes-remove', 'follows-add', 'follows-remove'].indexOf(event.type))
       renderNavDebounced()
   }))
 }

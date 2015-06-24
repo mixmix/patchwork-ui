@@ -138,7 +138,7 @@ module.exports = function (app, msg, opts) {
     (opts && opts.fullview) ? com.postForm(app, msg, { rows: 5, placeholder: 'Write your reply', noheader: true, onpost: onfullviewpost }) : ''
   )
 
-  fetchRowState(app, msgSummary, msg.key)
+  fetchRowState(app, msgSummary, msg.key, opts)
   return msgSummary
 
   // handlers
@@ -201,47 +201,21 @@ module.exports = function (app, msg, opts) {
 
 var statsOpts = { recursive: true }
 var fetchRowState =
-module.exports.fetchRowState = function (app, el, mid) {
+module.exports.fetchRowState = function (app, el, mid, opts) {
   mid = mid || el.dataset.msg
   if (!mid) return
   app.ssb.relatedMessages({ id: mid, count: true }, function (err, thread) {
-    var keys = []
-    var first = true
-    function acc (msg) {
-      if (first || msg.value.content.type == 'post')
-        keys.push(msg.key)
-      first = false
-      if (msg.related)
-        msg.related.forEach(acc)
-    }
-    
-    if (thread) {
-      setRowState(app, el, thread)
-
-      // check if any of the messages are unread
-      // :TODO: needed?
-      /*acc(thread)
-      app.ssb.phoenix.isRead(keys, function (err, isreads) {
-        for (var i=0; i < isreads.length; i++) {
-          if (!isreads[i]) {
-            el.classList.add('unread')
-            return
-          }
-        }
-      })*/
-    }
+    if (thread)
+      setRowState(app, el, thread, opts)
   })
 }
 
 var setRowState =
-module.exports.setRowState = function (app, el, thread) {
-  if (!thread.related)
-    return
-
+module.exports.setRowState = function (app, el, thread, opts) {
   // collect comments and votes
   var comments = []
   var upvoters = {}
-  thread.related.forEach(function (r) {
+  ;(thread.related||comments).forEach(function (r) {
     var c = r.value.content
     if (c.type === 'vote') {
       if (c.vote === 1)
@@ -273,6 +247,12 @@ module.exports.setRowState = function (app, el, thread) {
       h('.comment-inner', getSummary(app, comment)))
     el.querySelector('.message-comments').appendChild(cdiv)
   })
+
+  // mark read
+  if (opts && opts.markread) {
+    var ids = [thread.key].concat(comments.map(function (c) { return c.key }))
+    app.ssb.phoenix.markRead(ids)
+  }
 }
 
 function ago (msg) {

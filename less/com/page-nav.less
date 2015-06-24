@@ -86,7 +86,23 @@
 
     &:hover {
       .unread {
-        background: darken(rgb(249, 87, 87), 10%);
+        position: absolute;
+        top: -4px;
+        right: 2px;
+        color: #fff;
+        background: #FF0000;
+        font-size: 9px;
+        border-radius: 3px;
+        padding: 0px 3px;
+        font-weight: normal;
+      }
+
+      &:hover {
+        text-decoration: none;
+        background: #f5f5f5;
+        .unread {
+          background: lighten(#FF0000, 10%);
+        }
       }
     }
   }

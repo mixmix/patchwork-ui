@@ -1,23 +1,25 @@
 var h = require('hyperscript')
 var com = require('./index')
 
-sigma.canvas.nodes.square = function (node, context, settings) {
-  var prefix = settings('prefix') || '',
-      size = node[prefix + 'size']
+if ('sigma' in window) {
+  sigma.canvas.nodes.square = function (node, context, settings) {
+    var prefix = settings('prefix') || '',
+        size = node[prefix + 'size']
 
-  context.strokeStyle = node.color || settings('defaultNodeColor')
-  context.fillStyle = 'rgba(238,238,238,0.7)'
-  context.beginPath()
-  context.rect(
-    node[prefix + 'x'] - size,
-    node[prefix + 'y'] - size,
-    size * 2,
-    size * 2
-  )
+    context.strokeStyle = node.color || settings('defaultNodeColor')
+    context.fillStyle = 'rgba(238,238,238,0.7)'
+    context.beginPath()
+    context.rect(
+      node[prefix + 'x'] - size,
+      node[prefix + 'y'] - size,
+      size * 2,
+      size * 2
+    )
 
-  context.closePath()
-  context.fill()
-  context.stroke()
+    context.closePath()
+    context.fill()
+    context.stroke()
+  }
 }
 
 module.exports = function (app, opts) {
