@@ -9,7 +9,7 @@ module.exports = function (app) {
     var content
     if (msg) {
       msg = { key: app.page.param, value: msg }
-      content = com.message(app, msg, { fullview: true })
+      content = com.message(app, msg, { markread: true, fullview: true })
     } else {
       content = 'Message not found.'
     }
