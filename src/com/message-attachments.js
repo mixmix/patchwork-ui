@@ -21,7 +21,7 @@ module.exports = function (app, msg) {
   var els = []
   mlib.indexLinks(msg.value.content, { ext: true }, function (link, rel) {
     var label
-    var url = '/ext/'+link.ext
+    var url = 'ext:'+link.ext//'/ext/'+link.ext
 
     if (!link.name && link.type) {
       // if we know the filetype, try to construct a good filename
@@ -30,14 +30,14 @@ module.exports = function (app, msg) {
         link.name = 'attachment.'+ext
     }
 
-    if (link.name)
-      url += '/'+link.name
+    // if (link.name)
+      // url += '/'+link.name
 
     if (isImage(link))
       label = h('.image', { style: 'background-image: url('+encodeURI(url)+')' })
     else
       label = h('.file', com.icon('file'), ' ', link.name, ' ', h('small', (('size' in link) ? u.bytesHuman(link.size) : ''), ' ', link.type||''))
-    els.push(h('a', { href: url+'?sp', target: '_blank' }, label))
+    els.push(h('a', { href: url/*+'?sp'*/, target: '_blank' }, label))
   })
   return els.length ? h('.attachments', els) : undefined
 }

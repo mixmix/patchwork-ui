@@ -56,6 +56,8 @@ exports.profilePicUrl = function (app, id) {
       link = profile.self.profilePic
 
     if (link) {
+      url = 'ext:'+link.ext
+      /* :TODO: update when electron custom-protocols are better understood
       // construct base url
       url = '/ext/' + link.ext
 
@@ -70,6 +72,7 @@ exports.profilePicUrl = function (app, id) {
 
       // append the 'backup img' flag, so we always have an image
       url += '?bimg'
+      */
     }
   }
   return url
