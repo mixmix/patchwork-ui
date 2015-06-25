@@ -8,11 +8,9 @@
     "url": "git://github.com/ssbc/phoenix.git"
   },
   "scripts": {
-    "build-js-home": "mkdir -p js; browserify -o js/home.js src/home.js  --debug",
-    "build-js": "mkdir -p js; npm run build-js-home",
     "build-css-home": "mkdir -p css; lessc less/home.less css/home.css",
     "build-css": "mkdir -p css; npm run build-css-home",
-    "build": "npm run build-css; npm run build-js",
+    "build": "npm run build-css",
     "prepublish": "npm run build"
   },
   "dependencies": {
@@ -41,7 +39,6 @@
     "suggest-box": "~1.1.6"
   },
   "devDependencies": {
-    "browserify": "~6.2.0",
     "less": "~1.7.5"
   },
   "author": "Paul Frazee <pfrazee@gmail.com>",

@@ -1,6 +1,3 @@
 node_modules
-js/home.js
-js/auth.js
 css/home.css
 css/auth.css
-test/app-auth.js
