@@ -86,7 +86,7 @@ function setup() {
   // rpc connection
   ssb.on('connect', function() {
     // authenticate the connection
-    auth.getToken(window.location.host, function(err, token) {
+    auth.getToken('http://localhost:8008', function(err, token) {
       if (err) return ssb.close(), console.error('Token fetch failed', err)
       ssb.auth(token, function(err) {
         phoenix.ui.setStatus(false)
