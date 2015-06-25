@@ -1,5 +1,4 @@
 'use strict'
-var auth       = require('ssb-domain-auth')
 var h          = require('hyperscript')
 var multicb    = require('multicb')
 var router     = require('phoenix-router')
@@ -7,10 +6,10 @@ var pull       = require('pull-stream')
 var emojis     = require('emoji-named-characters')
 var schemas    = require('ssb-msg-schemas')
 var SSBClient  = require('ssb-client')
-var com        = require('./com')
-var pages      = require('./pages')
+var com        = require('./lib/com')
+var pages      = require('./lib/pages')
 var u          = require('./lib/util')
-var addUI      = require('./app-ui')
+var addUI      = require('./lib/ui')
 
 // program load
 setup()
@@ -18,7 +17,7 @@ setup()
 // create the application object and register handlers
 var _onPageTeardown
 function setup() {
-  var ssb = SSBClient()
+  var ssb = SSBClient({ path: '/Users/paulfrazee/.ssb' }) // :TEMP:
   ssb.connect()
 
   // master state object
@@ -86,13 +85,12 @@ function setup() {
   // rpc connection
   ssb.on('connect', function() {
     // authenticate the connection
-    auth.getToken('http://localhost:8008', function(err, token) {
-      if (err) return ssb.close(), console.error('Token fetch failed', err)
-      ssb.auth(token, function(err) {
-        phoenix.ui.setStatus(false)
-        setupRpcConnection()
-        phoenix.refreshPage()
-      })
+    // :TODO: replace with scheme over IPC
+    var token = 'todo'
+    ssb.auth(token, function(err) {
+      phoenix.ui.setStatus(false)
+      setupRpcConnection()
+      phoenix.refreshPage()
     })
   })
   ssb.on('close', function() {
