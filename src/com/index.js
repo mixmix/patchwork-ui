@@ -56,7 +56,7 @@ exports.profilePicUrl = function (app, id) {
       link = profile.self.profilePic
 
     if (link) {
-      url = 'ext:'+link.ext
+      url = 'blob:'+link.ext
       /* :TODO: update when electron custom-protocols are better understood
       // construct base url
       url = '/ext/' + link.ext

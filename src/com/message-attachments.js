@@ -21,7 +21,7 @@ module.exports = function (app, msg) {
   var els = []
   mlib.indexLinks(msg.value.content, { ext: true }, function (link, rel) {
     var label
-    var url = 'ext:'+link.ext//'/ext/'+link.ext
+    var url = 'blob:'+link.ext//'/ext/'+link.ext
 
     if (!link.name && link.type) {
       // if we know the filetype, try to construct a good filename
