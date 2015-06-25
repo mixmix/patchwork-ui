@@ -5,7 +5,12 @@ var router     = require('phoenix-router')
 var pull       = require('pull-stream')
 var emojis     = require('emoji-named-characters')
 var schemas    = require('ssb-msg-schemas')
-var SSBClient  = require('ssb-client')
+// var SSBClient  = require('ssb-client')
+var ipc        = require('ipc')
+var muxrpc     = require('muxrpc')
+var loadManf   = require('ssb-manifest/load')
+var pushable   = require('pull-pushable')
+var Serializer = require('pull-serializer')
 var com        = require('./lib/com')
 var pages      = require('./lib/pages')
 var u          = require('./lib/util')
@@ -17,8 +22,21 @@ setup()
 // create the application object and register handlers
 var _onPageTeardown
 function setup() {
-  var ssb = SSBClient({ path: '/Users/paulfrazee/.ssb' }) // :TEMP:
-  ssb.connect()
+  // fetch config
+  var config = ipc.sendSync('fetch-config')
+  console.log('got config', config)
+
+  // create rpc object
+  var ssb = muxrpc(loadManf(config), null, serialize)()
+  function serialize (stream) {
+    return Serializer(stream, JSON, {split: '\n\n'})
+  }
+
+  // setup rpc stream over ipc
+  var rpcStream = ssb.createStream()
+  var ipcPush = pushable()
+  ipc.on('muxrpc-ssb', function (msg) { ipcPush.push(msg) })
+  pull(ipcPush, rpcStream, pull.drain(function (msg) { ipc.send('muxrpc-ssb', msg) }))
 
   // master state object
   window.phoenix = {
@@ -82,27 +100,9 @@ function setup() {
     })
   }
 
-  // rpc connection
-  ssb.on('connect', function() {
-    // authenticate the connection
-    // :TODO: replace with scheme over IPC
-    var token = 'todo'
-    ssb.auth(token, function(err) {
-      phoenix.ui.setStatus(false)
-      setupRpcConnection()
-      phoenix.refreshPage()
-    })
-  })
-  ssb.on('close', function() {
-    // inform user and attempt a reconnect
-    console.log('Connection Lost')
-    phoenix.ui.setStatus('danger', 'Lost connection to the host program. Please restart the host program. Trying again in 10 seconds.')
-    ssb.reconnect({ wait: 10e3 })
-  })
-  ssb.on('reconnecting', function() {
-    console.log('Attempting Reconnect')
-    phoenix.ui.setStatus('danger', 'Lost connection to the host program. Reconnecting...')
-  })
+  // init
+  setupRpcConnection()
+  phoenix.refreshPage()
 }
 
 // find any controls with the 'full-height' class and expand them vertically to fill
