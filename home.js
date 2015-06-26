@@ -10,7 +10,6 @@ var ipc        = require('ipc')
 var muxrpc     = require('muxrpc')
 var loadManf   = require('ssb-manifest/load')
 var pushable   = require('pull-pushable')
-var Serializer = require('pull-serializer')
 var com        = require('./lib/com')
 var pages      = require('./lib/pages')
 var u          = require('./lib/util')
@@ -28,9 +27,7 @@ function setup() {
 
   // create rpc object
   var ssb = muxrpc(loadManf(config), null, serialize)()
-  function serialize (stream) {
-    return Serializer(stream, JSON, {split: '\n\n'})
-  }
+  function serialize (stream) { return stream }
 
   // setup rpc stream over ipc
   var rpcStream = ssb.createStream()
