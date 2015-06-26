@@ -6,10 +6,7 @@ var pull       = require('pull-stream')
 var emojis     = require('emoji-named-characters')
 var schemas    = require('ssb-msg-schemas')
 // var SSBClient  = require('ssb-client')
-var ipc        = require('ipc')
-var muxrpc     = require('muxrpc')
-var loadManf   = require('ssb-manifest/load')
-var pushable   = require('pull-pushable')
+var SSBClient  = require('./lib/muxrpc-ipc')
 var com        = require('./lib/com')
 var pages      = require('./lib/pages')
 var u          = require('./lib/util')
@@ -21,24 +18,10 @@ setup()
 // create the application object and register handlers
 var _onPageTeardown
 function setup() {
-  // fetch config
-  var config = ipc.sendSync('fetch-config')
-  console.log('got config', config)
-
-  // create rpc object
-  var ssb = muxrpc(loadManf(config), null, serialize)()
-  function serialize (stream) { return stream }
-
-  // setup rpc stream over ipc
-  var rpcStream = ssb.createStream()
-  var ipcPush = pushable()
-  ipc.on('muxrpc-ssb', function (msg) { ipcPush.push(msg) })
-  pull(ipcPush, rpcStream, pull.drain(function (msg) { ipc.send('muxrpc-ssb', msg) }))
-
   // master state object
   window.phoenix = {
     // sbot rpc connection
-    ssb: ssb,
+    ssb: SSBClient(),
 
     // api
     refreshPage: refreshPage,
