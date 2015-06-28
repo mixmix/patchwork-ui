@@ -1,30 +1,10 @@
-.profile-nav {
-  padding-top: 6px;
+.profile-header {
+  max-width: 560px;
+  margin: 8px auto 0;
+  text-align: right;
 
-  .navlinks > a {
-    display: block;
-    background: #fff;
-    padding: 8px 10px;
-    margin: 5px;
-    border: 1px solid #ccc;
-    color: #808080;
-    font-size: 16px;
-    border-right: 10px solid #ccc;
-    font-weight: 100;
-
-    &.selected {
-      color: rgb(85, 85, 85);
-      border-color: rgb(170, 170, 170);
-    }
-
-    &:nth-child(2), &:nth-child(3) {
-      background: none;
-      border: 0;
-      color: #1D49D5;
-      &.selected {
-        background: #e0e0e0;
-      }
-    }
+  .btn {
+    margin-left: 5px;
   }
 }
 
@@ -62,8 +42,13 @@
     }
     .btns-group {
       margin-top: 5px;
-      .btn:nth-child(1) {
-        width: 98px;
+      display: flex;
+      .btn {
+        flex: 1;
+        margin-right: 2px;
+        &:last-child {
+          margin: 0;
+        }
       }
     }
   }
