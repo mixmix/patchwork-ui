@@ -138,9 +138,6 @@ function refreshPage (e) {
   var starttime = Date.now()
   phoenix.ui.pleaseWait(true, 1000)
 
-  // clear pending messages
-  setNewMessageCount(0)
-
   // run the router
   var route = router('#'+(location.href.split('#')[1]||''), 'home')
   phoenix.page.id    = route[0]
@@ -203,6 +200,12 @@ function refreshPage (e) {
       page = pages.notfound
     page(phoenix)
 
+    // clear or re-render pending messages
+    if (phoenix.page.id == 'home')
+      setNewMessageCount(0)
+    else
+      setNewMessageCount(getNewMessageCount())
+
     // metrics!
     phoenix.ui.pleaseWait(false)
     console.debug('page loaded in', (Date.now() - starttime), 'ms')
@@ -217,15 +220,19 @@ function getNewMessageCount () {
 function setNewMessageCount (n) {
   n = (n<0)?0:n
   newMessageCount = n
-  if (n) {
-    document.title = '('+n+') Scuttlebutt'
-    try { 
-      var loadmore = document.querySelector('.load-more')
-      loadmore.style.display = 'block'
-      loadmore.innerText = loadmore.textContent = 'Load More ('+n+')'
-    } catch (e) {}
-  } else
-    document.title = 'Scuttlebutt'
+  var homebtn = document.querySelector('#page-nav .home')
+  try {
+    if (n) {
+      document.title = '('+n+') Secure Scuttlebutt'
+      homebtn.classList.add('has-unread')
+      homebtn.querySelector('.unread').innerHTML = n
+    } else {
+      document.title = 'Secure Scuttlebutt'
+      homebtn.classList.remove('has-unread')
+    }
+  } catch (e) {
+    // ignore
+  }
 }
 
 function renderNav () {
