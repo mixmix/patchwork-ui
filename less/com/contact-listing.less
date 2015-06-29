@@ -1,89 +1,48 @@
 .contact-listing {
-  display: inline-block;
-  width: 240px;
-  margin: 32px 32px 0;
+  display: flex;
   color: #555;
-  vertical-align: top;
 
   .profpic {
-    display: flex;
+    margin-left: 10px;
     height: 75px;
     .hovercard {
       visibility: hidden; // never show
     }
-
-    .action {
-      position: relative;
-      width: 100%;
-      .btn {
-        position: absolute;
-        right: 0;
-        bottom: 5px;
-        background: #2778E2;
-        color: #fff;
-        border: 0;
-        
-        &:hover {
-          background: linear-gradient(to bottom, #2778e2, #1D66C7);
-        }
-        &.unfollow {
-          color: #555;
-          background: #eee; //#81367A;
-        }
-        &.unfollow:hover {
-          background: linear-gradient(to bottom, #ddd, #ccc); //linear-gradient(to bottom, #81367A, #6B2E65);
-        }
-      }
-    }
   }
   .details {
-    background: #fff;
-    border: 1px solid #ccc;
-    padding-bottom: 5px;
-
-    .name {
-      font-size: 21px;
-      position: relative;
-      top: 6px;
-
-      a {
-        color: #555;
-        font-weight: bold;
-      }
-    }
+    flex: 1;
+    margin-left: 14px;
+    padding: 10px 0;
     p {
-      margin: 10px 15px 10px;
+      margin: 0 15px;
       overflow: hidden;
       text-overflow: ellipsis;
     }
-    a {
-      color: #555;
-      font-weight: bold;
+    .name {
+      font-size: 21px;
+
+      a {
+        color: #444;
+        font-weight: bold;
+      }
     }
-    .user-img img {
-      width: 24px;
-      height: 24px;
-      margin: 1px;
-      border-radius: 2px;
-    }
+  }
+  .actions {
+    padding: 24px 10px 0 0;
   }
   .text-danger {
     color: #FD241F;
-    font-weight: bold;
   }
-  .flaggers {
-    color: #FD241F;
-    background: #FDF6F5;
-    padding: 10px 15px 10px;
-    font-weight: bold;
-    border: 1px solid rgb(240, 186, 186);
-    border-top: 0;
 
-    .user-img img {
-      width: 24px;
-      height: 24px;
-      margin: 1px;
-      border-radius: 2px;
+  &:nth-child(odd) {
+    background: #fff;
+    .details {
+      margin-left: 60px;
+    }
+  }
+  &:nth-child(even) {
+    .profpic {
+      margin-left: 54px;
     }
   }
 }
