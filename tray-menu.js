@@ -87,15 +87,13 @@ function render (renderer) {
   var done = multicb({ pluck: 1 })
   app.ssb.whoami(done())
   app.ssb.phoenix.getNamesById(done())
-  app.ssb.phoenix.getNameTrustRanks(done())
   app.ssb.phoenix.getAllProfiles(done())
   app.ssb.phoenix.getIndexCounts(done())
   done(function (err, data) {
     if (err) throw err.message
     app.users = {
       names: data[1],
-      nameTrustRanks: data[2],
-      profiles: data[3]
+      profiles: data[2]
     }
     app.user = {
       id: data[0].id,

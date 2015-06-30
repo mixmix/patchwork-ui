@@ -50,7 +50,6 @@ function setup() {
     },
     users: {
       names: null,
-      nameTrustRanks: null,
       profiles: null,
       link: function (id) { return h('span', com.user(phoenix, id)) }
     },
@@ -148,7 +147,6 @@ function refreshPage (e) {
   var done = multicb({ pluck: 1 })
   phoenix.ssb.whoami(done())
   phoenix.ssb.phoenix.getNamesById(done())
-  phoenix.ssb.phoenix.getNameTrustRanks(done())
   phoenix.ssb.phoenix.getAllProfiles(done())
   phoenix.ssb.phoenix.getActionItems(done())
   phoenix.ssb.phoenix.getIndexCounts(done())
@@ -156,10 +154,9 @@ function refreshPage (e) {
     if (err) throw err.message
     phoenix.user.id = data[0].id
     phoenix.users.names = data[1]
-    phoenix.users.nameTrustRanks = data[2]
-    phoenix.users.profiles = data[3]
-    phoenix.ui.actionItems = data[4]
-    phoenix.ui.indexCounts = data[5]
+    phoenix.users.profiles = data[2]
+    phoenix.ui.actionItems = data[3]
+    phoenix.ui.indexCounts = data[4]
     var userProf = phoenix.user.profile = phoenix.users.profiles[phoenix.user.id]
 
     // refresh suggest options for usernames
