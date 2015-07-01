@@ -220,11 +220,11 @@ function setNewMessageCount (n) {
   var homebtn = document.querySelector('#page-nav .home')
   try {
     if (n) {
-      document.title = '('+n+') Secure Scuttlebutt'
+      document.title = '-=[ ('+n+') Patchwork : '+phoenix.users.names[phoenix.user.id]+' ]=-'
       homebtn.classList.add('has-unread')
       homebtn.querySelector('.unread').innerHTML = n
     } else {
-      document.title = 'Secure Scuttlebutt'
+      document.title = '-=[ Patchwork : '+phoenix.users.names[phoenix.user.id]+' ]=-'
       homebtn.classList.remove('has-unread')
     }
   } catch (e) {
