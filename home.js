@@ -217,14 +217,15 @@ function getNewMessageCount () {
 function setNewMessageCount (n) {
   n = (n<0)?0:n
   newMessageCount = n
+  var name = phoenix.users.names[phoenix.user.id] || 'New Account'
   var homebtn = document.querySelector('#page-nav .home')
   try {
     if (n) {
-      document.title = '-=[ ('+n+') Patchwork : '+phoenix.users.names[phoenix.user.id]+' ]=-'
+      document.title = '-=[ ('+n+') Patchwork : '+name+' ]=-'
       homebtn.classList.add('has-unread')
       homebtn.querySelector('.unread').innerHTML = n
     } else {
-      document.title = '-=[ Patchwork : '+phoenix.users.names[phoenix.user.id]+' ]=-'
+      document.title = '-=[ Patchwork : '+name+' ]=-'
       homebtn.classList.remove('has-unread')
     }
   } catch (e) {
