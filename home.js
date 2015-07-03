@@ -16,7 +16,7 @@ var addUI      = require('./lib/ui')
 setup()
 
 // create the application object and register handlers
-var _onPageTeardown
+var _onPageTeardown, _hideNav = false
 function setup() {
   // master state object
   window.phoenix = {
@@ -175,13 +175,22 @@ function refreshPage (e) {
       }
     }
 
-    // re-route to setup if needed
+    // re-route to setup or sync if needed
     if (!phoenix.users.names[phoenix.user.id]) {
+      _hideNav = true
       if (window.location.hash != '#/setup') {      
         window.location.hash = '#/setup'
         return
       }
     }
+    else if (phoenix.user.profile && Object.keys(phoenix.user.profile.assignedTo).length == 0) {
+      _hideNav = true
+      if (window.location.hash != '#/sync') {      
+        window.location.hash = '#/sync'
+        return
+      }
+    } else
+      _hideNav = false
 
     // lookup the page
     var page = pages[phoenix.page.id]
@@ -235,8 +244,13 @@ function setNewMessageCount (n) {
 
 function renderNav () {
   var navEl = document.getElementById('page-nav')    
-  navEl.innerHTML = ''   
-  navEl.appendChild(com.pagenav(phoenix))
+  if (_hideNav) {
+    navEl.style.display = 'none'
+  } else {
+    navEl.style.display = 'block'
+    navEl.innerHTML = ''   
+    navEl.appendChild(com.pagenav(phoenix))
+  }
 }
 var renderNavDebounced = u.debounce(function () {
   phoenix.ssb.phoenix.getIndexCounts(function (err, counts) {

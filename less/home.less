@@ -33,7 +33,7 @@
 @import "bootstrap/jumbotron.less";
 //@import "bootstrap/thumbnails.less";
 @import "bootstrap/alerts.less";
-// @import "bootstrap/progress-bars.less";
+@import "bootstrap/progress-bars.less";
 // @import "bootstrap/media.less";
 // @import "bootstrap/list-group.less";
 @import "bootstrap/panels.less";
@@ -74,6 +74,7 @@
 @import "com/header-controls.less";
 @import "com/ext.less";
 @import "com/search.less";
+@import "com/peers.less";
 @import "com/composer.less";
 @import "com/post-form.less";
 @import "com/pm-form.less";
@@ -199,6 +200,9 @@ body {
   color: #6e6c6c;
   font-size: 12px;
   font-weight: bold;
+  &.btn-sm, &.btn-xs {
+    font-weight: normal;
+  }
 
   &:hover {
     color: #444;
@@ -248,31 +252,34 @@ body {
   background: rgba(0,0,0,0.1);
 }
 .welcome-help {
-  margin: 0 50px;
-  .well {
+  max-width: 840px;
+  margin: 0 auto 15px;
+  padding: 10px 30px;
+  background: #fff;
+  border-radius: 10px;
+  h2 {
+    text-align: center;
+    margin-top: 10px;
+    color: @blue-primary;
+    font-weight: bold;
+  }
+  .big-btn {
+    border: 1px solid #ccc;
+    border-radius: 2px;
+    padding: 10px 20px;
     margin: 15px 0;
-    padding: 10px 30px;
-    background: #eee;
-    border: 0;
-    h2 {
-      margin-top: 10px;
+    cursor: pointer;
+    background: linear-gradient(to bottom, #ffffff, #fdfdfd 10%, #ffffff 95%, #e5e5e5);
+    text-align: center;
+    color: #6e6c6c;
+    font-weight: bold;
+
+    h3 {
+      margin-top: 6px;
     }
-    .big-btn {
-      border: 1px solid #ccc;
-      border-radius: 2px;
-      padding: 10px 20px;
-      margin: 15px 0;
-      cursor: pointer;
-      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-      background: #fff;
 
-      h3 {
-        margin-top: 6px;
-      }
-
-      &:hover {
-        background: #fafafa;
-      }
+    &:hover {
+      background: #fafafa;
     }
   }
 }
