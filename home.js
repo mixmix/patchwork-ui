@@ -138,6 +138,9 @@ function setupRpcConnection () {
     var els = document.querySelectorAll('img[src^="blob:'+hash+'"]')
     for (var i=0; i < els.length; i++)
       els[i].src = 'blob:'+hash
+    var els = document.querySelectorAll('[data-bg^="blob:'+hash+'"]')
+    for (var i=0; i < els.length; i++)
+      els[i].style.backgroundImage = 'url(blob:'+hash+')'
   }))
 }
 
