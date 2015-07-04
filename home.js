@@ -133,6 +133,12 @@ function setupRpcConnection () {
     if (-1 !== ['inbox-add', 'inbox-remove', 'votes-add', 'votes-remove', 'follows-add', 'follows-remove'].indexOf(event.type))
       renderNavDebounced()
   }))
+  pull(phoenix.ssb.blobs.changes(), pull.drain(function (hash) {
+    // hash downloaded, update any images
+    var els = document.querySelectorAll('img[src^="blob:'+hash+'"]')
+    for (var i=0; i < els.length; i++)
+      els[i].src = 'blob:'+hash
+  }))
 }
 
 // re-renders the page
