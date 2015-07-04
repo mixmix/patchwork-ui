@@ -39,7 +39,11 @@ function setup() {
       emojis: [],
       suggestOptions: { ':': [], '@': [] },
       actionItems: null,
-      indexCounts: {}
+      indexCounts: {},
+      homeMode: {
+        view: 'party',
+        live: false
+      }
       // ui helper methods added by `addUi`
     },
 
