@@ -110,8 +110,15 @@ body {
         margin-right: 10px;
       }
     }
+    .btn-group .btn {
+      width: 80px;
+      text-align: center;
+    }
     li {
       margin-bottom: 5px;
+    }
+    hr {
+      border-color: #ddd;
     }
   }
   .message-feed {
@@ -206,6 +213,12 @@ body {
 
   &:hover {
     color: #444;
+  }
+  &.pressed {
+    color: #FFFFFF;
+    background: rgb(67, 105, 255);
+    box-shadow: inset 0px 2px 3px rgba(0, 0, 0, 0.1);
+    border-color: rgb(74, 101, 208);
   }
 }
 .alert-info {
