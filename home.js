@@ -179,18 +179,11 @@ function refreshPage (e) {
       }
     }
 
-    // re-route to setup or sync if needed
+    // re-route to setup if needed
     if (!phoenix.users.names[phoenix.user.id]) {
       _hideNav = true
       if (window.location.hash != '#/setup') {      
         window.location.hash = '#/setup'
-        return
-      }
-    }
-    else if (phoenix.user.profile && Object.keys(phoenix.user.profile.assignedTo).length == 0) {
-      _hideNav = true
-      if (window.location.hash != '#/sync') {      
-        window.location.hash = '#/sync'
         return
       }
     } else
