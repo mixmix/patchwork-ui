@@ -121,17 +121,30 @@
       position: absolute;
       z-index: 10000;
       top: 25px;
-      left: -90px;
+      left: -160px;
       width: 200px;
       background: #fff;
       box-shadow: 0px 3px 3px rgba(0,0,0,0.1);
       border: 1px solid #bbb;
 
+      &:before {
+        content: '';
+        position: absolute;
+        right: 17px;
+        width: 10px;
+        height: 10px;
+        top: -10px;
+        border-width: 0 7px 8px;
+        border-bottom-color: #ccc;
+        border-style: solid;
+        color: transparent;
+      }
+
       a {
         display: block;
         margin: 0;
         text-align: left;
-        padding: 20px;
+        padding: 10px 20px;
         border-bottom: 1px solid #D7D4D4;
 
         &:last-child {
