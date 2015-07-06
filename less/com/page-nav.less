@@ -87,11 +87,6 @@
     .glyphicon {
       margin-right: 2px;
     }
-    .glyphicon-cloud {
-      margin: 0;
-      position: relative;
-      top: 3px;
-    }
     .glyphicon-envelope, .glyphicon-user {
       font-size: 14px;
     }
@@ -112,6 +107,36 @@
       text-decoration: none;
       .unread {
         background: lighten(@brand-primary, 10%);
+      }
+    }
+  }
+
+  a.dropdown {
+    margin: 0;
+    padding: 3px 7px 1px 7px;
+    position: relative;
+    .dropdown-inner {
+      display: none;
+
+      position: absolute;
+      z-index: 10000;
+      top: 25px;
+      left: -90px;
+      width: 200px;
+      background: #fff;
+      box-shadow: 0px 3px 3px rgba(0,0,0,0.1);
+      border: 1px solid #bbb;
+
+      a {
+        display: block;
+        margin: 0;
+        text-align: left;
+        padding: 20px;
+        border-bottom: 1px solid #D7D4D4;
+
+        &:last-child {
+          border: 0;
+        }
       }
     }
   }
@@ -141,7 +166,7 @@
     flex: 1;
     height: 26px;
     padding: 0 7px;
-    margin: 0 5px;
+    margin: 0 0 0 5px;
     font-size: 14px;
     color: #808080;
     background: transparent;
