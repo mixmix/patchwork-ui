@@ -120,9 +120,10 @@
 
       position: absolute;
       z-index: 10000;
-      top: 25px;
-      left: -160px;
+      top: 40px;
+      right: -5px;
       width: 200px;
+      padding: 6px 0;
       background: #fff;
       box-shadow: 0px 3px 3px rgba(0,0,0,0.1);
       border: 1px solid #bbb;
@@ -143,13 +144,18 @@
       a {
         display: block;
         margin: 0;
-        text-align: left;
-        padding: 10px 20px;
-        border-bottom: 1px solid #D7D4D4;
+        text-align: right;
+        padding: 6px 20px;
 
-        &:last-child {
-          border: 0;
+        &:hover {
+          color: #fff;
+          background: @brand-primary;
+          font-weight:100;
         }
+      }
+      hr {
+        margin: 6px 0;
+        border-color: #ccc;
       }
     }
   }
@@ -179,7 +185,7 @@
     flex: 1;
     height: 26px;
     padding: 0 7px;
-    margin: 0 0 0 5px;
+    margin: 0;
     font-size: 14px;
     color: #808080;
     background: transparent;
