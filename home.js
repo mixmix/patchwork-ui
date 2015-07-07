@@ -43,6 +43,11 @@ function setup() {
       homeMode: {
         view: 'party',
         live: false
+      },
+      filters: {
+        nsfw: true,
+        spam: true,
+        abuse: true
       }
       // ui helper methods added by `addUi`
     },
