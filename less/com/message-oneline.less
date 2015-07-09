@@ -10,9 +10,6 @@
   
   .message-oneline-column {
     padding: 6px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
 
     &:nth-child(1) {
       flex: 0 0 40px;
@@ -22,6 +19,9 @@
       flex: 0 0 115px;
     }
     &:nth-child(3) {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
       flex: 1;
       a {
         color: #444;
