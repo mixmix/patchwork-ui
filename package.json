@@ -20,7 +20,7 @@
     "hyperscript": "~1.4.3",
     "marked": "git://github.com/clehner/marked#8af8ae018ba452b5c7f936a474dbce265f2ae732",
     "mimetype": "0.0.7",
-    "multiblob": "~1.4.1",
+    "multiblob": "~1.5.0",
     "multicb": "~1.1.0",
     "muxrpc": "~5.0.1",
     "nicedate": "~0.0.0",
