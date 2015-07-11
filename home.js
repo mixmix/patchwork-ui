@@ -62,6 +62,7 @@ function setup() {
       profiles: null,
       link: function (id) { return h('span', com.user(phoenix, id)) }
     },
+    peers: null,
 
     // for plugins
     h: require('hyperscript'),
@@ -168,6 +169,7 @@ function refreshPage (e) {
   phoenix.ssb.phoenix.getAllProfiles(done())
   phoenix.ssb.phoenix.getActionItems(done())
   phoenix.ssb.phoenix.getIndexCounts(done())
+  phoenix.ssb.gossip.peers(done())
   done(function (err, data) {
     if (err) throw err.message
     phoenix.user.id = data[0].id
@@ -175,6 +177,7 @@ function refreshPage (e) {
     phoenix.users.profiles = data[2]
     phoenix.ui.actionItems = data[3]
     phoenix.ui.indexCounts = data[4]
+    phoenix.peers = data[5]
     var userProf = phoenix.user.profile = phoenix.users.profiles[phoenix.user.id]
 
     // refresh suggest options for usernames
