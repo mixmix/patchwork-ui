@@ -41,7 +41,7 @@ function setup() {
       actionItems: null,
       indexCounts: {},
       homeMode: {
-        view: 'party',
+        view: 'all',
         live: false
       },
       filters: {
