@@ -8,9 +8,7 @@
     "url": "git://github.com/ssbc/phoenix.git"
   },
   "scripts": {
-    "build-css-home": "mkdir -p css; lessc less/home.less css/home.css",
-    "build-css": "mkdir -p css; npm run build-css-home",
-    "build": "npm run build-css",
+    "build": "mkdir -p css; lessc less/main.less css/main.css",
     "prepublish": "npm run build"
   },
   "dependencies": {
