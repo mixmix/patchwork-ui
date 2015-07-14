@@ -14,6 +14,7 @@ document.body.addEventListener('click', onClick)
 pull(app.ssb.phoenix.createEventStream(), pull.drain(onIndexEvent))
 pull(app.ssb.blobs.changes(), pull.drain(onBlobDownloaded))
 pull(app.ssb.gossip.changes(), pull.drain(onGossipEvent))
+app.observ.newPosts(onNewPost)
 
 // render
 ui.refreshPage()
@@ -37,10 +38,15 @@ function onClick (e) {
 
 // update UI to reflect index changes
 function onIndexEvent (event) {
+  console.log('onIndexEvent', event)
   if (event.type == 'home-add')
-    ui.setNewMessageCount(ui.getNewMessageCount() + 1)
-  if (-1 !== ['inbox-add', 'inbox-remove', 'votes-add', 'votes-remove', 'follows-add', 'follows-remove'].indexOf(event.type))
-    ui.renderNav()
+    app.observ.newPosts(1 + app.observ.newPosts())
+  if (event.type == 'index-change') {
+    app.indexCounts[event.index] = event.total
+    app.indexCounts[event.index+'Unread'] = event.unread
+    app.observ.indexCounts[event.index](event.total)
+    app.observ.indexCounts[event.index+'Unread'](event.unread)
+  }
 }
 
 // render blobs as they come in
@@ -71,4 +77,15 @@ function onGossipEvent (e) {
   if (i == app.peers.length)
     app.peers.push(e.peer)
   app.observ.peers(app.peers)
+}
+
+// update title to show when new messages are available
+function onNewPost (n) {
+  n = (n<0)?0:n
+  var name = app.users.names[app.user.id] || 'New Account'
+  if (n) {
+    document.title = '-=[ ('+n+') Patchwork : '+name+' ]=-'
+  } else {
+    document.title = '-=[ Patchwork : '+name+' ]=-'
+  }
 }

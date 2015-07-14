@@ -48,29 +48,23 @@
     position: relative;
     top: -3px;
     left: -2px;
-    padding: 8px 0 0 11px;
     text-align: left;
     font-size: 24px;
     background-color: #fff;
     border: 1px solid #ccc;
     box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.1);
 
+    .glyphicon {  
+      padding: 8px 0 0 11px;
+    }
     .unread {
       .monospace;
-      display: none;
+      display: inline-block;
       width: 44px;
       text-align: center;
       font-weight: bold;
-    }
-    &.has-unread {
-      padding-left: 2px;
-      padding-top: 7px;
-      .unread {
-        display: inline-block;
-      }
-      .glyphicon {
-        display: none;
-      }
+      padding-left: 4px;
+      padding-top: 5px;
     }
   }
 
