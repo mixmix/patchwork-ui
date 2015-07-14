@@ -1,0 +1,54 @@
+.lookup-form {
+  .modal-form;
+
+  .form-inline > p {
+    display: flex;
+    .form-control {
+      flex: 1;
+      margin-right: 10px;
+    }
+  }
+  .processing-info {
+    display: none;
+    margin: 30px 25px 60px;
+    .spinner {
+      margin: 0;
+      float: left;
+    }
+    p {
+      color: #666;
+      position: relative;
+      left: 50px;
+      top: 15px;
+    }
+  }
+  .error {
+    display: none;
+    margin: 30px;
+    font-size: 16px;
+  }
+
+  .help {
+    padding: 10px;
+    color: #777;
+    h3 {
+      color: #555;
+    }
+
+    .help-section {
+      background: #f5f5f5;
+      padding: 10px;
+      margin-bottom: 12px;
+      display: flex;
+
+      img {
+        flex: 0 0 300px;
+        border: 1px solid #aaa;
+      }
+      div {
+        padding: 10px 10px 10px 20px;
+        color: #555;
+      }
+    }
+  }
+}
