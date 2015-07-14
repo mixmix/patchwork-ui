@@ -13,6 +13,7 @@ window.addEventListener('hashchange', ui.refreshPage)
 document.body.addEventListener('click', onClick)
 pull(app.ssb.phoenix.createEventStream(), pull.drain(onIndexEvent))
 pull(app.ssb.blobs.changes(), pull.drain(onBlobDownloaded))
+pull(app.ssb.gossip.changes(), pull.drain(onGossipEvent))
 
 // render
 ui.refreshPage()
@@ -51,4 +52,23 @@ function onBlobDownloaded (hash) {
   var els = document.querySelectorAll('[data-bg^="blob:'+hash+'"]')
   for (var i=0; i < els.length; i++)
     els[i].style.backgroundImage = 'url(blob:'+hash+')'
+}
+
+function onGossipEvent (e) {
+  // make sure 'connected' is right
+  if (e.type == 'disconnect')
+    e.peer.connected = false
+  console.log(e)
+
+  // update the peers
+  var i
+  for (i=0; i < app.peers.length; i++) {
+    if (app.peers[i].key == e.peer.key) {
+      app.peers[i] = e.peer
+      break
+    }
+  }
+  if (i == app.peers.length)
+    app.peers.push(e.peer)
+  app.observ.peers(app.peers)
 }

@@ -14,7 +14,7 @@ There, don't you feel better?
 I didn't chose React because:
 
  - I don't have a performance problem.
- - I don't have a data-flow problem.
+ - I don't have a data-flow problem. (*edit: almost true - see the bottom of the page*)
  - I don't have a code organization problem.
  - I do have a templating problem.
 
@@ -69,3 +69,14 @@ It's really not that far off from JSX.
 
 If I decide I want a virtual DOM or reactive data flows, I'll pull in [virtual-hyperscript](https://www.npmjs.com/package/virtual-hyperscript) or [observable](https://www.npmjs.com/package/observable).
 I kind of doubt I will, though!
+
+---
+
+*EDIT*
+
+After writing this, I decided to pull in observables.
+Hah!
+There are some pieces of state which change frequently from events, and which I want updated in realtime.
+The list of peers, in particular, needs to behave this way.
+
+So this really ought to be titled, On Using Hyperscript and Observables Instead of React 
