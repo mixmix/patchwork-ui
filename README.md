@@ -13,6 +13,10 @@ Join us in #scuttlebutt on freenode.
 ![phoenix screenshot](screenshot2.jpg)
 ![phoenix screenshot](screenshot3.jpg)
 
+## Docs
+
+ - [On Using Hyperscript Instead of React](HYPERSCRIPT.md)
+
 ## Getting Started
 
 Follow the instructions for using [scuttlebot](https://github.com/ssbc/scuttlebot). Phoenix comes packaged with scuttlebot by default.
