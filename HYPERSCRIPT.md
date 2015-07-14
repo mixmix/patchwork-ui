@@ -18,13 +18,8 @@ I didn't chose React because:
  - I don't have a code organization problem.
  - I do have a templating problem.
 
-Instead, I chose [Hyperscript](http://npmjs.com/package/hyperscript).
+So, I chose [Hyperscript](http://npmjs.com/package/hyperscript).
 Hyperscript is like [Jade](http://jade-lang.com/) as a Javascript function.
-
- - You write `h()` and inside you put a selector to define the tag, id, and classes.
- - Then, optionally, an object of attributes, including event-handlers.
- - Then, optionally, any number of sub-elements.
-
 It looks like this:
 
 ```js
