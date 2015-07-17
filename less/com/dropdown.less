@@ -19,8 +19,11 @@
     border-style: solid;
     color: transparent;
   }
+  &.nopad {
+    padding: 0;
+  }
 
-  a {
+  .item {
     display: block;
     margin: 0;
     padding: 6px 20px;
@@ -36,5 +39,15 @@
   hr {
     margin: 6px 0;
     border-color: #ccc;
+  }
+
+  &.right {
+    &:before {
+      left: auto;
+      right: 17px;
+    }
+    .item {
+      text-align: right;
+    }
   }
 }
