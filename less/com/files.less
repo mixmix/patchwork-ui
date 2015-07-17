@@ -1,0 +1,45 @@
+.files {
+  font-size: 15px;
+
+  .files-headers, .file {
+    display: flex;
+    padding: 9px 10px;
+    div:nth-child(1) {
+      flex: 1;
+    }
+    div:nth-child(2) {
+      flex: 0 0 100px;
+    }
+    div:nth-child(3) {
+      flex: 0 0 100px;
+    }
+    div:nth-child(4) {
+      flex: 0 0 100px;
+    }
+  }
+
+  .files-headers {
+    background: #444;
+    color: #fff;
+    font-weight: bold;
+  }
+  .file {
+    border-bottom: 1px solid #ccc;
+    color: #555;
+
+    .actions {
+      display: none;
+      float: right;
+      margin-right: 10px;
+      a {
+        margin-right: 20px;
+      }
+    }
+    &:hover {
+      background: #ddd;
+      .actions {
+        display: block;
+      }
+    }
+  }
+}
