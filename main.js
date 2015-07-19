@@ -10,6 +10,7 @@ window.app = require('./lib/app')
 
 // toplevel events
 window.addEventListener('hashchange', ui.refreshPage)
+window.addEventListener('contextmenu', ui.contextMenu)
 document.body.addEventListener('click', onClick)
 pull(app.ssb.phoenix.createEventStream(), pull.drain(onIndexEvent))
 pull(app.ssb.blobs.changes(), pull.drain(onBlobDownloaded))
