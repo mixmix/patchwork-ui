@@ -31,15 +31,24 @@
     color: #FD241F;
   }
 
-  &:nth-child(odd) {
+  &:not(.compact):nth-child(odd) {
     background: #fff;
     .details {
       margin-left: 60px;
     }
   }
-  &:nth-child(even) {
+  &:not(.compact):nth-child(even) {
     .profpic {
       margin-left: 54px;
+    }
+  }
+  &.compact {
+    .details {
+      margin-left: 8px;
+    }
+    .profpic {
+      height: auto;
+      margin-top: 10px;
     }
   }
 }
