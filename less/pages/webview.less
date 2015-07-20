@@ -1,5 +1,6 @@
 .webview-page {
   .webview-left {
+    margin: 0;
     border-right: 1px solid #aaa;
   }
   .webview-right {
@@ -9,16 +10,25 @@
       overflow: scroll;
 
       .message-feed-container {
-        padding: 0 20px;
+        padding: 0 20px 0 30px;
       }
       .message-feed {
         max-width: 560px;
       }
     }
-    &.edit {
-      padding: 10px 10px 10px 0;
+    &.editor {
+      .editor-toolbar {
+        padding: 2px;
+      }
       textarea {
+        border: 0;
+        border-top: 1px solid #ccc;
+        padding: 3px 6px;
         width: 100%;
+
+        &:focus {
+          outline: 0;
+        }
       }
     }
   }
