@@ -9,23 +9,17 @@
     &.comments {
       overflow: scroll;
 
+      .comments-toolbar {
+        margin: 2px;
+      }
+
       .message-feed {
         max-width: 560px;
       }
       .message {
         margin: 2px;
-        & > .user-img {
-          left: 5px;
-          top: 5px;
-          img {
-            width: 25px;
-            height: 25px;
-            border-radius: 15px;
-            box-shadow: none;
-          }
-        }
-        .message-header {
-          padding-left: 30px;
+        .attachments {
+          display: none;
         }
       }
     }
