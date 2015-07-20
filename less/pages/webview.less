@@ -9,11 +9,24 @@
     &.comments {
       overflow: scroll;
 
-      .message-feed-container {
-        padding: 0 20px 0 30px;
-      }
       .message-feed {
         max-width: 560px;
+      }
+      .message {
+        margin: 2px;
+        & > .user-img {
+          left: 5px;
+          top: 5px;
+          img {
+            width: 25px;
+            height: 25px;
+            border-radius: 15px;
+            box-shadow: none;
+          }
+        }
+        .message-header {
+          padding-left: 30px;
+        }
       }
     }
     &.editor {
