@@ -1,0 +1,25 @@
+.webview-page {
+  .webview-left {
+    border-right: 1px solid #aaa;
+  }
+  .webview-right {
+    margin: 0;
+
+    &.comments {
+      overflow: scroll;
+
+      .message-feed-container {
+        padding: 0 20px;
+      }
+      .message-feed {
+        max-width: 560px;
+      }
+    }
+    &.edit {
+      padding: 10px 10px 10px 0;
+      textarea {
+        width: 100%;
+      }
+    }
+  }
+}
