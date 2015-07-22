@@ -1,23 +1,20 @@
 .webview-page {
   .webview-left {
-    margin: 0;
-    border-right: 1px solid #aaa;
+    margin: 2px 2px 0;
+    border: 1px solid #ccc;
   }
   .webview-right {
-    margin: 0;
+    margin: 2px 2px 0 0;
 
     &.comments {
       overflow: scroll;
-
-      .comments-toolbar {
-        margin: 2px;
-      }
+      max-width: 562px;
 
       .message-feed {
         max-width: 560px;
       }
       .message {
-        margin: 2px;
+        margin: 0 0 2px;
         .attachments {
           display: none;
         }
@@ -25,11 +22,10 @@
     }
     &.editor {
       .editor-toolbar {
-        padding: 2px;
+        margin-bottom: 2px;
       }
       textarea {
-        border: 0;
-        border-top: 1px solid #ccc;
+        border: 1px solid #ccc;
         padding: 3px 6px;
         width: 100%;
 
