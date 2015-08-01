@@ -1,11 +1,11 @@
 {
-  "name": "ssbplug-phoenix",
-  "description": "a web-interface plugin for scuttlebot",
-  "version": "4.5.13",
-  "homepage": "https://github.com/ssbc/phoenix",
+  "name": "ssb-patchwork-ui",
+  "description": "patchwork's ui module",
+  "version": "0.0.1",
+  "homepage": "https://github.com/ssbc/patchwork-ui",
   "repository": {
     "type": "git",
-    "url": "git://github.com/ssbc/phoenix.git"
+    "url": "git://github.com/ssbc/patchwork-ui.git"
   },
   "scripts": {
     "build": "mkdir -p css; lessc less/main.less css/main.css",
