@@ -1,37 +1,15 @@
-Phoenix v1
-==========
+Patchwork UI
+============
 
-![phoenix](phoenix.png) **It's distributed!**
+[Patchwork's](/patchwork) ui module
 
-Phoenix is the web UI for [scuttlebot](https://github.com/ssbc/scuttlebot) and part of the [secure-scuttlebutt](https://github.com/ssbc/secure-scuttlebutt) decentralized network. 
-
-Secure Scuttlebutt (SSB) is a fully-decentralized data network designed to replace Web services. It uses cryptographic keypairs to gossip unforgeable data-feeds across the network. "Pub" servers aggregate and redistribute the feeds, but SSB has no central authority: every node is equal, and the network is fully open.
-
-Join us in #scuttlebutt on freenode.
-
-![phoenix screenshot](screenshot1.jpg)
-![phoenix screenshot](screenshot2.jpg)
-![phoenix screenshot](screenshot3.jpg)
+![patchwork screenshot](screenshot1.jpg)
+![patchwork screenshot](screenshot2.jpg)
+![patchwork screenshot](screenshot3.jpg)
 
 ## Docs
 
  - [On Using Hyperscript Instead of React](HYPERSCRIPT.md)
-
-## Getting Started
-
-Follow the instructions for using [scuttlebot](https://github.com/ssbc/scuttlebot). Phoenix comes packaged with scuttlebot by default.
-
-## Building
-
-To build phoenix, run `npm run build`. If you're doing active development, run `sbot server` with the `--dev` flag. This will cause the frontend assets to be built on each request.
-
-## Contributing
-
-Contributions are welcome! Submit your update as a PR; maintainers will review and merge asap.
-
-Make sure your submissions are licensed for free use. All code in Phoenix (including contributions) falls under the license below, or under the licenses attached to included libraries.
-
-You can get help in #scuttlebutt on freenode.
 
 ## License
 
