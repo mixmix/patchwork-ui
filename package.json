@@ -35,8 +35,8 @@
     "ssb-client": "~1.0.2",
     "ssb-manifest": "^1.1.1",
     "ssb-msg-schemas": "~3.2.0",
-    "ssb-msgs": "~4.0.0",
-    "ssb-ref": "~1.0.0",
+    "ssb-msgs": "~5.0.0",
+    "ssb-ref": "~2.0.0",
     "stream-to-pull-stream": "~1.6.0",
     "suggest-box": "~1.1.6"
   },
