@@ -12,6 +12,7 @@ window.app = require('./lib/app')
 window.addEventListener('hashchange', ui.refreshPage)
 window.addEventListener('contextmenu', ui.contextMenu)
 document.body.addEventListener('click', onClick)
+document.body.addEventListener('mouseover', onHover)
 pull(app.ssb.patchwork.createEventStream(), pull.drain(onIndexEvent))
 pull(app.ssb.blobs.changes(), pull.drain(onBlobDownloaded))
 pull(app.ssb.gossip.changes(), pull.drain(onGossipEvent))
@@ -35,6 +36,23 @@ function onClick (e) {
     }
     el = el.parentNode
   }
+}
+function onHover (e) {
+  var el = e.target
+  while (el) {
+    if (el.tagName == 'A') {
+      if (el.getAttribute('title')) {
+        ui.setStatus(el.getAttribute('title'))
+      } else if (el.href) {
+        var i = el.href.indexOf('#')
+        if (i > 0)
+          ui.setStatus(el.href.slice(i+1))
+      }
+      return 
+    }
+    el = el.parentNode
+  }
+  ui.setStatus(false)
 }
 
 // update UI to reflect index changes
