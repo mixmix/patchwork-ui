@@ -14,7 +14,6 @@
   "dependencies": {
     "animated_gif": "0.0.3",
     "blake2s": "~1.0.0",
-    "data-uri-to-blob": "0.0.4",
     "eccjs": "git://github.com/dominictarr/eccjs.git#586f6d47507184a2efe84684ed0a30605cbc43a5",
     "emoji-named-characters": "^1.0.1",
     "hyperscript": "~1.4.6",

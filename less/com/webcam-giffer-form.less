@@ -1,16 +1,20 @@
 .webcam-giffer-form {
-  canvas {
-    display: none;
-  }
+  display: flex;
   .webcam-giffer-form-videos {
-    display: flex;
-    max-height: 210px;
-    video, img {
-      flex: 1;
-      border: 1px solid transparent;
+    flex: 0 0 300px;
+    max-height: 150px;
+    video {
       &.recording {
-        border-color: red;
+        outline: 1px solid red;
       }
+    }
+  }
+  .webcam-giffer-form-ctrls {
+    flex: 1;
+    padding: 0 3px;
+    textarea {
+      height: 150px;
+      margin-bottom: 5px;
     }
   }
 }
