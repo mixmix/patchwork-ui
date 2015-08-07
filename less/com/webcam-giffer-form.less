@@ -1,0 +1,16 @@
+.webcam-giffer-form {
+  canvas {
+    display: none;
+  }
+  .webcam-giffer-form-videos {
+    display: flex;
+    max-height: 210px;
+    video, img {
+      flex: 1;
+      border: 1px solid transparent;
+      &.recording {
+        border-color: red;
+      }
+    }
+  }
+}
