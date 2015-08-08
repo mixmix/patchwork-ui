@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "blake2s": "~1.0.0",
+    "blob-to-buffer": "^1.2.3",
     "eccjs": "git://github.com/dominictarr/eccjs.git#586f6d47507184a2efe84684ed0a30605cbc43a5",
     "emoji-named-characters": "^1.0.1",
     "hyperscript": "~1.4.6",
@@ -34,8 +35,8 @@
     "pull-ws-server": "~1.1.1",
     "ssb-client": "~1.0.2",
     "ssb-manifest": "^1.1.1",
-    "ssb-msgs": "~5.0.0",
     "ssb-msg-schemas": "~4.1.0",
+    "ssb-msgs": "~5.0.0",
     "ssb-ref": "~2.0.0",
     "stream-to-pull-stream": "~1.6.0",
     "suggest-box": "~1.1.6"
