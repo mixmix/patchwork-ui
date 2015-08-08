@@ -14,7 +14,7 @@
       border-radius: @input-border-radius;
       border-bottom-left-radius: 0;
       border-bottom-right-radius: 0;
-      border-bottom: 0;
+      border-bottom-width: 0;
       outline: none;
 
       position: relative;
@@ -22,6 +22,11 @@
 
       // Placeholder
       .placeholder(@input-color-placeholder);
+
+      &.short {
+        border-radius: 2px;
+        border-bottom-width: 1px;
+      }
     }
   }
   .post-form-preview {
@@ -32,7 +37,7 @@
     border-top-style: dashed;
     &:empty {
       padding: 0;
-      border-width: 0 0 1px;
+      border-width: 0;
     }
     & > :first-child {
       margin-top: 0;
@@ -62,16 +67,10 @@
       position: absolute;
       top: 1px;
       right: 1px;
+      height: 34px;
       color: #fff;
       background: @brand-primary;
       font-weight: 100;
-      font-size: 11px;
-      padding: 5px 10px;
-
-      &[disabled] {
-        background: #ccc;
-        color: #555;
-      }
     }
   }
 }
