@@ -20,10 +20,10 @@
     position: absolute;
     top: 0;
     left: -40px;
-    width: 40px;
+    width: 38px;
 
     a {
-      display: inline-block;
+      display: none;
       position: relative;
       padding: 6px 12px;
       color: gray;
@@ -33,14 +33,14 @@
 
       &:hover, &.selected {
         color: #555;
+        display: inline-block;
       }
-      &.selected:before {
-        content: '.';
-        position: absolute;
-        left: 1px;
-        top: -5px;
-        font-weight: bold;
-        font-size: 21px;
+    }
+    &:hover {
+      background: #ddd;
+      border-radius: 5px;
+      a {
+        display: inline-block;
       }
     }
   }
