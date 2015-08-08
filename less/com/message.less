@@ -83,35 +83,18 @@
     }
   }
   .message-body {
-    padding: 6px 24px 18px;
-    & > h4 {
-      margin-top: 0;
-    }
+    padding: 6px 24px 16px;
+    min-height: 54px;
   }
   .markdown {
     & > :first-child {
       margin-top: 0;
     }
+    & > :last-child {
+      margin-bottom: 0;
+    }
     ul {
       padding-left: 24px;
-    }
-  }
-  .attachments {
-    &:empty {
-      display: none;
-    }
-    padding: 10px;
-    background: #fafafa;
-    a {
-      .image {
-        height: 200px;
-        background: no-repeat center center;
-        background-size: cover;
-        border: 1px solid #ccc;
-      }
-    }
-    .file {
-      margin: 14px;
     }
   }
 
@@ -123,41 +106,35 @@
     }
   }
   .message-comments {
-    border-left: 10px solid #ccc;
-    padding: 1px 15px;
     &:empty {
       display: none;
     }
-    & > a {
-      float: right;
-      padding-right: 2px;
-    }
-    .comment {
-      color: #333;
-      border-top: 1px solid #ddd;
-      &:first-child {
-        border: 0;
+  }
+  .comment {
+    .user-img {
+      float: left;
+      margin-left: 28px;
+      img {
+        width: 60px;
+        height: 60px;
+        opacity: 0.9;
       }
-
-      .user-img {
-        float: left;
-        padding-top: 7px;
-        img {
-          width: 25px;
-          height: 25px;
-          border-radius: 12px;
-          background: 2px 2px 3px rgba(0,0,0,0.25);
-        }
-      }
-      .comment-inner {
-        margin-left: 30px;
-        padding: 10px 5px 0;
-
-        .markdown ul {
-          padding-left: 21px;
-        }
+      img:hover {
+        opacity: 1;
       }
     }
+  }
+  .comment-inner {
+    margin-left: 88px;
+    background: #fff;
+    border-top: 1px solid #ddd;
+
+    .markdown ul {
+      padding-left: 21px;
+    }
+  }
+  .comment-body {
+    padding: 20px 24px 19px;
   }
   .composer-header {
     margin-left: 88px;
