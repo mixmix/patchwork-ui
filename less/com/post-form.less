@@ -43,12 +43,9 @@
   }
   .post-form-attachments {
     position: relative; // for the position absolute postbtn
-    border-bottom-left-radius: @input-border-radius;
-    border-bottom-right-radius: @input-border-radius;
-    padding: 10px 5px 6px;
+    padding: 6px;
     color: #555;
     font-size: 12px;
-    min-height: 30px;
 
     ul {
       padding-left: 20px;
@@ -65,10 +62,16 @@
       position: absolute;
       top: 1px;
       right: 1px;
-      height: 34px;
       color: #fff;
       background: @brand-primary;
       font-weight: 100;
+      font-size: 11px;
+      padding: 5px 10px;
+
+      &[disabled] {
+        background: #ccc;
+        color: #555;
+      }
     }
   }
 }

@@ -24,14 +24,23 @@
 
     a {
       display: inline-block;
+      position: relative;
       padding: 6px 12px;
-      color: #555;
+      color: gray;
       border-radius: 2px;
       cursor: pointer;
       text-shadow: 0 2px 3px rgba(0,0,0,0.15);
 
       &:hover, &.selected {
-        color: #2778e2;
+        color: #555;
+      }
+      &.selected:before {
+        content: '.';
+        position: absolute;
+        left: 1px;
+        top: -5px;
+        font-weight: bold;
+        font-size: 21px;
       }
     }
   }
