@@ -13,29 +13,30 @@
 }
 
 .composer-header {
+  position: relative;
   max-width: 560px;
-  margin: 0 auto;
+  margin: 2px auto 0;
 
   .composer-header-nav {
-    padding: 0 1px;
+    position: absolute;
+    top: 0;
+    left: -40px;
+    width: 40px;
+
     a {
       display: inline-block;
       padding: 6px 12px;
       color: #555;
       border-radius: 2px;
       cursor: pointer;
+      text-shadow: 0 2px 3px rgba(0,0,0,0.15);
 
-      &:hover {
-        color: #2778e2;
-      }
-      &.selected {
-        text-shadow: 0 2px 3px rgba(0,0,0,0.15);
+      &:hover, &.selected {
         color: #2778e2;
       }
     }
   }
 
-  & > input {
-    height: 38px;
+  .composer-header-body {
   }
 }
