@@ -1,6 +1,6 @@
 .message {
   position: relative;
-  margin: 18px auto 24px;
+  margin: 24px auto;
   word-break: break-word;  
 
   & > .user-img {
@@ -85,6 +85,10 @@
   .message-body {
     padding: 6px 24px 16px;
     min-height: 54px;
+
+    & > * {
+      margin: 0;
+    }
   }
   .markdown {
     & > :first-child {
@@ -136,6 +140,10 @@
   }
   .comment-body {
     padding: 20px 24px 19px;
+
+    & > * {
+      margin: 0;
+    }
   }
   .composer-header {
     margin-left: 88px;

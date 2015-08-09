@@ -92,6 +92,7 @@
 // Pages
 @import "pages/home.less";
 @import "pages/profile.less";
+@import "pages/message.less";
 @import "pages/sync.less";
 @import "pages/feed.less";
 @import "pages/followers.less";
@@ -114,6 +115,10 @@ a[target=_blank]:not(.noicon):before {
   height: 12px;
   display: inline-block;
   background: url(../img/external-link.svg) top left no-repeat transparent;
+}
+textarea, textarea.form-control {
+  border: 0;
+  box-shadow: none;
 }
 .user-link {
   font-weight: bold;
