@@ -6,7 +6,7 @@
   & > .user-img {
     position: absolute;
     left: 0px;
-    top: 31px;
+    top: 0px;
 
     img {
       width: 88px;
@@ -46,16 +46,17 @@
     li {
       padding: 7px 10px;
     }
+    .glyphicon {
+      font-size: 18px;
+      color: #bbb;
+    }
+    a:hover .glyphicon {
+      color: #aaa;
+    }
     .favorite {
-      .glyphicon-star {
-        font-size: 21px;
-        color: #bbb;
-      }
+      padding-right: 0;
       a.selected .glyphicon-star {
         color: rgb(255, 194, 0);
-      }
-      a:hover .glyphicon-star {
-        color: #aaa;
       }
       a.selected:hover .glyphicon-star {
         color: darken(rgb(255, 194, 0), 10%);
@@ -67,9 +68,9 @@
           margin-right: 5px;
         }
         img {
-          width: 24px;
-          height: 24px;
-          border-radius: 12px;
+          width: 20px;
+          height: 20px;
+          border-radius: 10px;
           vertical-align: top;
         }
         span {
@@ -114,35 +115,19 @@
     &:empty {
       display: none;
     }
-  }
-  .comment {
-    .user-img {
-      float: left;
-      margin-left: 28px;
-      img {
-        width: 60px;
-        height: 60px;
-        opacity: 0.9;
-      }
-      img:hover {
-        opacity: 1;
-      }
-    }
-  }
-  .comment-inner {
-    margin-left: 88px;
-    background: #fff;
-    border-top: 1px solid #ddd;
 
-    .markdown ul {
-      padding-left: 21px;
-    }
-  }
-  .comment-body {
-    padding: 20px 24px 19px;
-
-    & > * {
+    .message {
       margin: 0;
+      & > .user-img {
+        margin-left: 28px;
+        img {
+          width: 60px;
+          height: 60px;
+        }
+      }
+      .message-inner {
+        border-top: 1px solid #eee;
+      }
     }
   }
   .composer-header {
