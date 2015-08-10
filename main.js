@@ -71,12 +71,12 @@ function onIndexEvent (event) {
 // render blobs as they come in
 function onBlobDownloaded (hash) {
   // hash downloaded, update any images
-  var els = document.querySelectorAll('img[src^="blob:'+hash+'"]')
+  var els = document.querySelectorAll('img[src^="http://localhost:7777/'+hash+'"]')
   for (var i=0; i < els.length; i++)
-    els[i].src = 'blob:'+hash
-  var els = document.querySelectorAll('[data-bg^="blob:'+hash+'"]')
+    els[i].src = 'http://localhost:7777/'+hash
+  var els = document.querySelectorAll('[data-bg^="http://localhost:7777/'+hash+'"]')
   for (var i=0; i < els.length; i++)
-    els[i].style.backgroundImage = 'url(blob:'+hash+')'
+    els[i].style.backgroundImage = 'url(http://localhost:7777/'+hash+')'
 }
 
 function onGossipEvent (e) {
