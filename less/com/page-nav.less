@@ -38,6 +38,7 @@
   }
 
   a.button {
+    position: relative;
     flex: 0 0 30px;
     height: 25px;
   }
@@ -65,24 +66,24 @@
       font-size: 14px;
     }
 
-    .unread {
-      position: absolute;
-      top: -4px;
-      right: 2px;
-      color: #FFFFFF;
-      background: @brand-primary;
-      font-size: 9px;
-      border-radius: 3px;
-      padding: 0 4px;
-      font-weight: normal;
-    }
-
     &:hover {
       text-decoration: none;
-      .unread {
-        background: lighten(@brand-primary, 10%);
-      }
     }
+  }
+
+  .unread {
+    position: absolute;
+    top: 0;
+    left: 0;
+    color: #FFFFFF;
+    background: @brand-primary;
+    font-size: 9px;
+    border-radius: 3px;
+    padding: 0 4px;
+    font-weight: normal;
+  }
+  a:hover .unread {
+    background: lighten(@brand-primary, 10%);
   }
 
   a.profile {
