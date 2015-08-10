@@ -95,7 +95,11 @@ function onGossipEvent (e) {
   }
   if (i == app.peers.length)
     app.peers.push(e.peer)
+  var stats = require('./lib/util').getPubStats()
+
+  // update observables
   app.observ.peers(app.peers)
+  app.observ.hasSyncIssue(!stats.membersof || !stats.active)
 }
 
 // update title to show when new messages are available
