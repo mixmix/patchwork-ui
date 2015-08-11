@@ -21,7 +21,7 @@ pull(app.ssb.gossip.changes(), pull.drain(onGossipEvent))
 app.observ.newPosts(onNewPost)
 
 // render
-ui.refreshPage()
+ui.refreshPage(null, ui.pleaseWait.bind(ui, false))
 
 // Handlers
 // ========
