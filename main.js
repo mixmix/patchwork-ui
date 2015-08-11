@@ -1,6 +1,7 @@
 'use strict'
-var pull = require('pull-stream')
-var ui   = require('./lib/ui')
+var pull   = require('pull-stream')
+var ui     = require('./lib/ui')
+var modals = require('./lib/ui/modals')
 
 // Init
 // ====
@@ -11,6 +12,7 @@ window.app = require('./lib/app')
 // toplevel events
 window.addEventListener('hashchange', ui.refreshPage)
 window.addEventListener('contextmenu', ui.contextMenu)
+window.addEventListener('error', onError)
 document.body.addEventListener('click', onClick)
 document.body.addEventListener('mouseover', onHover)
 pull(app.ssb.patchwork.createEventStream(), pull.drain(onIndexEvent))
@@ -23,6 +25,12 @@ ui.refreshPage()
 
 // Handlers
 // ========
+
+function onError (e) {
+  e.preventDefault()
+  console.error(e.error)
+  modals.error('Unexpected Error', e.error, 'This was an unhandled exception.')
+}
 
 // look for link clicks which should trigger same-page refreshes
 function onClick (e) {
