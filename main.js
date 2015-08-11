@@ -91,12 +91,14 @@ function onGossipEvent (e) {
   // make sure 'connected' is right
   if (e.type == 'disconnect')
     e.peer.connected = false
+  else if (e.type == 'connect')
+    e.peer.connected = true
   console.log(e)
 
   // update the peers
   var i
   for (i=0; i < app.peers.length; i++) {
-    if (app.peers[i].key == e.peer.key) {
+    if (app.peers[i].key == e.peer.key && app.peers[i].host == e.peer.host && app.peers[i].port == e.peer.port) {
       app.peers[i] = e.peer
       break
     }
