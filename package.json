@@ -35,7 +35,7 @@
     "pull-ws-server": "~1.1.1",
     "ssb-client": "~1.0.2",
     "ssb-manifest": "^1.1.1",
-    "ssb-msg-schemas": "~4.1.0",
+    "ssb-msg-schemas": "~5.0.0",
     "ssb-msgs": "~5.0.0",
     "ssb-ref": "~2.0.0",
     "stream-to-pull-stream": "~1.6.0",
