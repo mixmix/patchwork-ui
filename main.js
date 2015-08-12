@@ -18,6 +18,7 @@ document.body.addEventListener('mouseover', onHover)
 pull(app.ssb.patchwork.createEventStream(), pull.drain(onIndexEvent))
 pull(app.ssb.blobs.changes(), pull.drain(onBlobDownloaded))
 pull(app.ssb.gossip.changes(), pull.drain(onGossipEvent))
+pull(app.ssb.replicate.changes(), pull.drain(onReplicationEvent))
 app.observ.newPosts(onNewPost)
 
 // render
@@ -88,11 +89,6 @@ function onBlobDownloaded (hash) {
 }
 
 function onGossipEvent (e) {
-  // make sure 'connected' is right
-  if (e.type == 'disconnect')
-    e.peer.connected = false
-  else if (e.type == 'connect')
-    e.peer.connected = true
   console.log(e)
 
   // update the peers
@@ -110,6 +106,24 @@ function onGossipEvent (e) {
   // update observables
   app.observ.peers(app.peers)
   app.observ.hasSyncIssue(!stats.membersof || !stats.active)
+}
+
+function onReplicationEvent (e) {
+  console.log(e)
+
+  // update the peers
+  var progress = { feeds: e.feeds, sync: e.sync, current: e.progress, total: e.total }
+  var i
+  for (i=0; i < app.peers.length; i++) {
+    if (app.peers[i].key == e.peerid) {
+      app.peers[i].progress = progress
+      break
+    }
+  }
+
+  // update observables
+  if (i !== app.peers.length)
+    app.observ.peers(app.peers)
 }
 
 // update title to show when new messages are available
