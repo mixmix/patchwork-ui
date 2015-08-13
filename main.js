@@ -83,6 +83,9 @@ function onBlobDownloaded (hash) {
   var els = document.querySelectorAll('img[src^="http://localhost:7777/'+hash+'"]')
   for (var i=0; i < els.length; i++)
     els[i].src = 'http://localhost:7777/'+hash
+  var els = document.querySelectorAll('video[src^="http://localhost:7777/'+hash+'"]')
+  for (var i=0; i < els.length; i++)
+    els[i].src = 'http://localhost:7777/'+hash
   var els = document.querySelectorAll('[data-bg^="http://localhost:7777/'+hash+'"]')
   for (var i=0; i < els.length; i++)
     els[i].style.backgroundImage = 'url(http://localhost:7777/'+hash+')'
