@@ -1,6 +1,6 @@
 .message {
   position: relative;
-  margin: 24px auto;
+  margin: 0 auto;
   word-break: break-word;  
 
   & > .user-img {
@@ -32,9 +32,14 @@
     }
   }
 
+  &.smallview {
+    cursor: pointer;
+  }
+
   .message-inner {
     margin-left: 88px;
     background: #fff;
+    border-bottom: 1px solid #eee;
   }
 
   &.add-anim {
@@ -127,31 +132,9 @@
     }
   }
 
-  .load-comments {
-    display: block;
-    padding: 5px 12px;
-    background: #ddd;
-    border-radius: 3px;
-    margin: 5px 0 0 88px;
-    color: gray;
-  }
   .message-comments {
     &:empty {
       display: none;
-    }
-
-    .message {
-      margin: 0;
-      & > .user-img {
-        margin-left: 28px;
-        img {
-          width: 60px;
-          height: 60px;
-        }
-      }
-      .message-inner {
-        border-top: 1px solid #eee;
-      }
     }
   }
   .composer-header {
