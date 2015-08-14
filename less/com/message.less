@@ -61,7 +61,8 @@
       padding: 7px 10px;
     }
   }
-  .message-header {
+  .message-header,
+  .message-footer {
     margin: 0;
     height: 34px;
     padding-left: 3px;
@@ -112,9 +113,11 @@
       }
     }
   }
+  .message-footer a {
+    color: gray;
+  }
   .message-body {
-    padding: 6px 24px 16px;
-    min-height: 54px;
+    padding: 6px 24px;
 
     & > * {
       margin: 0;
