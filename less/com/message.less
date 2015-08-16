@@ -55,15 +55,16 @@
   }
   .message-header,
   .message-footer {
-    margin: 0;
+    display: flex;
     height: 34px;
-    padding-left: 3px;
+    padding: 8px 10px;
+
+    & > div {
+      flex: 1;
+    }
 
     a {
       color: #666;
-    }
-    li {
-      padding: 7px 10px;
     }
     .glyphicon {
       font-size: 18px;
@@ -146,6 +147,58 @@
       text-align: right;
       min-width: 150px;
       color: #999;
+    }
+  }
+}
+
+.message.nav {
+  cursor: pointer;
+
+  .message-inner {
+    margin: 0;
+    background: #fafafa;
+  }
+
+  .message-header {
+    color: gray;
+    .glyphicon-star {
+      font-size: 14px;
+      margin-right: 2px;
+    }
+    .glyphicon-comment {
+      font-size: 12px;
+      margin-right: 4px;
+    }
+    .favs, .replies {
+      flex: 0 0 40px;
+      text-align: right;
+    }
+    .replies {
+      margin-left: 10px;
+    }
+    .favs.faved .glyphicon {
+      color: rgb(255, 194, 0);
+    }
+    .age {
+      flex: 0 0 60px;
+      text-align: right;
+    }
+  }
+
+  .message-body {
+    color: gray;
+    overflow: hidden;
+    max-height: 40px;
+    margin: 0px 10px 10px;
+    padding: 0;
+  }
+
+  &.unread {
+    .message-inner {
+      background: #fff;
+    }
+    .message-body {
+      color: #555;
     }
   }
 }

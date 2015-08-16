@@ -1,5 +1,13 @@
-#page-nav {
-  position: fixed;
+#wm {
+  display: flex;
+}
+.wm-window {
+  flex: 1;
+  position: relative;
+}
+
+.wm-nav {
+  position: absolute;
   top: 0;
   left: 0;
   height: 38px;
@@ -13,7 +21,7 @@
   background: linear-gradient(to bottom, #eee, #ddd);
   border-bottom: 1px solid #aaa;
 
-  .page-nav-inner {
+  .wm-nav-inner {
     display: flex;
     flex-direction: row;
     height: 25px;
@@ -26,7 +34,7 @@
       color: rgb(100, 98, 98);
       cursor: pointer;
 
-      &:hover, &.selected {
+      &:hover {
         text-decoration: none;
         color: @brand-primary;
       }
@@ -135,5 +143,37 @@
       top: 6px;
       color: #666;
     }
+  }
+}
+
+.wm-content {
+  overflow: auto;
+  position: absolute;
+  top: 38px;
+  width: 100%;
+}
+
+
+#sidepane {
+  flex: 0 0 300px;
+  .wm-nav {
+    border-right: 1px solid #bbb;
+    background: #ddd;
+    a {
+      flex: 0 0 38px;
+      height: 32px;
+      padding-top: 8px;
+      border: 1px solid transparent;
+
+      &.selected {
+        background: #FAFAFA;
+        border: 1px solid #bbb;
+        border-bottom: 0;
+      }
+    }
+  }
+  .wm-content {
+    border-right: 1px solid #999;
+    width: 300px;
   }
 }

@@ -1,6 +1,7 @@
 'use strict'
 var pull   = require('pull-stream')
 var ui     = require('./lib/ui')
+var wm     = require('./lib/ui/wm')
 var modals = require('./lib/ui/modals')
 
 // Init
@@ -22,7 +23,12 @@ pull(app.ssb.replicate.changes(), pull.drain(onReplicationEvent))
 app.observ.newPosts(onNewPost)
 
 // render
-ui.refreshPage(null, ui.pleaseWait.bind(ui, false))
+wm.setup()
+wm.refreshNavs()
+ui.refreshPage(null, function () {
+  ui.pleaseWait(false)
+  app.observ.sidepaneView('home')
+})
 
 // Handlers
 // ========
