@@ -4,35 +4,8 @@
     border: 1px solid #ccc;
   }
   .webview-right {
-    margin: 2px 2px 0 0;
-
-    &.comments {
-      overflow: scroll;
-      max-width: 562px;
-
-      .message-feed {
-        max-width: 560px;
-      }
-      .message:first-child {
-        margin: 0 0 2px;
-        .attachments {
-          display: none;
-        }
-      }
-    }
-    &.editor {
-      .editor-toolbar {
-        margin-bottom: 2px;
-      }
-      textarea {
-        border: 1px solid #ccc;
-        padding: 3px 6px;
-        width: 100%;
-
-        &:focus {
-          outline: 0;
-        }
-      }
-    }
+    flex: 0 0 305px;
+    overflow-y: auto;
+    overflow-x: hidden;
   }
 }
