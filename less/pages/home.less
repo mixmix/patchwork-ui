@@ -1,15 +1,20 @@
 .home-page {
-  .flagged-nsfw, .flagged-spam, .flagged-abuse {
-    display: none;
-  }
-  .show-nsfw .flagged-nsfw {
-    display: block;
-  }
-  .show-spam .flagged-spam {
-    display: block;
-  }
-  .show-abuse .flagged-abuse {
-    display: block;
+  .shortcuts {
+    margin: 10px 0;
+    background: #fafafa;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    padding: 8px 0;
+
+    a {
+      color: gray;
+      padding: 0 16px;
+
+      border-right: 1px solid #ccc;
+      &:last-child {
+        border: 0;
+      }
+    }
   }
 
   .user-hexagrid-200 {
@@ -18,21 +23,6 @@
     display: block;
     .user-hexagon {
       opacity: 1;
-    }
-  }
-  
-  .layout-twocol {
-    max-width: 910px;
-  }
-  .layout-rightnav {
-    flex: 0 0 290px;
-  }
-  .livemode-progress-bars {
-    max-width: 560px;
-    margin: 0 auto;
-    .progress {
-      height: 5px;
-      border-radius: 0;
     }
   }
 }
