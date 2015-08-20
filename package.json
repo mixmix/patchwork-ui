@@ -33,6 +33,7 @@
     "pull-stream": "~2.24.1",
     "pull-stream-to-stream": "~1.3.0",
     "pull-ws-server": "~1.1.1",
+    "readdirp": "^1.4.0",
     "ssb-client": "~1.0.2",
     "ssb-manifest": "^1.1.1",
     "ssb-msg-schemas": "~5.0.0",

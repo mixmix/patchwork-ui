@@ -1,18 +1,27 @@
 .home-page {
   .shortcuts {
+    display: flex;
     margin: 10px 0;
     background: #fafafa;
     border: 1px solid #ccc;
     border-radius: 3px;
     padding: 8px 0;
 
-    a {
-      color: gray;
-      padding: 0 16px;
-
-      border-right: 1px solid #ccc;
-      &:last-child {
-        border: 0;
+    .shortcuts-left {
+      flex: 1;
+      a {
+        color: gray;
+        padding: 0 16px;
+        border-right: 1px solid #ccc;
+        &:last-child {
+          border: 0;
+        }
+      }
+    }
+    .shortcuts-right {
+      a {
+        color: gray;
+        padding: 0 18px 0 0;
       }
     }
   }
