@@ -56,6 +56,8 @@ function onHover (e) {
         var i = el.href.indexOf('#')
         if (i > 0)
           ui.setStatus(el.href.slice(i+1))
+        else
+          ui.setStatus(el.href)
       }
       return 
     }
