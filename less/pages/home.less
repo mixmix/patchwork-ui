@@ -1,17 +1,17 @@
 .home-page {
   .shortcuts {
     display: flex;
-    margin: 10px 0;
-    background: #fafafa;
-    border: 1px solid #ccc;
+    margin: 5px 0;
+    background: rgb(246, 246, 246);
+    border: 1px solid #E2E2E2;
     border-radius: 3px;
-    padding: 8px 0;
+    padding: 6px 0;
 
     .shortcuts-left {
       flex: 1;
       a {
         color: gray;
-        padding: 0 16px;
+        padding: 0 12px;
         border-right: 1px solid #ccc;
         &:last-child {
           border: 0;
@@ -21,17 +21,35 @@
     .shortcuts-right {
       a {
         color: gray;
-        padding: 0 18px 0 0;
+        padding: 0 12px 0 4px;
       }
     }
   }
 
-  .user-hexagrid-200 {
-    margin: 70px auto;
-    width: 808px;
+  .flagged-nsfw, .flagged-spam, .flagged-abuse {
+    display: none;
+  }
+  .show-nsfw .flagged-nsfw {
     display: block;
-    .user-hexagon {
-      opacity: 1;
+  }
+  .show-spam .flagged-spam {
+    display: block;
+  }
+  .show-abuse .flagged-abuse {
+    display: block;
+  }
+  .layout-twocol {
+    max-width: 910px;
+  }
+  .layout-rightnav {
+    flex: 0 0 290px;
+  }
+  .livemode-progress-bars {
+    max-width: 560px;
+    margin: 0 auto;
+    .progress {
+      height: 5px;
+      border-radius: 0;
     }
   }
 }
