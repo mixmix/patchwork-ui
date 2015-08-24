@@ -8,10 +8,16 @@
     padding: 6px 0;
     font-size: 16px;
 
+    a {
+      color: gray;
+      &.highlight {
+        color: @brand-primary;
+      }
+    }
+
     .shortcuts-left {
       flex: 1;
       a {
-        color: gray;
         padding: 0 12px;
         border-right: 1px solid #ccc;
         &:last-child {
@@ -21,7 +27,6 @@
     }
     .shortcuts-right {
       a {
-        color: gray;
         padding: 0 12px 0 4px;
       }
     }
