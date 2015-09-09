@@ -2,6 +2,30 @@
 var pull   = require('pull-stream')
 var ui     = require('./lib/ui')
 var modals = require('./lib/ui/modals')
+require('./css/main.css')
+
+// Base HTML
+document.body.innerHTML = [
+'<!DOCTYPE html>',
+'<html>',
+'  <head>',
+'    <title>-=[ Patchwork ]=-</title>',
+'    <meta charset="utf-8">',
+'  </head>',
+'  <body>',
+'    <div id="app-status"></div>',
+'    <div id="app-notices"></div>',
+'    <div id="please-wait">',
+'      <div class="spinner">',
+'        <div class="cube1"></div>',
+'        <div class="cube2"></div>',
+'      </div>',
+'    </div>',
+'    <div id="page-nav"></div>',
+'    <div id="page-container"></div>',
+'  </body>',
+'</html>'
+].join('')
 
 // Init
 // ====
