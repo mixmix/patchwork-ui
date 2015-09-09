@@ -8,6 +8,7 @@
     "url": "git://github.com/ssbc/patchwork-ui.git"
   },
   "scripts": {
+    "build-feed": "lessc less/feed.less css/feed.css; browserify -t browserify-css feed.js > feed-bundle.js",
     "build": "mkdir -p css; lessc less/main.less css/main.css",
     "prepublish": "npm run build"
   },
